@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "monopoly"
+version = "0.1.0"
+description = ""
+authors = ["benjamin-awd <benjamindornel@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pypdf2 = "^2.12.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
