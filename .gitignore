@@ -1,2 +1,4 @@
 *.pdf
 *.ipynb
+*.csv
+__pycache__
