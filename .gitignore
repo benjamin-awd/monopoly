@@ -1,4 +1,5 @@
 *.pdf
 *.ipynb
 *.csv
+.python-version
 __pycache__
