@@ -2,4 +2,5 @@
 *.ipynb
 *.csv
 .python-version
+Brewfile.lock.json
 __pycache__

@@ -12,6 +12,8 @@ pdfminer-six = "^20221105"
 pandas = "^1.5.2"
 pytesseract = "^0.3.10"
 ocrmypdf = "^14.0.1"
+pdf2image = "^1.16.0"
+pikepdf = "^8.2.2"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -21,3 +23,7 @@ pylint = "^2.15.9"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+packages = [
+    { include = "my_package", from = "src" },
+]
