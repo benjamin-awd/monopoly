@@ -58,3 +58,8 @@ class PDF:
         transactions = self._extract_transactions_from_text(self.pages)
 
         return pd.DataFrame(transactions, columns=columns)
+
+    def transform(self):
+        df = self.df
+        df[AMOUNT] = df[AMOUNT].astype(float)
+        return df
