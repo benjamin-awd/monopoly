@@ -16,16 +16,15 @@ class PDF:
         self.file_name: str
         self.df: pd.DataFrame
 
-    def extract(self):
+    def _extract_text_from_pdf(self):
         pdf = pikepdf.open(self.file_path, password=self.password)
         self.file_name = pdf.filename
-
-        df = pd.DataFrame(columns=["Date", "Description", "Transaction Amount"])
-        extracted_data = []
 
         with tempfile.NamedTemporaryFile() as tmp:
             pdf.save(tmp.name)
             doc = convert_from_path(tmp.name)
+
+        extracted_data = []
 
         for _, page_data in enumerate(doc):
             text = pytesseract.image_to_string(page_data)
@@ -35,15 +34,17 @@ class PDF:
             for line in lines:
                 match = re.match(self.regex_pattern, line)
                 if match:
-                    date = match.group(1)
-                    merchant_details = match.group(2)
-                    transaction_amount = match.group(3)
+                    date, description, amount = match.groups()
 
                     extracted_data.append(
                         {
                             "Date": date,
-                            "Merchant Details": merchant_details,
-                            "Transaction Amount": transaction_amount
+                            "Description": description,
+                            "Amount": amount
                         })
 
-        self.df = pd.concat([df, pd.DataFrame(extracted_data)])
+        return extracted_data
+
+    def extract(self, columns: list = ["Date", "Description", "Amount"]):
+        extracted_data = self._extract_text_from_pdf()
+        self.df = pd.DataFrame(extracted_data, columns=columns)
