@@ -20,7 +20,7 @@ class PDF:
         pdf = pikepdf.open(self.file_path, password=self.password)
         self.file_name = pdf.filename
 
-        df = pd.DataFrame(columns=["Date", "Merchant Details", "Transaction Amount"])
+        df = pd.DataFrame(columns=["Date", "Description", "Transaction Amount"])
         extracted_data = []
 
         with tempfile.NamedTemporaryFile() as tmp:
