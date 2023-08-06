@@ -1,12 +1,12 @@
 import re
-import pandas as pd
-
-import pytesseract
-import pikepdf
-from pdf2image import convert_from_path
-from monopoly.constants import DATE, DESCRIPTION, AMOUNT
-import re
 import tempfile
+
+import pandas as pd
+import pikepdf
+import pytesseract
+from pdf2image import convert_from_path
+
+from monopoly.constants import AMOUNT, DATE, DESCRIPTION
 
 
 class PDF:
@@ -38,14 +38,10 @@ class PDF:
                     date, description, amount = match.groups()
 
                     extracted_data.append(
-                        {
-                            DATE: date,
-                            DESCRIPTION: description,
-                            AMOUNT: amount
-                        })
+                        {DATE: date, DESCRIPTION: description, AMOUNT: amount}
+                    )
 
         return extracted_data
-
 
     def extract(self, columns: list = [DATE, DESCRIPTION, AMOUNT]):
         extracted_data = self._extract_text_from_pdf()
