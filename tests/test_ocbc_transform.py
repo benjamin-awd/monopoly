@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import pandas as pd
+from pandas.testing import assert_frame_equal
 
 from monopoly.banks.ocbc import OCBC
 from monopoly.constants import AMOUNT, DATE, DESCRIPTION
@@ -25,7 +26,21 @@ def test_ocbc_transform():
         ]
     )
 
-    df = pdf._transform_dates(input_data, statement_date)
+    transformed_df = pdf._transform_dates(input_data, statement_date)
 
-    assert str(df.loc[0][DATE])[:10] == "2024-01-12"
-    assert str(df.loc[1][DATE])[:10] == "2023-12-28"
+    expected_data = pd.DataFrame(
+        [
+            {
+                DATE: pd.Timestamp("2024-01-12"),
+                DESCRIPTION: "FAIRPRICE FINEST SINGAPORE SG",
+                AMOUNT: "18.49",
+            },
+            {
+                DATE: pd.Timestamp("2023-12-28"),
+                DESCRIPTION: "DA PAOLO GASTRONOMIA SING — SINGAPORE SG",
+                AMOUNT: "19.69",
+            },
+        ]
+    )
+
+    assert_frame_equal(transformed_df, expected_data)

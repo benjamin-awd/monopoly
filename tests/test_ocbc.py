@@ -1,4 +1,5 @@
 import pandas as pd
+from pandas.testing import assert_frame_equal
 
 from monopoly.banks.ocbc import OCBC
 from monopoly.constants import AMOUNT, DATE, DESCRIPTION
@@ -23,4 +24,4 @@ def test_ocbc_unprotected_pdf():
         ]
     )
 
-    assert input_data.to_dict() == expected_data.to_dict()
+    assert_frame_equal(input_data, expected_data)
