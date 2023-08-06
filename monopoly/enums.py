@@ -2,6 +2,6 @@ from enum import Enum
 
 
 class BankStatement(str, Enum):
-    DATE = "Date"
-    DESCRIPTION = "Description"
-    AMOUNT = "Amount"
+    DATE = "date"
+    DESCRIPTION = "description"
+    AMOUNT = "amount"
