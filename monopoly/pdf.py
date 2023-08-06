@@ -10,21 +10,23 @@ from monopoly.constants import AMOUNT, DATE, DESCRIPTION
 
 
 class PDF:
-    def __init__(self, file_path: str):
+    def __init__(self, file_path: str, password: str = ""):
         self.file_path: str = file_path
-        self.password: str
+        self.password: str = password
         self.regex_pattern: str
         self.file_name: str
         self.df: pd.DataFrame
 
-    def _extract_text_from_pdf(self):
+    def _open_pdf(self):
         pdf = pikepdf.open(self.file_path, password=self.password)
         self.file_name = pdf.filename
 
         with tempfile.NamedTemporaryFile() as tmp:
             pdf.save(tmp.name)
-            doc = convert_from_path(tmp.name)
+            return convert_from_path(tmp.name)
 
+    def _extract_text_from_pdf(self):
+        doc = self._open_pdf()
         extracted_data = []
 
         for _, page_data in enumerate(doc):
