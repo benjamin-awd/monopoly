@@ -6,7 +6,7 @@ from monopoly.constants import AMOUNT, DATE, DESCRIPTION
 
 def test_ocbc_unprotected_pdf():
     pdf = OCBC(file_path="tests/ocbc_365.pdf")
-    pdf.extract()
+    input_data: pd.DataFrame = pdf.extract()
 
     expected_data = pd.DataFrame(
         [
@@ -23,4 +23,4 @@ def test_ocbc_unprotected_pdf():
         ]
     )
 
-    assert pdf.df.to_dict() == expected_data.to_dict()
+    assert input_data.to_dict() == expected_data.to_dict()

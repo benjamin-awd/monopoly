@@ -15,6 +15,7 @@ class PDF:
         self.password: str = password
         self.regex_pattern: str
         self.file_name: str
+        self.pages: list[list[str]]
         self.df: pd.DataFrame
 
     def _open_pdf(self):
@@ -25,26 +26,35 @@ class PDF:
             pdf.save(tmp.name)
             return convert_from_path(tmp.name)
 
-    def _extract_text_from_pdf(self):
+    def _extract_text_from_pdf(self) -> list[list[str]]:
         doc = self._open_pdf()
-        extracted_data = []
+        pages = []
 
         for _, page_data in enumerate(doc):
             text = pytesseract.image_to_string(page_data)
-
             lines = text.split("\n")
+            pages.append(lines)
 
-            for line in lines:
+        return pages
+
+    def _extract_transactions_from_text(self, pages) -> list[dict[str, str]]:
+        transactions = []
+        for page in pages:
+            for line in page:
                 match = re.match(self.regex_pattern, line)
                 if match:
                     date, description, amount = match.groups()
 
-                    extracted_data.append(
+                    transactions.append(
                         {DATE: date, DESCRIPTION: description, AMOUNT: amount}
                     )
 
-        return extracted_data
+            return transactions
 
-    def extract(self, columns: list = [DATE, DESCRIPTION, AMOUNT]):
-        extracted_data = self._extract_text_from_pdf()
-        self.df = pd.DataFrame(extracted_data, columns=columns)
+    def extract(
+        self, columns: list = [DATE, DESCRIPTION, AMOUNT]
+    ) -> pd.DataFrame:
+        self.pages = self._extract_text_from_pdf()
+        transactions = self._extract_transactions_from_text(self.pages)
+
+        return pd.DataFrame(transactions, columns=columns)
