@@ -1,6 +1,5 @@
 import re
 import pandas as pd
-from datetime import datetime
 
 import pytesseract
 import pikepdf
@@ -14,11 +13,13 @@ class PDF:
         self.file_path: str = file_path
         self.password: str
         self.regex_pattern: str
-        self.raw_text: str = None
-        self.df: pd.DataFrame = None
+        self.file_name: str
+        self.df: pd.DataFrame
 
     def extract(self):
         pdf = pikepdf.open(self.file_path, password=self.password)
+        self.file_name = pdf.filename
+
         df = pd.DataFrame(columns=["Date", "Merchant Details", "Transaction Amount"])
         extracted_data = []
 
