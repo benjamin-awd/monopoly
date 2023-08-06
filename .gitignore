@@ -10,3 +10,4 @@ __pycache__
 *.tfstate.backup
 credentials.json
 token.json
+_ignore*
