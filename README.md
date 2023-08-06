@@ -1,10 +1,12 @@
-# Install dependencies
+# Install
 Install using
 
-```brew bundle```
+```sh
+brew bundle
+```
 
 Install the gcloud CLI
-```
+```sh
 cd ~
 curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-440.0.0-linux-x86_64.tar.gz
 tar -xf google-cloud-cli-440.0.0-linux-x86_64.tar.gz
@@ -14,14 +16,20 @@ cd -
 ```
 
 Then generate credentials with
-```
-gcloud auth application-default login 
+```sh
+gcloud auth application-default login
 ```
 
 Enable the Gmail API and authorize access:
 https://developers.google.com/gmail/api/quickstart/python
 
 Get API credentials
-```
+```sh
 python3 quickstart.py
+```
+
+# Developing
+Set up the pre-commit hooks
+```sh
+pre-commit install
 ```
