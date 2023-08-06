@@ -36,6 +36,10 @@ test = "pytest ."
 ci = "poetry run task format && poetry run task lint && poetry run task test"
 
 
+[tool.black]
+line-length = 79
+
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
