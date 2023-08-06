@@ -41,13 +41,11 @@ class OCBC(PDF):
             statement_month = statement_date.month
             day, month = [int(i) for i in row[DATE].split("/")]
 
-            # If my statement is in January, I have to convert dates
+            # Deal with mixed years from Jan/Dec
             if statement_month == 1:
-                # Specifically, if the month is Jan, the year is 2024
                 if month == 1:
                     year = statement_year
 
-                # If the month is Dec, the year is 2023
                 if month == 12:
                     year = statement_year - 1
 
