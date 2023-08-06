@@ -8,10 +8,10 @@ from monopoly.constants import AMOUNT, DATE, DESCRIPTION
 
 
 def test_ocbc_transform():
-    pdf = OCBC(file_path="tests/ocbc_365.pdf")
-    statement_date = datetime.strptime("2024-01-01", "%Y-%m-%d")
+    ocbc = OCBC(file_path="tests/ocbc_365.pdf")
+    ocbc.statement_date = datetime.strptime("2024-01-01", "%Y-%m-%d")
 
-    input_data = pd.DataFrame(
+    ocbc.df = pd.DataFrame(
         [
             {
                 DATE: "12/01",
@@ -26,7 +26,7 @@ def test_ocbc_transform():
         ]
     )
 
-    transformed_df = pdf._transform_dates(input_data, statement_date)
+    transformed_df = ocbc.transform()
 
     expected_data = pd.DataFrame(
         [
