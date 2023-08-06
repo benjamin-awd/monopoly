@@ -6,4 +6,4 @@ class OCBC(PDF):
         super().__init__(file_path)
 
         self.password = password
-        self.regex_pattern = r"(\d+\/\d+)(.*?)([\d.,]+)$"
+        self.regex_pattern = r"(\d+\/\d+)\s*(.*?)\s*([\d.,]+)$"
