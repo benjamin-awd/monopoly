@@ -32,6 +32,8 @@ flake8 = "^6.1.0"
 [tool.taskipy.tasks]
 format = "isort . && black ."
 lint = "flake8 ."
+test = "pytest ."
+ci = "poetry run task format && poetry run task lint && poetry run task test"
 
 
 [build-system]
