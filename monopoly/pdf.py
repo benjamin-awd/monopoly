@@ -4,7 +4,7 @@ import pandas as pd
 import pytesseract
 import pikepdf
 from pdf2image import convert_from_path
-from monopoly.enums import BankStatement
+from monopoly.constants import DATE, DESCRIPTION, AMOUNT
 import re
 import tempfile
 
@@ -39,14 +39,14 @@ class PDF:
 
                     extracted_data.append(
                         {
-                            BankStatement.DATE.value: date,
-                            BankStatement.DESCRIPTION.value: description,
-                            BankStatement.AMOUNT.value: amount
+                            DATE: date,
+                            DESCRIPTION: description,
+                            AMOUNT: amount
                         })
 
         return extracted_data
 
 
-    def extract(self, columns: list = [e.value for e in BankStatement]):
+    def extract(self, columns: list = [DATE, DESCRIPTION, AMOUNT]):
         extracted_data = self._extract_text_from_pdf()
         self.df = pd.DataFrame(extracted_data, columns=columns)
