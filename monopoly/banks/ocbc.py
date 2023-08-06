@@ -30,6 +30,7 @@ class OCBC(PDF):
                 return datetime.strptime(statement_date, "%d-%m-%Y")
 
     def transform(self) -> DataFrame:
+        df = super().transform()
         df = self._transform_dates(self.df, self.statement_date)
         return df
 
