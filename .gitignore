@@ -4,3 +4,9 @@
 .python-version
 Brewfile.lock.json
 __pycache__
+.terraform
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.backup
+credentials.json
+token.json
