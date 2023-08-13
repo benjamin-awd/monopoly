@@ -50,6 +50,9 @@ class OCBC(PDF):
                 if month == 12:
                     year = statement_year - 1
 
+            else:
+                year = statement_year
+
             return f"{year}-{month:02d}-{day:02d}"
 
         df[DATE] = df.apply(
