@@ -7,8 +7,7 @@ from monopoly.banks.ocbc import OCBC
 from monopoly.constants import AMOUNT, DATE, DESCRIPTION
 
 
-def test_ocbc_transform_cross_year():
-    ocbc = OCBC()
+def test_ocbc_transform_cross_year(ocbc: OCBC):
     ocbc.statement_date = datetime(2024, 1, 1)
 
     ocbc.df = pd.DataFrame(
@@ -46,8 +45,7 @@ def test_ocbc_transform_cross_year():
     assert_frame_equal(transformed_df, expected_data)
 
 
-def test_ocbc_transform_within_year():
-    ocbc = OCBC(file_path="tests/ocbc_365.pdf")
+def test_ocbc_transform_within_year(ocbc: OCBC):
     ocbc.statement_date = datetime(2023, 7, 1)
 
     ocbc.df = pd.DataFrame(
