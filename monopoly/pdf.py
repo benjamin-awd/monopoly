@@ -14,7 +14,7 @@ from monopoly.helpers import upload_to_google_cloud_storage
 
 
 class PDF:
-    def __init__(self, file_path: str, password: str = ""):
+    def __init__(self, file_path: str = "", password: str = ""):
         self.file_path: str = file_path
         self.password: str = password
         self.regex_pattern: str

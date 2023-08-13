@@ -7,9 +7,10 @@ from monopoly.constants import AMOUNT, DATE, DESCRIPTION
 from monopoly.exceptions import UndefinedFilePathError
 
 
-def test_ocbc_extract_unprotected_pdf():
-    pdf = OCBC(file_path="tests/ocbc_365.pdf")
-    raw_df: pd.DataFrame = pdf.extract()
+def test_ocbc_extract_unprotected_pdf(ocbc: OCBC):
+    ocbc.file_path = "tests/ocbc_365.pdf"
+
+    raw_df: pd.DataFrame = ocbc.extract()
 
     expected_df = pd.DataFrame(
         [
