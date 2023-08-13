@@ -1,9 +1,9 @@
 import re
 import tempfile
 
-import pandas as pd
 import pikepdf
 import pytesseract
+from pandas import DataFrame
 from pdf2image import convert_from_path
 
 from monopoly.constants import AMOUNT, DATE, DESCRIPTION
@@ -16,7 +16,7 @@ class PDF:
         self.regex_pattern: str
         self.file_name: str
         self.pages: list[list[str]]
-        self.df: pd.DataFrame
+        self.df: DataFrame
 
     def _open_pdf(self):
         pdf = pikepdf.open(self.file_path, password=self.password)
@@ -53,11 +53,11 @@ class PDF:
 
     def extract(
         self, columns: list = [DATE, DESCRIPTION, AMOUNT]
-    ) -> pd.DataFrame:
+    ) -> DataFrame:
         self.pages = self._extract_text_from_pdf()
         transactions = self._extract_transactions_from_text(self.pages)
 
-        return pd.DataFrame(transactions, columns=columns)
+        return DataFrame(transactions, columns=columns)
 
     def transform(self):
         df = self.df
