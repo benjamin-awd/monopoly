@@ -5,11 +5,11 @@ from monopoly.banks.ocbc import OCBC
 from monopoly.constants import AMOUNT, DATE, DESCRIPTION
 
 
-def test_ocbc_unprotected_pdf():
+def test_ocbc_extract_unprotected_pdf():
     pdf = OCBC(file_path="tests/ocbc_365.pdf")
-    input_data: pd.DataFrame = pdf.extract()
+    raw_df: pd.DataFrame = pdf.extract()
 
-    expected_data = pd.DataFrame(
+    expected_df = pd.DataFrame(
         [
             {
                 DATE: "12/06",
@@ -24,4 +24,4 @@ def test_ocbc_unprotected_pdf():
         ]
     )
 
-    assert_frame_equal(input_data, expected_data)
+    assert_frame_equal(raw_df, expected_df)
