@@ -1,12 +1,16 @@
+import os
 import re
 import tempfile
+from datetime import datetime
 
+import google.cloud.storage as storage
 import pikepdf
 import pytesseract
 from pandas import DataFrame
 from pdf2image import convert_from_path
 
-from monopoly.constants import AMOUNT, DATE, DESCRIPTION
+from monopoly.constants import AMOUNT, DATE, DESCRIPTION, ROOT_DIR
+from monopoly.helpers import upload_to_google_cloud_storage
 
 
 class PDF:
@@ -17,6 +21,18 @@ class PDF:
         self.file_name: str
         self.pages: list[list[str]]
         self.df: DataFrame
+
+        # The following uses credentials inferred from the local environment
+        # using Application Default Credentials.
+        # https://googleapis.dev/python/google-api-core/latest/auth.html
+        self.storage_client = storage.Client()
+
+        self.filename: str = "statement.csv"
+        self.bank: str
+        self.account_name: str
+        self.statement_date: datetime
+
+        self.gcs_bucket: str
 
     def _open_pdf(self):
         pdf = pikepdf.open(self.file_path, password=self.password)
@@ -63,3 +79,31 @@ class PDF:
         df = self.df
         df[AMOUNT] = df[AMOUNT].astype(float)
         return df
+
+    def _write_to_csv(self, df: DataFrame):
+        self.filename = (
+            f"{self.bank}-"
+            f"{self.account_name}-"
+            f"{self.statement_date.year}-"
+            f"{self.statement_date.month:02d}.csv"
+        )
+
+        df.to_csv(os.path.join(ROOT_DIR, "output", self.filename), index=False)
+
+    def load(self, df: DataFrame, upload_to_cloud: bool = False):
+        self._write_to_csv(df)
+        if upload_to_cloud:
+            self.gcs_bucket = os.getenv("GCS_BUCKET")
+
+            upload_to_google_cloud_storage(
+                client=self.storage_client,
+                source_filename=self.filename,
+                bucket_name=self.gcs_bucket,
+                blob_name=(
+                    f"bank={self.bank}/"
+                    f"account_name={self.account_name}/"
+                    f"year={self.statement_date.year}/"
+                    f"month={self.statement_date.month}/"
+                    f"{self.filename}"
+                ),
+            )
