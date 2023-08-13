@@ -33,4 +33,4 @@ def test_ocbc_write_to_local_csv():
     local_df = pd.read_csv(
         os.path.join(ROOT_DIR, "output", "OCBC-365-2024-01.csv")
     )
-    assert_frame_equal(transformed_df, local_df, check_dtype=False)
+    assert_frame_equal(transformed_df, local_df)
