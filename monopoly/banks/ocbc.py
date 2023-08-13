@@ -1,7 +1,6 @@
 import re
 from datetime import datetime
 
-import pandas as pd
 from pandas import DataFrame
 
 from monopoly.constants import DATE
@@ -49,9 +48,7 @@ class OCBC(PDF):
                 if month == 12:
                     year = statement_year - 1
 
-            return pd.to_datetime(
-                f"{year}-{month:02d}-{day:02d}", format="%Y-%m-%d"
-            )
+            return f"{year}-{month:02d}-{day:02d}"
 
         df[DATE] = df.apply(
             lambda row: convert_date(row, statement_date), axis=1

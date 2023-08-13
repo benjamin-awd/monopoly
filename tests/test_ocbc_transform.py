@@ -31,12 +31,12 @@ def test_ocbc_transform():
     expected_data = pd.DataFrame(
         [
             {
-                DATE: pd.Timestamp("2024-01-12"),
+                DATE: "2024-01-12",
                 DESCRIPTION: "FAIRPRICE FINEST SINGAPORE SG",
                 AMOUNT: 18.49,
             },
             {
-                DATE: pd.Timestamp("2023-12-28"),
+                DATE: "2023-12-28",
                 DESCRIPTION: "DA PAOLO GASTRONOMIA SING — SINGAPORE SG",
                 AMOUNT: 19.69,
             },
