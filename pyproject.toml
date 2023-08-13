@@ -34,7 +34,7 @@ pytest-xdist = "^3.3.1"
 [tool.taskipy.tasks]
 format = "isort . && black ."
 lint = "flake8 ."
-test = "pytest -n auto"
+test = "pytest -n auto ."
 ci = "poetry run task format && poetry run task lint && poetry run task test"
 
 

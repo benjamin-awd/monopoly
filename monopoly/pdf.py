@@ -88,16 +88,20 @@ class PDF:
             f"{self.statement_date.month:02d}.csv"
         )
 
-        df.to_csv(os.path.join(ROOT_DIR, "output", self.filename), index=False)
+        file_path = os.path.join(ROOT_DIR, "output", self.filename)
+        df.to_csv(file_path, index=False)
+
+        return file_path
 
     def load(self, df: DataFrame, upload_to_cloud: bool = False):
-        self._write_to_csv(df)
+        csv_file_path = self._write_to_csv(df)
+
         if upload_to_cloud:
             self.gcs_bucket = os.getenv("GCS_BUCKET")
 
             upload_to_google_cloud_storage(
                 client=self.storage_client,
-                source_filename=self.filename,
+                source_filename=csv_file_path,
                 bucket_name=self.gcs_bucket,
                 blob_name=(
                     f"bank={self.bank}/"
