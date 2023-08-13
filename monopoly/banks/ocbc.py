@@ -15,6 +15,8 @@ class OCBC(PDF):
         self.regex_pattern: str = r"(\d+\/\d+)\s*(.*?)\s*([\d.,]+)$"
         self.statement_date_pattern: str = r"\d{2}\-\d{2}\-\d{4}"
         self.statement_date: datetime
+        self.bank = "OCBC"
+        self.account_name = "365"
 
     def extract(self) -> DataFrame:
         df = super().extract()
