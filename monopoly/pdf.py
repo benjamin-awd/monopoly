@@ -75,8 +75,8 @@ class PDF:
 
         return DataFrame(transactions, columns=columns)
 
-    def transform(self):
-        df = self.df
+    @staticmethod
+    def transform(df: DataFrame):
         df[AMOUNT] = df[AMOUNT].astype(float)
         return df
 

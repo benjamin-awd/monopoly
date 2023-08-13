@@ -10,7 +10,7 @@ from monopoly.constants import AMOUNT, DATE, DESCRIPTION
 def test_ocbc_transform_cross_year(ocbc: OCBC):
     ocbc.statement_date = datetime(2024, 1, 1)
 
-    ocbc.df = pd.DataFrame(
+    raw_df = pd.DataFrame(
         [
             {
                 DATE: "12/01",
@@ -25,7 +25,7 @@ def test_ocbc_transform_cross_year(ocbc: OCBC):
         ]
     )
 
-    transformed_df = ocbc.transform()
+    transformed_df = ocbc.transform(raw_df)
 
     expected_data = pd.DataFrame(
         [
@@ -48,7 +48,7 @@ def test_ocbc_transform_cross_year(ocbc: OCBC):
 def test_ocbc_transform_within_year(ocbc: OCBC):
     ocbc.statement_date = datetime(2023, 7, 1)
 
-    ocbc.df = pd.DataFrame(
+    raw_df = pd.DataFrame(
         [
             {
                 DATE: "12/06",
@@ -63,7 +63,7 @@ def test_ocbc_transform_within_year(ocbc: OCBC):
         ]
     )
 
-    transformed_df = ocbc.transform()
+    transformed_df = ocbc.transform(raw_df)
 
     expected_data = pd.DataFrame(
         [
