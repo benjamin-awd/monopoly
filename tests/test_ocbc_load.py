@@ -11,7 +11,7 @@ from monopoly.constants import AMOUNT, DATE, DESCRIPTION, ROOT_DIR
 def test_ocbc_write_to_local_csv():
     ocbc = OCBC(file_path="tests/ocbc_365.pdf")
 
-    ocbc.statement_date = datetime.strptime("2024-01-01", "%Y-%m-%d")
+    ocbc.statement_date = datetime(2024, 1, 1)
 
     transformed_df = pd.DataFrame(
         [
