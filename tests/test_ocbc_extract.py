@@ -1,8 +1,10 @@
 import pandas as pd
+import pytest
 from pandas.testing import assert_frame_equal
 
 from monopoly.banks.ocbc import OCBC
 from monopoly.constants import AMOUNT, DATE, DESCRIPTION
+from monopoly.exceptions import UndefinedFilePathError
 
 
 def test_ocbc_extract_unprotected_pdf():
@@ -25,3 +27,11 @@ def test_ocbc_extract_unprotected_pdf():
     )
 
     assert_frame_equal(raw_df, expected_df)
+
+
+def test_error_raised_if_no_file_path_during_extract():
+    with pytest.raises(
+        UndefinedFilePathError, match="File path must be defined"
+    ):
+        pdf = OCBC()
+        pdf.extract()
