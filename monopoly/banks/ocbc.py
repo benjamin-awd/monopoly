@@ -4,11 +4,12 @@ from datetime import datetime
 from pandas import DataFrame
 
 from monopoly.constants import DATE
+from monopoly.exceptions import UndefinedFilePathError
 from monopoly.pdf import PDF
 
 
 class OCBC(PDF):
-    def __init__(self, file_path: str, password: str = ""):
+    def __init__(self, file_path: str = "", password: str = ""):
         super().__init__(file_path)
 
         self.password: str = password
@@ -19,6 +20,9 @@ class OCBC(PDF):
         self.account_name = "365"
 
     def extract(self) -> DataFrame:
+        if not self.file_path:
+            raise UndefinedFilePathError("File path must be defined")
+
         df = super().extract()
         self.statement_date = self._extract_statement_date()
         return df
