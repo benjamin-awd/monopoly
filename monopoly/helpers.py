@@ -1,16 +1,19 @@
-import re
-from datetime import datetime
+import logging
+
+import google.cloud.storage as storage
+
+logger = logging.getLogger(__name__)
 
 
-def get_payment_due_date(text: str):
-    """Helper function to deal with bills split across a different year
-    (e.g. Dec 2021 and Jan 2022), and to transform dates
-    into a YYYY-MM-DD format"""
-    pattern = r"Statement Date (?P<month>\w+) (?P<day>\d+), (?P<year>\d+)"
-    match = re.search(pattern, text)
-    groups = match.groupdict()
+def upload_to_google_cloud_storage(
+    client: storage.Client,
+    source_filename: str,
+    bucket_name: str,
+    blob_name: str,
+) -> None:
 
-    # Serialize the string and return a datetime object
-    payment_due_date = " ".join(groups.values())
-    date = datetime.strptime(payment_due_date, "%B %d %Y").date()
-    return date
+    bucket = client.get_bucket(bucket_name)
+    blob = bucket.blob(blob_name)
+
+    logger.info(f"Attempting to upload to 'gs://{bucket_name}/{blob_name}'")
+    blob.upload_from_filename(source_filename)
