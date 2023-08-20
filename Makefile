@@ -4,7 +4,7 @@ project := phonic-ceremony-394407
 docker_url := us-central1-docker.pkg.dev
 
 build:
-	docker build --tag ${image} .
+	docker compose build
 
 push:
 	docker tag ${image} \

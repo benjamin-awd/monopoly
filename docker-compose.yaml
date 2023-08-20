@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  monopoly:
+    build: .
+    container_name: monopoly
+    image: monopoly
+    volumes:
+      - $HOME/.config/gcloud:/root/.config/gcloud
+      - ./monopoly:/monopoly
+    env_file:
+      .env
