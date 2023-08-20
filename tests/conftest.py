@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 
 from monopoly.banks.ocbc import OCBC
-from monopoly.pdf import PDF
+from monopoly.pdf import PDF, Statement
 
 
 @pytest.fixture(scope="session")
@@ -15,9 +15,13 @@ def ocbc():
 @pytest.fixture(scope="session")
 def pdf():
     pdf = PDF()
-    pdf.bank = "Example Bank"
-    pdf.account_name = "Savings"
-    pdf.statement_date = datetime(2023, 8, 1)
-    pdf.filename = "statement.csv"
+    pdf.statement = Statement(
+        bank="Example Bank",
+        account_name="Savings",
+        date=datetime(2023, 8, 1),
+        filename="statement.csv",
+        date_pattern=None,
+        transaction_pattern=None,
+    )
 
     yield pdf
