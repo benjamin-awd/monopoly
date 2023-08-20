@@ -1,4 +1,4 @@
-FROM python:3.10-slim as builder
+FROM python:3.11.4-slim as builder
 
 RUN pip install poetry==1.4.2
 
@@ -13,7 +13,7 @@ COPY pyproject.toml poetry.lock ./
 
 RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --without dev --no-root
 
-FROM python:3.10-slim as runtime
+FROM python:3.11.4-slim as runtime
 
 ENV VIRTUAL_ENV=/app/.venv \
     PATH="/app/.venv/bin:$PATH"
