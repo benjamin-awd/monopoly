@@ -42,5 +42,5 @@ def generate_name(format_type: str, statement: Statement) -> str:
             f"{statement.date.year}-"
             f"{statement.date.month:02d}.csv"
         )
-    else:
-        raise ValueError("Invalid format_type")
+
+    raise ValueError("Invalid format_type")
