@@ -5,7 +5,7 @@ from pandas import DataFrame
 
 from monopoly.constants import DATE
 from monopoly.exceptions import UndefinedFilePathError
-from monopoly.pdf import PDF
+from monopoly.pdf import PDF, Statement
 
 
 class OCBC(PDF):
@@ -13,31 +13,33 @@ class OCBC(PDF):
         super().__init__(file_path)
 
         self.password: str = password
-        self.regex_pattern: str = r"(\d+\/\d+)\s*(.*?)\s*([\d.,]+)$"
-        self.statement_date_pattern: str = r"\d{2}\-\d{2}\-\d{4}"
-        self.statement_date: datetime
-        self.bank = "OCBC"
-        self.account_name = "365"
+        self.statement = Statement(
+            bank="OCBC",
+            account_name="365",
+            date_pattern=r"\d{2}\-\d{2}\-\d{4}",
+            date=None,
+            transaction_pattern=r"(\d+\/\d+)\s*(.*?)\s*([\d.,]+)$",
+        )
 
     def extract(self) -> DataFrame:
         if not self.file_path:
             raise UndefinedFilePathError("File path must be defined")
 
         df = super().extract_df_from_pdf()
-        self.statement_date = self._extract_statement_date()
+        self.statement.date = self._extract_statement_date()
         return df
 
     def _extract_statement_date(self) -> datetime:
         first_page = self.pages[0]
         for line in first_page:
-            if match := re.match(self.statement_date_pattern, line):
+            if match := re.match(self.statement.date_pattern, line):
                 statement_date = match.group()
                 return datetime.strptime(statement_date, "%d-%m-%Y")
         return None
 
     def transform(self, df: DataFrame) -> DataFrame:
         df = super().transform_amount_to_float(df)
-        df = self._transform_dates(df, self.statement_date)
+        df = self._transform_dates(df, self.statement.date)
         return df
 
     @staticmethod

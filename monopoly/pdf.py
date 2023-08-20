@@ -1,3 +1,4 @@
+import dataclasses
 import os
 import re
 import tempfile
@@ -11,6 +12,16 @@ from pdf2image import convert_from_path
 
 from monopoly.constants import AMOUNT, DATE, DESCRIPTION, ROOT_DIR
 from monopoly.helpers import generate_name, upload_to_google_cloud_storage
+
+
+@dataclasses.dataclass
+class Statement:
+    bank: str
+    account_name: str
+    date: datetime
+    date_pattern: str
+    transaction_pattern: str
+    filename: str = "statement.csv"
 
 
 class PDF:
@@ -27,11 +38,7 @@ class PDF:
         # https://googleapis.dev/python/google-api-core/latest/auth.html
         self.storage_client = storage.Client()
 
-        self.filename: str = "statement.csv"
-        self.bank: str
-        self.account_name: str
-        self.statement_date: datetime
-
+        self.statement: Statement
         self.gcs_bucket: str
 
     def _open_pdf(self):
@@ -57,7 +64,7 @@ class PDF:
         transactions = []
         for page in pages:
             for line in page:
-                match = re.match(self.regex_pattern, line)
+                match = re.match(self.statement.transaction_pattern, line)
                 if match:
                     date, description, amount = match.groups()
 
@@ -81,7 +88,7 @@ class PDF:
         return df
 
     def _write_to_csv(self, df: DataFrame):
-        self.filename = generate_name("file", self)
+        self.filename = generate_name("file", self.statement)
 
         file_path = os.path.join(ROOT_DIR, "output", self.filename)
         df.to_csv(file_path, index=False)
@@ -93,7 +100,7 @@ class PDF:
 
         if upload_to_cloud:
             self.gcs_bucket = os.getenv("GCS_BUCKET")
-            blob_name = generate_name("blob", self)
+            blob_name = generate_name("blob", self.statement)
             upload_to_google_cloud_storage(
                 client=self.storage_client,
                 source_filename=csv_file_path,
