@@ -21,3 +21,5 @@ ENV VIRTUAL_ENV=/app/.venv \
 COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
 COPY monopoly ./monopoly
+
+ENTRYPOINT ["python", "-m", "monopoly.gmail.pubsub"]
