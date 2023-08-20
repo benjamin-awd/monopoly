@@ -67,14 +67,16 @@ class PDF:
 
             return transactions
 
-    def extract(self, columns: list = [DATE, DESCRIPTION, AMOUNT]) -> DataFrame:
+    def extract_df_from_pdf(
+        self, columns: list = [DATE, DESCRIPTION, AMOUNT]
+    ) -> DataFrame:
         self.pages = self._extract_text_from_pdf()
         transactions = self._extract_transactions_from_text(self.pages)
 
         return DataFrame(transactions, columns=columns)
 
     @staticmethod
-    def transform(df: DataFrame):
+    def transform_amount_to_float(df: DataFrame):
         df[AMOUNT] = df[AMOUNT].astype(float)
         return df
 
