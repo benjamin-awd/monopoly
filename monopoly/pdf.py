@@ -10,6 +10,7 @@ from google.cloud import storage
 from pandas import DataFrame
 from pdf2image import convert_from_path
 
+from monopoly.config import settings
 from monopoly.constants import AMOUNT, DATE, DESCRIPTION, ROOT_DIR
 from monopoly.helpers import generate_name, upload_to_google_cloud_storage
 
@@ -28,18 +29,11 @@ class PDF:
     def __init__(self, file_path: str = "", password: str = ""):
         self.file_path: str = file_path
         self.password: str = password
-        self.regex_pattern: str
         self.file_name: str
         self.pages: list[list[str]]
         self.df: DataFrame
 
-        # The following uses credentials inferred from the local environment
-        # using Application Default Credentials.
-        # https://googleapis.dev/python/google-api-core/latest/auth.html
-        self.storage_client = storage.Client()
-
         self.statement: Statement
-        self.gcs_bucket: str
 
     def _open_pdf(self):
         pdf = pikepdf.open(self.file_path, password=self.password)
@@ -88,9 +82,9 @@ class PDF:
         return df
 
     def _write_to_csv(self, df: DataFrame):
-        self.filename = generate_name("file", self.statement)
+        self.statement.filename = generate_name("file", self.statement)
 
-        file_path = os.path.join(ROOT_DIR, "output", self.filename)
+        file_path = os.path.join(ROOT_DIR, "output", self.statement.filename)
         df.to_csv(file_path, index=False)
 
         return file_path
@@ -99,11 +93,10 @@ class PDF:
         csv_file_path = self._write_to_csv(df)
 
         if upload_to_cloud:
-            self.gcs_bucket = os.getenv("GCS_BUCKET")
             blob_name = generate_name("blob", self.statement)
             upload_to_google_cloud_storage(
-                client=self.storage_client,
+                client=storage.Client(),
                 source_filename=csv_file_path,
-                bucket_name=self.gcs_bucket,
+                bucket_name=settings.gcs_bucket,
                 blob_name=blob_name,
             )
