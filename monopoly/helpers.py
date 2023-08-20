@@ -30,3 +30,12 @@ def generate_blob_name(
         f"month={statement_date.month}/"
         f"{filename}"
     )
+
+
+def generate_file_name(bank: str, account_name: str, statement_date: datetime) -> str:
+    return (
+        f"{bank}-"
+        f"{account_name}-"
+        f"{statement_date.year}-"
+        f"{statement_date.month:02d}.csv"
+    )

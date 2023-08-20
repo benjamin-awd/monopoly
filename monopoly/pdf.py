@@ -10,7 +10,11 @@ from pandas import DataFrame
 from pdf2image import convert_from_path
 
 from monopoly.constants import AMOUNT, DATE, DESCRIPTION, ROOT_DIR
-from monopoly.helpers import generate_blob_name, upload_to_google_cloud_storage
+from monopoly.helpers import (
+    generate_blob_name,
+    generate_file_name,
+    upload_to_google_cloud_storage,
+)
 
 
 class PDF:
@@ -81,11 +85,8 @@ class PDF:
         return df
 
     def _write_to_csv(self, df: DataFrame):
-        self.filename = (
-            f"{self.bank}-"
-            f"{self.account_name}-"
-            f"{self.statement_date.year}-"
-            f"{self.statement_date.month:02d}.csv"
+        self.filename = generate_file_name(
+            self.bank, self.account_name, self.statement_date
         )
 
         file_path = os.path.join(ROOT_DIR, "output", self.filename)
