@@ -33,6 +33,7 @@ class OCBC(PDF):
             if match := re.match(self.statement_date_pattern, line):
                 statement_date = match.group()
                 return datetime.strptime(statement_date, "%d-%m-%Y")
+        return None
 
     def transform(self, df: DataFrame) -> DataFrame:
         df = super().transform_amount_to_float(df)

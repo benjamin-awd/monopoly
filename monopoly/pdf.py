@@ -3,9 +3,9 @@ import re
 import tempfile
 from datetime import datetime
 
-import google.cloud.storage as storage
 import pikepdf
 import pytesseract
+from google.cloud import storage
 from pandas import DataFrame
 from pdf2image import convert_from_path
 
@@ -67,9 +67,9 @@ class PDF:
 
             return transactions
 
-    def extract_df_from_pdf(
-        self, columns: list = [DATE, DESCRIPTION, AMOUNT]
-    ) -> DataFrame:
+    def extract_df_from_pdf(self, columns: list = None) -> DataFrame:
+        if not columns:
+            columns = [DATE, DESCRIPTION, AMOUNT]
         self.pages = self._extract_text_from_pdf()
         transactions = self._extract_transactions_from_text(self.pages)
 
