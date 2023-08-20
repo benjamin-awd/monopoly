@@ -40,25 +40,17 @@ class OCBC(PDF):
         return df
 
     @staticmethod
-    def _transform_dates(df: DataFrame, statement_date: datetime):
-        def convert_date(row, statement_date: datetime):
-            statement_year = statement_date.year
-            statement_month = statement_date.month
-            day, month = [int(i) for i in row[DATE].split("/")]
+    def _transform_dates(df: DataFrame, statement_date: datetime) -> DataFrame:
+        def convert_date(row):
+            row_day, row_month = map(int, row[DATE].split("/"))
 
             # Deal with mixed years from Jan/Dec
-            if statement_month == 1:
-                if month == 1:
-                    year = statement_year
-
-                if month == 12:
-                    year = statement_year - 1
-
+            if statement_date.month == 1 and row_month == 12:
+                row_year = statement_date.year - 1
             else:
-                year = statement_year
+                row_year = statement_date.year
 
-            return f"{year}-{month:02d}-{day:02d}"
+            return f"{row_year}-{row_month:02d}-{row_day:02d}"
 
-        df[DATE] = df.apply(lambda row: convert_date(row, statement_date), axis=1)
-
+        df[DATE] = df.apply(convert_date, axis=1)
         return df
