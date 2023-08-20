@@ -37,14 +37,13 @@ google-api-python-client-stubs = "^1.17.0"
 
 [tool.taskipy.tasks]
 format = "isort . && black ."
-lint = "flake8 ."
+lint = "flake8  --max-line-length 88 ."
 test = "pytest ."
 ci = "poetry run task format && poetry run task lint && poetry run task test"
 
 
 [tool.black]
-line-length = 79
-
+line-length = 88
 
 [build-system]
 requires = ["poetry-core"]

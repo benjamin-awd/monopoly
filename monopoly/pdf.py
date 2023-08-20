@@ -67,9 +67,7 @@ class PDF:
 
             return transactions
 
-    def extract(
-        self, columns: list = [DATE, DESCRIPTION, AMOUNT]
-    ) -> DataFrame:
+    def extract(self, columns: list = [DATE, DESCRIPTION, AMOUNT]) -> DataFrame:
         self.pages = self._extract_text_from_pdf()
         transactions = self._extract_transactions_from_text(self.pages)
 

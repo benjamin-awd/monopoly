@@ -31,8 +31,6 @@ def test_ocbc_extract_unprotected_pdf(ocbc: OCBC):
 
 
 def test_error_raised_if_no_file_path_during_extract():
-    with pytest.raises(
-        UndefinedFilePathError, match="File path must be defined"
-    ):
+    with pytest.raises(UndefinedFilePathError, match="File path must be defined"):
         pdf = OCBC()
         pdf.extract()

@@ -59,8 +59,6 @@ class OCBC(PDF):
 
             return f"{year}-{month:02d}-{day:02d}"
 
-        df[DATE] = df.apply(
-            lambda row: convert_date(row, statement_date), axis=1
-        )
+        df[DATE] = df.apply(lambda row: convert_date(row, statement_date), axis=1)
 
         return df
