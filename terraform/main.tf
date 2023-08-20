@@ -18,3 +18,13 @@ resource "google_artifact_registry_repository" "default" {
   repository_id = "monopoly"
   format        = "DOCKER"
 }
+
+resource "google_secret_manager_secret_iam_binding" "default" {
+  secret_id = data.google_secret_manager_secret_version.default.secret
+  project   = data.google_secret_manager_secret_version.default.project
+  role      = "roles/secretmanager.secretAccessor"
+
+  members = [
+    "serviceAccount:${google_service_account.service_account.email}"
+  ]
+}
