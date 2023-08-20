@@ -6,7 +6,7 @@ authors = ["benjamin-awd <benjamindornel@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.11"
 pypdf2 = "^2.12.1"
 pdfminer-six = "^20221105"
 pandas = "^1.5.2"
