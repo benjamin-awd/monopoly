@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime
 
 from google.cloud import storage
 
@@ -20,22 +19,21 @@ def upload_to_google_cloud_storage(
     blob.upload_from_filename(source_filename)
 
 
-def generate_blob_name(
-    bank: str, account_name: str, statement_date: datetime, filename: str
-) -> str:
-    return (
-        f"bank={bank}/"
-        f"account_name={account_name}/"
-        f"year={statement_date.year}/"
-        f"month={statement_date.month}/"
-        f"{filename}"
-    )
-
-
-def generate_file_name(bank: str, account_name: str, statement_date: datetime) -> str:
-    return (
-        f"{bank}-"
-        f"{account_name}-"
-        f"{statement_date.year}-"
-        f"{statement_date.month:02d}.csv"
-    )
+def generate_name(format_type: str, pdf):
+    if format_type == "blob":
+        return (
+            f"bank={pdf.bank}/"
+            f"account_name={pdf.account_name}/"
+            f"year={pdf.statement_date.year}/"
+            f"month={pdf.statement_date.month}/"
+            f"{pdf.filename}"
+        )
+    if format_type == "file":
+        return (
+            f"{pdf.bank}-"
+            f"{pdf.account_name}-"
+            f"{pdf.statement_date.year}-"
+            f"{pdf.statement_date.month:02d}.csv"
+        )
+    else:
+        raise ValueError("Invalid format_type")
