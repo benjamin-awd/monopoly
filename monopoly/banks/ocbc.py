@@ -23,7 +23,7 @@ class OCBC(PDF):
         if not self.file_path:
             raise UndefinedFilePathError("File path must be defined")
 
-        df = super().extract()
+        df = super().extract_df_from_pdf()
         self.statement_date = self._extract_statement_date()
         return df
 
@@ -35,7 +35,7 @@ class OCBC(PDF):
                 return datetime.strptime(statement_date, "%d-%m-%Y")
 
     def transform(self, df: DataFrame) -> DataFrame:
-        df = super().transform(df)
+        df = super().transform_amount_to_float(df)
         df = self._transform_dates(df, self.statement_date)
         return df
 
