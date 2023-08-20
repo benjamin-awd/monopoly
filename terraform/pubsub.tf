@@ -2,6 +2,7 @@ resource "google_pubsub_topic" "default" {
   name    = "monopoly-topic"
   project = "phonic-ceremony-394407"
 
+  message_retention_duration = "86600s"
 }
 
 module "pubsub_topic-iam-bindings" {
