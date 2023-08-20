@@ -3,6 +3,8 @@ repository := monopoly
 project := phonic-ceremony-394407
 docker_url := us-central1-docker.pkg.dev
 
+default: build push
+
 build:
 	docker compose build
 
