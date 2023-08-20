@@ -41,6 +41,14 @@ lint = "flake8  --max-line-length 88 ."
 test = "pytest ."
 ci = "poetry run task format && poetry run task lint && poetry run task test"
 
+[tool.pylint]
+good-names = ["i", "j", "k", "ex", "Run", "_", "df"]
+disable = [
+    "missing-module-docstring",
+    "missing-function-docstring",
+    "missing-class-docstring",
+    "logging-fstring-interpolation"
+]
 
 [tool.black]
 line-length = 88
