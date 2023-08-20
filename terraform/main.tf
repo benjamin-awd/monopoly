@@ -12,3 +12,9 @@ resource "google_storage_bucket" "default" {
   location      = "US"
   storage_class = "STANDARD"
 }
+
+resource "google_artifact_registry_repository" "default" {
+  location      = "us-central1"
+  repository_id = "monopoly"
+  format        = "DOCKER"
+}
