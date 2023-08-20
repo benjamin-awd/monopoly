@@ -1,6 +1,6 @@
 FROM python:3.11.4-slim as builder
 
-RUN pip install poetry==1.4.2
+RUN pip install poetry==1.5.1
 
 ENV POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_IN_PROJECT=1 \
