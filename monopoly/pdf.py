@@ -10,7 +10,7 @@ from pandas import DataFrame
 from pdf2image import convert_from_path
 
 from monopoly.constants import AMOUNT, DATE, DESCRIPTION, ROOT_DIR
-from monopoly.helpers import upload_to_google_cloud_storage
+from monopoly.helpers import generate_blob_name, upload_to_google_cloud_storage
 
 
 class PDF:
@@ -98,16 +98,12 @@ class PDF:
 
         if upload_to_cloud:
             self.gcs_bucket = os.getenv("GCS_BUCKET")
-
+            blob_name = generate_blob_name(
+                self.bank, self.account_name, self.statement_date, self.filename
+            )
             upload_to_google_cloud_storage(
                 client=self.storage_client,
                 source_filename=csv_file_path,
                 bucket_name=self.gcs_bucket,
-                blob_name=(
-                    f"bank={self.bank}/"
-                    f"account_name={self.account_name}/"
-                    f"year={self.statement_date.year}/"
-                    f"month={self.statement_date.month}/"
-                    f"{self.filename}"
-                ),
+                blob_name=blob_name,
             )
