@@ -53,7 +53,7 @@ class PDF:
             pix = page_data.get_pixmap(dpi=300, colorspace=csGRAY)
             image = Image.frombytes("L", [pix.width, pix.height], pix.samples)
 
-            text = pytesseract.image_to_string(image)
+            text = pytesseract.image_to_string(image, config="--psm 4")
             lines = text.split("\n")
             pages.append(lines)
 
