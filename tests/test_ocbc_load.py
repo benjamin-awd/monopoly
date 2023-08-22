@@ -9,7 +9,7 @@ from monopoly.constants import AMOUNT, DATE, DESCRIPTION, ROOT_DIR
 
 
 def test_ocbc_write_to_local_csv(ocbc: OCBC):
-    ocbc.statement_date = datetime(2024, 1, 1)
+    ocbc.statement.date = datetime(2024, 1, 1)
 
     transformed_df = pd.DataFrame(
         [
