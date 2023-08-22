@@ -1,5 +1,4 @@
 import pytest
-from pikepdf import PasswordError
 
 from monopoly.pdf import PDF
 
@@ -15,5 +14,5 @@ def test_wrong_password_raises_error(pdf: PDF):
     pdf.file_path = "tests/ocbc_365_protected.pdf"
     pdf.password = "wrong_pw"
 
-    with pytest.raises(PasswordError, match="invalid password"):
+    with pytest.raises(ValueError, match="document is encrypted"):
         pdf._open_pdf()

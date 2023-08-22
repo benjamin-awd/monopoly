@@ -21,7 +21,7 @@ def test_ocbc_extract_unprotected_pdf(ocbc: OCBC):
             },
             {
                 DATE: "12/06",
-                DESCRIPTION: "DA PAOLO GASTRONOMIA SING — SINGAPORE SG",
+                DESCRIPTION: "DA PAOLO GASTRONOMIA SING SINGAPORE SG",
                 AMOUNT: "19.69",
             },
         ]

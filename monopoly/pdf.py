@@ -1,14 +1,13 @@
 import dataclasses
 import os
 import re
-import tempfile
 from datetime import datetime
 
-import pikepdf
 import pytesseract
+from fitz import Document, csGRAY
 from google.cloud import storage
 from pandas import DataFrame
-from pdf2image import convert_from_path
+from PIL import Image
 
 from monopoly.config import settings
 from monopoly.constants import AMOUNT, DATE, DESCRIPTION, ROOT_DIR
@@ -36,19 +35,25 @@ class PDF:
         self.statement: Statement
 
     def _open_pdf(self):
-        pdf = pikepdf.open(self.file_path, password=self.password)
-        self.file_name = pdf.filename
+        pdf = Document(self.file_path)
+        pdf.authenticate(password=self.password)
 
-        with tempfile.NamedTemporaryFile() as tmp:
-            pdf.save(tmp.name)
-            return convert_from_path(tmp.name)
+        if pdf.is_encrypted:
+            raise ValueError("Wrong password - document is encrypted")
+
+        self.file_name = pdf.name
+
+        return pdf
 
     def _extract_text_from_pdf(self) -> list[list[str]]:
         doc = self._open_pdf()
         pages = []
 
         for _, page_data in enumerate(doc):
-            text = pytesseract.image_to_string(page_data)
+            pix = page_data.get_pixmap(dpi=300, colorspace=csGRAY)
+            image = Image.frombytes("L", [pix.width, pix.height], pix.samples)
+
+            text = pytesseract.image_to_string(image)
             lines = text.split("\n")
             pages.append(lines)
 
