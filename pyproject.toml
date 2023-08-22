@@ -7,20 +7,15 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-pypdf2 = "^2.12.1"
-pdfminer-six = "^20221105"
 pandas = "^1.5.2"
 pytesseract = "^0.3.10"
-ocrmypdf = "^14.0.1"
-pdf2image = "^1.16.0"
-pikepdf = "^8.2.2"
 google-api-python-client = "^2.95.0"
 google-auth-oauthlib = "^1.0.0"
 google-auth = "^2.22.0"
-google-auth-httplib2 = "^0.1.0"
 google-cloud-storage = "^2.10.0"
 google-cloud-secret-manager = "^2.16.3"
 pydantic-settings = "^2.0.3"
+pymupdf = "^1.22.5"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -33,7 +28,6 @@ pytest = "^7.4.0"
 pytest-xdist = "^3.3.1"
 pysnooper = "^1.2.0"
 google-api-python-client-stubs = "^1.17.0"
-pymupdf = "^1.22.5"
 
 
 [tool.taskipy.tasks]
