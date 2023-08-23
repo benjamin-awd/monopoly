@@ -15,10 +15,10 @@ def main():
 
     If an error occurs, the statement is removed from disk
     """
-    att = Attachment().get_latest_attachment()
+    attachment = Attachment().get_latest_attachment()
 
-    with att.persist_attachment_to_disk(att) as file_path:
-        if att.name.startswith(OCBC_365):
+    with attachment.save(attachment) as file_path:
+        if attachment.name.startswith(OCBC_365):
             ocbc = OCBC(file_path=file_path, password=settings.ocbc_pdf_password)
 
             raw_df = ocbc.extract()
