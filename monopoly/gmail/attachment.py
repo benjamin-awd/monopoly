@@ -32,7 +32,8 @@ class Attachment:
 
     @staticmethod
     @contextlib.contextmanager
-    def persist_attachment_to_disk(attachment: Attachment) -> TemporaryDirectory:
+    def save(attachment: Attachment) -> TemporaryDirectory:
+        """Saves attachment to a temporary directory"""
         temp_dir = TemporaryDirectory()
 
         temp_file_path = os.path.join(temp_dir.name, attachment.name)
