@@ -30,4 +30,6 @@ def pdf():
 
 @pytest.fixture
 def attachment():
-    return Attachment(name="test.pdf", file_byte_string=b"Test data")
+    return Attachment(
+        name="test.pdf", file_byte_string=b"Test data", gmail_service="service"
+    )
