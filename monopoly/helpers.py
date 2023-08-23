@@ -18,7 +18,6 @@ def upload_to_google_cloud_storage(
     bucket_name: str,
     blob_name: str,
 ) -> None:
-
     bucket = client.get_bucket(bucket_name)
     blob = bucket.blob(blob_name)
 
