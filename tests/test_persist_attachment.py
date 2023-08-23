@@ -1,13 +1,6 @@
 import os
 
-import pytest
-
 from monopoly.gmail.attachment import Attachment
-
-
-@pytest.fixture
-def attachment():
-    return Attachment(name="test.pdf", file_byte_string=b"Test data")
 
 
 def test_temporary_file_create_and_cleanup(attachment: Attachment):

@@ -7,6 +7,7 @@ from base64 import urlsafe_b64decode
 from tempfile import TemporaryDirectory
 from typing import TYPE_CHECKING
 
+from monopoly.config import settings
 from monopoly.gmail.credentials import get_gmail_service
 
 if TYPE_CHECKING:
@@ -106,8 +107,9 @@ class Attachment:
         """Check if user is trusted"""
         for item in message["payload"]["headers"]:
             if item["name"] == "From":
-                if "<benjamindornel@gmail.com>" in item["value"]:
-                    return "trusted"
+                for trusted_email in settings.trusted_user_emails:
+                    if f"<{trusted_email}>" in item["value"]:
+                        return "trusted"
 
         logger.info("No trusted user found")
         return "not trusted"
