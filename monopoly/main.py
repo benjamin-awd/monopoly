@@ -15,6 +15,7 @@ def main():
 
     If an error occurs, the statement is removed from disk
     """
+    logger.info("Beginning bank statement extraction")
     attachment = Attachment().get_latest_attachment()
 
     with attachment.save(attachment) as file_path:

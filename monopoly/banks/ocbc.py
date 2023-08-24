@@ -1,3 +1,4 @@
+import logging
 import re
 from datetime import datetime
 
@@ -6,6 +7,8 @@ from pandas import DataFrame
 from monopoly.constants import DATE
 from monopoly.exceptions import UndefinedFilePathError
 from monopoly.pdf import PDF, Statement
+
+logger = logging.getLogger(__name__)
 
 
 class OCBC(PDF):
@@ -30,20 +33,25 @@ class OCBC(PDF):
         return df
 
     def _extract_statement_date(self) -> datetime:
+        logger.info("Extracting statement date")
         first_page = self.pages[0]
         for line in first_page:
             if match := re.match(self.statement.date_pattern, line):
                 statement_date = match.group()
+                logger.debug("Statement date found")
                 return datetime.strptime(statement_date, "%d-%m-%Y")
         return None
 
     def transform(self, df: DataFrame) -> DataFrame:
+        logger.info("Running transformation functions on DataFrame")
         df = super().transform_amount_to_float(df)
         df = self._transform_dates(df, self.statement.date)
         return df
 
     @staticmethod
     def _transform_dates(df: DataFrame, statement_date: datetime) -> DataFrame:
+        logger.info("Transforming dates from MM/DD")
+
         def convert_date(row):
             row_day, row_month = map(int, row[DATE].split("/"))
 
