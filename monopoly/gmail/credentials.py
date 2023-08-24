@@ -38,7 +38,7 @@ def get_gmail_service() -> GmailResource:
     credentials = get_credentials()
 
     try:
-        service = build("gmail", "v1", credentials=credentials)
+        service = build("gmail", "v1", credentials=credentials, cache_discovery=False)
         return service
 
     except Exception as err:

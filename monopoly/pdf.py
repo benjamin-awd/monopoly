@@ -1,4 +1,5 @@
 import dataclasses
+import logging
 import os
 import re
 from datetime import datetime
@@ -12,6 +13,8 @@ from PIL import Image
 from monopoly.config import settings
 from monopoly.constants import AMOUNT, DATE, DESCRIPTION, ROOT_DIR
 from monopoly.helpers import generate_name, upload_to_google_cloud_storage
+
+logger = logging.getLogger(__name__)
 
 
 @dataclasses.dataclass
@@ -35,6 +38,7 @@ class PDF:
         self.statement: Statement
 
     def _open_pdf(self):
+        logger.info("Opening pdf from path %s", self.file_path)
         pdf = Document(self.file_path)
         pdf.authenticate(password=self.password)
 
@@ -46,13 +50,19 @@ class PDF:
         return pdf
 
     def _extract_text_from_pdf(self) -> list[list[str]]:
+        logger.info("Extracting text from pdf")
         doc = self._open_pdf()
         pages = []
 
-        for _, page_data in enumerate(doc):
+        for page_num, page_data in enumerate(doc):
+            logger.info("Processing page %s", page_num)
+            logger.debug("Creating pixmap for page %s", page_num)
             pix = page_data.get_pixmap(dpi=300, colorspace=csGRAY)
+
+            logger.debug("Converting pixmap to PIL image")
             image = Image.frombytes("L", [pix.width, pix.height], pix.samples)
 
+            logger.debug("Extracting string from image")
             text = pytesseract.image_to_string(image, config="--psm 4")
             lines = text.split("\n")
             pages.append(lines)
@@ -61,6 +71,7 @@ class PDF:
 
     def _extract_transactions_from_text(self, pages) -> list[dict[str, str]]:
         transactions = []
+        logger.info("Extracting transactions from text")
         for page in pages:
             for line in page:
                 match = re.match(self.statement.transaction_pattern, line)
@@ -74,6 +85,7 @@ class PDF:
             return transactions
 
     def extract_df_from_pdf(self, columns: list = None) -> DataFrame:
+        logger.info("Extracting DataFrame from pdf")
         if not columns:
             columns = [DATE, DESCRIPTION, AMOUNT]
         self.pages = self._extract_text_from_pdf()
@@ -83,6 +95,7 @@ class PDF:
 
     @staticmethod
     def transform_amount_to_float(df: DataFrame):
+        logger.debug("Transforming amount column to `float`")
         df[AMOUNT] = df[AMOUNT].astype(float)
         return df
 
@@ -98,6 +111,7 @@ class PDF:
         csv_file_path = self._write_to_csv(df)
 
         if upload_to_cloud:
+            logger.info("Uploading to cloud storage")
             blob_name = generate_name("blob", self.statement)
             upload_to_google_cloud_storage(
                 client=storage.Client(),

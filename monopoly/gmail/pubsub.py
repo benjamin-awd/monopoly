@@ -9,7 +9,7 @@ from monopoly.gmail.credentials import get_gmail_service
 if TYPE_CHECKING:
     from googleapiclient._apis.gmail.v1.resources import GmailResource
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("root")
 
 
 def set_up_gmail_push_notifications():
@@ -19,12 +19,18 @@ def set_up_gmail_push_notifications():
         "topicName": f"projects/{settings.project_id}/topics/{settings.pubsub_topic}",
     }
 
-    # pylint: disable=E1101
-    return (
+    # pylint: disable=no-member
+    watch = (
         service.users()
         .watch(userId=settings.gmail_address, body=request_body)
         .execute()
     )
+
+    logger.info(
+        "Successfully set up watch request on inbox - historyId: %s", watch["historyId"]
+    )
+
+    return True
 
 
 if __name__ == "__main__":

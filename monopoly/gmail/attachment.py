@@ -37,6 +37,8 @@ class Attachment:
         temp_dir = TemporaryDirectory()
 
         temp_file_path = os.path.join(temp_dir.name, attachment.name)
+
+        logger.info("Writing attachment to path %s", temp_file_path)
         with open(temp_file_path, "wb") as file:
             file.write(attachment.file_byte_string)
 
@@ -53,6 +55,7 @@ class Attachment:
                 part, service, message["id"]
             )
 
+        logger.info("Attachment successfully extracted")
         return Attachment(
             name=filename,
             file_byte_string=file_byte_string,
@@ -67,8 +70,8 @@ class Attachment:
             .execute()
             .get("messages")
         )
-
         latest_email_id = emails[0]["id"]
+        logger.info("Retrieving latest email %s", latest_email_id)
 
         message = (
             self.gmail_service.users()
@@ -81,6 +84,7 @@ class Attachment:
 
     @staticmethod
     def _get_attachment_byte_string(part, service: GmailResource, latest_email_id: str):
+        logger.info("Getting attachment byte string")
         att_id = part["body"]["attachmentId"]
         att = (
             service.users()
@@ -100,6 +104,7 @@ class Attachment:
         """
         for part in message["payload"]["parts"]:
             if part["filename"]:
+                logger.info("Found attachment part")
                 return part
         return None
 
