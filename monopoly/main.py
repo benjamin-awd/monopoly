@@ -24,9 +24,7 @@ def main():
 
             raw_df = ocbc.extract()
             transformed_df = ocbc.transform(raw_df)
-            ocbc.load(transformed_df, upload_to_cloud=False)
-
-            logger.info("Successfully uploaded files to bucket")
+            ocbc.load(transformed_df, upload_to_cloud=True)
 
 
 if __name__ == "__main__":

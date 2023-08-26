@@ -111,7 +111,6 @@ class PDF:
         csv_file_path = self._write_to_csv(df)
 
         if upload_to_cloud:
-            logger.info("Uploading to cloud storage")
             blob_name = generate_name("blob", self.statement)
             upload_to_google_cloud_storage(
                 client=storage.Client(),
@@ -119,3 +118,4 @@ class PDF:
                 bucket_name=settings.gcs_bucket,
                 blob_name=blob_name,
             )
+            logger.info("Uploaded to %s", blob_name)
