@@ -28,3 +28,9 @@ resource "google_secret_manager_secret_iam_binding" "default" {
     "serviceAccount:${google_service_account.service_account.email}"
   ]
 }
+
+resource "google_storage_bucket_iam_member" "default" {
+  bucket = google_storage_bucket.default.name
+  role   = "roles/storage.admin"
+  member = "serviceAccount:${google_service_account.service_account.email}"
+}
