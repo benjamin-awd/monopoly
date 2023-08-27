@@ -1,4 +1,4 @@
-resource "google_service_account" "service_account" {
+resource "google_service_account" "default" {
   account_id   = "monopoly"
   display_name = "Monopoly"
 }
@@ -25,12 +25,12 @@ resource "google_secret_manager_secret_iam_binding" "default" {
   role      = "roles/secretmanager.secretAccessor"
 
   members = [
-    "serviceAccount:${google_service_account.service_account.email}"
+    "serviceAccount:${google_service_account.default.email}"
   ]
 }
 
 resource "google_storage_bucket_iam_member" "default" {
   bucket = google_storage_bucket.default.name
   role   = "roles/storage.admin"
-  member = "serviceAccount:${google_service_account.service_account.email}"
+  member = "serviceAccount:${google_service_account.default.email}"
 }
