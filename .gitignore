@@ -11,3 +11,4 @@ __pycache__
 credentials.json
 token.json
 _ignore*
+*.tfvars
