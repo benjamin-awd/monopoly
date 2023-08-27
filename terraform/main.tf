@@ -45,7 +45,7 @@ resource "google_cloud_run_v2_job" "default" {
       max_retries     = 1
 
       containers {
-        image = "${local.region}-docker.pkg.dev/${local.project_id}/monopoly/monopoly:main"
+        image = local.container_uri
 
         env {
           name  = "PUBSUB_TOPIC"
@@ -78,4 +78,28 @@ resource "google_cloud_run_v2_job" "default" {
       }
     }
   }
+}
+
+resource "google_cloud_scheduler_job" "default" {
+  name             = "hourly-bank-statement-extraction"
+  description      = "Extracts bank statements"
+  schedule         = "0 * * * *"
+  time_zone        = "UTC"
+
+  http_target {
+    http_method = "POST"
+      uri = "${local.cloud_run_scheduler_prefix}/jobs/${google_cloud_run_v2_job.default.name}:run"
+    oauth_token {
+      service_account_email = google_service_account.default.email
+    }
+  }
+}
+
+resource "google_project_iam_binding" "cloud_run_invoker" {
+  project = local.project_id
+  role    = "roles/run.invoker"
+
+  members = [
+    "serviceAccount:${google_service_account.default.email}"
+  ]
 }
