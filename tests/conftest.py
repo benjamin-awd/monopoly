@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 
 from monopoly.banks.ocbc import OCBC
-from monopoly.gmail.attachment import Attachment
+from monopoly.gmail import Message
 from monopoly.pdf import PDF, Statement
 
 
@@ -28,8 +28,11 @@ def pdf():
     yield pdf
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
+def message():
+    return Message({})
+
+
+@pytest.fixture(scope="session")
 def attachment():
-    return Attachment(
-        name="test.pdf", file_byte_string=b"Test data", gmail_service="service"
-    )
+    return Message.Attachment(filename="test.pdf", file_byte_string=b"Test data")

@@ -22,6 +22,7 @@ def get_credentials(secret_id=settings.secret_id, version_id="latest"):
         "https://www.googleapis.com/auth/gmail.readonly",
         "https://www.googleapis.com/auth/gmail.settings.basic",
         "https://www.googleapis.com/auth/gmail.labels",
+        "https://www.googleapis.com/auth/gmail.modify",
     ]
 
     client = secretmanager.SecretManagerServiceClient()
