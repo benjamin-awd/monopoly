@@ -37,24 +37,24 @@ class PDF:
 
         self.statement: Statement
 
-    def _open_pdf(self):
-        logger.info("Opening pdf from path %s", self.file_path)
-        pdf = Document(self.file_path)
-        pdf.authenticate(password=self.password)
+    @staticmethod
+    def open(file_path: str, password: str) -> Document:
+        logger.info("Opening pdf from path %s", file_path)
+        pdf = Document(file_path)
+        pdf.authenticate(password)
 
         if pdf.is_encrypted:
             raise ValueError("Wrong password - document is encrypted")
-
-        self.file_name = pdf.name
 
         return pdf
 
     def _extract_text_from_pdf(self) -> list[list[str]]:
         logger.info("Extracting text from pdf")
-        doc = self._open_pdf()
+        pdf = self.open(self.file_path, self.password)
+        self.file_name = pdf.name
         pages = []
 
-        for page_num, page_data in enumerate(doc):
+        for page_num, page_data in enumerate(pdf):
             logger.info("Processing page %s", page_num)
             logger.debug("Creating pixmap for page %s", page_num)
             pix = page_data.get_pixmap(dpi=300, colorspace=csGRAY)
