@@ -61,17 +61,9 @@ class PDF:
         lines = text.split("\n")
         return lines
 
-    def _extract_text_from_pdf(
-        self, delete_first_page=True, delete_last_page=True
-    ) -> list[list[str]]:
+    def _extract_text_from_pdf(self) -> list[list[str]]:
         logger.info("Extracting text from PDF")
         pdf = self.open(self.file_path, self.password)
-
-        if delete_first_page:
-            del pdf[0]
-
-        if delete_last_page:
-            del pdf[-1]
 
         pages = [self._process_page(page_data) for page_data in pdf]
         self.file_name = pdf.name
