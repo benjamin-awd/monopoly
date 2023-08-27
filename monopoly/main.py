@@ -3,7 +3,7 @@ import logging
 from monopoly.banks.ocbc import OCBC
 from monopoly.config import settings
 from monopoly.constants import OCBC_365
-from monopoly.gmail import Gmail
+from monopoly.gmail import Gmail, Message
 
 logger = logging.getLogger(__name__)
 
@@ -17,18 +17,20 @@ def main(gmail=Gmail()):
     """
     logger.info("Beginning bank statement extraction")
 
-    message = gmail.get_latest_email()
-    attachment = message.get_attachment()
+    messages: list[Message] = gmail.get_emails()
 
-    with message.save(attachment) as file:
-        if attachment.filename.startswith(OCBC_365):
-            ocbc = OCBC(file_path=file, password=settings.ocbc_pdf_password)
+    for message in messages:
+        attachment = message.get_attachment()
 
-            raw_df = ocbc.extract()
-            transformed_df = ocbc.transform(raw_df)
-            ocbc.load(transformed_df, upload_to_cloud=True)
+        with message.save(attachment) as file:
+            if attachment.filename.startswith(OCBC_365):
+                ocbc = OCBC(file_path=file, password=settings.ocbc_pdf_password)
 
-    message.mark_as_read()
+                raw_df = ocbc.extract()
+                transformed_df = ocbc.transform(raw_df)
+                ocbc.load(transformed_df, upload_to_cloud=True)
+
+        message.mark_as_read()
 
 
 if __name__ == "__main__":
