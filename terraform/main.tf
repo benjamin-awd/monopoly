@@ -14,7 +14,7 @@ resource "google_storage_bucket" "default" {
 }
 
 resource "google_artifact_registry_repository" "default" {
-  location      = "us-central1"
+  location      = local.region
   repository_id = "monopoly"
   format        = "DOCKER"
 }

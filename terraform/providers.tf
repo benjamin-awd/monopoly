@@ -8,6 +8,6 @@ terraform {
 }
 
 provider "google" {
-  project     = "phonic-ceremony-394407"
-  region      = "us-central1"
+  project     = local.project_id
+  region      = local.region
 }
