@@ -3,12 +3,12 @@ from datetime import datetime
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
-from monopoly.banks.ocbc import OCBC
+from monopoly.banks.ocbc.credit import Ocbc365
 from monopoly.constants import AMOUNT, DATE, DESCRIPTION
 
 
-def test_ocbc_transform_cross_year(ocbc: OCBC):
-    ocbc.statement.date = datetime(2024, 1, 1)
+def test_ocbc_transform_cross_year(ocbc: Ocbc365):
+    ocbc.statement_date = datetime(2024, 1, 1)
 
     raw_df = pd.DataFrame(
         [
@@ -45,8 +45,8 @@ def test_ocbc_transform_cross_year(ocbc: OCBC):
     assert_frame_equal(transformed_df, expected_data)
 
 
-def test_ocbc_transform_within_year(ocbc: OCBC):
-    ocbc.statement.date = datetime(2023, 7, 1)
+def test_ocbc_transform_within_year(ocbc: Ocbc365):
+    ocbc.statement_date = datetime(2023, 7, 1)
 
     raw_df = pd.DataFrame(
         [

@@ -1,4 +1,3 @@
-import dataclasses
 import logging
 import re
 from datetime import datetime
@@ -13,36 +12,24 @@ from monopoly.constants import AMOUNT, DATE, DESCRIPTION
 logger = logging.getLogger(__name__)
 
 
-@dataclasses.dataclass
-class Statement:
-    bank: str
-    account_name: str
-    date: datetime
-    date_pattern: str
-    transaction_pattern: str
-    filename: str = "statement.csv"
+class PdfParser:
+    def __init__(self, file_path: str, password: str = ""):
+        self.file_path = file_path
+        self.password = password
 
-
-class PDF:
-    def __init__(self, file_path: str = "", password: str = ""):
-        self.file_path: str = file_path
-        self.password: str = password
-        self.file_name: str
-        self.pages: list[list[str]]
-        self.df: DataFrame
-
-        self.statement: Statement
-
-    @staticmethod
-    def open(file_path: str, password: str) -> fitz.Document:
-        logger.info("Opening pdf from path %s", file_path)
-        pdf = fitz.Document(file_path)
-        pdf.authenticate(password)
+    def open(self):
+        logger.info("Opening pdf from path %s", self.file_path)
+        pdf = fitz.Document(self.file_path)
+        pdf.authenticate(self.password)
 
         if pdf.is_encrypted:
             raise ValueError("Wrong password - document is encrypted")
-
         return pdf
+
+    def get_pages(self) -> list[fitz.Page]:
+        logger.info("Extracting text from PDF")
+        pages = self.open()
+        return [self._process_page(page) for page in pages]
 
     def _process_page(self, page: fitz.Page) -> list[str]:
         page = self._remove_vertical_text(page)
@@ -73,20 +60,32 @@ class PDF:
         page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE)
         return page
 
-    def _extract_text_from_pdf(self) -> list[list[str]]:
-        logger.info("Extracting text from PDF")
-        pdf = self.open(self.file_path, self.password)
 
-        pages = [self._process_page(page) for page in pdf]
-        self.file_name = pdf.name
-        return pages
+class StatementExtractor:
+    def __init__(
+        self, transaction_pattern: str, date_pattern: str, pages: list[fitz.Page]
+    ):
+        self.transaction_pattern = transaction_pattern
+        self.date_pattern = date_pattern
+        self.pages = pages
+        self.columns = [DATE, DESCRIPTION, AMOUNT]
 
-    def _extract_transactions_from_text(self, pages) -> list[dict[str, str]]:
+    @property
+    def transactions(self):
+        return self._process_transactions()
+
+    @property
+    def statement_date(self):
+        return self._extract_statement_date()
+
+    def to_dataframe(self):
+        return DataFrame(self.transactions, columns=self.columns)
+
+    def _process_transactions(self) -> list[dict[str, str]]:
         transactions = []
-        logger.info("Extracting transactions from text")
-        for page in pages:
+        for page in self.pages:
             for line in page:
-                match = re.match(self.statement.transaction_pattern, line)
+                match = re.match(self.transaction_pattern, line)
                 if match:
                     date, description, amount = match.groups()
 
@@ -96,11 +95,12 @@ class PDF:
 
         return transactions
 
-    def extract_df_from_pdf(self, columns: list = None) -> DataFrame:
-        logger.info("Extracting DataFrame from pdf")
-        if not columns:
-            columns = [DATE, DESCRIPTION, AMOUNT]
-        self.pages = self._extract_text_from_pdf()
-        transactions = self._extract_transactions_from_text(self.pages)
-
-        return DataFrame(transactions, columns=columns)
+    def _extract_statement_date(self) -> datetime:
+        logger.info("Extracting statement date")
+        first_page = self.pages[0]
+        for line in first_page:
+            if match := re.match(self.date_pattern, line):
+                statement_date = match.group()
+                logger.debug("Statement date found")
+                return datetime.strptime(statement_date, "%d-%m-%Y")
+        return None
