@@ -1,18 +1,14 @@
 import dataclasses
 import logging
-import os
 import re
 from datetime import datetime
 
 import fitz
 import pytesseract
-from google.cloud import storage
 from pandas import DataFrame
 from PIL import Image
 
-from monopoly.config import settings
-from monopoly.constants import AMOUNT, DATE, DESCRIPTION, ROOT_DIR
-from monopoly.helpers import generate_name, upload_to_google_cloud_storage
+from monopoly.constants import AMOUNT, DATE, DESCRIPTION
 
 logger = logging.getLogger(__name__)
 
@@ -108,30 +104,3 @@ class PDF:
         transactions = self._extract_transactions_from_text(self.pages)
 
         return DataFrame(transactions, columns=columns)
-
-    @staticmethod
-    def transform_amount_to_float(df: DataFrame):
-        logger.debug("Transforming amount column to `float`")
-        df[AMOUNT] = df[AMOUNT].astype(float)
-        return df
-
-    def _write_to_csv(self, df: DataFrame):
-        self.statement.filename = generate_name("file", self.statement)
-
-        file_path = os.path.join(ROOT_DIR, "output", self.statement.filename)
-        df.to_csv(file_path, index=False)
-
-        return file_path
-
-    def load(self, df: DataFrame, upload_to_cloud: bool = False):
-        csv_file_path = self._write_to_csv(df)
-
-        if upload_to_cloud:
-            blob_name = generate_name("blob", self.statement)
-            upload_to_google_cloud_storage(
-                client=storage.Client(),
-                source_filename=csv_file_path,
-                bucket_name=settings.gcs_bucket,
-                blob_name=blob_name,
-            )
-            logger.info("Uploaded to %s", blob_name)
