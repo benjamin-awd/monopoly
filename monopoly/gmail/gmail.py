@@ -10,11 +10,7 @@ from typing import TYPE_CHECKING
 
 from monopoly.config import settings
 from monopoly.gmail.credentials import get_gmail_service
-from monopoly.gmail.exceptions import (
-    MultipleAttachmentsError,
-    NoEmailsFoundError,
-    UntrustedUserError,
-)
+from monopoly.gmail.exceptions import MultipleAttachmentsError, UntrustedUserError
 
 if TYPE_CHECKING:
     from googleapiclient._apis.gmail.v1.resources import GmailResource
@@ -36,7 +32,7 @@ class Gmail:
             .get("messages")
         )
         if not emails:
-            raise NoEmailsFoundError(f"No emails found using query: '{query}'")
+            logger.info("No emails found using query: '%s'", query)
 
         if latest:
             emails = emails[0]
