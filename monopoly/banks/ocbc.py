@@ -4,7 +4,7 @@ from datetime import datetime
 
 from pandas import DataFrame
 
-from monopoly.constants import DATE
+from monopoly.constants import AMOUNT, DATE
 from monopoly.exceptions import UndefinedFilePathError
 from monopoly.pdf import PDF, Statement
 
@@ -44,7 +44,7 @@ class OCBC(PDF):
 
     def transform(self, df: DataFrame) -> DataFrame:
         logger.info("Running transformation functions on DataFrame")
-        df = super().transform_amount_to_float(df)
+        df[AMOUNT] = df[AMOUNT].astype(float)
         df = self._transform_dates(df, self.statement.date)
         return df
 
