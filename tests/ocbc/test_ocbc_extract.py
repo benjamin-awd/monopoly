@@ -12,6 +12,10 @@ def test_ocbc_extract_unprotected_pdf(ocbc: OCBC):
     expected_df = pd.read_csv("tests/ocbc/fixtures/expected.csv", dtype=object)
 
     assert_frame_equal(raw_df, expected_df)
+    raw_df["amount"] = raw_df["amount"].astype("float")
+
+    # check total (excluding cash rebate)
+    assert round(raw_df["amount"].sum(), 2) == 703.48
 
 
 def test_error_raised_if_no_file_path_during_extract():
