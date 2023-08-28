@@ -1,13 +1,10 @@
 import pandas as pd
-import pytest
 from pandas.testing import assert_frame_equal
 
-from monopoly.banks.ocbc import OCBC
-from monopoly.exceptions import UndefinedFilePathError
+from monopoly.banks.ocbc.credit import Ocbc365
 
 
-def test_ocbc_extract_unprotected_pdf(ocbc: OCBC):
-    ocbc.file_path = "tests/ocbc/fixtures/input.pdf"
+def test_ocbc_extract_unprotected_pdf(ocbc: Ocbc365):
     raw_df = ocbc.extract()
     expected_df = pd.read_csv("tests/ocbc/fixtures/expected.csv", dtype=object)
 
@@ -16,9 +13,3 @@ def test_ocbc_extract_unprotected_pdf(ocbc: OCBC):
 
     # check total (excluding cash rebate)
     assert round(raw_df["amount"].sum(), 2) == 703.48
-
-
-def test_error_raised_if_no_file_path_during_extract():
-    with pytest.raises(UndefinedFilePathError, match="File path must be defined"):
-        pdf = OCBC()
-        pdf.extract()

@@ -1,7 +1,6 @@
 import logging
 
-from monopoly.banks.ocbc import OCBC
-from monopoly.config import settings
+from monopoly.banks.ocbc.credit import Ocbc365
 from monopoly.constants import OCBC_365
 from monopoly.gmail import Gmail, Message
 
@@ -24,7 +23,7 @@ def main(gmail=Gmail()):
 
         with message.save(attachment) as file:
             if attachment.filename.startswith(OCBC_365):
-                ocbc = OCBC(file_path=file, password=settings.ocbc_pdf_password)
+                ocbc = Ocbc365(pdf_file_path=file)
 
                 raw_df = ocbc.extract()
                 transformed_df = ocbc.transform(raw_df)

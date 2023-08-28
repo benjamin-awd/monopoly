@@ -1,6 +1,6 @@
 import logging
 import os
-import re
+from dataclasses import dataclass
 from datetime import datetime
 
 from google.cloud import storage
@@ -8,52 +8,46 @@ from pandas import DataFrame
 
 from monopoly.config import settings
 from monopoly.constants import AMOUNT, DATE, ROOT_DIR
-from monopoly.exceptions import UndefinedFilePathError
 from monopoly.helpers import generate_name, upload_to_google_cloud_storage
-from monopoly.pdf import PDF, Statement
+from monopoly.pdf import PdfParser, StatementExtractor
 
 logger = logging.getLogger(__name__)
 
 
-class OCBC(PDF):
-    def __init__(self, file_path: str = "", password: str = ""):
-        super().__init__(file_path)
+# pylint: disable=too-many-instance-attributes
+@dataclass
+class BankStatement:
+    account_name: str
+    bank: str
+    date_pattern: str
+    pdf_file_path: str
+    pdf_password: str
+    transaction_pattern: str
+    transform_dates: bool = True
+    statement_date: datetime = None
 
-        self.password: str = password
-        self.statement = Statement(
-            bank="OCBC",
-            account_name="365",
-            date_pattern=r"\d{2}\-\d{2}\-\d{4}",
-            date=None,
-            transaction_pattern=r"(\d+\/\d+)\s*(.*?)\s*([\d.,]+)$",
+    def extract(self):
+        parser = PdfParser(self.pdf_file_path, self.pdf_password)
+        pages = parser.get_pages()
+
+        statement = StatementExtractor(
+            self.transaction_pattern, self.date_pattern, pages
         )
+        self.statement_date = statement.statement_date
 
-    def extract(self) -> DataFrame:
-        if not self.file_path:
-            raise UndefinedFilePathError("File path must be defined")
-
-        df = super().extract_df_from_pdf()
-        self.statement.date = self._extract_statement_date()
-        return df
-
-    def _extract_statement_date(self) -> datetime:
-        logger.info("Extracting statement date")
-        first_page = self.pages[0]
-        for line in first_page:
-            if match := re.match(self.statement.date_pattern, line):
-                statement_date = match.group()
-                logger.debug("Statement date found")
-                return datetime.strptime(statement_date, "%d-%m-%Y")
-        return None
+        return statement.to_dataframe()
 
     def transform(self, df: DataFrame) -> DataFrame:
         logger.info("Running transformation functions on DataFrame")
         df[AMOUNT] = df[AMOUNT].astype(float)
-        df = self._transform_dates(df, self.statement.date)
+
+        if self.transform_dates:
+            df = self.transform_date_to_iso(df, self.statement_date)
+
         return df
 
     @staticmethod
-    def _transform_dates(df: DataFrame, statement_date: datetime) -> DataFrame:
+    def transform_date_to_iso(df: DataFrame, statement_date: datetime) -> DataFrame:
         logger.info("Transforming dates from MM/DD")
 
         def convert_date(row):
@@ -71,9 +65,9 @@ class OCBC(PDF):
         return df
 
     def _write_to_csv(self, df: DataFrame):
-        self.statement.filename = generate_name("file", self.statement)
+        filename = generate_name("file", self)
 
-        file_path = os.path.join(ROOT_DIR, "output", self.statement.filename)
+        file_path = os.path.join(ROOT_DIR, "output", filename)
         df.to_csv(file_path, index=False)
 
         return file_path
@@ -82,7 +76,7 @@ class OCBC(PDF):
         csv_file_path = self._write_to_csv(df)
 
         if upload_to_cloud:
-            blob_name = generate_name("blob", self.statement)
+            blob_name = generate_name("blob", self)
             upload_to_google_cloud_storage(
                 client=storage.Client(),
                 source_filename=csv_file_path,

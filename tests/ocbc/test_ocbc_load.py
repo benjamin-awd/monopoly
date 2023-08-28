@@ -4,12 +4,12 @@ from datetime import datetime
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
-from monopoly.banks.ocbc import OCBC
+from monopoly.banks.ocbc.credit import Ocbc365
 from monopoly.constants import AMOUNT, DATE, DESCRIPTION, ROOT_DIR
 
 
-def test_ocbc_write_to_local_csv(ocbc: OCBC):
-    ocbc.statement.date = datetime(2024, 1, 1)
+def test_ocbc_write_to_local_csv(ocbc: Ocbc365):
+    ocbc.statement_date = datetime(2024, 1, 1)
 
     transformed_df = pd.DataFrame(
         [
