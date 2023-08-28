@@ -4,7 +4,3 @@ class MultipleAttachmentsError(Exception):
 
 class UntrustedUserError(Exception):
     """Raise when email received from an untrusted user"""
-
-
-class NoEmailsFoundError(Exception):
-    """Raise when a query returns no emails"""
