@@ -3,6 +3,7 @@ from __future__ import annotations
 import contextlib
 import logging
 import os
+import sys
 from base64 import urlsafe_b64decode
 from dataclasses import dataclass
 from tempfile import TemporaryDirectory
@@ -33,6 +34,7 @@ class Gmail:
         )
         if not emails:
             logger.info("No emails found using query: '%s'", query)
+            sys.exit(0)
 
         if latest:
             emails = emails[0]
