@@ -1,11 +1,15 @@
 import logging
+import os
 import re
 from datetime import datetime
 
+from google.cloud import storage
 from pandas import DataFrame
 
-from monopoly.constants import AMOUNT, DATE
+from monopoly.config import settings
+from monopoly.constants import AMOUNT, DATE, ROOT_DIR
 from monopoly.exceptions import UndefinedFilePathError
+from monopoly.helpers import generate_name, upload_to_google_cloud_storage
 from monopoly.pdf import PDF, Statement
 
 logger = logging.getLogger(__name__)
@@ -65,3 +69,24 @@ class OCBC(PDF):
 
         df[DATE] = df.apply(convert_date, axis=1)
         return df
+
+    def _write_to_csv(self, df: DataFrame):
+        self.statement.filename = generate_name("file", self.statement)
+
+        file_path = os.path.join(ROOT_DIR, "output", self.statement.filename)
+        df.to_csv(file_path, index=False)
+
+        return file_path
+
+    def load(self, df: DataFrame, upload_to_cloud: bool = False):
+        csv_file_path = self._write_to_csv(df)
+
+        if upload_to_cloud:
+            blob_name = generate_name("blob", self.statement)
+            upload_to_google_cloud_storage(
+                client=storage.Client(),
+                source_filename=csv_file_path,
+                bucket_name=settings.gcs_bucket,
+                blob_name=blob_name,
+            )
+            logger.info("Uploaded to %s", blob_name)
