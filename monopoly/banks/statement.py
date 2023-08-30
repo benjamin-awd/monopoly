@@ -23,11 +23,12 @@ class BankStatement:
     pdf_file_path: str
     pdf_password: str
     transaction_pattern: str
+    pdf_page_range: tuple = (None, None)
     transform_dates: bool = True
     statement_date: datetime = None
 
     def extract(self):
-        parser = PdfParser(self.pdf_file_path, self.pdf_password)
+        parser = PdfParser(self.pdf_file_path, self.pdf_password, self.pdf_page_range)
         pages = parser.get_pages()
 
         statement = StatementExtractor(

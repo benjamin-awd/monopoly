@@ -15,5 +15,6 @@ class Ocbc365(BankStatement):
             transaction_pattern=r"(\d+\/\d+)\s*(.*?)\s*([\d.,]+)$",
             transform_dates=True,
             pdf_file_path=pdf_file_path,
+            pdf_page_range=(0, -2),
             pdf_password=settings.ocbc_pdf_password,
         )

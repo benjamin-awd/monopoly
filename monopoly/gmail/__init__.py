@@ -1,1 +1,1 @@
-from .gmail import Gmail, Message
+from .gmail import Gmail, Message  # noqa: F401

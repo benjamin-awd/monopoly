@@ -13,23 +13,35 @@ logger = logging.getLogger(__name__)
 
 
 class PdfParser:
-    def __init__(self, file_path: str, password: str = ""):
+    def __init__(
+        self, file_path: str, password: str = "", page_range: tuple = (None, None)
+    ):
+        """Class responsible for parsing PDFs and returning raw text
+
+        The page_range variable determines which pages are extracted.
+        All pages are extracted by default.
+        """
         self.file_path = file_path
         self.password = password
+        self.page_range = slice(*page_range)
 
     def open(self):
         logger.info("Opening pdf from path %s", self.file_path)
-        pdf = fitz.Document(self.file_path)
-        pdf.authenticate(self.password)
+        document = fitz.Document(self.file_path)
+        document.authenticate(self.password)
 
-        if pdf.is_encrypted:
+        if document.is_encrypted:
             raise ValueError("Wrong password - document is encrypted")
-        return pdf
+        return document
 
     def get_pages(self) -> list[fitz.Page]:
         logger.info("Extracting text from PDF")
-        pages = self.open()
-        return [self._process_page(page) for page in pages]
+        document: fitz.Document = self.open()
+
+        num_pages = list(range(document.page_count))
+        document.select(num_pages[self.page_range])
+
+        return [self._process_page(page) for page in document]
 
     def _process_page(self, page: fitz.Page) -> list[str]:
         page = self._remove_vertical_text(page)
@@ -46,7 +58,7 @@ class PdfParser:
 
     @staticmethod
     def _remove_vertical_text(page: fitz.Page):
-        """Helper function to remove vertical text, based on the writing direction (wdir).
+        """Helper function to remove vertical text, based on writing direction (wdir).
 
         Note:
             The 'dir' key represents the tuple (cosine, sine) for the angle.
