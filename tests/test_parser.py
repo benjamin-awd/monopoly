@@ -16,3 +16,19 @@ def test_wrong_password_raises_error(parser: PdfParser):
 
     with pytest.raises(ValueError, match="document is encrypted"):
         parser.open()
+
+
+def test_get_pages(parser: PdfParser):
+    parser.file_path = "tests/4_pages_blank.pdf"
+    parser.page_range = slice(0, -1)
+
+    pages = parser.get_pages()
+    assert len(pages) == 3
+
+
+def test_get_pages_invalid_returns_error(parser: PdfParser):
+    parser.file_path = "tests/4_pages_blank.pdf"
+    parser.page_range = slice(99, -99)
+
+    with pytest.raises(ValueError, match="bad page number"):
+        parser.get_pages()
