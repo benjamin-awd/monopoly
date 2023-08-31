@@ -24,6 +24,8 @@ class PdfParser:
         self.file_path = file_path
         self.password = password
         self.page_range = slice(*page_range)
+        self.page_bbox: tuple = None
+        self.remove_vertical_text = True
 
     def open(self):
         logger.info("Opening pdf from path %s", self.file_path)
@@ -44,7 +46,14 @@ class PdfParser:
         return [self._process_page(page) for page in document]
 
     def _process_page(self, page: fitz.Page) -> list[str]:
-        page = self._remove_vertical_text(page)
+        if self.page_bbox:
+            logger.debug("Cropping page")
+            page.set_cropbox(self.page_bbox)
+
+        if self.remove_vertical_text:
+            logger.debug("Removing vertical text")
+            page = self._remove_vertical_text(page)
+
         logger.debug("Creating pixmap for page")
         pix = page.get_pixmap(dpi=300, colorspace=fitz.csGRAY)
 
