@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from google.cloud import storage
 
 if TYPE_CHECKING:
-    from monopoly.banks.statement import BankStatement
+    from monopoly.banks.dataclasses import Bank
 
 
 logger = logging.getLogger(__name__)
@@ -25,21 +25,21 @@ def upload_to_google_cloud_storage(
     blob.upload_from_filename(source_filename)
 
 
-def generate_name(format_type: str, statement: BankStatement) -> str:
+def generate_name(format_type: str, bank: Bank) -> str:
     if format_type == "blob":
         return (
-            f"bank={statement.bank}/"
-            f"account_name={statement.account_name}/"
-            f"year={statement.statement_date.year}/"
-            f"month={statement.statement_date.month}/"
-            f"{statement.filename}"
+            f"bank={bank.bank}/"
+            f"account_name={bank.account_name}/"
+            f"year={bank.statement.statement_date.year}/"
+            f"month={bank.statement.statement_date.month}/"
+            f"statement.csv"
         )
     if format_type == "file":
         return (
-            f"{statement.bank}-"
-            f"{statement.account_name}-"
-            f"{statement.statement_date.year}-"
-            f"{statement.statement_date.month:02d}.csv"
+            f"{bank.bank}-"
+            f"{bank.account_name}-"
+            f"{bank.statement.statement_date.year}-"
+            f"{bank.statement.statement_date.month:02d}.csv"
         )
 
     raise ValueError("Invalid format_type")

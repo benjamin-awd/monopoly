@@ -2,6 +2,7 @@ import logging
 import os
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Match
 
 from google.cloud import storage
 from pandas import DataFrame
@@ -14,28 +15,36 @@ from monopoly.pdf import PdfParser, StatementExtractor
 logger = logging.getLogger(__name__)
 
 
-# pylint: disable=too-many-instance-attributes
 @dataclass
-class BankStatement:
-    account_name: str
-    bank: str
-    date_pattern: str
-    pdf_file_path: str
-    pdf_password: str
-    transaction_pattern: str
-    date_converter: callable = None
-    pdf_page_range: tuple = (None, None)
-    transform_dates: bool = True
+class Pdf:
+    file_path: str
+    password: str
+    page_range: tuple = (None, None)
+
+
+@dataclass
+class Statement:
+    transaction_pattern: Match
+    date_pattern: Match
     statement_date: datetime = None
 
+
+@dataclass
+class Bank:
+    account_name: str
+    bank: str
+    pdf: Pdf
+    statement: Statement
+    date_converter: callable = None
+    transform_dates: bool = True
+
     def extract(self):
-        parser = PdfParser(self.pdf_file_path, self.pdf_password, self.pdf_page_range)
+        parser = PdfParser(**self.pdf.__dict__)
         pages = parser.get_pages()
 
         statement = StatementExtractor(
-            self.transaction_pattern, self.date_pattern, pages
+            self.statement.transaction_pattern, self.statement.date_pattern, pages
         )
-        self.statement_date = statement.statement_date
 
         return statement.to_dataframe()
 
@@ -44,12 +53,12 @@ class BankStatement:
         df[AMOUNT] = df[AMOUNT].astype(float)
 
         if self.transform_dates:
-            df = self.transform_date_to_iso(df)
+            df = self._transform_date_to_iso(df)
 
         return df
 
-    def transform_date_to_iso(self, df: DataFrame) -> DataFrame:
-        logger.info("Transforming dates from MM/DD")
+    def _transform_date_to_iso(self, df: DataFrame) -> DataFrame:
+        logger.info("Transforming dates")
 
         df[DATE] = df.apply(self.date_converter, axis=1)
         return df
