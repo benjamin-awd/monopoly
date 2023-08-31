@@ -23,6 +23,7 @@ class BankStatement:
     pdf_file_path: str
     pdf_password: str
     transaction_pattern: str
+    date_converter: callable = None
     pdf_page_range: tuple = (None, None)
     transform_dates: bool = True
     statement_date: datetime = None
@@ -43,26 +44,14 @@ class BankStatement:
         df[AMOUNT] = df[AMOUNT].astype(float)
 
         if self.transform_dates:
-            df = self.transform_date_to_iso(df, self.statement_date)
+            df = self.transform_date_to_iso(df)
 
         return df
 
-    @staticmethod
-    def transform_date_to_iso(df: DataFrame, statement_date: datetime) -> DataFrame:
+    def transform_date_to_iso(self, df: DataFrame) -> DataFrame:
         logger.info("Transforming dates from MM/DD")
 
-        def convert_date(row):
-            row_day, row_month = map(int, row[DATE].split("/"))
-
-            # Deal with mixed years from Jan/Dec
-            if statement_date.month == 1 and row_month == 12:
-                row_year = statement_date.year - 1
-            else:
-                row_year = statement_date.year
-
-            return f"{row_year}-{row_month:02d}-{row_day:02d}"
-
-        df[DATE] = df.apply(convert_date, axis=1)
+        df[DATE] = df.apply(self.date_converter, axis=1)
         return df
 
     def _write_to_csv(self, df: DataFrame):
