@@ -10,7 +10,7 @@ from monopoly.pdf import PdfParser
 
 @pytest.fixture(scope="session")
 def ocbc():
-    ocbc = Ocbc365(pdf_file_path="tests/ocbc/fixtures/input.pdf")
+    ocbc = Ocbc365(pdf_file_path="tests/fixtures/ocbc/input.pdf")
     yield ocbc
 
 
