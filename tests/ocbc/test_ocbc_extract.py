@@ -6,7 +6,7 @@ from monopoly.banks.ocbc.credit import Ocbc365
 
 def test_ocbc_extract_unprotected_pdf(ocbc: Ocbc365):
     raw_df = ocbc.extract()
-    expected_df = pd.read_csv("tests/ocbc/fixtures/expected.csv", dtype=object)
+    expected_df = pd.read_csv("tests/fixtures/ocbc/expected.csv", dtype=object)
 
     assert_frame_equal(raw_df, expected_df)
     raw_df["amount"] = raw_df["amount"].astype("float")
