@@ -19,13 +19,13 @@ def bank():
     bank = Bank(
         account_name="Savings",
         bank="Example Bank",
-        statement=Statement(
-            transaction_pattern=None,
-            date_pattern=None,
-            statement_date=datetime(2023, 8, 1),
-        ),
+        statement=Statement(transaction_pattern=None, date_pattern=None),
         pdf=None,
     )
+
+    # Generated dynamically during the extraction process
+    # so we are mocking it here
+    bank.statement.statement_date = datetime(2023, 8, 1)
 
     yield bank
 

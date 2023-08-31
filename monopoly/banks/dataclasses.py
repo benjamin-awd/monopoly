@@ -1,7 +1,6 @@
 import logging
 import os
 from dataclasses import dataclass
-from datetime import datetime
 from typing import Match
 
 from google.cloud import storage
@@ -26,7 +25,6 @@ class Pdf:
 class Statement:
     transaction_pattern: Match
     date_pattern: Match
-    statement_date: datetime = None
 
 
 @dataclass
@@ -41,10 +39,7 @@ class Bank:
     def extract(self):
         parser = PdfParser(**self.pdf.__dict__)
         pages = parser.get_pages()
-
-        statement = StatementExtractor(
-            self.statement.transaction_pattern, self.statement.date_pattern, pages
-        )
+        statement = StatementExtractor(**self.statement.__dict__, pages=pages)
 
         return statement.to_dataframe()
 
