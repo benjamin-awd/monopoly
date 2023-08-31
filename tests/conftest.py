@@ -2,8 +2,8 @@ from datetime import datetime
 
 import pytest
 
+from monopoly.banks.dataclasses import Bank, Statement
 from monopoly.banks.ocbc.credit import Ocbc365
-from monopoly.banks.statement import BankStatement
 from monopoly.gmail import Message
 from monopoly.pdf import PdfParser
 
@@ -15,20 +15,19 @@ def ocbc():
 
 
 @pytest.fixture(scope="session")
-def bank_statement():
-    bank_statement = BankStatement(
+def bank():
+    bank = Bank(
         account_name="Savings",
         bank="Example Bank",
-        date_pattern=None,
-        pdf_file_path=None,
-        pdf_password=None,
-        transaction_pattern=None,
-        transform_dates=False,
+        statement=Statement(
+            transaction_pattern=None,
+            date_pattern=None,
+            statement_date=datetime(2023, 8, 1),
+        ),
+        pdf=None,
     )
-    bank_statement.statement_date = datetime(2023, 8, 1)
-    bank_statement.filename = "statement.csv"
 
-    yield bank_statement
+    yield bank
 
 
 @pytest.fixture(scope="session")
