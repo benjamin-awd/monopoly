@@ -5,6 +5,7 @@ from unittest.mock import PropertyMock
 import pytest
 
 from monopoly.banks.bank import Bank, Statement
+from monopoly.banks.hsbc.credit import HsbcRevolution
 from monopoly.banks.ocbc.credit import Ocbc365
 from monopoly.gmail import Message
 from monopoly.pdf import PdfParser
@@ -25,6 +26,12 @@ def date_specific_ocbc(statement_date: datetime):
 def generic_ocbc():
     ocbc = Ocbc365(pdf_file_path="tests/fixtures/ocbc/input.pdf")
     yield ocbc
+
+
+@pytest.fixture(scope="session")
+def generic_hsbc():
+    hsbc = HsbcRevolution(pdf_file_path="tests/fixtures/hsbc/input.pdf")
+    yield hsbc
 
 
 @pytest.fixture(scope="session")

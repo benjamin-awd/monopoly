@@ -19,6 +19,7 @@ class Pdf:
     file_path: str
     password: str
     page_range: tuple = (None, None)
+    page_bbox: tuple = None
 
 
 @dataclass
@@ -34,7 +35,6 @@ class Bank:
         parser = PdfParser(**self.pdf.__dict__)
         self.statement.pages = parser.get_pages()
         statement = Statement(**self.statement.__dict__)
-
         return statement.to_dataframe()
 
     def transform(self, df: DataFrame) -> DataFrame:
