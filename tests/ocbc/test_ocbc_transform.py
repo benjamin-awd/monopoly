@@ -1,15 +1,16 @@
 from datetime import datetime
 
 import pandas as pd
+import pytest
 from pandas.testing import assert_frame_equal
 
+from monopoly.banks.bank import Statement
 from monopoly.banks.ocbc.credit import Ocbc365
 from monopoly.constants import AMOUNT, DATE, DESCRIPTION
 
 
-def test_ocbc_transform_cross_year(ocbc: Ocbc365):
-    ocbc.statement.statement_date = datetime(2024, 1, 1)
-
+@pytest.mark.parametrize("statement_date", [datetime(2024, 1, 1)])
+def test_ocbc_transform_cross_year(date_specific_ocbc: Ocbc365):
     raw_df = pd.DataFrame(
         [
             {
@@ -25,7 +26,7 @@ def test_ocbc_transform_cross_year(ocbc: Ocbc365):
         ]
     )
 
-    transformed_df = ocbc.transform(raw_df)
+    transformed_df = date_specific_ocbc.transform(raw_df)
 
     expected_data = pd.DataFrame(
         [
@@ -45,9 +46,8 @@ def test_ocbc_transform_cross_year(ocbc: Ocbc365):
     assert_frame_equal(transformed_df, expected_data)
 
 
-def test_ocbc_transform_within_year(ocbc: Ocbc365):
-    ocbc.statement.statement_date = datetime(2023, 7, 1)
-
+@pytest.mark.parametrize("statement_date", [datetime(2023, 7, 1)])
+def test_ocbc_transform_within_year(date_specific_ocbc: Ocbc365):
     raw_df = pd.DataFrame(
         [
             {
@@ -63,7 +63,7 @@ def test_ocbc_transform_within_year(ocbc: Ocbc365):
         ]
     )
 
-    transformed_df = ocbc.transform(raw_df)
+    transformed_df = date_specific_ocbc.transform(raw_df)
 
     expected_data = pd.DataFrame(
         [

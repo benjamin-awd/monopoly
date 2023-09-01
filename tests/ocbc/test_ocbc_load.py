@@ -2,15 +2,15 @@ import os
 from datetime import datetime
 
 import pandas as pd
+import pytest
 from pandas.testing import assert_frame_equal
 
 from monopoly.banks.ocbc.credit import Ocbc365
 from monopoly.constants import AMOUNT, DATE, DESCRIPTION, ROOT_DIR
 
 
-def test_ocbc_write_to_local_csv(ocbc: Ocbc365):
-    ocbc.statement.statement_date = datetime(2024, 1, 1)
-
+@pytest.mark.parametrize("statement_date", [datetime(2024, 1, 1)])
+def test_ocbc_write_to_local_csv(date_specific_ocbc: Ocbc365):
     transformed_df = pd.DataFrame(
         [
             {
@@ -26,7 +26,7 @@ def test_ocbc_write_to_local_csv(ocbc: Ocbc365):
         ]
     )
 
-    ocbc.load(transformed_df)
+    date_specific_ocbc.load(transformed_df)
 
     local_df = pd.read_csv(os.path.join(ROOT_DIR, "output", "OCBC-365-2024-01.csv"))
     assert_frame_equal(transformed_df, local_df)

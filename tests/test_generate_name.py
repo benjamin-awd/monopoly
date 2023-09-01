@@ -1,4 +1,4 @@
-from monopoly.banks.dataclasses import Bank
+from monopoly.banks.bank import Bank
 from monopoly.helpers import generate_name
 
 

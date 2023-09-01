@@ -1,15 +1,15 @@
 import logging
 import os
 from dataclasses import dataclass
-from typing import Match
 
 from google.cloud import storage
 from pandas import DataFrame
 
+from monopoly.banks.statement import Statement
 from monopoly.config import settings
 from monopoly.constants import AMOUNT, DATE, ROOT_DIR
 from monopoly.helpers import generate_name, upload_to_google_cloud_storage
-from monopoly.pdf import PdfParser, StatementExtractor
+from monopoly.pdf import PdfParser
 
 logger = logging.getLogger(__name__)
 
@@ -19,12 +19,6 @@ class Pdf:
     file_path: str
     password: str
     page_range: tuple = (None, None)
-
-
-@dataclass
-class Statement:
-    transaction_pattern: Match
-    date_pattern: Match
 
 
 @dataclass
@@ -38,8 +32,8 @@ class Bank:
 
     def extract(self):
         parser = PdfParser(**self.pdf.__dict__)
-        pages = parser.get_pages()
-        statement = StatementExtractor(**self.statement.__dict__, pages=pages)
+        self.statement.pages = parser.get_pages()
+        statement = Statement(**self.statement.__dict__)
 
         return statement.to_dataframe()
 

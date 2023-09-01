@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from google.cloud import storage
 
 if TYPE_CHECKING:
-    from monopoly.banks.dataclasses import Bank
+    from monopoly.banks.bank import Bank
 
 
 logger = logging.getLogger(__name__)
