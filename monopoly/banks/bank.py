@@ -28,7 +28,7 @@ class Bank:
     bank_name: str
     pdf: Pdf
     statement: Statement
-    date_converter: callable = None
+    date_parser: callable = None
     transform_dates: bool = True
 
     def extract(self):
@@ -49,8 +49,20 @@ class Bank:
     def _transform_date_to_iso(self, df: DataFrame) -> DataFrame:
         logger.info("Transforming dates")
 
-        df[DATE] = df.apply(self.date_converter, axis=1)
+        df[DATE] = df.apply(self._convert_date, axis=1)
         return df
+
+    def _convert_date(self, row):
+        logger.info("Transforming dates to ISO 8601")
+        row_day, row_month = self.date_parser(row)
+
+        # Deal with mixed years from Jan/Dec
+        if self.statement.statement_date.month == 1 and row_month == 12:
+            row_year = self.statement.statement_date.year - 1
+        else:
+            row_year = self.statement.statement_date.year
+
+        return f"{row_year}-{row_month:02d}-{row_day:02d}"
 
     def _write_to_csv(self, df: DataFrame):
         filename = generate_name("file", self)
