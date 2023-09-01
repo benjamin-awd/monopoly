@@ -9,7 +9,11 @@ logger = logging.getLogger(__name__)
 
 class PdfParser:
     def __init__(
-        self, file_path: str, password: str = "", page_range: tuple = (None, None)
+        self,
+        file_path: str,
+        password: str = "",
+        page_range: tuple = (None, None),
+        page_bbox: tuple = None,
     ):
         """Class responsible for parsing PDFs and returning raw text
 
@@ -19,7 +23,7 @@ class PdfParser:
         self.file_path = file_path
         self.password = password
         self.page_range = slice(*page_range)
-        self.page_bbox: tuple = None
+        self.page_bbox: tuple = page_bbox
         self.remove_vertical_text = True
 
     def open(self):

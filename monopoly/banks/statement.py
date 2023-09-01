@@ -15,21 +15,30 @@ logger = logging.getLogger(__name__)
 class Statement:
     transaction_pattern: str
     date_pattern: str
+    multiline_transactions: bool = False
     pages: list[fitz.Page] = None
     columns = [DATE, DESCRIPTION, AMOUNT]
 
     @property
-    def transactions(self):
+    def transactions(self) -> list[dict]:
         transactions = []
         for page in self.pages:
-            for line in page:
-                if match := re.match(self.transaction_pattern, line):
-                    date, description, amount = match.groups()
+            for i, line in enumerate(page):
+                item = self._process_line(line, page, idx=i)
+                transactions.append(item)
 
-                    transactions.append(
-                        {DATE: date, DESCRIPTION: description, AMOUNT: amount}
-                    )
-        return transactions
+        return list(filter(None, transactions))
+
+    def _process_line(self, line: str, page: fitz.Page, idx: int) -> dict:
+        if match := re.match(self.transaction_pattern, line):
+            date, description, amount = match.groups()
+
+            if self.multiline_transactions:
+                if not re.match(self.transaction_pattern, page[idx + 1]):
+                    description = " ".join([description, page[idx + 1]])
+
+            return {DATE: date, DESCRIPTION: description, AMOUNT: amount}
+        return None
 
     @property
     def statement_date(self):
