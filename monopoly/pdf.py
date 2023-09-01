@@ -1,13 +1,8 @@
 import logging
-import re
-from datetime import datetime
 
 import fitz
 import pytesseract
-from pandas import DataFrame
 from PIL import Image
-
-from monopoly.constants import AMOUNT, DATE, DESCRIPTION
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +31,7 @@ class PdfParser:
             raise ValueError("Wrong password - document is encrypted")
         return document
 
-    def get_pages(self) -> list[fitz.Page]:
+    def get_pages(self) -> list[str]:
         logger.info("Extracting text from PDF")
         document: fitz.Document = self.open()
 
@@ -80,48 +75,3 @@ class PdfParser:
                     page.add_redact_annot(line["bbox"])
         page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE)
         return page
-
-
-class StatementExtractor:
-    def __init__(
-        self, transaction_pattern: str, date_pattern: str, pages: list[fitz.Page]
-    ):
-        self.transaction_pattern = transaction_pattern
-        self.date_pattern = date_pattern
-        self.pages = pages
-        self.columns = [DATE, DESCRIPTION, AMOUNT]
-
-    @property
-    def transactions(self):
-        return self._process_transactions()
-
-    @property
-    def statement_date(self):
-        return self._extract_statement_date()
-
-    def to_dataframe(self):
-        return DataFrame(self.transactions, columns=self.columns)
-
-    def _process_transactions(self) -> list[dict[str, str]]:
-        transactions = []
-        for page in self.pages:
-            for line in page:
-                match = re.match(self.transaction_pattern, line)
-                if match:
-                    date, description, amount = match.groups()
-
-                    transactions.append(
-                        {DATE: date, DESCRIPTION: description, AMOUNT: amount}
-                    )
-
-        return transactions
-
-    def _extract_statement_date(self) -> datetime:
-        logger.info("Extracting statement date")
-        first_page = self.pages[0]
-        for line in first_page:
-            if match := re.match(self.date_pattern, line):
-                statement_date = match.group()
-                logger.debug("Statement date found")
-                return datetime.strptime(statement_date, "%d-%m-%Y")
-        return None

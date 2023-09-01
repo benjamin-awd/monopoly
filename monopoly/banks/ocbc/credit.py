@@ -1,6 +1,6 @@
 import logging
 
-from monopoly.banks.dataclasses import Bank, Pdf, Statement
+from monopoly.banks.bank import Bank, Pdf, Statement
 from monopoly.config import settings
 from monopoly.constants import DATE
 
