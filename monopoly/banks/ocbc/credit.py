@@ -8,15 +8,19 @@ logger = logging.getLogger(__name__)
 
 
 class Ocbc365(Bank):
+    statement_config = Statement(
+        transaction_pattern=(
+            r"(?P<date>\d+/\d+)\s*(?P<description>.*?)\s*(?P<amount>[\d.,]+)$"
+        ),
+        date_pattern=r"\d{2}\-\d{2}\-\d{4}",
+    )
+
     def __init__(self, pdf_file_path: str):
         date_converter = self.convert_date
         super().__init__(
             account_name="365",
             bank_name="OCBC",
-            statement=Statement(
-                transaction_pattern=r"(\d+\/\d+)\s*(.*?)\s*([\d.,]+)$",
-                date_pattern=r"\d{2}\-\d{2}\-\d{4}",
-            ),
+            statement=Statement(**self.statement_config.__dict__),
             transform_dates=True,
             pdf=Pdf(pdf_file_path, settings.ocbc_pdf_password, (0, -2)),
             date_converter=date_converter,
