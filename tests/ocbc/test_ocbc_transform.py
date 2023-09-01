@@ -4,7 +4,6 @@ import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
 
-from monopoly.banks.bank import Statement
 from monopoly.banks.ocbc.credit import Ocbc365
 from monopoly.constants import AMOUNT, DATE, DESCRIPTION
 
