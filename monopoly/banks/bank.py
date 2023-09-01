@@ -24,7 +24,7 @@ class Pdf:
 @dataclass
 class Bank:
     account_name: str
-    bank: str
+    bank_name: str
     pdf: Pdf
     statement: Statement
     date_converter: callable = None

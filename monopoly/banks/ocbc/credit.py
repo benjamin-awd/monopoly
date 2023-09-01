@@ -12,7 +12,7 @@ class Ocbc365(Bank):
         date_converter = self.convert_date
         super().__init__(
             account_name="365",
-            bank="OCBC",
+            bank_name="OCBC",
             statement=Statement(
                 transaction_pattern=r"(\d+\/\d+)\s*(.*?)\s*([\d.,]+)$",
                 date_pattern=r"\d{2}\-\d{2}\-\d{4}",

@@ -35,7 +35,7 @@ def bank():
         mock_statement_date.return_value = datetime(2023, 8, 1)
         bank = Bank(
             account_name="Savings",
-            bank="Example Bank",
+            bank_name="Example Bank",
             statement=Statement(
                 transaction_pattern=None, date_pattern=None, pages=None
             ),

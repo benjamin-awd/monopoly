@@ -26,20 +26,23 @@ def upload_to_google_cloud_storage(
 
 
 def generate_name(format_type: str, bank: Bank) -> str:
+    bank_name = bank.bank_name
+    account_name = bank.account_name
+    year = bank.statement.statement_date.year
+    month = bank.statement.statement_date.month
+
+    filename = f"{bank_name}-{account_name}-{year}-{month:02d}.csv"
+
     if format_type == "blob":
         return (
-            f"bank={bank.bank}/"
-            f"account_name={bank.account_name}/"
-            f"year={bank.statement.statement_date.year}/"
-            f"month={bank.statement.statement_date.month}/"
-            f"statement.csv"
+            f"bank_name={bank_name}/"
+            f"account_name={account_name}/"
+            f"year={year}/"
+            f"month={month}/"
+            f"{filename}"
         )
+
     if format_type == "file":
-        return (
-            f"{bank.bank}-"
-            f"{bank.account_name}-"
-            f"{bank.statement.statement_date.year}-"
-            f"{bank.statement.statement_date.month:02d}.csv"
-        )
+        return filename
 
     raise ValueError("Invalid format_type")

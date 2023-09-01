@@ -4,11 +4,11 @@ from monopoly.helpers import generate_name
 
 def test_generate_blob_name(bank: Bank):
     expected_blob_name = (
-        "bank=Example Bank/"
+        "bank_name=Example Bank/"
         "account_name=Savings/"
         "year=2023/"
         "month=8/"
-        "statement.csv"
+        "Example Bank-Savings-2023-08.csv"
     )
 
     actual_blob_name = generate_name("blob", bank)
