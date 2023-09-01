@@ -13,6 +13,7 @@ class Ocbc365(Bank):
             r"(?P<date>\d+/\d+)\s*(?P<description>.*?)\s*(?P<amount>[\d.,]+)$"
         ),
         date_pattern=r"\d{2}\-\d{2}\-\d{4}",
+        statement_date_format=r"%d-%m-%Y",
     )
 
     def __init__(self, pdf_file_path: str):
