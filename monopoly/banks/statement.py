@@ -2,6 +2,7 @@ import logging
 import re
 from dataclasses import dataclass
 from datetime import datetime
+from functools import cached_property
 
 import fitz
 from pandas import DataFrame
@@ -13,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class Statement:
+    statement_date_format: str
     transaction_pattern: str
     date_pattern: str
     multiline_transactions: bool = False
@@ -40,15 +42,15 @@ class Statement:
             return {DATE: date, DESCRIPTION: description, AMOUNT: amount}
         return None
 
-    @property
+    @cached_property
     def statement_date(self):
         logger.info("Extracting statement date")
         first_page = self.pages[0]
         for line in first_page:
-            if match := re.match(self.date_pattern, line):
-                statement_date = match.group()
+            if match := re.findall(self.date_pattern, line):
+                statement_date = match[0]
                 logger.debug("Statement date found")
-                return datetime.strptime(statement_date, "%d-%m-%Y")
+                return datetime.strptime(statement_date, self.statement_date_format)
         return None
 
     def to_dataframe(self):

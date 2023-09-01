@@ -12,24 +12,24 @@ from monopoly.pdf import PdfParser
 
 
 @pytest.fixture(scope="function")
-def date_specific_ocbc(statement_date: datetime):
+def date_specific_ocbc(statement, statement_date: datetime):
     with mock.patch.object(
         Statement, "statement_date", new_callable=PropertyMock
     ) as mock_statement_date:
         mock_statement_date.return_value = statement_date
         ocbc = Ocbc365(pdf_file_path="tests/fixtures/ocbc/input.pdf")
-        ocbc.statement = Statement(None, None)
+        ocbc.statement = statement
         yield ocbc
 
 
 @pytest.fixture(scope="function")
-def date_specific_hsbc(statement_date: datetime):
+def date_specific_hsbc(statement, statement_date: datetime):
     with mock.patch.object(
         Statement, "statement_date", new_callable=PropertyMock
     ) as mock_statement_date:
         mock_statement_date.return_value = statement_date
         hsbc = HsbcRevolution(pdf_file_path="tests/fixtures/hsbc/input.pdf")
-        hsbc.statement = Statement(None, None)
+        hsbc.statement = statement
         yield hsbc
 
 
@@ -45,8 +45,8 @@ def generic_hsbc():
     yield hsbc
 
 
-@pytest.fixture(scope="session")
-def bank():
+@pytest.fixture(scope="function")
+def bank(statement):
     with mock.patch.object(
         Statement, "statement_date", new_callable=PropertyMock
     ) as mock_statement_date:
@@ -54,9 +54,7 @@ def bank():
         bank = Bank(
             account_name="Savings",
             bank_name="Example Bank",
-            statement=Statement(
-                transaction_pattern=None, date_pattern=None, pages=None
-            ),
+            statement=statement,
             pdf=None,
         )
         yield bank
@@ -77,3 +75,15 @@ def parser():
     parser = PdfParser(None)
 
     yield parser
+
+
+@pytest.fixture
+def statement():
+    mock_page = mock.Mock()
+    statement = Statement(
+        statement_date_format=None,
+        transaction_pattern=None,
+        date_pattern=None,
+        pages=[mock_page],
+    )
+    yield statement
