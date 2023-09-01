@@ -2,7 +2,6 @@ import logging
 import re
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Match
 
 import fitz
 from pandas import DataFrame
@@ -14,8 +13,8 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class Statement:
-    transaction_pattern: Match
-    date_pattern: Match
+    transaction_pattern: str
+    date_pattern: str
     pages: list[fitz.Page] = None
     columns = [DATE, DESCRIPTION, AMOUNT]
 
