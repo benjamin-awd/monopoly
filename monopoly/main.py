@@ -1,7 +1,8 @@
 import logging
 
+from monopoly.banks.hsbc.credit import HsbcRevolution
 from monopoly.banks.ocbc.credit import Ocbc365
-from monopoly.constants import OCBC_365
+from monopoly.constants import HSBC_REVOLUTION, OCBC_365
 from monopoly.gmail import Gmail, Message
 
 logger = logging.getLogger(__name__)
@@ -21,13 +22,23 @@ def main(gmail=Gmail()):
     for message in messages:
         attachment = message.get_attachment()
 
-        with message.save(attachment) as file:
-            if attachment.filename.startswith(OCBC_365):
+        if OCBC_365 in message.subject:
+            with message.save(attachment) as file:
                 ocbc = Ocbc365(pdf_file_path=file)
 
                 raw_df = ocbc.extract()
                 transformed_df = ocbc.transform(raw_df)
                 ocbc.load(transformed_df, upload_to_cloud=True)
+
+                message.mark_as_read()
+
+        if HSBC_REVOLUTION in message.subject:
+            with message.save(attachment) as file:
+                hsbc = HsbcRevolution(pdf_file_path=file)
+
+                raw_df = hsbc.extract()
+                transformed_df = hsbc.transform(raw_df)
+                hsbc.load(transformed_df, upload_to_cloud=True)
 
                 message.mark_as_read()
 
