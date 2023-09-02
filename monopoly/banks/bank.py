@@ -47,13 +47,12 @@ class Bank:
         return df
 
     def _transform_date_to_iso(self, df: DataFrame) -> DataFrame:
-        logger.info("Transforming dates")
+        logger.info("Transforming dates to ISO 8601")
 
         df[DATE] = df.apply(self._convert_date, axis=1)
         return df
 
     def _convert_date(self, row):
-        logger.info("Transforming dates to ISO 8601")
         row_day, row_month = self.date_parser(row)
 
         # Deal with mixed years from Jan/Dec
