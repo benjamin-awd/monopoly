@@ -116,6 +116,13 @@ class Message(Gmail):
         )
 
     @property
+    def subject(self) -> str:
+        for item in self.payload.get("headers"):
+            if item["name"] == "Subject":
+                return item["value"]
+        return None
+
+    @property
     def parts(self) -> list[Message.Part]:
         return [Message.Part(part) for part in self.payload.get("parts")]
 

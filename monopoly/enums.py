@@ -7,5 +7,6 @@ class BankStatement(str, Enum):
     AMOUNT = "amount"
 
 
-class Prefix(str, Enum):
-    OCBC_365 = "OCBC 365 CREDIT CARD"
+class EmailSubject(str, Enum):
+    OCBC_365 = "OCBC Bank: Your Credit Card e-Statement"
+    HSBC_REVOLUTION = "Your HSBC VISA REVOLUTION eStatement"
