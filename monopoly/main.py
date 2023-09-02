@@ -29,7 +29,7 @@ def main(gmail=Gmail()):
                 transformed_df = ocbc.transform(raw_df)
                 ocbc.load(transformed_df, upload_to_cloud=True)
 
-        message.mark_as_read()
+                message.mark_as_read()
 
 
 if __name__ == "__main__":
