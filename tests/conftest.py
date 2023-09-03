@@ -7,7 +7,7 @@ import pytest
 from monopoly.banks.bank import Bank, Statement
 from monopoly.banks.hsbc.credit import HsbcRevolution
 from monopoly.banks.ocbc.credit import Ocbc365
-from monopoly.gmail import Message
+from monopoly.gmail import Gmail, Message
 from monopoly.pdf import PdfParser
 
 
@@ -62,7 +62,7 @@ def bank(statement):
 
 @pytest.fixture(scope="session")
 def message():
-    return Message({})
+    return Message(data={}, gmail_service=mock.Mock())
 
 
 @pytest.fixture(scope="session")
