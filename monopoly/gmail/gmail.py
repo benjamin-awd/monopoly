@@ -51,7 +51,7 @@ class Gmail:
             )
             messages.append(message)
 
-        return [Message(message) for message in messages]
+        return [Message(message, self.gmail_service) for message in messages]
 
     def get_attachment_byte_string(self, message_id, attachment_id) -> dict:
         logger.debug("Extracting attachment byte string")
@@ -66,11 +66,11 @@ class Gmail:
         return data
 
 
-class Message(Gmail):
-    def __init__(self, data: dict):
+class Message:
+    def __init__(self, data: dict, gmail_service: GmailResource):
         self.message_id: str = data.get("id")
         self.payload: dict = data.get("payload")
-        super().__init__()
+        self.gmail_service = gmail_service
 
     def get_attachment(self):
         logger.info("Extracting attachment '%s'", self.attachment_part.filename)

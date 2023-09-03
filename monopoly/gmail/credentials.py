@@ -36,6 +36,7 @@ def get_credentials(secret_id=settings.secret_id, version_id="latest"):
 
 
 def get_gmail_service() -> GmailResource:
+    logger.info("Creating Gmail client")
     credentials = get_credentials()
 
     try:
