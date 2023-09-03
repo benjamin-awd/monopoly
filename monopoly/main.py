@@ -26,9 +26,12 @@ def main(gmail=Gmail()):
             with message.save(attachment) as file:
                 ocbc = Ocbc365(pdf_file_path=file)
 
-                raw_df = ocbc.extract()
-                transformed_df = ocbc.transform(raw_df)
-                ocbc.load(transformed_df, upload_to_cloud=True)
+                statement = ocbc.extract()
+                statement_date = statement.statement_date
+
+                raw_df = statement.to_dataframe()
+                transformed_df = ocbc.transform(raw_df, statement_date)
+                ocbc.load(transformed_df, statement_date, upload_to_cloud=True)
 
                 message.mark_as_read()
 
@@ -36,9 +39,12 @@ def main(gmail=Gmail()):
             with message.save(attachment) as file:
                 hsbc = HsbcRevolution(pdf_file_path=file)
 
-                raw_df = hsbc.extract()
-                transformed_df = hsbc.transform(raw_df)
-                hsbc.load(transformed_df, upload_to_cloud=True)
+                statement = hsbc.extract()
+                statement_date = statement.statement_date
+
+                raw_df = statement.to_dataframe()
+                transformed_df = hsbc.transform(raw_df, statement_date)
+                hsbc.load(transformed_df, statement_date, upload_to_cloud=True)
 
                 message.mark_as_read()
 

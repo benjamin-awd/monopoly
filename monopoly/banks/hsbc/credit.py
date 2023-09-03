@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 
-from monopoly.banks.bank import Bank, Pdf, Statement
+from monopoly.banks.bank import Bank, Pdf, StatementConfig
 from monopoly.config import settings
 from monopoly.constants import DATE
 
@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class HsbcRevolution(Bank):
-    statement_config = Statement(
+    statement_config = StatementConfig(
         transaction_pattern=(
             r"\d{2}\s\w{3}\s*"
             r"(?P<date>\d{2}\s\w{3})\s*"
@@ -26,7 +26,7 @@ class HsbcRevolution(Bank):
         super().__init__(
             account_name="Revolution",
             bank_name="HSBC",
-            statement=Statement(**self.statement_config.__dict__),
+            statement_config=StatementConfig(**self.statement_config.__dict__),
             transform_dates=True,
             pdf=Pdf(
                 pdf_file_path,
