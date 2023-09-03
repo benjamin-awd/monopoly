@@ -8,8 +8,7 @@ from monopoly.banks.hsbc.credit import HsbcRevolution
 from monopoly.constants import AMOUNT, DATE, DESCRIPTION
 
 
-@pytest.mark.parametrize("statement_date", [datetime(2024, 1, 1)])
-def test_hsbc_transform_cross_year(date_specific_hsbc: HsbcRevolution):
+def test_hsbc_transform_cross_year(generic_hsbc: HsbcRevolution):
     raw_df = pd.DataFrame(
         [
             {
@@ -24,8 +23,8 @@ def test_hsbc_transform_cross_year(date_specific_hsbc: HsbcRevolution):
             },
         ]
     )
-
-    transformed_df = date_specific_hsbc.transform(raw_df)
+    statement_date = datetime(2024, 1, 1)
+    transformed_df = generic_hsbc.transform(raw_df, statement_date)
 
     expected_data = pd.DataFrame(
         [
@@ -45,8 +44,7 @@ def test_hsbc_transform_cross_year(date_specific_hsbc: HsbcRevolution):
     assert_frame_equal(transformed_df, expected_data)
 
 
-@pytest.mark.parametrize("statement_date", [datetime(2023, 7, 1)])
-def test_ocbc_transform_within_year(date_specific_hsbc: HsbcRevolution):
+def test_hsbc_transform_within_year(generic_hsbc: HsbcRevolution):
     raw_df = pd.DataFrame(
         [
             {
@@ -62,7 +60,8 @@ def test_ocbc_transform_within_year(date_specific_hsbc: HsbcRevolution):
         ]
     )
 
-    transformed_df = date_specific_hsbc.transform(raw_df)
+    statement_date = datetime(2023, 7, 1)
+    transformed_df = generic_hsbc.transform(raw_df, statement_date)
 
     expected_data = pd.DataFrame(
         [

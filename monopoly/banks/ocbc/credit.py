@@ -1,6 +1,6 @@
 import logging
 
-from monopoly.banks.bank import Bank, Pdf, Statement
+from monopoly.banks.bank import Bank, Pdf, StatementConfig
 from monopoly.config import settings
 from monopoly.constants import DATE
 
@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 class Ocbc365(Bank):
-    statement_config = Statement(
+    statement_config = StatementConfig(
         transaction_pattern=(
             r"(?P<date>\d+/\d+)\s*(?P<description>.*?)\s*(?P<amount>[\d.,]+)$"
         ),
@@ -21,7 +21,7 @@ class Ocbc365(Bank):
         super().__init__(
             account_name="365",
             bank_name="OCBC",
-            statement=Statement(**self.statement_config.__dict__),
+            statement_config=StatementConfig(**self.statement_config.__dict__),
             transform_dates=True,
             pdf=Pdf(pdf_file_path, settings.ocbc_pdf_password, (0, -2)),
             date_parser=date_parser,

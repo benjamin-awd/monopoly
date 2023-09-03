@@ -13,13 +13,18 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class Statement:
+class StatementConfig:
     statement_date_format: str
     transaction_pattern: str
     date_pattern: str
     multiline_transactions: bool = False
-    pages: list[PdfPage] = None
+
+
+@dataclass
+class Statement:
+    pages: list[PdfPage]
     columns = [DATE, DESCRIPTION, AMOUNT]
+    config: StatementConfig
 
     @property
     def transactions(self) -> list[dict]:
@@ -32,11 +37,11 @@ class Statement:
         return list(filter(None, transactions))
 
     def _process_line(self, line: str, page: list[str], idx: int) -> dict:
-        if match := re.match(self.transaction_pattern, line):
+        if match := re.match(self.config.transaction_pattern, line):
             date, description, amount = match.groups()
 
-            if self.multiline_transactions:
-                if not re.match(self.transaction_pattern, page[idx + 1]):
+            if self.config.multiline_transactions:
+                if not re.match(self.config.transaction_pattern, page[idx + 1]):
                     description = " ".join([description, page[idx + 1]])
 
             return {DATE: date, DESCRIPTION: description, AMOUNT: amount}
@@ -47,10 +52,12 @@ class Statement:
         logger.info("Extracting statement date")
         first_page = self.pages[0]
         for line in first_page:
-            if match := re.findall(self.date_pattern, line):
+            if match := re.findall(self.config.date_pattern, line):
                 statement_date = match[0]
                 logger.debug("Statement date found")
-                return datetime.strptime(statement_date, self.statement_date_format)
+                return datetime.strptime(
+                    statement_date, self.config.statement_date_format
+                )
         return None
 
     def to_dataframe(self):

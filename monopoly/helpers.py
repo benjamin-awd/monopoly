@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from datetime import datetime
 from typing import TYPE_CHECKING
 
 from google.cloud import storage
@@ -25,11 +26,11 @@ def upload_to_google_cloud_storage(
     blob.upload_from_filename(source_filename)
 
 
-def generate_name(format_type: str, bank: Bank) -> str:
+def generate_name(format_type: str, bank: Bank, statement_date: datetime) -> str:
     bank_name = bank.bank_name
     account_name = bank.account_name
-    year = bank.statement.statement_date.year
-    month = bank.statement.statement_date.month
+    year = statement_date.year
+    month = statement_date.month
 
     filename = f"{bank_name}-{account_name}-{year}-{month:02d}.csv"
 
