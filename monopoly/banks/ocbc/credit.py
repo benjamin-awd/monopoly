@@ -1,14 +1,17 @@
 import logging
 
-from monopoly.banks.bank import Bank, Pdf, StatementConfig
+from monopoly.banks.bank import BankBase, StatementConfig
 from monopoly.config import settings
 from monopoly.constants import DATE
+from monopoly.pdf import PdfConfig
 
 logger = logging.getLogger(__name__)
 
 
-class Ocbc365(Bank):
+class Ocbc365(BankBase):
     statement_config = StatementConfig(
+        bank_name="OCBC",
+        account_name="365",
         transaction_pattern=(
             r"(?P<date>\d+/\d+)\s*(?P<description>.*?)\s*(?P<amount>[\d.,]+)$"
         ),
@@ -16,16 +19,10 @@ class Ocbc365(Bank):
         statement_date_format=r"%d-%m-%Y",
     )
 
-    def __init__(self, pdf_file_path: str):
-        date_parser = self.get_date_parts
-        super().__init__(
-            account_name="365",
-            bank_name="OCBC",
-            statement_config=StatementConfig(**self.statement_config.__dict__),
-            transform_dates=True,
-            pdf=Pdf(pdf_file_path, settings.ocbc_pdf_password, (0, -2)),
-            date_parser=date_parser,
-        )
+    pdf_config = PdfConfig(password=settings.ocbc_pdf_password, page_range=(0, -2))
+
+    def __init__(self, file_path: str):
+        super().__init__(file_path, self.get_date_parts)
 
     def get_date_parts(self, row):
         row_day, row_month = map(int, row[DATE].split("/"))

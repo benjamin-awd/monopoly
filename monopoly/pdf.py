@@ -19,23 +19,24 @@ class PdfPage:
         return self.raw_text.split("\n")
 
 
+@dataclass
+class PdfConfig:
+    password: str
+    page_range: tuple = (None, None)
+    page_bbox: tuple = None
+
+
 class PdfParser:
-    def __init__(
-        self,
-        file_path: str,
-        password: str = "",
-        page_range: tuple = (None, None),
-        page_bbox: tuple = None,
-    ):
+    def __init__(self, file_path: str, config: PdfConfig):
         """Class responsible for parsing PDFs and returning raw text
 
         The page_range variable determines which pages are extracted.
         All pages are extracted by default.
         """
         self.file_path = file_path
-        self.password = password
-        self.page_range = slice(*page_range)
-        self.page_bbox: tuple = page_bbox
+        self.password = config.password
+        self.page_range = slice(*config.page_range)
+        self.page_bbox: tuple = config.page_bbox
         self.remove_vertical_text = True
 
     def open(self):

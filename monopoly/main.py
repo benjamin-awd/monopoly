@@ -24,7 +24,7 @@ def main(gmail=Gmail()):
 
         if OCBC_365 in message.subject:
             with message.save(attachment) as file:
-                ocbc = Ocbc365(pdf_file_path=file)
+                ocbc = Ocbc365(file_path=file)
 
                 statement = ocbc.extract()
                 statement_date = statement.statement_date
@@ -37,7 +37,7 @@ def main(gmail=Gmail()):
 
         if HSBC_REVOLUTION in message.subject:
             with message.save(attachment) as file:
-                hsbc = HsbcRevolution(pdf_file_path=file)
+                hsbc = HsbcRevolution(file_path=file)
 
                 statement = hsbc.extract()
                 statement_date = statement.statement_date
