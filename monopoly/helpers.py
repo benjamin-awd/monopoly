@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from google.cloud import storage
 
 if TYPE_CHECKING:
-    from monopoly.banks.bank import Bank
+    from monopoly.banks.statement import StatementConfig
 
 
 logger = logging.getLogger(__name__)
@@ -26,9 +26,11 @@ def upload_to_google_cloud_storage(
     blob.upload_from_filename(source_filename)
 
 
-def generate_name(format_type: str, bank: Bank, statement_date: datetime) -> str:
-    bank_name = bank.bank_name
-    account_name = bank.account_name
+def generate_name(
+    format_type: str, config: StatementConfig, statement_date: datetime
+) -> str:
+    bank_name = config.bank_name
+    account_name = config.account_name
     year = statement_date.year
     month = statement_date.month
 

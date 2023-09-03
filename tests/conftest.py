@@ -8,7 +8,7 @@ from monopoly.banks.bank import Bank, Statement, StatementConfig
 from monopoly.banks.hsbc.credit import HsbcRevolution
 from monopoly.banks.ocbc.credit import Ocbc365
 from monopoly.gmail import Message
-from monopoly.pdf import PdfParser
+from monopoly.pdf import PdfConfig, PdfParser
 
 
 def setup_mock_transactions(statement, transactions_data, date_specific_hsbc):
@@ -22,28 +22,23 @@ def setup_mock_transactions(statement, transactions_data, date_specific_hsbc):
 
 @pytest.fixture(scope="session")
 def ocbc():
-    ocbc = Ocbc365(pdf_file_path="tests/fixtures/ocbc/input.pdf")
+    ocbc = Ocbc365(file_path="tests/fixtures/ocbc/input.pdf")
     yield ocbc
 
 
 @pytest.fixture(scope="session")
 def hsbc():
-    hsbc = HsbcRevolution(pdf_file_path="tests/fixtures/hsbc/input.pdf")
+    hsbc = HsbcRevolution(file_path="tests/fixtures/hsbc/input.pdf")
     yield hsbc
 
 
 @pytest.fixture(scope="function")
-def bank():
+def bank(statement_config):
     with mock.patch.object(
         Statement, "statement_date", new_callable=PropertyMock
     ) as mock_statement_date:
         mock_statement_date.return_value = datetime(2023, 8, 1)
-        bank = Bank(
-            account_name="Savings",
-            bank_name="Example Bank",
-            statement_config=None,
-            pdf=None,
-        )
+        bank = Bank(statement_config=statement_config, pdf_config=None, file_path="foo")
         yield bank
 
 
@@ -59,18 +54,24 @@ def attachment():
 
 @pytest.fixture(scope="session")
 def parser():
-    parser = PdfParser(None)
-
+    parser = PdfParser(None, config=PdfConfig(None))
     yield parser
 
 
 @pytest.fixture(scope="function")
-def statement():
+def statement(statement_config):
     mock_page = mock.Mock()
+    statement = Statement(pages=[mock_page], config=statement_config)
+    yield statement
+
+
+@pytest.fixture(scope="session")
+def statement_config():
     statement_config = StatementConfig(
+        account_name="Savings",
+        bank_name="Example Bank",
         statement_date_format=None,
         transaction_pattern=None,
         date_pattern=None,
     )
-    statement = Statement(pages=[mock_page], config=statement_config)
-    yield statement
+    yield statement_config
