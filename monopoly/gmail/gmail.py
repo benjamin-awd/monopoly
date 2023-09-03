@@ -37,7 +37,7 @@ class Gmail:
             sys.exit(0)
 
         if latest:
-            emails = emails[0]
+            emails = [emails[0]]
 
         messages = []
         for email in emails:
