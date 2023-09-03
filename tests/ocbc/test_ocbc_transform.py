@@ -8,7 +8,7 @@ from monopoly.banks.ocbc.credit import Ocbc365
 from monopoly.constants import AMOUNT, DATE, DESCRIPTION
 
 
-def test_ocbc_transform_cross_year(generic_ocbc: Ocbc365):
+def test_ocbc_transform_cross_year(ocbc: Ocbc365):
     raw_df = pd.DataFrame(
         [
             {
@@ -24,7 +24,7 @@ def test_ocbc_transform_cross_year(generic_ocbc: Ocbc365):
         ]
     )
     statement_date = datetime(2024, 1, 1)
-    transformed_df = generic_ocbc.transform(raw_df, statement_date)
+    transformed_df = ocbc.transform(raw_df, statement_date)
 
     expected_data = pd.DataFrame(
         [
@@ -44,7 +44,7 @@ def test_ocbc_transform_cross_year(generic_ocbc: Ocbc365):
     assert_frame_equal(transformed_df, expected_data)
 
 
-def test_ocbc_transform_within_year(generic_ocbc: Ocbc365):
+def test_ocbc_transform_within_year(ocbc: Ocbc365):
     raw_df = pd.DataFrame(
         [
             {
@@ -60,7 +60,7 @@ def test_ocbc_transform_within_year(generic_ocbc: Ocbc365):
         ]
     )
     statement_date = datetime(2023, 7, 1)
-    transformed_df = generic_ocbc.transform(raw_df, statement_date)
+    transformed_df = ocbc.transform(raw_df, statement_date)
 
     expected_data = pd.DataFrame(
         [

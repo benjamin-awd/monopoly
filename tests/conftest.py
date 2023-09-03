@@ -20,35 +20,14 @@ def setup_mock_transactions(statement, transactions_data, date_specific_hsbc):
     return transformed_df
 
 
-@pytest.fixture(scope="function")
-def date_specific_ocbc(statement, statement_date: datetime):
-    with mock.patch.object(
-        Statement, "statement_date", new_callable=PropertyMock
-    ) as mock_statement_date:
-        mock_statement_date.return_value = statement_date
-        ocbc = Ocbc365(pdf_file_path="tests/fixtures/ocbc/input.pdf")
-        ocbc.statement = statement
-        yield ocbc
-
-
-@pytest.fixture(scope="function")
-def date_specific_hsbc(statement_date: datetime):
-    with mock.patch.object(
-        Statement, "statement_date", new_callable=PropertyMock
-    ) as mock_statement_date:
-        mock_statement_date.return_value = statement_date
-        hsbc = HsbcRevolution(pdf_file_path="tests/fixtures/hsbc/input.pdf")
-        yield hsbc
-
-
 @pytest.fixture(scope="session")
-def generic_ocbc():
+def ocbc():
     ocbc = Ocbc365(pdf_file_path="tests/fixtures/ocbc/input.pdf")
     yield ocbc
 
 
 @pytest.fixture(scope="session")
-def generic_hsbc():
+def hsbc():
     hsbc = HsbcRevolution(pdf_file_path="tests/fixtures/hsbc/input.pdf")
     yield hsbc
 
