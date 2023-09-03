@@ -45,6 +45,7 @@ class PdfParser:
         return [self._process_page(page) for page in document]
 
     def _process_page(self, page: fitz.Page) -> list[str]:
+        logger.info("Processing: %s", page)
         if self.page_bbox:
             logger.debug("Cropping page")
             page.set_cropbox(self.page_bbox)
