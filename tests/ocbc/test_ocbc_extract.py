@@ -4,8 +4,8 @@ from pandas.testing import assert_frame_equal
 from monopoly.banks.ocbc.credit import Ocbc365
 
 
-def test_ocbc_extract_unprotected_pdf(generic_ocbc: Ocbc365):
-    statement = generic_ocbc.extract()
+def test_ocbc_extract_unprotected_pdf(ocbc: Ocbc365):
+    statement = ocbc.extract()
     raw_df = statement.to_dataframe()
 
     expected_df = pd.read_csv("tests/fixtures/ocbc/expected.csv", dtype=object)

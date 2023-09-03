@@ -8,7 +8,7 @@ from monopoly.banks.hsbc.credit import HsbcRevolution
 from monopoly.constants import AMOUNT, DATE, DESCRIPTION
 
 
-def test_hsbc_transform_cross_year(generic_hsbc: HsbcRevolution):
+def test_hsbc_transform_cross_year(hsbc: HsbcRevolution):
     raw_df = pd.DataFrame(
         [
             {
@@ -24,7 +24,7 @@ def test_hsbc_transform_cross_year(generic_hsbc: HsbcRevolution):
         ]
     )
     statement_date = datetime(2024, 1, 1)
-    transformed_df = generic_hsbc.transform(raw_df, statement_date)
+    transformed_df = hsbc.transform(raw_df, statement_date)
 
     expected_data = pd.DataFrame(
         [
@@ -44,7 +44,7 @@ def test_hsbc_transform_cross_year(generic_hsbc: HsbcRevolution):
     assert_frame_equal(transformed_df, expected_data)
 
 
-def test_hsbc_transform_within_year(generic_hsbc: HsbcRevolution):
+def test_hsbc_transform_within_year(hsbc: HsbcRevolution):
     raw_df = pd.DataFrame(
         [
             {
@@ -61,7 +61,7 @@ def test_hsbc_transform_within_year(generic_hsbc: HsbcRevolution):
     )
 
     statement_date = datetime(2023, 7, 1)
-    transformed_df = generic_hsbc.transform(raw_df, statement_date)
+    transformed_df = hsbc.transform(raw_df, statement_date)
 
     expected_data = pd.DataFrame(
         [

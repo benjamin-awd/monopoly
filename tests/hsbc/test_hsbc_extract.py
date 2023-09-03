@@ -4,8 +4,8 @@ from pandas.testing import assert_frame_equal
 from monopoly.banks.hsbc.credit import HsbcRevolution
 
 
-def test_hsbc_extract_unprotected_pdf(generic_hsbc: HsbcRevolution):
-    raw_df = generic_hsbc.extract().to_dataframe()
+def test_hsbc_extract_unprotected_pdf(hsbc: HsbcRevolution):
+    raw_df = hsbc.extract().to_dataframe()
     expected_df = pd.read_csv("tests/fixtures/hsbc/expected.csv", dtype=object)
 
     assert_frame_equal(raw_df, expected_df)
