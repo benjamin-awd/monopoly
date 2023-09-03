@@ -1,10 +1,22 @@
 import logging
+from dataclasses import dataclass
 
 import fitz
 import pytesseract
 from PIL import Image
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class PdfPage:
+    pix_map: fitz.Pixmap
+    raw_text: str
+    image: Image
+
+    @property
+    def lines(self):
+        return self.raw_text.split("\n")
 
 
 class PdfParser:
@@ -35,7 +47,7 @@ class PdfParser:
             raise ValueError("Wrong password - document is encrypted")
         return document
 
-    def get_pages(self) -> list[str]:
+    def get_pages(self) -> list[PdfPage]:
         logger.info("Extracting text from PDF")
         document: fitz.Document = self.open()
 
@@ -62,8 +74,8 @@ class PdfParser:
 
         logger.debug("Extracting string from image")
         text = pytesseract.image_to_string(image, config="--psm 6")
-        lines = text.split("\n")
-        return lines
+
+        return PdfPage(pix_map=pix, raw_text=text, image=image)
 
     @staticmethod
     def _remove_vertical_text(page: fitz.Page):

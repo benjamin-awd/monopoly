@@ -4,10 +4,10 @@ from dataclasses import dataclass
 from datetime import datetime
 from functools import cached_property
 
-import fitz
 from pandas import DataFrame
 
 from monopoly.constants import AMOUNT, DATE, DESCRIPTION
+from monopoly.pdf import PdfPage
 
 logger = logging.getLogger(__name__)
 
@@ -18,20 +18,20 @@ class Statement:
     transaction_pattern: str
     date_pattern: str
     multiline_transactions: bool = False
-    pages: list[fitz.Page] = None
+    pages: list[PdfPage] = None
     columns = [DATE, DESCRIPTION, AMOUNT]
 
     @property
     def transactions(self) -> list[dict]:
         transactions = []
         for page in self.pages:
-            for i, line in enumerate(page):
-                item = self._process_line(line, page, idx=i)
+            for i, line in enumerate(page.lines):
+                item = self._process_line(line, page.lines, idx=i)
                 transactions.append(item)
 
         return list(filter(None, transactions))
 
-    def _process_line(self, line: str, page: fitz.Page, idx: int) -> dict:
+    def _process_line(self, line: str, page: list[str], idx: int) -> dict:
         if match := re.match(self.transaction_pattern, line):
             date, description, amount = match.groups()
 
