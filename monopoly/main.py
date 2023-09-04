@@ -9,16 +9,14 @@ from monopoly.gmail import Gmail, Message
 logger = logging.getLogger(__name__)
 
 
-def main(gmail=Gmail()):
+def main():
     """
     Entrypoint for Cloud Run function that extracts bank statement,
     transforms it, then loads it to disk or cloud
-
-    If an error occurs, the statement is removed from disk
     """
     logger.info("Beginning bank statement extraction")
 
-    messages: list[Message] = gmail.get_emails()
+    messages: list[Message] = Gmail().get_emails()
 
     bank_classes = {
         OCBC_365: Ocbc365,
@@ -32,6 +30,8 @@ def main(gmail=Gmail()):
 def process_bank_statement(message: Message, bank_classes: dict):
     """
     Process a bank statement using the provided bank class.
+
+    If an error occurs, the statement is removed from disk
     """
     attachment = message.get_attachment()
     subject = message.subject
