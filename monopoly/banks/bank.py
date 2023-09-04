@@ -31,7 +31,7 @@ class Bank:
 
     def transform(self, df: DataFrame, statement_date: datetime) -> DataFrame:
         logger.info("Running transformation functions on DataFrame")
-        df[AMOUNT] = df[AMOUNT].astype(float)
+        df[AMOUNT] = df[AMOUNT].str.replace(",", "").astype(float)
 
         if self.transform_dates:
             df = self._transform_date_to_iso(df, statement_date)

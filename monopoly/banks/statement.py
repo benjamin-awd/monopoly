@@ -53,7 +53,7 @@ class Statement:
     def statement_date(self):
         logger.info("Extracting statement date")
         first_page = self.pages[0]
-        for line in first_page:
+        for line in first_page.lines:
             if match := re.findall(self.config.date_pattern, line):
                 statement_date = match[0]
                 logger.debug("Statement date found")
