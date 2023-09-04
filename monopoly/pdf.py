@@ -21,7 +21,7 @@ class PdfPage:
 
 @dataclass
 class PdfConfig:
-    password: str
+    password: str = None
     page_range: tuple = (None, None)
     page_bbox: tuple = None
 
