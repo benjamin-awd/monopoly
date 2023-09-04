@@ -59,7 +59,8 @@ def parser():
 
 
 @pytest.fixture(scope="function")
-def statement(statement_config):
+def statement(monkeypatch, statement_config):
+    monkeypatch.setattr("monopoly.banks.statement.Statement.df", None)
     mock_page = mock.Mock()
     statement = Statement(pages=[mock_page], config=statement_config)
     yield statement
