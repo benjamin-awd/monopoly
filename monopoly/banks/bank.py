@@ -31,6 +31,9 @@ class Bank:
         if not statement.transactions:
             raise ValueError("No transactions found - statement extraction failed")
 
+        if not statement.statement_date:
+            raise ValueError("No statement date found")
+
         return statement
 
     def transform(self, statement: Statement) -> DataFrame:
