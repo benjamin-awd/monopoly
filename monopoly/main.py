@@ -1,5 +1,6 @@
 import logging
 
+from monopoly.banks.bank import Bank
 from monopoly.banks.hsbc.credit import HsbcRevolution
 from monopoly.banks.ocbc.credit import Ocbc365
 from monopoly.constants import HSBC_REVOLUTION, OCBC_365
@@ -19,26 +20,29 @@ def main(gmail=Gmail()):
 
     messages: list[Message] = gmail.get_emails()
 
+    bank_classes = {
+        OCBC_365: Ocbc365,
+        HSBC_REVOLUTION: HsbcRevolution,
+    }
+
     for message in messages:
-        attachment = message.get_attachment()
+        process_bank_statement(message, bank_classes)
 
-        if OCBC_365 in message.subject:
+
+def process_bank_statement(message: Message, bank_classes: dict):
+    """
+    Process a bank statement using the provided bank class.
+    """
+    attachment = message.get_attachment()
+    subject = message.subject
+
+    for bank_enum, bank_class in bank_classes.items():
+        if bank_enum in subject:
             with message.save(attachment) as file:
-                ocbc = Ocbc365(file_path=file)
-
-                statement = ocbc.extract()
-                transformed_df = ocbc.transform(statement)
-                ocbc.load(transformed_df, statement, upload_to_cloud=True)
-
-                message.mark_as_read()
-
-        if HSBC_REVOLUTION in message.subject:
-            with message.save(attachment) as file:
-                hsbc = HsbcRevolution(file_path=file)
-
-                statement = hsbc.extract()
-                transformed_df = hsbc.transform(statement)
-                hsbc.load(transformed_df, statement, upload_to_cloud=True)
+                bank: Bank = bank_class(file_path=file)
+                statement = bank.extract()
+                transformed_df = bank.transform(statement)
+                bank.load(transformed_df, statement, upload_to_cloud=True)
 
                 message.mark_as_read()
 
