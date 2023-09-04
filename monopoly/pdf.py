@@ -15,8 +15,8 @@ class PdfPage:
     image: Image
 
     @property
-    def lines(self):
-        return self.raw_text.split("\n")
+    def lines(self) -> list:
+        return list(filter(None, self.raw_text.split("\n")))
 
 
 @dataclass
