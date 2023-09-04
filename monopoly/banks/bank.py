@@ -27,6 +27,10 @@ class Bank:
         parser = PdfParser(self.file_path, self.pdf_config)
         pages = parser.get_pages()
         statement = Statement(pages, self.statement_config)
+
+        if not statement.transactions:
+            raise ValueError("No transactions found - statement extraction failed")
+
         return statement
 
     def transform(self, statement: Statement) -> DataFrame:
