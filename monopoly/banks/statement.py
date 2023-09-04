@@ -62,5 +62,6 @@ class Statement:
                 )
         return None
 
-    def to_dataframe(self):
+    @cached_property
+    def df(self) -> DataFrame:
         return DataFrame(self.transactions, columns=self.columns)

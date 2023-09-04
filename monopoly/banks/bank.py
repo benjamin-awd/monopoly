@@ -29,8 +29,11 @@ class Bank:
         statement = Statement(pages, self.statement_config)
         return statement
 
-    def transform(self, df: DataFrame, statement_date: datetime) -> DataFrame:
+    def transform(self, statement: Statement) -> DataFrame:
         logger.info("Running transformation functions on DataFrame")
+        df = statement.df
+        statement_date = statement.statement_date
+
         df[AMOUNT] = df[AMOUNT].str.replace(",", "").astype(float)
 
         if self.transform_dates:
@@ -65,9 +68,13 @@ class Bank:
         return file_path
 
     def load(
-        self, df: DataFrame, statement_date: datetime, upload_to_cloud: bool = False
+        self,
+        transformed_df: DataFrame,
+        statement: Statement,
+        upload_to_cloud: bool = False,
     ):
-        csv_file_path = self._write_to_csv(df, statement_date)
+        statement_date = statement.statement_date
+        csv_file_path = self._write_to_csv(transformed_df, statement_date)
 
         if upload_to_cloud:
             blob_name = generate_name("blob", self.statement_config, statement_date)

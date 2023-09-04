@@ -5,8 +5,7 @@ from monopoly.banks.ocbc.credit import Ocbc365
 
 
 def test_ocbc_extract_unprotected_pdf(ocbc: Ocbc365):
-    statement = ocbc.extract()
-    raw_df = statement.to_dataframe()
+    raw_df = ocbc.extract().df
 
     expected_df = pd.read_csv("tests/fixtures/ocbc/expected.csv", dtype=object)
 

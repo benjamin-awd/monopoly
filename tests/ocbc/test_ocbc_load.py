@@ -5,10 +5,11 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 
 from monopoly.banks.ocbc.credit import Ocbc365
+from monopoly.banks.statement import Statement
 from monopoly.constants import AMOUNT, DATE, DESCRIPTION, ROOT_DIR
 
 
-def test_ocbc_write_to_local_csv(ocbc: Ocbc365):
+def test_ocbc_write_to_local_csv(ocbc: Ocbc365, statement: Statement):
     transformed_df = pd.DataFrame(
         [
             {
@@ -23,8 +24,8 @@ def test_ocbc_write_to_local_csv(ocbc: Ocbc365):
             },
         ]
     )
-    statement_date = datetime(2024, 1, 1)
-    ocbc.load(transformed_df, statement_date)
+    statement.statement_date = datetime(2024, 1, 1)
+    ocbc.load(transformed_df, statement)
 
     local_df = pd.read_csv(os.path.join(ROOT_DIR, "output", "OCBC-365-2024-01.csv"))
     assert_frame_equal(transformed_df, local_df)
