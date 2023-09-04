@@ -1,10 +1,10 @@
 import os
 
-from monopoly.gmail import Message
+from monopoly.gmail import Message, MessageAttachment
 
 
 def test_temporary_file_create_and_cleanup(
-    message: Message, attachment: Message.Attachment
+    message: Message, attachment: MessageAttachment
 ):
     """
     Test that file exists during context manager, and is
@@ -16,7 +16,7 @@ def test_temporary_file_create_and_cleanup(
     assert not os.path.exists(file_path)
 
 
-def test_save_writes_correct_data(message: Message, attachment: Message.Attachment):
+def test_save_writes_correct_data(message: Message, attachment: MessageAttachment):
     """
     Test that correct data is written to file
     """
@@ -26,7 +26,7 @@ def test_save_writes_correct_data(message: Message, attachment: Message.Attachme
             assert file_contents == attachment.file_byte_string
 
 
-def test_save_exception_cleanup(message: Message, attachment: Message.Attachment):
+def test_save_exception_cleanup(message: Message, attachment: MessageAttachment):
     """
     Test that file is deleted if an exception occurs
     """

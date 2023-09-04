@@ -1,1 +1,1 @@
-from .gmail import Gmail, Message  # noqa: F401
+from .gmail import Gmail, Message, MessageAttachment, MessagePart  # noqa: F401
