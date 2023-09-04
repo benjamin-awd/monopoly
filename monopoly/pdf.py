@@ -27,13 +27,17 @@ class PdfConfig:
 
 
 class PdfParser:
-    def __init__(self, file_path: str, config: PdfConfig):
+    def __init__(self, file_path: str, config: PdfConfig = None):
         """Class responsible for parsing PDFs and returning raw text
 
         The page_range variable determines which pages are extracted.
         All pages are extracted by default.
         """
         self.file_path = file_path
+
+        if config is None:
+            config = PdfConfig()
+
         self.password = config.password
         self.page_range = slice(*config.page_range)
         self.page_bbox: tuple = config.page_bbox
