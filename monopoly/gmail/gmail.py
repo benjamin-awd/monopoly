@@ -11,7 +11,11 @@ from typing import TYPE_CHECKING
 
 from monopoly.config import settings
 from monopoly.gmail.credentials import get_gmail_service
-from monopoly.gmail.exceptions import MultipleAttachmentsError, UntrustedUserError
+from monopoly.gmail.exceptions import (
+    AttachmentNotFoundError,
+    MultipleAttachmentsError,
+    UntrustedUserError,
+)
 
 if TYPE_CHECKING:
     from googleapiclient._apis.gmail.v1.resources import GmailResource
@@ -66,11 +70,12 @@ class Gmail:
         return data
 
 
-class Message:
+class Message(Gmail):
     def __init__(self, data: dict, gmail_service: GmailResource):
         self.message_id: str = data.get("id")
         self.payload: dict = data.get("payload")
         self.gmail_service = gmail_service
+        super().__init__(gmail_service)
 
     def get_attachment(self):
         logger.info("Extracting attachment '%s'", self.attachment_part.filename)
@@ -124,11 +129,22 @@ class Message:
 
     @property
     def parts(self) -> list[Message.Part]:
-        return [Message.Part(part) for part in self.payload.get("parts")]
+        """Return parts and nested parts"""
+        parts = list(self.payload.get("parts"))
+        nested_parts = [
+            nested_part
+            for part in parts
+            if part.get("parts")
+            for nested_part in part.get("parts")
+        ]
+        return [Message.Part(part) for part in parts + nested_parts]
 
     @property
     def attachment_part(self) -> Part:
         attachments = [part for part in self.parts if part.filename]
+        if not attachments:
+            raise AttachmentNotFoundError
+
         if len(attachments) > 1:
             raise MultipleAttachmentsError
 
@@ -149,6 +165,7 @@ class Message:
     @dataclass
     class Part:
         def __init__(self, data: dict):
+            self._data = data
             self.part_id = data.get("partId")
             self.filename: str = data.get("filename")
             self.body: dict = data.get("body")
@@ -157,8 +174,14 @@ class Message:
         def attachment_id(self):
             return self.body.get("attachmentId")
 
+        def __repr__(self):
+            return str(self._data)
+
     @dataclass
     class Attachment:
         def __init__(self, filename, file_byte_string):
             self.filename: str = filename
             self.file_byte_string: bytes = file_byte_string
+
+        def __repr__(self):
+            return str(self.filename)
