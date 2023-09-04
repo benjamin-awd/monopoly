@@ -28,7 +28,7 @@ class Statement:
     columns = [DATE, DESCRIPTION, AMOUNT]
     config: StatementConfig
 
-    @property
+    @cached_property
     def transactions(self) -> list[dict]:
         transactions = []
         for page in self.pages:
@@ -43,8 +43,11 @@ class Statement:
             date, description, amount = match.groups()
 
             if self.config.multiline_transactions:
-                if not re.match(self.config.transaction_pattern, page[idx + 1]):
-                    description = " ".join([description, page[idx + 1]])
+                try:
+                    if not re.findall(self.config.transaction_pattern, page[idx + 1]):
+                        description = " ".join([description, page[idx + 1]])
+                except IndexError as err:
+                    logger.debug(err)
 
             return {DATE: date, DESCRIPTION: description, AMOUNT: amount}
         return None
