@@ -7,7 +7,7 @@ import pytest
 from monopoly.banks.bank import Bank, Statement, StatementConfig
 from monopoly.banks.hsbc.credit import HsbcRevolution
 from monopoly.banks.ocbc.credit import Ocbc365
-from monopoly.gmail import Message
+from monopoly.gmail import Message, MessageAttachment
 from monopoly.pdf import PdfConfig, PdfParser
 
 
@@ -49,7 +49,7 @@ def message():
 
 @pytest.fixture(scope="session")
 def attachment():
-    return Message.Attachment(filename="test.pdf", file_byte_string=b"Test data")
+    return MessageAttachment(filename="test.pdf", file_byte_string=b"Test data")
 
 
 @pytest.fixture(scope="session")

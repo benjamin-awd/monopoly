@@ -86,11 +86,11 @@ class Message(Gmail):
         file_byte_string = self.get_attachment_byte_string(
             self.message_id, self.attachment_part.attachment_id
         )
-        return Message.Attachment(self.attachment_part.filename, file_byte_string)
+        return MessageAttachment(self.attachment_part.filename, file_byte_string)
 
     @staticmethod
     @contextlib.contextmanager
-    def save(attachment: Attachment) -> TemporaryDirectory:
+    def save(attachment: MessageAttachment) -> TemporaryDirectory:
         """Saves attachment to a temporary directory, and marks
         the message as read & processed
         """
@@ -128,7 +128,7 @@ class Message(Gmail):
         return None
 
     @property
-    def parts(self) -> list[Message.Part]:
+    def parts(self) -> list[MessagePart]:
         """Return parts and nested parts"""
         parts = list(self.payload.get("parts"))
         nested_parts = [
@@ -137,10 +137,10 @@ class Message(Gmail):
             if part.get("parts")
             for nested_part in part.get("parts")
         ]
-        return [Message.Part(part) for part in parts + nested_parts]
+        return [MessagePart(part) for part in parts + nested_parts]
 
     @property
-    def attachment_part(self) -> Part:
+    def attachment_part(self) -> MessagePart:
         attachments = [part for part in self.parts if part.filename]
         if not attachments:
             raise AttachmentNotFoundError
@@ -162,26 +162,28 @@ class Message(Gmail):
         logger.info("No trusted user found")
         return False
 
-    @dataclass
-    class Part:
-        def __init__(self, data: dict):
-            self._data = data
-            self.part_id = data.get("partId")
-            self.filename: str = data.get("filename")
-            self.body: dict = data.get("body")
 
-        @property
-        def attachment_id(self):
-            return self.body.get("attachmentId")
+@dataclass
+class MessagePart:
+    def __init__(self, data: dict):
+        self._data = data
+        self.part_id = data.get("partId")
+        self.filename: str = data.get("filename")
+        self.body: dict = data.get("body")
 
-        def __repr__(self):
-            return str(self._data)
+    @property
+    def attachment_id(self):
+        return self.body.get("attachmentId")
 
-    @dataclass
-    class Attachment:
-        def __init__(self, filename, file_byte_string):
-            self.filename: str = filename
-            self.file_byte_string: bytes = file_byte_string
+    def __repr__(self):
+        return str(self._data)
 
-        def __repr__(self):
-            return str(self.filename)
+
+@dataclass
+class MessageAttachment:
+    def __init__(self, filename, file_byte_string):
+        self.filename: str = filename
+        self.file_byte_string: bytes = file_byte_string
+
+    def __repr__(self):
+        return str(self.filename)
