@@ -11,15 +11,6 @@ from monopoly.gmail import Message, MessageAttachment
 from monopoly.pdf import PdfConfig, PdfParser
 
 
-def setup_mock_transactions(statement, transactions_data, date_specific_hsbc):
-    with mock.patch.object(
-        Statement, "transactions", new_callable=PropertyMock
-    ) as mock_transactions:
-        mock_transactions.return_value = transactions_data
-        transformed_df = date_specific_hsbc.transform(statement)
-    return transformed_df
-
-
 @pytest.fixture(scope="session")
 def ocbc():
     ocbc = Ocbc365(file_path="tests/fixtures/ocbc/input.pdf")
