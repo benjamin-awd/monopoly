@@ -9,10 +9,10 @@ from monopoly.pdf import PdfConfig
 logger = logging.getLogger(__name__)
 
 
-class HsbcRevolution(BankBase):
+class Hsbc(BankBase):
     statement_config = StatementConfig(
         bank_name="HSBC",
-        account_name="Revolution",
+        account_type="Credit",
         transaction_pattern=(
             r"\d{2}\s\w{3}\s*"
             r"(?P<date>\d{2}\s\w{3})\s*"

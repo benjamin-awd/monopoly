@@ -5,21 +5,21 @@ from unittest.mock import PropertyMock
 import pytest
 
 from monopoly.banks.bank import Bank, Statement, StatementConfig
-from monopoly.banks.hsbc.credit import HsbcRevolution
-from monopoly.banks.ocbc.credit import Ocbc365
+from monopoly.banks.hsbc.credit import Hsbc
+from monopoly.banks.ocbc.credit import Ocbc
 from monopoly.gmail import Message, MessageAttachment
 from monopoly.pdf import PdfConfig, PdfParser
 
 
 @pytest.fixture(scope="session")
 def ocbc():
-    ocbc = Ocbc365(file_path="tests/fixtures/ocbc/input.pdf")
+    ocbc = Ocbc(file_path="tests/fixtures/ocbc/input.pdf")
     yield ocbc
 
 
 @pytest.fixture(scope="session")
 def hsbc():
-    hsbc = HsbcRevolution(file_path="tests/fixtures/hsbc/input.pdf")
+    hsbc = Hsbc(file_path="tests/fixtures/hsbc/input.pdf")
     yield hsbc
 
 
@@ -60,7 +60,7 @@ def statement(monkeypatch, statement_config):
 @pytest.fixture(scope="session")
 def statement_config():
     statement_config = StatementConfig(
-        account_name="Savings",
+        account_type="Savings",
         bank_name="Example Bank",
         statement_date_format=None,
         transaction_pattern=None,

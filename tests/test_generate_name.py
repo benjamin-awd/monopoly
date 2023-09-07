@@ -8,7 +8,7 @@ def test_generate_blob_name(bank: Bank):
     statement_date = datetime(2023, 8, 1)
     expected_blob_name = (
         "bank_name=Example Bank/"
-        "account_name=Savings/"
+        "account_type=Savings/"
         "year=2023/"
         "month=8/"
         "Example Bank-Savings-2023-08.csv"

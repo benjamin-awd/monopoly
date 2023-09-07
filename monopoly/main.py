@@ -1,9 +1,10 @@
 import logging
+import re
 
 from monopoly.banks.bank import Bank
-from monopoly.banks.hsbc.credit import HsbcRevolution
-from monopoly.banks.ocbc.credit import Ocbc365
-from monopoly.constants import HSBC_REVOLUTION, OCBC_365
+from monopoly.banks.hsbc.credit import Hsbc
+from monopoly.banks.ocbc.credit import Ocbc
+from monopoly.constants import HSBC, OCBC
 from monopoly.gmail import Gmail, Message
 
 logger = logging.getLogger(__name__)
@@ -18,16 +19,13 @@ def main():
 
     messages: list[Message] = Gmail().get_emails()
 
-    bank_classes = {
-        OCBC_365: Ocbc365,
-        HSBC_REVOLUTION: HsbcRevolution,
-    }
+    banks = {OCBC: Ocbc, HSBC: Hsbc}
 
     for message in messages:
-        process_bank_statement(message, bank_classes)
+        process_bank_statement(message, banks)
 
 
-def process_bank_statement(message: Message, bank_classes: dict):
+def process_bank_statement(message: Message, banks: dict):
     """
     Process a bank statement using the provided bank class.
 
@@ -36,8 +34,8 @@ def process_bank_statement(message: Message, bank_classes: dict):
     attachment = message.get_attachment()
     subject = message.subject
 
-    for bank_enum, bank_class in bank_classes.items():
-        if bank_enum in subject:
+    for bank_regex_pattern, bank_class in banks.items():
+        if re.match(bank_regex_pattern, subject):
             with message.save(attachment) as file:
                 bank: Bank = bank_class(file_path=file)
                 statement = bank.extract()

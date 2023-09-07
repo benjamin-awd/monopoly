@@ -8,10 +8,10 @@ from monopoly.pdf import PdfConfig
 logger = logging.getLogger(__name__)
 
 
-class Ocbc365(BankBase):
+class Ocbc(BankBase):
     statement_config = StatementConfig(
         bank_name="OCBC",
-        account_name="365",
+        account_type="Credit",
         transaction_pattern=(
             r"(?P<date>\d+/\d+)\s*(?P<description>.*?)\s*(?P<amount>[\d.,]+)$"
         ),

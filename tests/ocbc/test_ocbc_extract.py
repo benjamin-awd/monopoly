@@ -1,10 +1,10 @@
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
-from monopoly.banks.ocbc.credit import Ocbc365
+from monopoly.banks.ocbc.credit import Ocbc
 
 
-def test_ocbc_extract_unprotected_pdf(ocbc: Ocbc365):
+def test_ocbc_extract_unprotected_pdf(ocbc: Ocbc):
     raw_df = ocbc.extract().df
 
     expected_df = pd.read_csv("tests/fixtures/ocbc/expected.csv", dtype=object)
