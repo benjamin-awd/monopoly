@@ -1,7 +1,7 @@
 from monopoly.gmail import Message
 
 
-def test_message_with_parts():
+def test_message_with_parts(message: Message):
     data = {
         "payload": {
             "parts": [
@@ -14,7 +14,7 @@ def test_message_with_parts():
             ]
         }
     }
-    message = Message(data, None)
+    message.payload = data["payload"]
     parts = message.parts
 
     assert len(parts) == 2
@@ -29,7 +29,7 @@ def test_message_with_parts():
     assert part2.attachment_id == "456"
 
 
-def test_message_with_nested_parts():
+def test_message_with_nested_parts(message: Message):
     data = {
         "payload": {
             "parts": [
@@ -52,7 +52,7 @@ def test_message_with_nested_parts():
             ]
         }
     }
-    message = Message(data, None)
+    message.payload = data["payload"]
     parts = message.parts
 
     assert len(parts) == 3
