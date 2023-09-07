@@ -91,9 +91,7 @@ class Message(Gmail):
     @staticmethod
     @contextlib.contextmanager
     def save(attachment: MessageAttachment) -> TemporaryDirectory:
-        """Saves attachment to a temporary directory, and marks
-        the message as read & processed
-        """
+        """Saves attachment to a temporary directory"""
         temp_dir = TemporaryDirectory()
         temp_file_path = os.path.join(temp_dir.name, attachment.filename)
 
