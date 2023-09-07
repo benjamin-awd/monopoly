@@ -1,10 +1,10 @@
-from monopoly.banks.hsbc.credit import HsbcRevolution
-from monopoly.banks.ocbc.credit import Ocbc365
+from monopoly.banks.hsbc.credit import Hsbc
+from monopoly.banks.ocbc.credit import Ocbc
 from monopoly.banks.statement import Statement
 from monopoly.pdf import PdfPage
 
 
-def test_hsbc_statement_date_extraction(hsbc: HsbcRevolution, statement: Statement):
+def test_hsbc_statement_date_extraction(hsbc: Hsbc, statement: Statement):
     page_content = "Statement From 21 JUL 2023 to 20 AUG 2023"
 
     statement.config.date_pattern = hsbc.statement_config.date_pattern
@@ -21,7 +21,7 @@ def test_hsbc_statement_date_extraction(hsbc: HsbcRevolution, statement: Stateme
     )
 
 
-def test_ocbc_statement_date_extraction(ocbc: Ocbc365, statement: Statement):
+def test_ocbc_statement_date_extraction(ocbc: Ocbc, statement: Statement):
     page_content = "01-08-2023 24-08-2023 S$12,345 S$12,345 S$50.00"
 
     statement.config.date_pattern = ocbc.statement_config.date_pattern

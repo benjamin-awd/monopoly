@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class StatementConfig:
     bank_name: str
-    account_name: str
+    account_type: str
     statement_date_format: str
     transaction_pattern: str
     date_pattern: str

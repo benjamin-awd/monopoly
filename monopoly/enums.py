@@ -7,6 +7,6 @@ class BankStatement(str, Enum):
     AMOUNT = "amount"
 
 
-class EmailSubject(str, Enum):
-    OCBC_365 = "OCBC Bank: Your Credit Card e-Statement"
-    HSBC_REVOLUTION = "Your HSBC VISA REVOLUTION eStatement"
+class EmailSubjectRegex(str, Enum):
+    OCBC = r"OCBC Bank: Your Credit Card e-Statement"
+    HSBC = r"Your.HSBC.*eStatement"
