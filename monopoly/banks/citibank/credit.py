@@ -11,9 +11,9 @@ logger = logging.getLogger(__name__)
 class Citibank(BankBase):
     statement_config = StatementConfig(
         bank_name="Citibank",
-        account_name="CashbackPlus",
+        account_type="Credit",
         transaction_pattern=(
-            r"(?P<date>\b\d{2}\s\w{3})\s*(?P<description>.*?)\s*(?P<amount>[\d.,]+)$"
+            r"(?P<date>\b\d{2}\s\w{3}\b)\s*(?P<description>.*?)\s*(?P<amount>[\d.,]+)$"
         ),
         date_pattern=r"Statement\sDate\s(.*)$",
         statement_date_format=r"%B %d, %Y",

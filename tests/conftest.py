@@ -5,10 +5,17 @@ from unittest.mock import PropertyMock
 import pytest
 
 from monopoly.banks.bank import Bank, Statement, StatementConfig
+from monopoly.banks.citibank.credit import Citibank
 from monopoly.banks.hsbc.credit import Hsbc
 from monopoly.banks.ocbc.credit import Ocbc
 from monopoly.gmail import Message, MessageAttachment
 from monopoly.pdf import PdfConfig, PdfParser
+
+
+@pytest.fixture(scope="session")
+def citibank():
+    citibank = Citibank(file_path="tests/fixtures/citibank/input.pdf")
+    yield citibank
 
 
 @pytest.fixture(scope="session")
