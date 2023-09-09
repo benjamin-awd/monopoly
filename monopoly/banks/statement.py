@@ -39,8 +39,8 @@ class Statement:
         return list(filter(None, transactions))
 
     def _process_line(self, line: str, page: list[str], idx: int) -> dict:
-        if match := re.match(self.config.transaction_pattern, line):
-            date, description, amount = match.groups()
+        if match := re.findall(self.config.transaction_pattern, line):
+            date, description, amount = match[0]
 
             if self.config.multiline_transactions:
                 try:

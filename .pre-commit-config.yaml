@@ -42,4 +42,5 @@ repos:
         name: test
         entry: poetry run task test
         language: system
+        pass_filenames: false
         types: [python]
