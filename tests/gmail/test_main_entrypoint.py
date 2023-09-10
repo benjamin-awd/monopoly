@@ -2,7 +2,7 @@ from unittest.mock import Mock, PropertyMock, patch
 
 import pytest
 
-from monopoly.constants import HSBC, OCBC
+from monopoly.helpers.constants import HSBC, OCBC
 from monopoly.main import process_bank_statement
 
 

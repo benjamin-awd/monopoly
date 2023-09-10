@@ -6,7 +6,7 @@ from functools import cached_property
 
 from pandas import DataFrame
 
-from monopoly.constants import AMOUNT, DATE, DESCRIPTION
+from monopoly.helpers.constants import AMOUNT, DATE, DESCRIPTION
 from monopoly.pdf import PdfPage
 
 logger = logging.getLogger(__name__)

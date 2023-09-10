@@ -1,7 +1,7 @@
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
-from monopoly.banks.citibank.credit import Citibank
+from monopoly.banks.citibank import Citibank
 
 
 def test_citibank_extract_unprotected_pdf(citibank: Citibank):

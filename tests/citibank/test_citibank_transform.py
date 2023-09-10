@@ -3,9 +3,9 @@ from datetime import datetime
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
-from monopoly.banks.citibank.credit import Citibank
-from monopoly.banks.statement import Statement
-from monopoly.constants import AMOUNT, DATE, DESCRIPTION
+from monopoly.bank import Statement
+from monopoly.banks.citibank import Citibank
+from monopoly.helpers.constants import AMOUNT, DATE, DESCRIPTION
 
 
 def test_citibank_transform_cross_year(citibank: Citibank, statement: Statement):

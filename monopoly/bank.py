@@ -6,11 +6,11 @@ from datetime import datetime
 from google.cloud import storage
 from pandas import DataFrame
 
-from monopoly.banks.statement import Statement, StatementConfig
 from monopoly.config import settings
-from monopoly.constants import AMOUNT, DATE, ROOT_DIR
-from monopoly.helpers import generate_name, upload_to_google_cloud_storage
+from monopoly.helpers.constants import AMOUNT, DATE, ROOT_DIR
+from monopoly.helpers.generate_name import generate_name
 from monopoly.pdf import PdfConfig, PdfParser
+from monopoly.statement import Statement, StatementConfig
 
 logger = logging.getLogger(__name__)
 
@@ -90,13 +90,26 @@ class Bank:
 
         if upload_to_cloud:
             blob_name = generate_name("blob", self.statement_config, statement_date)
-            upload_to_google_cloud_storage(
+            self._upload_to_google_cloud_storage(
                 client=storage.Client(),
                 source_filename=csv_file_path,
                 bucket_name=settings.gcs_bucket,
                 blob_name=blob_name,
             )
             logger.info("Uploaded to %s", blob_name)
+
+    @staticmethod
+    def _upload_to_google_cloud_storage(
+        client: storage.Client,
+        source_filename: str,
+        bucket_name: str,
+        blob_name: str,
+    ) -> None:
+        bucket = client.get_bucket(bucket_name)
+        blob = bucket.blob(blob_name)
+
+        logger.info(f"Attempting to upload to 'gs://{bucket_name}/{blob_name}'")
+        blob.upload_from_filename(source_filename)
 
 
 class BankBase(Bank):

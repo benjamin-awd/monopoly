@@ -4,10 +4,10 @@ from unittest.mock import PropertyMock
 
 import pytest
 
-from monopoly.banks.bank import Bank, Statement, StatementConfig
-from monopoly.banks.citibank.credit import Citibank
-from monopoly.banks.hsbc.credit import Hsbc
-from monopoly.banks.ocbc.credit import Ocbc
+from monopoly.bank import Bank, Statement, StatementConfig
+from monopoly.banks.citibank import Citibank
+from monopoly.banks.hsbc import Hsbc
+from monopoly.banks.ocbc import Ocbc
 from monopoly.gmail import Message, MessageAttachment
 from monopoly.pdf import PdfConfig, PdfParser
 
@@ -58,7 +58,7 @@ def parser():
 
 @pytest.fixture(scope="function")
 def statement(monkeypatch, statement_config):
-    monkeypatch.setattr("monopoly.banks.statement.Statement.df", None)
+    monkeypatch.setattr("monopoly.bank.Statement.df", None)
     mock_page = mock.Mock()
     statement = Statement(pages=[mock_page], config=statement_config)
     yield statement

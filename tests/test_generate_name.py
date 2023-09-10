@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from monopoly.banks.bank import Bank
-from monopoly.helpers import generate_name
+from monopoly.bank import Bank
+from monopoly.helpers.generate_name import generate_name
 
 
 def test_generate_blob_name(bank: Bank):

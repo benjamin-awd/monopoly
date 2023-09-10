@@ -1,11 +1,11 @@
 import logging
 import re
 
-from monopoly.banks.bank import Bank
-from monopoly.banks.hsbc.credit import Hsbc
-from monopoly.banks.ocbc.credit import Ocbc
-from monopoly.constants import HSBC, OCBC
+from monopoly.bank import Bank
+from monopoly.banks.hsbc import Hsbc
+from monopoly.banks.ocbc import Ocbc
 from monopoly.gmail import Gmail, Message
+from monopoly.helpers.constants import HSBC, OCBC
 
 logger = logging.getLogger(__name__)
 

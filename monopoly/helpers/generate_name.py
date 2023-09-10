@@ -2,25 +2,12 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime
+from typing import TYPE_CHECKING
 
-from google.cloud import storage
-
-from monopoly.banks.statement import StatementConfig
+if TYPE_CHECKING:
+    from monopoly.bank import StatementConfig
 
 logger = logging.getLogger(__name__)
-
-
-def upload_to_google_cloud_storage(
-    client: storage.Client,
-    source_filename: str,
-    bucket_name: str,
-    blob_name: str,
-) -> None:
-    bucket = client.get_bucket(bucket_name)
-    blob = bucket.blob(blob_name)
-
-    logger.info(f"Attempting to upload to 'gs://{bucket_name}/{blob_name}'")
-    blob.upload_from_filename(source_filename)
 
 
 def generate_name(

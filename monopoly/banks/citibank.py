@@ -1,6 +1,6 @@
 import logging
 
-from monopoly.banks.bank import BankBase, StatementConfig
+from monopoly.bank import BankBase, StatementConfig
 from monopoly.pdf import PdfConfig
 
 logger = logging.getLogger(__name__)
