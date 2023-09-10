@@ -15,8 +15,8 @@ class Hsbc(BankBase):
         account_type="Credit",
         transaction_pattern=(
             r"\d{2}\s\w{3}\s*"
-            r"(?P<date>\d{2}\s\w{3})\s*"
-            r"(?P<description>.*?)\s*"
+            r"(?P<date>\d{2}\s\w{3})\s.*?"
+            r"(?P<description>\w.*?)\s*"
             r"(?P<amount>[\d.,]+)$"
         ),
         date_pattern=r"(\d{2}\s\w{3}\s\d{4})\s.*$",
