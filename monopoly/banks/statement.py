@@ -18,6 +18,7 @@ class StatementConfig:
     account_type: str
     statement_date_format: str
     transaction_pattern: str
+    transaction_date_format: str
     date_pattern: str
     multiline_transactions: bool = False
 

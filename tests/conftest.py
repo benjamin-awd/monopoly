@@ -71,6 +71,7 @@ def statement_config():
         bank_name="Example Bank",
         statement_date_format=None,
         transaction_pattern=None,
+        transaction_date_format=None,
         date_pattern=None,
     )
     yield statement_config

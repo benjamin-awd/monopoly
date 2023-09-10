@@ -55,8 +55,13 @@ class Bank:
         df[DATE] = df.apply(self._convert_date, statement_date=statement_date, axis=1)
         return df
 
+    def parse_date(self, date_str):
+        date_format = self.statement_config.transaction_date_format
+        parsed_date = datetime.strptime(date_str, date_format)
+        return parsed_date.day, parsed_date.month
+
     def _convert_date(self, row, statement_date: datetime):
-        row_day, row_month = self.date_parser(row)
+        row_day, row_month = self.parse_date(row[DATE])
 
         # Deal with mixed years from Jan/Dec
         if statement_date.month == 1 and row_month == 12:
@@ -98,10 +103,9 @@ class BankBase(Bank):
     """Helper class to handle initialization of common variables
     that are shared between bank classes"""
 
-    def __init__(self, file_path: str, date_parser: callable):
+    def __init__(self, file_path: str):
         super().__init__(
             statement_config=self.statement_config,
             pdf_config=self.pdf_config,
-            date_parser=date_parser,
             file_path=file_path,
         )
