@@ -1,0 +1,19 @@
+name: ci
+
+on: pull_request
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Python & Poetry
+        uses: ./.github/actions/setup-python-poetry
+        with:
+          python-version: "3.11"
+          poetry-version: "1.6.1"
+
+      - name: Run CI
+        run: poetry run task format && poetry run task lint

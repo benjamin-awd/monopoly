@@ -27,5 +27,5 @@ def test_ocbc_write_to_local_csv(ocbc: Ocbc, statement: Statement):
     statement.statement_date = datetime(2024, 1, 1)
     ocbc.load(transformed_df, statement)
 
-    local_df = pd.read_csv(os.path.join(ROOT_DIR, "output", "OCBC-365-2024-01.csv"))
+    local_df = pd.read_csv(os.path.join(ROOT_DIR, "output", "OCBC-Credit-2024-01.csv"))
     assert_frame_equal(transformed_df, local_df)

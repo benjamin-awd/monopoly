@@ -13,3 +13,4 @@ token.json
 _ignore*
 *.tfvars
 !tests/fixtures/*/**
+!tests/fixtures/*.pdf
