@@ -3,7 +3,6 @@ name = "monopoly"
 version = "0.1.0"
 description = ""
 authors = ["benjamin-awd <benjamindornel@gmail.com>"]
-readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
