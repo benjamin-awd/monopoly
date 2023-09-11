@@ -75,6 +75,7 @@ class Message(Gmail):
         self.message_id: str = data.get("id")
         self.payload: dict = data.get("payload")
         self.gmail_service = gmail_service
+        self.trusted_user_emails = settings.trusted_user_emails
         super().__init__(gmail_service)
 
     def get_attachment(self):
@@ -153,7 +154,7 @@ class Message(Gmail):
         """Check if user is trusted"""
         for item in self.payload["headers"]:
             if item["name"] == "From":
-                for trusted_email in settings.trusted_user_emails:
+                for trusted_email in self.trusted_user_emails:
                     if f"<{trusted_email}>" in item["value"]:
                         return True
 
