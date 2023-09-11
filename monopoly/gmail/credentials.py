@@ -17,7 +17,9 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def get_credentials(secret_id=settings.secret_id, version_id="latest"):
+def get_credentials(version_id="latest"):
+    project_id = settings.project_id
+    secret_id = settings.secret_id
     scopes = [
         "https://www.googleapis.com/auth/gmail.readonly",
         "https://www.googleapis.com/auth/gmail.settings.basic",
@@ -26,7 +28,7 @@ def get_credentials(secret_id=settings.secret_id, version_id="latest"):
     ]
 
     client = secretmanager.SecretManagerServiceClient()
-    name = f"projects/{settings.project_id}/secrets/{secret_id}/versions/{version_id}"
+    name = f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
     response = client.access_secret_version(name=name)
 
     credentials = Credentials.from_authorized_user_info(
