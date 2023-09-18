@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 from datetime import datetime
 from typing import TYPE_CHECKING
+from uuid import uuid4
 
 if TYPE_CHECKING:
     from monopoly.bank import StatementConfig
@@ -18,7 +19,7 @@ def generate_name(
     year = statement_date.year
     month = statement_date.month
 
-    filename = f"{bank_name}-{account_type}-{year}-{month:02d}.csv"
+    filename = f"{bank_name}-{account_type}-{year}-{month:02d}"
 
     if format_type == "blob":
         return (
@@ -26,10 +27,10 @@ def generate_name(
             f"account_type={account_type}/"
             f"year={year}/"
             f"month={month}/"
-            f"{filename}"
+            f"{filename}-{uuid4().hex[0:8]}.csv"
         )
 
     if format_type == "file":
-        return filename
+        return f"{filename}.csv"
 
     raise ValueError("Invalid format_type")
