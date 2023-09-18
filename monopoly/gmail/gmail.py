@@ -79,15 +79,16 @@ class Message(Gmail):
         super().__init__(gmail_service)
 
     def get_attachment(self):
-        logger.info("Extracting attachment '%s'", self.attachment_part.filename)
+        attachment_part = self._get_attachment_part()
+        logger.info("Extracting attachment '%s'", attachment_part.filename)
 
         if not self.from_trusted_user:
             raise UntrustedUserError("Not from trusted user")
 
         file_byte_string = self.get_attachment_byte_string(
-            self.message_id, self.attachment_part.attachment_id
+            self.message_id, attachment_part.attachment_id
         )
-        return MessageAttachment(self.attachment_part.filename, file_byte_string)
+        return MessageAttachment(attachment_part.filename, file_byte_string)
 
     @staticmethod
     @contextlib.contextmanager
@@ -119,6 +120,19 @@ class Message(Gmail):
             .execute()
         )
 
+    def _get_attachment_part(self) -> MessagePart:
+        if not self.parts:
+            raise AttachmentNotFoundError
+
+        attachments = [part for part in self.parts if part.filename]
+        if not attachments:
+            raise AttachmentNotFoundError
+
+        if len(attachments) > 1:
+            raise MultipleAttachmentsError
+
+        return attachments[0]
+
     @property
     def subject(self) -> str:
         for item in self.payload.get("headers"):
@@ -129,25 +143,16 @@ class Message(Gmail):
     @property
     def parts(self) -> list[MessagePart]:
         """Return parts and nested parts"""
-        parts = list(self.payload.get("parts"))
-        nested_parts = [
-            nested_part
-            for part in parts
-            if part.get("parts")
-            for nested_part in part.get("parts")
-        ]
-        return [MessagePart(part) for part in parts + nested_parts]
+        if parts := self.payload.get("parts"):
+            nested_parts = [
+                nested_part
+                for part in list(parts)
+                if part.get("parts")
+                for nested_part in part.get("parts")
+            ]
+            return [MessagePart(part) for part in parts + nested_parts]
 
-    @property
-    def attachment_part(self) -> MessagePart:
-        attachments = [part for part in self.parts if part.filename]
-        if not attachments:
-            raise AttachmentNotFoundError
-
-        if len(attachments) > 1:
-            raise MultipleAttachmentsError
-
-        return attachments[0]
+        return None
 
     @property
     def from_trusted_user(self) -> bool:
