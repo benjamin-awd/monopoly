@@ -76,7 +76,7 @@ resource "google_cloud_run_v2_job" "default" {
           value = var.ocbc_password
         }
         env {
-          name  = "HSBC_PDF_PASSWORD"
+          name  = "HSBC_PDF_PASSWORD_PREFIX"
           value = var.hsbc_password
         }
       }

@@ -14,3 +14,7 @@ push:
 
 	docker push ${docker_url}/${project}/${repository}/${image}:main
 	@echo "Successfully uploaded image"
+
+docker-test:
+	docker build -t monopoly-test --target test .
+	docker run --rm monopoly-test

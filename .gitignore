@@ -14,3 +14,8 @@ _ignore*
 *.tfvars
 !tests/fixtures/*/**
 !tests/fixtures/*.pdf
+
+# john files
+john.log
+.hash
+.pot
