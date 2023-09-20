@@ -31,11 +31,12 @@ def process_bank_statement(message: Message, banks: dict):
 
     If an error occurs, the statement is removed from disk
     """
-    attachment = message.get_attachment()
     subject = message.subject
 
     for bank_regex_pattern, bank_class in banks.items():
-        if re.match(bank_regex_pattern, subject):
+        if re.search(bank_regex_pattern, subject):
+            attachment = message.get_attachment()
+
             with message.save(attachment) as file:
                 bank: Bank = bank_class(file_path=file)
                 statement = bank.extract()
