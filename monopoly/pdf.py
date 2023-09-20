@@ -1,9 +1,12 @@
 import logging
+import subprocess
 from dataclasses import dataclass
 
 import fitz
 import pytesseract
 from PIL import Image
+
+from monopoly.helpers.pdf2john import PdfHashExtractor
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +24,7 @@ class PdfPage:
 
 @dataclass
 class PdfConfig:
+    brute_force_mask: str = None
     password: str = None
     page_range: tuple = (None, None)
     page_bbox: tuple = None
@@ -41,16 +45,46 @@ class PdfParser:
         self.password = config.password
         self.page_range = slice(*config.page_range)
         self.page_bbox: tuple = config.page_bbox
+        self.brute_force_mask = config.brute_force_mask
         self.remove_vertical_text = True
 
     def open(self):
         logger.info("Opening pdf from path %s", self.file_path)
         document = fitz.Document(self.file_path)
-        document.authenticate(self.password)
 
-        if document.is_encrypted:
-            raise ValueError("Wrong password - document is encrypted")
-        return document
+        if not document.is_encrypted:
+            return document
+
+        if self.password and not self.brute_force_mask:
+            document.authenticate(self.password)
+
+            if document.is_encrypted:
+                raise ValueError("Wrong password - document is encrypted")
+
+            return document
+
+        # This attempts to unlock statements based on a common password,
+        # followed by the last few digits of a card
+        if document.is_encrypted and self.brute_force_mask:
+            logger.info("Unlocking PDF using a string prefix with mask")
+            password = self.unlock_pdf(
+                pdf_file_path=self.file_path,
+                static_string=self.password,
+                mask=self.brute_force_mask,
+            )
+
+            document.authenticate(password)
+
+            if not document.is_encrypted:
+                logger.info("Successfully authenticated with password")
+                return document
+
+            # If no successful authentication, raise an error
+            raise ValueError(
+                "Unable to unlock PDF password using static string and mask"
+            )
+
+        return None
 
     def get_pages(self) -> list[PdfPage]:
         logger.info("Extracting text from PDF")
@@ -60,6 +94,38 @@ class PdfParser:
         document.select(num_pages[self.page_range])
 
         return [self._process_page(page) for page in document]
+
+    @staticmethod
+    def unlock_pdf(pdf_file_path: str, static_string: str, mask: str):
+        hash_extractor = PdfHashExtractor(pdf_file_path)
+        pdf_hash = hash_extractor.parse()
+
+        hash_path = ".hash"
+        with open(hash_path, "w", encoding="utf-8") as file:
+            file.write(pdf_hash)
+
+        mask_command = [
+            f"john --format=PDF --mask={static_string}{mask} {hash_path} --pot=.pot"
+        ]
+        process = subprocess.run(mask_command, shell=True, check=False)
+
+        if not process.returncode == 0:
+            raise ValueError(f"Return code is not 0: {process}")
+
+        show_command = ["john", "--show", hash_path, "--pot=.pot"]
+        output = subprocess.run(
+            show_command, capture_output=True, text=True, check=False
+        )
+
+        if not output.returncode == 0:
+            raise ValueError(f"Return code is not 0: {output}")
+
+        if "1 password hash cracked, 0 left" not in output.stdout:
+            raise ValueError(f"PDF was not unlocked: {output}")
+
+        password = output.stdout.split("\n")[0].split(":")[-1]
+
+        return password
 
     def _process_page(self, page: fitz.Page) -> PdfPage:
         logger.info("Processing: %s", page)
