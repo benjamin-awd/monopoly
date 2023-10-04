@@ -12,8 +12,11 @@ credentials.json
 token.json
 _ignore*
 *.tfvars
+
+# allowed pdf files/fixtures
 !tests/fixtures/*/**
 !tests/fixtures/*.pdf
+!statements/**/*example.pdf
 
 # john files
 john.log
