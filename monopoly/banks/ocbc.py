@@ -19,4 +19,8 @@ class Ocbc(BankBase):
         statement_date_format=r"%d-%m-%Y",
     )
 
-    pdf_config = PdfConfig(password=settings.ocbc_pdf_password, page_range=(0, -2))
+    pdf_config = PdfConfig(
+        password=settings.ocbc_pdf_password,
+        page_range=(0, -2),
+        page_bbox=(0, 0, 560, 750),
+    )
