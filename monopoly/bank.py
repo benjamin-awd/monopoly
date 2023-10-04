@@ -75,6 +75,7 @@ class Bank:
         filename = generate_name("file", self.statement_config, statement_date)
 
         file_path = os.path.join(ROOT_DIR, "output", filename)
+        logger.info("Writing CSV to file path: %s", file_path)
         df.to_csv(file_path, index=False)
 
         return file_path
