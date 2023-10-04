@@ -1,3 +1,11 @@
+# Usage
+Monopoly can be run as a Python package, allowing you to extract, transform and write bank statements to a CSV file.
+
+To see an example of how Monopoly works, you can run
+```bash
+python3 monopoly/examples/single_statement.py
+```
+
 # Install
 Install using
 
