@@ -85,14 +85,14 @@ resource "google_cloud_run_v2_job" "default" {
 }
 
 resource "google_cloud_scheduler_job" "default" {
-  name             = "hourly-bank-statement-extraction"
-  description      = "Extracts bank statements"
-  schedule         = "0 * * * *"
-  time_zone        = "UTC"
+  name        = "hourly-bank-statement-extraction"
+  description = "Extracts bank statements"
+  schedule    = "0 * * * *"
+  time_zone   = "UTC"
 
   http_target {
     http_method = "POST"
-      uri = "${local.cloud_run_scheduler_prefix}/jobs/${google_cloud_run_v2_job.default.name}:run"
+    uri         = "${local.cloud_run_scheduler_prefix}/jobs/${google_cloud_run_v2_job.default.name}:run"
     oauth_token {
       service_account_email = google_service_account.default.email
     }

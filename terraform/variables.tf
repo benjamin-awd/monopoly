@@ -18,7 +18,7 @@ variable "gmail_address" {
 
 variable "trusted_emails" {
   description = "Trusted user emails"
-  type        = list
+  type        = list(any)
   sensitive   = true
 }
 
