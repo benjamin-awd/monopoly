@@ -24,6 +24,7 @@ class PdfPage:
 
 @dataclass
 class PdfConfig:
+    static_string: str = None
     brute_force_mask: str = None
     password: str = None
     page_range: tuple = (None, None)
@@ -46,6 +47,7 @@ class PdfParser:
         self.page_range = slice(*config.page_range)
         self.page_bbox: tuple = config.page_bbox
         self.brute_force_mask = config.brute_force_mask
+        self.static_string = config.static_string
         self.remove_vertical_text = True
 
     def open(self):
@@ -69,7 +71,7 @@ class PdfParser:
             logger.info("Unlocking PDF using a string prefix with mask")
             password = self.unlock_pdf(
                 pdf_file_path=self.file_path,
-                static_string=self.password,
+                static_string=self.static_string,
                 mask=self.brute_force_mask,
             )
 
