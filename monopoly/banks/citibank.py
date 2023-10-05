@@ -1,6 +1,7 @@
 import logging
 
 from monopoly.bank import BankBase, StatementConfig
+from monopoly.config import settings
 from monopoly.pdf import PdfConfig
 
 logger = logging.getLogger(__name__)
@@ -18,4 +19,4 @@ class Citibank(BankBase):
         statement_date_format=r"%B %d, %Y",
     )
 
-    pdf_config = PdfConfig(page_range=(0, -3))
+    pdf_config = PdfConfig(password=settings.citibank_pdf_password, page_range=(0, -3))
