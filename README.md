@@ -42,9 +42,17 @@ To see how Monopoly works, you can run this [example](monopoly/examples/single_s
 python3 monopoly/examples/single_statement.py
 ```
 
-## Features
-Monopoly can be run on Google Cloud as a scheduled Cloud Run job.
+If your PDF is encrypted, you'll have to add the password to a .env file in the root directory, which is automatically read by monopoly
 
-Current implementation:
+You can use the .env.template and then update values in the .env file
+```
+cp .env.template .env
+```
+
+## Features
+- Monopoly can be run on Google Cloud as a scheduled Cloud Run job.
+- PDFs can be unlocked using explicitly defined passwords and/or a masking pattern like ?d?d?d
+
+Current cloud implementation:
 
 ![Screenshot](docs/monopoly_gcp.png)
