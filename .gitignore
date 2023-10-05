@@ -16,7 +16,7 @@ _ignore*
 # allowed pdf files/fixtures
 !tests/fixtures/*/**
 !tests/fixtures/*.pdf
-!statements/**/*example.pdf
+!monopoly/examples/*.pdf
 
 # john files
 john.log
