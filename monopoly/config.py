@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     secret_id: str = ""
     gcs_bucket: str = ""
     ocbc_pdf_password: str = ""
+    citibank_pdf_password: str = ""
     hsbc_pdf_password_prefix: str = ""
     trusted_user_emails: list = []
 
