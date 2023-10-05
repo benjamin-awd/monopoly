@@ -21,3 +21,18 @@ variable "trusted_emails" {
   type        = list
   sensitive   = true
 }
+
+variable "project_id" {
+  description = "Google project ID"
+  type        = string
+}
+
+variable "region" {
+  description = "Google region"
+  type        = string
+}
+
+variable "gmail_credential_secret" {
+  description = "Name of secret containing client secret and token for Gmail account"
+  type        = string
+}

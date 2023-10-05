@@ -14,7 +14,7 @@ resource "google_storage_bucket" "default" {
 }
 
 resource "google_artifact_registry_repository" "default" {
-  location      = local.region
+  location      = var.region
   repository_id = "monopoly"
   format        = "DOCKER"
 }
@@ -37,7 +37,7 @@ resource "google_storage_bucket_iam_member" "default" {
 
 resource "google_cloud_run_v2_job" "default" {
   name     = "monopoly-tf"
-  location = local.region
+  location = var.region
 
   template {
     template {
@@ -57,7 +57,7 @@ resource "google_cloud_run_v2_job" "default" {
         }
         env {
           name  = "PROJECT_ID"
-          value = local.project_id
+          value = var.project_id
         }
         env {
           name  = "GCS_BUCKET"
@@ -65,7 +65,7 @@ resource "google_cloud_run_v2_job" "default" {
         }
         env {
           name  = "SECRET_ID"
-          value = local.gmail_credential_secret
+          value = var.gmail_credential_secret
         }
         env {
           name  = "TRUSTED_USER_EMAILS"
@@ -100,7 +100,7 @@ resource "google_cloud_scheduler_job" "default" {
 }
 
 resource "google_project_iam_binding" "cloud_run_invoker" {
-  project = local.project_id
+  project = var.project_id
   role    = "roles/run.invoker"
 
   members = [
