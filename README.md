@@ -1,3 +1,7 @@
+<img src="./docs/logo.svg"><br>
+
+-----------------
+
 # Monopoly
 Monopoly is a Python library that extracts transactions from bank statement PDFs using Tesseract
 
