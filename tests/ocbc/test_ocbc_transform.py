@@ -5,22 +5,14 @@ from pandas.testing import assert_frame_equal
 
 from monopoly.bank import Statement
 from monopoly.banks.ocbc import Ocbc
-from monopoly.helpers.constants import BankStatement
+from monopoly.statement import Transaction
 
 
 def test_ocbc_transform_cross_year(ocbc: Ocbc, statement: Statement):
     raw_df = pd.DataFrame(
         [
-            {
-                BankStatement.DATE: "12/01",
-                BankStatement.DESCRIPTION: "FAIRPRICE FINEST SINGAPORE SG",
-                BankStatement.AMOUNT: "18.49",
-            },
-            {
-                BankStatement.DATE: "28/12",
-                BankStatement.DESCRIPTION: "DA PAOLO GASTRONOMIA SING — SINGAPORE SG",
-                BankStatement.AMOUNT: "19.69",
-            },
+            Transaction("12/01", "FAIRPRICE FINEST", "18.49"),
+            Transaction("28/12", "DA PAOLO GASTRONOMIA", "19.69"),
         ]
     )
     statement.statement_date = datetime(2024, 1, 1)
@@ -29,16 +21,8 @@ def test_ocbc_transform_cross_year(ocbc: Ocbc, statement: Statement):
 
     expected_data = pd.DataFrame(
         [
-            {
-                BankStatement.DATE: "2024-01-12",
-                BankStatement.DESCRIPTION: "FAIRPRICE FINEST SINGAPORE SG",
-                BankStatement.AMOUNT: 18.49,
-            },
-            {
-                BankStatement.DATE: "2023-12-28",
-                BankStatement.DESCRIPTION: "DA PAOLO GASTRONOMIA SING — SINGAPORE SG",
-                BankStatement.AMOUNT: 19.69,
-            },
+            Transaction("2024-01-12", "FAIRPRICE FINEST", 18.49),
+            Transaction("2023-12-28", "DA PAOLO GASTRONOMIA", 19.69),
         ]
     )
 
@@ -48,16 +32,8 @@ def test_ocbc_transform_cross_year(ocbc: Ocbc, statement: Statement):
 def test_ocbc_transform_within_year(ocbc: Ocbc, statement: Statement):
     raw_df = pd.DataFrame(
         [
-            {
-                BankStatement.DATE: "12/06",
-                BankStatement.DESCRIPTION: "FAIRPRICE FINEST SINGAPORE SG",
-                BankStatement.AMOUNT: "18.49",
-            },
-            {
-                BankStatement.DATE: "12/06",
-                BankStatement.DESCRIPTION: "DA PAOLO GASTRONOMIA SING — SINGAPORE SG",
-                BankStatement.AMOUNT: "19.69",
-            },
+            Transaction("12/06", "FAIRPRICE FINEST", "18.49"),
+            Transaction("12/06", "DA PAOLO GASTRONOMIA", "19.69"),
         ]
     )
     statement.statement_date = datetime(2023, 7, 1)
@@ -67,16 +43,8 @@ def test_ocbc_transform_within_year(ocbc: Ocbc, statement: Statement):
 
     expected_data = pd.DataFrame(
         [
-            {
-                BankStatement.DATE: "2023-06-12",
-                BankStatement.DESCRIPTION: "FAIRPRICE FINEST SINGAPORE SG",
-                BankStatement.AMOUNT: 18.49,
-            },
-            {
-                BankStatement.DATE: "2023-06-12",
-                BankStatement.DESCRIPTION: "DA PAOLO GASTRONOMIA SING — SINGAPORE SG",
-                BankStatement.AMOUNT: 19.69,
-            },
+            Transaction("2023-06-12", "FAIRPRICE FINEST", 18.49),
+            Transaction("2023-06-12", "DA PAOLO GASTRONOMIA", 19.69),
         ]
     )
 

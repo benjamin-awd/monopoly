@@ -6,7 +6,7 @@ from functools import cached_property
 
 from pandas import DataFrame
 
-from monopoly.helpers.constants import BankStatement
+from monopoly.helpers.constants import AccountType, BankNames, BankStatement
 from monopoly.pdf import PdfPage
 
 logger = logging.getLogger(__name__)
@@ -14,13 +14,25 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class StatementConfig:
-    bank_name: str
-    account_type: str
+    bank_name: BankNames
+    account_type: AccountType
     statement_date_format: str
     transaction_pattern: str
     transaction_date_format: str
     date_pattern: str
     multiline_transactions: bool = False
+
+    # Convert enums to strings
+    def __post_init__(self):
+        self.bank_name = self.bank_name.value
+        self.account_type = self.account_type.value
+
+
+@dataclass
+class Transaction:
+    date: str
+    description: str
+    amount: float
 
 
 @dataclass
@@ -51,11 +63,7 @@ class Statement:
                 except IndexError as err:
                     logger.debug(err)
 
-            return {
-                BankStatement.DATE: date,
-                BankStatement.DESCRIPTION: description,
-                BankStatement.AMOUNT: amount,
-            }
+            return vars(Transaction(date, description, amount))
         return None
 
     @cached_property

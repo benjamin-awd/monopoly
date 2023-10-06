@@ -14,11 +14,11 @@ def test_generate_blob_name(bank: Bank):
 
         statement_date = datetime(2023, 8, 1)
         expected_blob_name = (
-            "bank_name=Example Bank/"
-            "account_type=Savings/"
+            "bank_name=ocbc/"
+            "account_type=credit/"
             "year=2023/"
             "month=8/"
-            "Example Bank-Savings-2023-08-12345foo.csv"
+            "ocbc-credit-2023-08-12345foo.csv"
         )
 
         actual_blob_name = generate_name("blob", bank.statement_config, statement_date)
@@ -27,7 +27,7 @@ def test_generate_blob_name(bank: Bank):
 
 def test_generate_file_name(bank: Bank):
     statement_date = datetime(2023, 8, 1)
-    expected_file_name = "Example Bank-Savings-2023-08.csv"
+    expected_file_name = "ocbc-credit-2023-08.csv"
 
     actual_file_name = generate_name("file", bank.statement_config, statement_date)
 

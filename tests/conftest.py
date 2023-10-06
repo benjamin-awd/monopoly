@@ -9,6 +9,7 @@ from monopoly.banks.citibank import Citibank
 from monopoly.banks.hsbc import Hsbc
 from monopoly.banks.ocbc import Ocbc
 from monopoly.gmail import Message, MessageAttachment
+from monopoly.helpers.constants import AccountType, BankNames
 from monopoly.pdf import PdfConfig, PdfParser
 
 
@@ -67,8 +68,8 @@ def statement(monkeypatch, statement_config):
 @pytest.fixture(scope="session")
 def statement_config():
     statement_config = StatementConfig(
-        account_type="Savings",
-        bank_name="Example Bank",
+        account_type=AccountType.CREDIT,
+        bank_name=BankNames.OCBC,
         statement_date_format=None,
         transaction_pattern=None,
         transaction_date_format=None,
