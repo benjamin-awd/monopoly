@@ -2,6 +2,7 @@ import logging
 
 from monopoly.bank import BankBase, StatementConfig
 from monopoly.config import settings
+from monopoly.helpers.constants import AccountType, BankNames
 from monopoly.pdf import PdfConfig
 
 logger = logging.getLogger(__name__)
@@ -9,8 +10,8 @@ logger = logging.getLogger(__name__)
 
 class Hsbc(BankBase):
     statement_config = StatementConfig(
-        bank_name="HSBC",
-        account_type="Credit",
+        bank_name=BankNames.HSBC,
+        account_type=AccountType.CREDIT,
         transaction_pattern=(
             r"\d{2}\s\w{3}\s*"
             r"(?P<date>\d{2}\s\w{3})\s.*?"
