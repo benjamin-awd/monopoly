@@ -2,7 +2,6 @@
 
 -----------------
 
-# Monopoly
 [![Tests](https://github.com/benjamin-awd/monopoly/workflows/tests/badge.svg)](https://github.com/benjamin-awd/monopoly/actions)
 [![CI](https://github.com/benjamin-awd/monopoly/workflows/ci/badge.svg)](https://github.com/benjamin-awd/monopoly/actions)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
