@@ -6,7 +6,7 @@ from functools import cached_property
 
 from pandas import DataFrame
 
-from monopoly.helpers.constants import AMOUNT, DATE, DESCRIPTION
+from monopoly.helpers.constants import BankStatement
 from monopoly.pdf import PdfPage
 
 logger = logging.getLogger(__name__)
@@ -26,7 +26,7 @@ class StatementConfig:
 @dataclass
 class Statement:
     pages: list[PdfPage]
-    columns = [DATE, DESCRIPTION, AMOUNT]
+    columns = [BankStatement.DATE, BankStatement.DESCRIPTION, BankStatement.AMOUNT]
     config: StatementConfig
 
     @cached_property
@@ -50,7 +50,11 @@ class Statement:
                 except IndexError as err:
                     logger.debug(err)
 
-            return {DATE: date, DESCRIPTION: description, AMOUNT: amount}
+            return {
+                BankStatement.DATE: date,
+                BankStatement.DESCRIPTION: description,
+                BankStatement.AMOUNT: amount,
+            }
         return None
 
     @cached_property

@@ -5,7 +5,7 @@ from monopoly.bank import Bank
 from monopoly.banks.hsbc import Hsbc
 from monopoly.banks.ocbc import Ocbc
 from monopoly.gmail import Gmail, Message
-from monopoly.helpers.constants import HSBC, OCBC
+from monopoly.helpers.constants import EmailSubjectRegex
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ def main():
 
     messages: list[Message] = Gmail().get_emails()
 
-    banks = {OCBC: Ocbc, HSBC: Hsbc}
+    banks = {EmailSubjectRegex.OCBC: Ocbc, EmailSubjectRegex.HSBC: Hsbc}
 
     for message in messages:
         process_bank_statement(message, banks)
