@@ -5,22 +5,14 @@ from pandas.testing import assert_frame_equal
 
 from monopoly.bank import Statement
 from monopoly.banks.citibank import Citibank
-from monopoly.helpers.constants import BankStatement
+from monopoly.statement import Transaction
 
 
 def test_citibank_transform_cross_year(citibank: Citibank, statement: Statement):
     raw_df = pd.DataFrame(
         [
-            {
-                BankStatement.DATE: "09 JAN",
-                BankStatement.DESCRIPTION: "Shopee Singapore SINGAPORE SG",
-                BankStatement.AMOUNT: "31.45",
-            },
-            {
-                BankStatement.DATE: "12 DEC",
-                BankStatement.DESCRIPTION: "UNIQLO SINGAPORE PTE. SINGAPORE SG",
-                BankStatement.AMOUNT: "29.80",
-            },
+            Transaction("09 JAN", "Shopee Singapore", "31.45"),
+            Transaction("12 DEC", "UNIQLO SINGAPORE", "29.80"),
         ]
     )
     statement.statement_date = datetime(2024, 1, 1)
@@ -29,16 +21,8 @@ def test_citibank_transform_cross_year(citibank: Citibank, statement: Statement)
 
     expected_data = pd.DataFrame(
         [
-            {
-                BankStatement.DATE: "2024-01-09",
-                BankStatement.DESCRIPTION: "Shopee Singapore SINGAPORE SG",
-                BankStatement.AMOUNT: 31.45,
-            },
-            {
-                BankStatement.DATE: "2023-12-12",
-                BankStatement.DESCRIPTION: "UNIQLO SINGAPORE PTE. SINGAPORE SG",
-                BankStatement.AMOUNT: 29.80,
-            },
+            Transaction("2024-01-09", "Shopee Singapore", 31.45),
+            Transaction("2023-12-12", "UNIQLO SINGAPORE", 29.80),
         ]
     )
 
@@ -48,16 +32,8 @@ def test_citibank_transform_cross_year(citibank: Citibank, statement: Statement)
 def test_citibank_transform_within_year(citibank: Citibank, statement: Statement):
     raw_df = pd.DataFrame(
         [
-            {
-                BankStatement.DATE: "09 JUN",
-                BankStatement.DESCRIPTION: "Shopee Singapore SINGAPORE SG",
-                BankStatement.AMOUNT: "31.45",
-            },
-            {
-                BankStatement.DATE: "12 JUN",
-                BankStatement.DESCRIPTION: "UNIQLO SINGAPORE PTE. SINGAPORE SG",
-                BankStatement.AMOUNT: "29.80",
-            },
+            Transaction("09 JUN", "Shopee Singapore", "31.45"),
+            Transaction("12 JUN", "UNIQLO SINGAPORE", "29.80"),
         ]
     )
 
@@ -68,16 +44,8 @@ def test_citibank_transform_within_year(citibank: Citibank, statement: Statement
 
     expected_data = pd.DataFrame(
         [
-            {
-                BankStatement.DATE: "2023-06-09",
-                BankStatement.DESCRIPTION: "Shopee Singapore SINGAPORE SG",
-                BankStatement.AMOUNT: 31.45,
-            },
-            {
-                BankStatement.DATE: "2023-06-12",
-                BankStatement.DESCRIPTION: "UNIQLO SINGAPORE PTE. SINGAPORE SG",
-                BankStatement.AMOUNT: 29.80,
-            },
+            Transaction("2023-06-09", "Shopee Singapore", 31.45),
+            Transaction("2023-06-12", "UNIQLO SINGAPORE", 29.80),
         ]
     )
 

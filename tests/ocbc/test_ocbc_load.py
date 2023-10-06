@@ -1,4 +1,5 @@
 import os
+import tempfile
 from datetime import datetime
 
 import pandas as pd
@@ -6,26 +7,21 @@ from pandas.testing import assert_frame_equal
 
 from monopoly.bank import Statement
 from monopoly.banks.ocbc import Ocbc
-from monopoly.helpers.constants import ROOT_DIR, BankStatement
+from monopoly.helpers.constants import ROOT_DIR
+from monopoly.statement import Transaction
 
 
 def test_ocbc_write_to_local_csv(ocbc: Ocbc, statement: Statement):
     transformed_df = pd.DataFrame(
         [
-            {
-                BankStatement.DATE: "2024-01-12",
-                BankStatement.DESCRIPTION: "FAIRPRICE FINEST SINGAPORE SG",
-                BankStatement.AMOUNT: 18.49,
-            },
-            {
-                BankStatement.DATE: "2023-12-28",
-                BankStatement.DESCRIPTION: "DA PAOLO GASTRONOMIA SING — SINGAPORE SG",
-                BankStatement.AMOUNT: 19.69,
-            },
+            Transaction("2024-01-12", "FAIRPRICE FINEST", 18.49),
+            Transaction("2023-12-28", "DA PAOLO GASTRONOMIA", 19.69),
         ]
     )
-    statement.statement_date = datetime(2024, 1, 1)
-    ocbc.load(transformed_df, statement)
+    statement.statement_date = datetime(2999, 1, 1)
+    with tempfile.NamedTemporaryFile(delete=True) as temp_file:
+        csv_file_path = temp_file.name
+        ocbc.load(df=transformed_df, statement=statement, csv_file_path=csv_file_path)
 
-    local_df = pd.read_csv(os.path.join(ROOT_DIR, "output", "OCBC-Credit-2024-01.csv"))
-    assert_frame_equal(transformed_df, local_df)
+        local_df = pd.read_csv(os.path.join(csv_file_path))
+        assert_frame_equal(transformed_df, local_df)

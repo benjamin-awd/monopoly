@@ -5,22 +5,14 @@ from pandas.testing import assert_frame_equal
 
 from monopoly.bank import Statement
 from monopoly.banks.hsbc import Hsbc
-from monopoly.helpers.constants import BankStatement
+from monopoly.statement import Transaction
 
 
 def test_hsbc_transform_cross_year(hsbc: Hsbc, statement: Statement):
     raw_df = pd.DataFrame(
         [
-            {
-                BankStatement.DATE: "09 Jan",
-                BankStatement.DESCRIPTION: "Shopee Singapore SINGAPORE SG",
-                BankStatement.AMOUNT: "31.45",
-            },
-            {
-                BankStatement.DATE: "12 Dec",
-                BankStatement.DESCRIPTION: "UNIQLO SINGAPORE PTE. SINGAPORE SG",
-                BankStatement.AMOUNT: "29.80",
-            },
+            Transaction("09 Jan", "Shopee Singapore", "31.45"),
+            Transaction("12 Dec", "UNIQLO SINGAPORE", "29.80"),
         ]
     )
     statement.statement_date = datetime(2024, 1, 1)
@@ -29,16 +21,8 @@ def test_hsbc_transform_cross_year(hsbc: Hsbc, statement: Statement):
 
     expected_data = pd.DataFrame(
         [
-            {
-                BankStatement.DATE: "2024-01-09",
-                BankStatement.DESCRIPTION: "Shopee Singapore SINGAPORE SG",
-                BankStatement.AMOUNT: 31.45,
-            },
-            {
-                BankStatement.DATE: "2023-12-12",
-                BankStatement.DESCRIPTION: "UNIQLO SINGAPORE PTE. SINGAPORE SG",
-                BankStatement.AMOUNT: 29.80,
-            },
+            Transaction("2024-01-09", "Shopee Singapore", 31.45),
+            Transaction("2023-12-12", "UNIQLO SINGAPORE", 29.80),
         ]
     )
 
@@ -48,16 +32,8 @@ def test_hsbc_transform_cross_year(hsbc: Hsbc, statement: Statement):
 def test_hsbc_transform_within_year(hsbc: Hsbc, statement: Statement):
     raw_df = pd.DataFrame(
         [
-            {
-                BankStatement.DATE: "09 Jun",
-                BankStatement.DESCRIPTION: "Shopee Singapore SINGAPORE SG",
-                BankStatement.AMOUNT: "31.45",
-            },
-            {
-                BankStatement.DATE: "12 Jun",
-                BankStatement.DESCRIPTION: "UNIQLO SINGAPORE PTE. SINGAPORE SG",
-                BankStatement.AMOUNT: "29.80",
-            },
+            Transaction("09 Jun", "Shopee Singapore", "31.45"),
+            Transaction("12 Jun", "UNIQLO SINGAPORE", "29.80"),
         ]
     )
 
@@ -68,16 +44,8 @@ def test_hsbc_transform_within_year(hsbc: Hsbc, statement: Statement):
 
     expected_data = pd.DataFrame(
         [
-            {
-                BankStatement.DATE: "2023-06-09",
-                BankStatement.DESCRIPTION: "Shopee Singapore SINGAPORE SG",
-                BankStatement.AMOUNT: 31.45,
-            },
-            {
-                BankStatement.DATE: "2023-06-12",
-                BankStatement.DESCRIPTION: "UNIQLO SINGAPORE PTE. SINGAPORE SG",
-                BankStatement.AMOUNT: 29.80,
-            },
+            Transaction("2023-06-09", "Shopee Singapore", 31.45),
+            Transaction("2023-06-12", "UNIQLO SINGAPORE", 29.80),
         ]
     )
 
