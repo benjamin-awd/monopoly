@@ -26,7 +26,7 @@ class StatementConfig:
 @dataclass
 class Statement:
     pages: list[PdfPage]
-    columns = [BankStatement.DATE, BankStatement.DESCRIPTION, BankStatement.AMOUNT]
+    columns = [enum.value for enum in BankStatement]
     config: StatementConfig
 
     @cached_property
@@ -34,10 +34,11 @@ class Statement:
         transactions = []
         for page in self.pages:
             for i, line in enumerate(page.lines):
-                item = self._process_line(line, page.lines, idx=i)
-                transactions.append(item)
+                transaction = self._process_line(line, page.lines, idx=i)
+                if transaction:
+                    transactions.append(transaction)
 
-        return list(filter(None, transactions))
+        return transactions
 
     def _process_line(self, line: str, page: list[str], idx: int) -> dict:
         if match := re.findall(self.config.transaction_pattern, line):
