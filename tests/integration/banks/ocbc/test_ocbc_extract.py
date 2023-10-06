@@ -8,7 +8,7 @@ from monopoly.helpers.constants import BankStatement
 def test_ocbc_extract_unprotected_pdf(ocbc: Ocbc):
     raw_df = ocbc.extract().df
 
-    expected_df = pd.read_csv("tests/fixtures/ocbc/expected.csv")
+    expected_df = pd.read_csv("tests/integration/fixtures/ocbc/expected.csv")
 
     assert_frame_equal(raw_df, expected_df)
 

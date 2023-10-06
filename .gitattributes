@@ -1,1 +1,1 @@
-tests/fixtures/**/input.pdf filter=git-crypt diff=git-crypt
+tests/integration/fixtures/**/input.pdf filter=git-crypt diff=git-crypt

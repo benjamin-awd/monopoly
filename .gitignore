@@ -14,8 +14,8 @@ _ignore*
 *.tfvars
 
 # allowed pdf files/fixtures
-!tests/fixtures/*/**
-!tests/fixtures/*.pdf
+!tests/integration/fixtures/*/**
+!tests/integration/fixtures/*.pdf
 !monopoly/examples/*.pdf
 
 # john files
