@@ -2,7 +2,7 @@ from unittest.mock import Mock, PropertyMock, patch
 
 import pytest
 
-from monopoly.helpers.constants import HSBC, OCBC
+from monopoly.helpers.constants import EmailSubjectRegex
 from monopoly.main import process_bank_statement
 
 
@@ -26,9 +26,9 @@ def run_bank_statement_test(message, pattern, subject, expected_result):
 @pytest.mark.parametrize(
     "subject,pattern,expected_result",
     [
-        ("OCBC Bank: Your Credit Card e-Statement", OCBC, "call"),
-        ("Your HSBC VISA REVOLUTION eStatement", HSBC, "call"),
-        ("Random Subject", OCBC, "ignore"),
+        ("OCBC Bank: Your Credit Card e-Statement", EmailSubjectRegex.OCBC, "call"),
+        ("Your HSBC VISA REVOLUTION eStatement", EmailSubjectRegex.HSBC, "call"),
+        ("Random Subject", EmailSubjectRegex.OCBC, "ignore"),
     ],
 )
 def test_process_bank_statements(
