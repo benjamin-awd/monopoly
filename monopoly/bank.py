@@ -74,23 +74,21 @@ class Bank:
 
         return f"{row_year}-{row_month:02d}-{row_day:02d}"
 
-    def _write_to_csv(self, df: DataFrame, statement_date: datetime):
-        filename = generate_name("file", self.statement_config, statement_date)
-
-        file_path = os.path.join(ROOT_DIR, "output", filename)
-        logger.info("Writing CSV to file path: %s", file_path)
-        df.to_csv(file_path, index=False)
-
-        return file_path
-
     def load(
         self,
-        transformed_df: DataFrame,
+        df: DataFrame,
         statement: Statement,
+        csv_file_path: str = None,
         upload_to_cloud: bool = False,
     ):
         statement_date = statement.statement_date
-        csv_file_path = self._write_to_csv(transformed_df, statement_date)
+
+        if not csv_file_path:
+            filename = generate_name("file", self.statement_config, statement_date)
+            csv_file_path = os.path.join(ROOT_DIR, "output", filename)
+            logger.info("Writing CSV to file path: %s", csv_file_path)
+
+        df.to_csv(csv_file_path, index=False)
 
         if upload_to_cloud:
             blob_name = generate_name("blob", self.statement_config, statement_date)
