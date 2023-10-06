@@ -7,7 +7,7 @@ from monopoly.helpers.constants import BankStatement
 
 def test_citibank_extract_unprotected_pdf(citibank: Citibank):
     raw_df = citibank.extract().df
-    expected_df = pd.read_csv("tests/fixtures/citibank/expected.csv")
+    expected_df = pd.read_csv("tests/integration/fixtures/citibank/expected.csv")
 
     assert_frame_equal(raw_df, expected_df)
 

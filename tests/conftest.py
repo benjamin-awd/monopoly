@@ -15,19 +15,19 @@ from monopoly.pdf import PdfConfig, PdfPage, PdfParser
 
 @pytest.fixture(scope="session")
 def citibank():
-    citibank = Citibank(file_path="tests/fixtures/citibank/input.pdf")
+    citibank = Citibank(file_path="tests/integration/fixtures/citibank/input.pdf")
     yield citibank
 
 
 @pytest.fixture(scope="session")
 def ocbc():
-    ocbc = Ocbc(file_path="tests/fixtures/ocbc/input.pdf")
+    ocbc = Ocbc(file_path="tests/integration/fixtures/ocbc/input.pdf")
     yield ocbc
 
 
 @pytest.fixture(scope="session")
 def hsbc():
-    hsbc = Hsbc(file_path="tests/fixtures/hsbc/input.pdf")
+    hsbc = Hsbc(file_path="tests/integration/fixtures/hsbc/input.pdf")
     yield hsbc
 
 
