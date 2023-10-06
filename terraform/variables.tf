@@ -4,8 +4,8 @@ variable "ocbc_password" {
   sensitive   = true
 }
 
-variable "hsbc_password" {
-  description = "Password for encrypted HSBC PDFs"
+variable "hsbc_password_prefix" {
+  description = "Prefix of password for encrypted HSBC PDFs"
   type        = string
   sensitive   = true
 }

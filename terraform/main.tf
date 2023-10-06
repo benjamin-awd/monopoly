@@ -77,7 +77,7 @@ resource "google_cloud_run_v2_job" "default" {
         }
         env {
           name  = "HSBC_PDF_PASSWORD_PREFIX"
-          value = var.hsbc_password
+          value = var.hsbc_password_prefix
         }
       }
     }
