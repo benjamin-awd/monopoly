@@ -7,7 +7,7 @@ from google.cloud import storage
 from pandas import DataFrame
 
 from monopoly.config import settings
-from monopoly.helpers.constants import AMOUNT, DATE, ROOT_DIR
+from monopoly.helpers.constants import ROOT_DIR, BankStatement
 from monopoly.helpers.generate_name import generate_name
 from monopoly.pdf import PdfConfig, PdfParser
 from monopoly.statement import Statement, StatementConfig
@@ -41,7 +41,9 @@ class Bank:
         df = statement.df
         statement_date = statement.statement_date
 
-        df[AMOUNT] = df[AMOUNT].str.replace(",", "").astype(float)
+        df[BankStatement.AMOUNT] = (
+            df[BankStatement.AMOUNT].str.replace(",", "").astype(float)
+        )
 
         if self.transform_dates:
             df = self._transform_date_to_iso(df, statement_date)
@@ -52,7 +54,9 @@ class Bank:
         self, df: DataFrame, statement_date: datetime
     ) -> DataFrame:
         logger.info("Transforming dates to ISO 8601")
-        df[DATE] = df.apply(self._convert_date, statement_date=statement_date, axis=1)
+        df[BankStatement.DATE] = df.apply(
+            self._convert_date, statement_date=statement_date, axis=1
+        )
         return df
 
     def parse_date(self, date_str):
@@ -61,7 +65,7 @@ class Bank:
         return parsed_date.day, parsed_date.month
 
     def _convert_date(self, row, statement_date: datetime):
-        row_day, row_month = self.parse_date(row[DATE])
+        row_day, row_month = self.parse_date(row[BankStatement.DATE])
 
         # Deal with mixed years from Jan/Dec
         if statement_date.month == 1 and row_month == 12:
