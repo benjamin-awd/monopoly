@@ -20,7 +20,6 @@ class Bank:
     pdf_config: PdfConfig
     statement_config: StatementConfig
     file_path: str
-    date_parser: callable = None
     transform_dates: bool = True
 
     def extract(self) -> Statement:
