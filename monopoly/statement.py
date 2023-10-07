@@ -53,20 +53,16 @@ class Statement:
 
         return transactions
 
-    def _process_line(self, line: str, page: list[str], idx: int) -> dict:
+    def _process_line(self, line: str, lines: list[str], idx: int) -> dict:
         if match := re.search(self.config.transaction_pattern, line):
             transaction = Transaction(**match.groupdict())
 
-            if self.config.multiline_transactions:
-                try:
-                    if not re.search(self.config.transaction_pattern, page[idx + 1]):
-                        transaction.description = " ".join(
-                            [transaction.description, page[idx + 1]]
-                        )
-                except IndexError as err:
-                    logger.debug(err)
+            if self.config.multiline_transactions and idx < len(lines) - 1:
+                next_line = lines[idx + 1]
+                if not re.search(self.config.transaction_pattern, next_line):
+                    transaction.description += " " + next_line
 
-            return vars(transaction)
+            return transaction
         return None
 
     @cached_property
