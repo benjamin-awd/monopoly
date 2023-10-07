@@ -16,7 +16,7 @@ class Ocbc(BankBase):
             r"(?P<date>\d+/\d+)\s*(?P<description>.*?)\s*(?P<amount>[\d.,]+)$"
         ),
         transaction_date_format="%d/%m",
-        date_pattern=r"\d{2}\-\d{2}\-\d{4}",
+        statement_date_pattern=r"\d{2}\-\d{2}\-\d{4}",
         statement_date_format=r"%d-%m-%Y",
     )
 
