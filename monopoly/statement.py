@@ -55,16 +55,18 @@ class Statement:
 
     def _process_line(self, line: str, page: list[str], idx: int) -> dict:
         if match := re.search(self.config.transaction_pattern, line):
-            date, description, amount = match.groups()
+            transaction = Transaction(**match.groupdict())
 
             if self.config.multiline_transactions:
                 try:
                     if not re.search(self.config.transaction_pattern, page[idx + 1]):
-                        description = " ".join([description, page[idx + 1]])
+                        transaction.description = " ".join(
+                            [transaction.description, page[idx + 1]]
+                        )
                 except IndexError as err:
                     logger.debug(err)
 
-            return vars(Transaction(date, description, amount))
+            return vars(transaction)
         return None
 
     @cached_property
