@@ -73,6 +73,6 @@ def statement_config():
         statement_date_format=r"%d-%m-%Y",
         transaction_pattern="foo",
         transaction_date_format=r"%d/%m",
-        date_pattern="",
+        statement_date_pattern="",
     )
     yield statement_config

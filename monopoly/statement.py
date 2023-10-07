@@ -22,7 +22,7 @@ class StatementConfig:
     statement_date_format: Annotated[str, StringConstraints(pattern="%.+%.+%")]
     transaction_pattern: str
     transaction_date_format: Annotated[str, StringConstraints(pattern="%")]
-    date_pattern: str
+    statement_date_pattern: str
     multiline_transactions: bool = False
 
     # Convert enums to strings
@@ -72,7 +72,7 @@ class Statement:
         logger.info("Extracting statement date")
         first_page = self.pages[0]
         for line in first_page.lines:
-            if match := re.findall(self.config.date_pattern, line):
+            if match := re.findall(self.config.statement_date_pattern, line):
                 statement_date = match[0]
                 logger.debug("Statement date found")
                 return datetime.strptime(

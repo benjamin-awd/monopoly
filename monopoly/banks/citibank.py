@@ -16,7 +16,7 @@ class Citibank(BankBase):
             r"^(?P<date>\b\d{2}\s\w{3}\b)\s*(?P<description>.*?)\s*(?P<amount>[\d.,]+)$"
         ),
         transaction_date_format="%d %b",
-        date_pattern=r"Statement\sDate\s(.*)$",
+        statement_date_pattern=r"Statement\sDate\s(.*)$",
         statement_date_format=r"%B %d, %Y",
     )
 

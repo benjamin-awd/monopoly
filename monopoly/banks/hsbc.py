@@ -19,7 +19,7 @@ class Hsbc(BankBase):
             r"(?P<amount>[\d.,]+)$"
         ),
         transaction_date_format="%d %b",
-        date_pattern=r"(\d{2}\s\w{3}\s\d{4})\s.*$",
+        statement_date_pattern=r"(\d{2}\s\w{3}\s\d{4})\s.*$",
         multiline_transactions=True,
         statement_date_format=r"%d %b %Y",
     )
