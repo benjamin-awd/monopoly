@@ -2,8 +2,10 @@ import logging
 import re
 from datetime import datetime
 from functools import cached_property
+from typing import Annotated
 
 from pandas import DataFrame
+from pydantic import StringConstraints
 from pydantic.dataclasses import dataclass
 
 from monopoly.config import arbitrary_config
@@ -17,9 +19,9 @@ logger = logging.getLogger(__name__)
 class StatementConfig:
     bank_name: BankNames
     account_type: AccountType
-    statement_date_format: str
+    statement_date_format: Annotated[str, StringConstraints(pattern="%.+%.+%")]
     transaction_pattern: str
-    transaction_date_format: str
+    transaction_date_format: Annotated[str, StringConstraints(pattern="%")]
     date_pattern: str
     multiline_transactions: bool = False
 
