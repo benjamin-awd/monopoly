@@ -7,10 +7,9 @@ from monopoly.helpers.constants import BankStatement
 
 def test_citibank_extract_unprotected_pdf(citibank: Citibank):
     raw_df = citibank.extract().df
-    expected_df = pd.read_csv("tests/fixtures/citibank/expected.csv", dtype=object)
+    expected_df = pd.read_csv("tests/fixtures/citibank/expected.csv")
 
     assert_frame_equal(raw_df, expected_df)
-    raw_df[BankStatement.AMOUNT] = raw_df[BankStatement.AMOUNT].astype("float")
 
     # total excluding $20 cashback
     assert round(raw_df[BankStatement.AMOUNT].sum(), 2) == 1434.07

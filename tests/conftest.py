@@ -10,7 +10,7 @@ from monopoly.banks.hsbc import Hsbc
 from monopoly.banks.ocbc import Ocbc
 from monopoly.gmail import Message, MessageAttachment
 from monopoly.helpers.constants import AccountType, BankNames
-from monopoly.pdf import PdfConfig, PdfParser
+from monopoly.pdf import PdfConfig, PdfPage, PdfParser
 
 
 @pytest.fixture(scope="session")
@@ -60,7 +60,7 @@ def parser():
 @pytest.fixture(scope="function")
 def statement(monkeypatch, statement_config):
     monkeypatch.setattr("monopoly.bank.Statement.df", None)
-    mock_page = mock.Mock()
+    mock_page = mock.Mock(spec=PdfPage)
     statement = Statement(pages=[mock_page], config=statement_config)
     yield statement
 
@@ -70,9 +70,9 @@ def statement_config():
     statement_config = StatementConfig(
         account_type=AccountType.CREDIT,
         bank_name=BankNames.OCBC,
-        statement_date_format=None,
-        transaction_pattern=None,
-        transaction_date_format=None,
-        date_pattern=None,
+        statement_date_format="",
+        transaction_pattern="",
+        transaction_date_format="",
+        date_pattern="",
     )
     yield statement_config
