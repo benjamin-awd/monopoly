@@ -40,10 +40,6 @@ class Bank:
         df = statement.df
         statement_date = statement.statement_date
 
-        df[BankStatement.AMOUNT] = (
-            df[BankStatement.AMOUNT].str.replace(",", "").astype(float)
-        )
-
         if self.transform_dates:
             df = self._transform_date_to_iso(df, statement_date)
 

@@ -1,11 +1,12 @@
 import logging
 import re
-from dataclasses import dataclass
 from datetime import datetime
 from functools import cached_property
 
 from pandas import DataFrame
+from pydantic.dataclasses import dataclass
 
+from monopoly.config import arbitrary_config
 from monopoly.helpers.constants import AccountType, BankNames, BankStatement
 from monopoly.pdf import PdfPage
 
@@ -35,7 +36,7 @@ class Transaction:
     amount: float
 
 
-@dataclass
+@dataclass(config=arbitrary_config)
 class Statement:
     pages: list[PdfPage]
     columns = [enum.value for enum in BankStatement]
