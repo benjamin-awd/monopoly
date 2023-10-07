@@ -54,12 +54,12 @@ class Statement:
         return transactions
 
     def _process_line(self, line: str, page: list[str], idx: int) -> dict:
-        if match := re.findall(self.config.transaction_pattern, line):
-            date, description, amount = match[0]
+        if match := re.search(self.config.transaction_pattern, line):
+            date, description, amount = match.groups()
 
             if self.config.multiline_transactions:
                 try:
-                    if not re.findall(self.config.transaction_pattern, page[idx + 1]):
+                    if not re.search(self.config.transaction_pattern, page[idx + 1]):
                         description = " ".join([description, page[idx + 1]])
                 except IndexError as err:
                     logger.debug(err)
