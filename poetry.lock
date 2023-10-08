@@ -1271,6 +1271,35 @@ spelling = ["pyenchant (>=3.2,<4.0)"]
 testutils = ["gitpython (>3)"]
 
 [[package]]
+name = "pylint-plugin-utils"
+version = "0.8.2"
+description = "Utilities and helpers for writing Pylint plugins"
+optional = false
+python-versions = ">=3.7,<4.0"
+files = [
+    {file = "pylint_plugin_utils-0.8.2-py3-none-any.whl", hash = "sha256:ae11664737aa2effbf26f973a9e0b6779ab7106ec0adc5fe104b0907ca04e507"},
+    {file = "pylint_plugin_utils-0.8.2.tar.gz", hash = "sha256:d3cebf68a38ba3fba23a873809155562571386d4c1b03e5b4c4cc26c3eee93e4"},
+]
+
+[package.dependencies]
+pylint = ">=1.7"
+
+[[package]]
+name = "pylint-pydantic"
+version = "0.3.0"
+description = "A Pylint plugin to help Pylint understand the Pydantic"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "pylint_pydantic-0.3.0-py3-none-any.whl", hash = "sha256:040603055f45168048fe86e07bb4b6d672ddc931e00a318102f6da42f6c65564"},
+]
+
+[package.dependencies]
+pydantic = "<3.0"
+pylint = ">2.0,<4.0"
+pylint-plugin-utils = "*"
+
+[[package]]
 name = "pymupdf"
 version = "1.23.3"
 description = "A high performance Python library for data extraction, analysis, conversion & manipulation of PDF (and other) documents."
@@ -1683,4 +1712,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "a63de6862b5f168e85847ee9f6969321d39d601aca1fae64f6ba1072b0372580"
+content-hash = "a1295bd964f51bad3e9924734320e8ba339a40408fac9a441a7b58e3f0e0383e"
