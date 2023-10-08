@@ -28,6 +28,7 @@ pytest = "^7.4.1"
 pytest-xdist = "^3.3.1"
 pysnooper = "^1.2.0"
 google-api-python-client-stubs = "^1.17.0"
+pylint-pydantic = "^0.3.0"
 
 
 [tool.taskipy.tasks]
@@ -46,6 +47,7 @@ disable = [
     "no-member"
 ]
 ignore-paths = ["tests"]
+load-plugins = "pylint_pydantic"
 
 [tool.black]
 line-length = 88
