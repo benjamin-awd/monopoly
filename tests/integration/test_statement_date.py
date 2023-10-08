@@ -1,6 +1,6 @@
-from monopoly.bank import Statement
 from monopoly.banks import Hsbc, Ocbc
 from monopoly.pdf import PdfPage
+from monopoly.statement import Statement
 
 
 def test_hsbc_statement_date_extraction(hsbc: Hsbc, statement: Statement):

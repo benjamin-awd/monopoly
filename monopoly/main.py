@@ -1,10 +1,10 @@
 import logging
 import re
 
-from monopoly.bank import Bank
 from monopoly.banks import Hsbc, Ocbc
 from monopoly.constants import EmailSubjectRegex
 from monopoly.gmail import Gmail, Message
+from monopoly.processor import StatementProcessor
 
 logger = logging.getLogger(__name__)
 
@@ -37,10 +37,10 @@ def process_bank_statement(message: Message, banks: dict):
             attachment = message.get_attachment()
 
             with message.save(attachment) as file:
-                bank: Bank = bank_class(file_path=file)
-                statement = bank.extract()
-                transformed_df = bank.transform(statement)
-                bank.load(transformed_df, statement, upload_to_cloud=True)
+                processor: StatementProcessor = bank_class(file_path=file)
+                statement = processor.extract()
+                transformed_df = processor.transform(statement)
+                processor.load(transformed_df, statement, upload_to_cloud=True)
 
                 message.mark_as_read()
 

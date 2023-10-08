@@ -1,7 +1,7 @@
-from monopoly.bank import Bank
+from monopoly.processor import StatementProcessor
 
 
-class BankBase(Bank):
+class BankBase(StatementProcessor):
     """Helper class to handle initialization of common variables
     that are shared between bank classes"""
 
