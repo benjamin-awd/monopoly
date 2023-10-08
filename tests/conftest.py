@@ -5,9 +5,7 @@ from unittest.mock import PropertyMock
 import pytest
 
 from monopoly.bank import Bank, Statement, StatementConfig
-from monopoly.banks.citibank import Citibank
-from monopoly.banks.hsbc import Hsbc
-from monopoly.banks.ocbc import Ocbc
+from monopoly.banks import Citibank, Hsbc, Ocbc
 from monopoly.gmail import Message, MessageAttachment
 from monopoly.helpers.constants import AccountType, BankNames
 from monopoly.pdf import PdfConfig, PdfPage, PdfParser

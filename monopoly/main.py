@@ -2,8 +2,7 @@ import logging
 import re
 
 from monopoly.bank import Bank
-from monopoly.banks.hsbc import Hsbc
-from monopoly.banks.ocbc import Ocbc
+from monopoly.banks import Hsbc, Ocbc
 from monopoly.gmail import Gmail, Message
 from monopoly.helpers.constants import EmailSubjectRegex
 
