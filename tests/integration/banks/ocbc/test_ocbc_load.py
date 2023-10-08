@@ -7,7 +7,6 @@ from pandas.testing import assert_frame_equal
 
 from monopoly.bank import Statement
 from monopoly.banks.ocbc import Ocbc
-from monopoly.helpers.constants import ROOT_DIR
 from monopoly.statement import Transaction
 
 

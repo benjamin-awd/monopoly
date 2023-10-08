@@ -15,6 +15,13 @@ repos:
         require_serial: true
         types_or: [python, pyi]
 
+  - repo: https://github.com/PyCQA/flake8
+    rev: 6.1.0
+    hooks:
+      - id: flake8
+        name: flake8
+        entry: flake8
+
   - repo: https://github.com/PyCQA/isort
     rev: 5.12.0
     hooks:
