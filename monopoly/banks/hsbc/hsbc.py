@@ -1,7 +1,7 @@
 import logging
 
 from monopoly.config import PdfConfig, StatementConfig, settings
-from monopoly.constants import AccountType, BankNames
+from monopoly.constants import AccountType, BankNames, TransactionPatterns
 
 from ..base import BankBase
 
@@ -12,12 +12,7 @@ class Hsbc(BankBase):
     statement_config = StatementConfig(
         bank_name=BankNames.HSBC,
         account_type=AccountType.CREDIT,
-        transaction_pattern=(
-            r"\d{2}\s\w{3}\s*"
-            r"(?P<date>\d{2}\s\w{3})\s.*?"
-            r"(?P<description>\w.*?)\s*"
-            r"(?P<amount>[\d.,]+)$"
-        ),
+        transaction_pattern=TransactionPatterns.HSBC,
         transaction_date_format="%d %b",
         statement_date_pattern=r"(\d{2}\s\w{3}\s\d{4})\s.*$",
         multiline_transactions=True,
