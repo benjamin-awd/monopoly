@@ -1,6 +1,5 @@
 from monopoly.bank import Statement
-from monopoly.banks.hsbc import Hsbc
-from monopoly.banks.ocbc import Ocbc
+from monopoly.banks import Hsbc, Ocbc
 from monopoly.pdf import PdfPage
 
 

@@ -1,7 +1,7 @@
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
-from monopoly.banks.citibank import Citibank
+from monopoly.banks import Citibank
 from monopoly.helpers.constants import BankStatement
 
 

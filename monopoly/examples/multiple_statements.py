@@ -1,6 +1,6 @@
 from glob import glob
 
-from monopoly.banks.ocbc import Ocbc
+from monopoly.banks import Ocbc
 
 
 def ocbc_example():
