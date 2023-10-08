@@ -7,7 +7,7 @@ from pandas import DataFrame
 from pydantic.dataclasses import dataclass
 
 from monopoly.config import StatementConfig, arbitrary_config
-from monopoly.constants import BankStatement
+from monopoly.constants import StatementFields
 from monopoly.pdf import PdfPage
 
 logger = logging.getLogger(__name__)
@@ -23,7 +23,7 @@ class Transaction:
 @dataclass(config=arbitrary_config)
 class Statement:
     pages: list[PdfPage]
-    columns = [enum.value for enum in BankStatement]
+    columns = [enum.value for enum in StatementFields]
     config: StatementConfig
 
     @cached_property
