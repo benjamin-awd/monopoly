@@ -12,7 +12,7 @@ def test_trusted_user(message: Message):
     message.payload = trusted_message
     message.trusted_user_emails = trusted_user_emails
 
-    assert message.from_trusted_user == True
+    assert message.from_trusted_user
 
 
 def test_untrusted_user(message: Message):
@@ -24,4 +24,4 @@ def test_untrusted_user(message: Message):
     message.payload = untrusted_message
     message.trusted_user_emails = trusted_user_emails
 
-    assert message.from_trusted_user == False
+    assert not message.from_trusted_user
