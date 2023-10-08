@@ -2,8 +2,8 @@ import uuid
 from datetime import datetime
 from unittest import mock
 
-from monopoly.helpers.generate_name import generate_name
 from monopoly.processor import StatementProcessor
+from monopoly.storage import generate_name
 
 
 def test_generate_blob_name(processor: StatementProcessor):
