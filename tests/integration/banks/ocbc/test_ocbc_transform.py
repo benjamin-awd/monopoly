@@ -3,9 +3,8 @@ from datetime import datetime
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
-from monopoly.bank import Statement
 from monopoly.banks import Ocbc
-from monopoly.statement import Transaction
+from monopoly.statement import Statement, Transaction
 
 
 def test_ocbc_transform_cross_year(ocbc: Ocbc, statement: Statement):

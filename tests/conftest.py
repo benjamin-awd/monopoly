@@ -4,12 +4,13 @@ from unittest.mock import PropertyMock
 
 import pytest
 
-from monopoly.bank import Bank, Statement
 from monopoly.banks import Citibank, Hsbc, Ocbc
 from monopoly.config import StatementConfig
 from monopoly.constants import AccountType, BankNames
 from monopoly.gmail import Message, MessageAttachment
 from monopoly.pdf import PdfPage, PdfParser
+from monopoly.processor import StatementProcessor
+from monopoly.statement import Statement
 
 
 @pytest.fixture(scope="session")
@@ -31,13 +32,15 @@ def hsbc():
 
 
 @pytest.fixture(scope="function")
-def bank(statement_config):
+def processor(statement_config):
     with mock.patch.object(
         Statement, "statement_date", new_callable=PropertyMock
     ) as mock_statement_date:
         mock_statement_date.return_value = datetime(2023, 8, 1)
-        bank = Bank(statement_config=statement_config, pdf_config=None, file_path="foo")
-        yield bank
+        processor = StatementProcessor(
+            statement_config=statement_config, pdf_config=None, file_path="foo"
+        )
+        yield processor
 
 
 @pytest.fixture(scope="session")
@@ -58,7 +61,7 @@ def parser():
 
 @pytest.fixture(scope="function")
 def statement(monkeypatch, statement_config):
-    monkeypatch.setattr("monopoly.bank.Statement.df", None)
+    monkeypatch.setattr("monopoly.processor.Statement.df", None)
     mock_page = mock.Mock(spec=PdfPage)
     statement = Statement(pages=[mock_page], config=statement_config)
     yield statement

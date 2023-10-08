@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class Bank:
+class StatementProcessor:
     statement_config: StatementConfig
     file_path: str
     pdf_config: Optional[PdfConfig] = None
