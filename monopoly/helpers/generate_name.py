@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from uuid import uuid4
 
 if TYPE_CHECKING:
-    from monopoly.bank import StatementConfig
+    from monopoly.config import StatementConfig
 
 logger = logging.getLogger(__name__)
 
