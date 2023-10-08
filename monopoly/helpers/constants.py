@@ -12,6 +12,7 @@ class BankNames(Enum):
     CITIBANK = "citibank"
     HSBC = "hsbc"
     OCBC = "ocbc"
+    EXAMPLE = "monopoly"
 
 
 class BankStatement(str, Enum):
