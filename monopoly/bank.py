@@ -6,7 +6,7 @@ from typing import Optional
 from pandas import DataFrame
 
 from monopoly.config import PdfConfig, StatementConfig, settings
-from monopoly.constants import BankStatement
+from monopoly.constants import StatementFields
 from monopoly.pdf import PdfParser
 from monopoly.statement import Statement
 from monopoly.storage import upload_to_cloud_storage, write_to_csv
@@ -48,7 +48,7 @@ class Bank:
         self, df: DataFrame, statement_date: datetime
     ) -> DataFrame:
         logger.info("Transforming dates to ISO 8601")
-        df[BankStatement.DATE] = df.apply(
+        df[StatementFields.DATE] = df.apply(
             self._convert_date, statement_date=statement_date, axis=1
         )
         return df
@@ -59,7 +59,7 @@ class Bank:
         return parsed_date.day, parsed_date.month
 
     def _convert_date(self, row, statement_date: datetime):
-        row_day, row_month = self.parse_date(row[BankStatement.DATE])
+        row_day, row_month = self.parse_date(row[StatementFields.DATE])
 
         # Deal with mixed years from Jan/Dec
         if statement_date.month == 1 and row_month == 12:

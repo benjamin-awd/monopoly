@@ -15,7 +15,7 @@ class BankNames(Enum):
     EXAMPLE = "monopoly"
 
 
-class BankStatement(str, Enum):
+class StatementFields(str, Enum):
     DATE = "date"
     DESCRIPTION = "description"
     AMOUNT = "amount"
