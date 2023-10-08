@@ -2,7 +2,7 @@ import logging
 
 from monopoly.bank import BankBase, StatementConfig
 from monopoly.config import settings
-from monopoly.helpers.constants import AccountType, BankNames
+from monopoly.constants import AccountType, BankNames
 from monopoly.pdf import PdfConfig
 
 logger = logging.getLogger(__name__)

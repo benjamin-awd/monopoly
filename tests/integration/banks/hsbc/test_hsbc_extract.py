@@ -2,7 +2,7 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 
 from monopoly.banks import Hsbc
-from monopoly.helpers.constants import BankStatement
+from monopoly.constants import BankStatement
 
 
 def test_hsbc_extract_unprotected_pdf(hsbc: Hsbc):

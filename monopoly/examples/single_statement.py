@@ -1,5 +1,5 @@
 from monopoly.bank import BankBase
-from monopoly.helpers.constants import AccountType, BankNames
+from monopoly.constants import AccountType, BankNames
 from monopoly.statement import StatementConfig
 
 

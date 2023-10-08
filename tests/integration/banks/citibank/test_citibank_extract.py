@@ -2,7 +2,7 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 
 from monopoly.banks import Citibank
-from monopoly.helpers.constants import BankStatement
+from monopoly.constants import BankStatement
 
 
 def test_citibank_extract_unprotected_pdf(citibank: Citibank):
