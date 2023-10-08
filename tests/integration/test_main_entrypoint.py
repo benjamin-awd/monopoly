@@ -3,7 +3,7 @@ from unittest.mock import Mock, PropertyMock, patch
 
 import pytest
 
-from monopoly.helpers.constants import EmailSubjectRegex
+from monopoly.constants import EmailSubjectRegex
 from monopoly.main import process_bank_statement
 
 

@@ -3,8 +3,8 @@ import re
 
 from monopoly.bank import Bank
 from monopoly.banks import Hsbc, Ocbc
+from monopoly.constants import EmailSubjectRegex
 from monopoly.gmail import Gmail, Message
-from monopoly.helpers.constants import EmailSubjectRegex
 
 logger = logging.getLogger(__name__)
 

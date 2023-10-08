@@ -9,7 +9,7 @@ from pydantic import StringConstraints
 from pydantic.dataclasses import dataclass
 
 from monopoly.config import arbitrary_config
-from monopoly.helpers.constants import AccountType, BankNames, BankStatement
+from monopoly.constants import AccountType, BankNames, BankStatement
 from monopoly.pdf import PdfPage
 
 logger = logging.getLogger(__name__)
