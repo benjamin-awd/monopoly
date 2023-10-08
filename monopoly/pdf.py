@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class PdfPage:
     pix_map: fitz.Pixmap
     raw_text: str
-    image: Image
+    image: object
 
     @property
     def lines(self) -> list:

@@ -4,7 +4,7 @@ from datetime import datetime
 from functools import cached_property
 
 from pandas import DataFrame
-from pydantic import validator
+from pydantic import field_validator
 from pydantic.dataclasses import dataclass
 
 from monopoly.config import StatementConfig, arbitrary_config
@@ -20,7 +20,7 @@ class Transaction:
     description: str
     amount: float
 
-    @validator("amount", pre=True)
+    @field_validator("amount", mode="before")
     def adjust_number_format(cls, value: object) -> object:
         if isinstance(value, str):
             return value.replace(",", "")
