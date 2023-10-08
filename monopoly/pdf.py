@@ -6,6 +6,7 @@ import fitz
 import pytesseract
 from PIL import Image
 
+from monopoly.config import PdfConfig
 from monopoly.helpers.pdf2john import PdfHashExtractor
 
 logger = logging.getLogger(__name__)
@@ -20,15 +21,6 @@ class PdfPage:
     @property
     def lines(self) -> list:
         return list(filter(None, self.raw_text.split("\n")))
-
-
-@dataclass
-class PdfConfig:
-    static_string: str = None
-    brute_force_mask: str = None
-    password: str = None
-    page_range: tuple = (None, None)
-    page_bbox: tuple = None
 
 
 class PdfParser:

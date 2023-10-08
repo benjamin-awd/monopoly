@@ -4,11 +4,12 @@ from unittest.mock import PropertyMock
 
 import pytest
 
-from monopoly.bank import Bank, Statement, StatementConfig
+from monopoly.bank import Bank, Statement
 from monopoly.banks import Citibank, Hsbc, Ocbc
+from monopoly.config import StatementConfig
 from monopoly.constants import AccountType, BankNames
 from monopoly.gmail import Message, MessageAttachment
-from monopoly.pdf import PdfConfig, PdfPage, PdfParser
+from monopoly.pdf import PdfPage, PdfParser
 
 
 @pytest.fixture(scope="session")
@@ -51,7 +52,7 @@ def attachment():
 
 @pytest.fixture(scope="session")
 def parser():
-    parser = PdfParser(None, config=PdfConfig(None))
+    parser = PdfParser(file_path=None)
     yield parser
 
 

@@ -7,11 +7,11 @@ from typing import Optional
 from google.cloud import storage
 from pandas import DataFrame
 
-from monopoly.config import settings
+from monopoly.config import PdfConfig, StatementConfig, settings
 from monopoly.constants import ROOT_DIR, BankStatement
 from monopoly.helpers.generate_name import generate_name
-from monopoly.pdf import PdfConfig, PdfParser
-from monopoly.statement import Statement, StatementConfig
+from monopoly.pdf import PdfParser
+from monopoly.statement import Statement
 
 logger = logging.getLogger(__name__)
 
