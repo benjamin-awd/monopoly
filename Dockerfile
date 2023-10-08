@@ -21,6 +21,7 @@ RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --without dev --n
 FROM base AS test
 
 RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root
+RUN poetry install
 
 RUN apt-get update \
   && apt-get -y install tesseract-ocr
@@ -32,7 +33,6 @@ ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH
 
 COPY monopoly ./monopoly
 COPY tests ./tests
-RUN poetry install
 
 CMD ["python", "-m", "poetry", "run", "task", "test"]
 
