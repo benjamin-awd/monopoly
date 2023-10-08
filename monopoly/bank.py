@@ -1,17 +1,15 @@
 import logging
-import os
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
 
-from google.cloud import storage
 from pandas import DataFrame
 
 from monopoly.config import PdfConfig, StatementConfig, settings
-from monopoly.constants import ROOT_DIR, BankStatement
-from monopoly.helpers.generate_name import generate_name
+from monopoly.constants import BankStatement
 from monopoly.pdf import PdfParser
 from monopoly.statement import Statement
+from monopoly.storage import upload_to_cloud_storage, write_to_csv
 
 logger = logging.getLogger(__name__)
 
@@ -78,34 +76,13 @@ class Bank:
         csv_file_path: str = None,
         upload_to_cloud: bool = False,
     ):
-        statement_date = statement.statement_date
-
-        if not csv_file_path:
-            filename = generate_name("file", self.statement_config, statement_date)
-            csv_file_path = os.path.join(ROOT_DIR, "output", filename)
-            logger.info("Writing CSV to file path: %s", csv_file_path)
-
-        df.to_csv(csv_file_path, index=False)
+        csv_file_path = write_to_csv(
+            df=df, csv_file_path=csv_file_path, statement=statement
+        )
 
         if upload_to_cloud:
-            blob_name = generate_name("blob", self.statement_config, statement_date)
-            self._upload_to_google_cloud_storage(
-                client=storage.Client(),
+            upload_to_cloud_storage(
+                statement=statement,
                 source_filename=csv_file_path,
                 bucket_name=settings.gcs_bucket,
-                blob_name=blob_name,
             )
-            logger.info("Uploaded to %s", blob_name)
-
-    @staticmethod
-    def _upload_to_google_cloud_storage(
-        client: storage.Client,
-        source_filename: str,
-        bucket_name: str,
-        blob_name: str,
-    ) -> None:
-        bucket = client.get_bucket(bucket_name)
-        blob = bucket.blob(blob_name)
-
-        logger.info(f"Attempting to upload to 'gs://{bucket_name}/{blob_name}'")
-        blob.upload_from_filename(source_filename)
