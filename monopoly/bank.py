@@ -2,6 +2,7 @@ import logging
 import os
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Optional
 
 from google.cloud import storage
 from pandas import DataFrame
@@ -17,9 +18,9 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class Bank:
-    pdf_config: PdfConfig
     statement_config: StatementConfig
     file_path: str
+    pdf_config: Optional[PdfConfig] = None
     transform_dates: bool = True
 
     def extract(self) -> Statement:
