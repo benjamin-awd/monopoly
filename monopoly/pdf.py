@@ -7,7 +7,7 @@ import pytesseract
 from PIL import Image
 
 from monopoly.config import PdfConfig
-from monopoly.helpers.pdf2john import PdfHashExtractor
+from monopoly.helpers.pdf_hash_extractor import PdfHashExtractor
 
 logger = logging.getLogger(__name__)
 
