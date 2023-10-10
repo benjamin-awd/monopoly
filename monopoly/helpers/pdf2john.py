@@ -87,6 +87,7 @@ if __name__ == "__main__":
         extractor = PdfHashExtractor(filename)
 
         try:
-            extractor.parse()
+            result = extractor.parse()
+            print(result)
         except RuntimeError as e:
             logger.error(f"{filename} : {str(e)}")
