@@ -16,6 +16,7 @@ google-cloud-secret-manager = "^2.16.3"
 pydantic-settings = "^2.0.3"
 pymupdf = "^1.23.3"
 pydantic = "^2.4.2"
+pdf2john = "^0.1.2"
 
 
 [tool.poetry.group.dev.dependencies]

@@ -4,10 +4,10 @@ from dataclasses import dataclass
 
 import fitz
 import pytesseract
+from pdf2john import PdfHashExtractor
 from PIL import Image
 
 from monopoly.config import PdfConfig
-from monopoly.helpers.pdf2john import PdfHashExtractor
 
 logger = logging.getLogger(__name__)
 
