@@ -1,5 +1,6 @@
-import pytest
+from pytest import raises
 
+from monopoly.banks import Hsbc
 from monopoly.pdf import PdfParser
 
 
@@ -14,7 +15,7 @@ def test_wrong_password_raises_error(parser: PdfParser):
     parser.file_path = "tests/integration/fixtures/protected.pdf"
     parser.password = "wrong_pw"
 
-    with pytest.raises(ValueError, match="document is encrypted"):
+    with raises(ValueError, match="Wrong password"):
         parser.open()
 
 
@@ -30,7 +31,7 @@ def test_get_pages_invalid_returns_error(parser: PdfParser):
     parser.file_path = "tests/integration/fixtures/4_pages_blank.pdf"
     parser.page_range = slice(99, -99)
 
-    with pytest.raises(ValueError, match="bad page number"):
+    with raises(ValueError, match="bad page number"):
         parser.get_pages()
 
 
@@ -42,3 +43,17 @@ def test_pdf_unlock(parser: PdfParser):
     )
 
     assert password == "foobar123"
+
+
+def test_override_password(hsbc: Hsbc):
+    hsbc = Hsbc("tests/integration/fixtures/protected.pdf")
+
+    document = hsbc.open(password_override="foobar123")
+    assert not document.is_encrypted
+
+
+def test_error_raised_if_override_is_wrong(hsbc: Hsbc):
+    hsbc = Hsbc("tests/integration/fixtures/protected.pdf")
+
+    with raises(ValueError, match="Wrong password"):
+        hsbc.open(password_override="wrongpw")
