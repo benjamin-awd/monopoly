@@ -34,7 +34,7 @@ COPY monopoly ./monopoly
 COPY tests ./tests
 RUN poetry install
 
-CMD ["python", "-m", "poetry", "run", "task", "test"]
+CMD ["python", "-m", "poetry", "run", "task", "full_test"]
 
 FROM base AS runtime
 

@@ -47,7 +47,7 @@ repos:
     hooks:
       - id: test
         name: test
-        entry: poetry run task test
+        entry: poetry run task short_test
         language: system
         pass_filenames: false
         types: [python]
