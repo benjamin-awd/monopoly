@@ -35,7 +35,8 @@ pylint-pydantic = "^0.3.0"
 [tool.taskipy.tasks]
 format = "isort . && black ."
 lint = "flake8 monopoly && pylint monopoly"
-test = "pytest -n auto"
+short_test = "pytest --ignore tests/integration/banks"
+full_test = "pytest -n auto"
 ci = "poetry run task format && poetry run task lint && poetry run task test"
 
 [tool.pylint]
