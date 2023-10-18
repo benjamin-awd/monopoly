@@ -38,7 +38,8 @@ def process_bank_statement(message: Message, banks: dict):
 
             with message.save(attachment) as file:
                 processor: StatementProcessor = bank_class(file_path=file)
-                statement = processor.extract()
+                pages = processor.get_pages()
+                statement = processor.extract(pages)
                 transformed_df = processor.transform(statement)
                 processor.load(transformed_df, statement, upload_to_cloud=True)
 

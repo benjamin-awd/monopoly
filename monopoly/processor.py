@@ -1,5 +1,4 @@
 import logging
-from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
 
@@ -7,23 +6,25 @@ from pandas import DataFrame
 
 from monopoly.config import PdfConfig, StatementConfig, settings
 from monopoly.constants import StatementFields
-from monopoly.pdf import PdfParser
+from monopoly.pdf import PdfPage, PdfParser
 from monopoly.statement import Statement
 from monopoly.storage import upload_to_cloud_storage, write_to_csv
 
 logger = logging.getLogger(__name__)
 
 
-@dataclass
-class StatementProcessor:
-    statement_config: StatementConfig
-    file_path: str
-    pdf_config: Optional[PdfConfig] = None
-    transform_dates: bool = True
+class StatementProcessor(PdfParser):
+    def __init__(
+        self, statement_config, file_path, pdf_config=None, transform_dates=True
+    ):
+        self.statement_config: StatementConfig = statement_config
+        self.file_path: str = file_path
+        self.pdf_config: Optional[PdfConfig] = pdf_config
+        self.transform_dates: bool = transform_dates
 
-    def extract(self) -> Statement:
-        parser = PdfParser(self.file_path, self.pdf_config)
-        pages = parser.get_pages()
+        super().__init__(file_path=self.file_path, config=pdf_config)
+
+    def extract(self, pages: list[PdfPage]) -> Statement:
         statement = Statement(pages, self.statement_config)
 
         if not statement.transactions:

@@ -42,24 +42,29 @@ class PdfParser:
         self.static_string = config.static_string
         self.remove_vertical_text = True
 
-    def open(self):
+    def open(self, password_override: str = None):
+        """
+        Opens a PDF document. Accepts a manual password override,
+        if the user does not want to set passwords in the .env file.
+        """
         logger.info("Opening pdf from path %s", self.file_path)
         document = fitz.Document(self.file_path)
+        password = self.password or password_override
 
         if not document.is_encrypted:
             return document
 
-        if self.password and not self.brute_force_mask:
-            document.authenticate(self.password)
+        if password:
+            document.authenticate(password)
 
             if document.is_encrypted:
-                raise ValueError("Wrong password - document is encrypted")
+                raise ValueError("Wrong password - unable to open document")
 
             return document
 
         # This attempts to unlock statements based on a common password,
         # followed by the last few digits of a card
-        if document.is_encrypted and self.brute_force_mask:
+        if not password and self.brute_force_mask and self.static_string:
             logger.info("Unlocking PDF using a string prefix with mask")
             password = self.unlock_pdf(
                 pdf_file_path=self.file_path,
