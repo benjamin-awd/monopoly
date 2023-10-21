@@ -14,13 +14,10 @@ logger = logging.getLogger(__name__)
 
 
 class StatementProcessor(PdfParser):
-    def __init__(
-        self, statement_config, file_path, pdf_config=None, transform_dates=True
-    ):
+    def __init__(self, statement_config, file_path, pdf_config=None):
         self.statement_config: StatementConfig = statement_config
         self.file_path: str = file_path
         self.pdf_config: Optional[PdfConfig] = pdf_config
-        self.transform_dates: bool = transform_dates
 
         super().__init__(file_path=self.file_path, config=pdf_config)
 
@@ -39,11 +36,7 @@ class StatementProcessor(PdfParser):
 
     def transform(self, statement: Statement) -> DataFrame:
         logger.info("Running transformation functions on DataFrame")
-        df = statement.df
-        statement_date = statement.statement_date
-
-        if self.transform_dates:
-            df = self._transform_date_to_iso(df, statement_date)
+        df = self._transform_date_to_iso(statement.df, statement.statement_date)
 
         return df
 
