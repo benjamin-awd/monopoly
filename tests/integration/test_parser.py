@@ -46,14 +46,13 @@ def test_pdf_unlock(parser: PdfParser):
 
 
 def test_override_password(hsbc: Hsbc):
-    hsbc = Hsbc("tests/integration/fixtures/protected.pdf")
+    hsbc = Hsbc("tests/integration/fixtures/protected.pdf", password="foobar123")
 
-    document = hsbc.open(password_override="foobar123")
+    document = hsbc.open()
     assert not document.is_encrypted
 
 
-def test_error_raised_if_override_is_wrong(hsbc: Hsbc):
-    hsbc = Hsbc("tests/integration/fixtures/protected.pdf")
-
+def test_error_raised_if_override_is_wrong():
     with raises(ValueError, match="Wrong password"):
-        hsbc.open(password_override="wrongpw")
+        hsbc = Hsbc("tests/integration/fixtures/protected.pdf", password="wrongpw")
+        hsbc.open()
