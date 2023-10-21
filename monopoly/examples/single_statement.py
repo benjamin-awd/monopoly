@@ -11,8 +11,7 @@ def example():
 
     # This runs Tesseract on the PDF and
     # extracts transactions as raw text
-    pages = bank.get_pages()
-    statement = bank.extract(pages)
+    statement = bank.extract()
 
     # Dates are converted into an ISO 8601 date format
     transformed_df = bank.transform(statement)

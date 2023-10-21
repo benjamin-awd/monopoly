@@ -12,8 +12,7 @@ def ocbc_example():
         bank = Ocbc(
             file_path=file_path,
         )
-        pages = bank.get_pages()
-        statement = bank.extract(pages)
+        statement = bank.extract()
         transformed_df = bank.transform(statement)
         bank.load(transformed_df, statement)
 

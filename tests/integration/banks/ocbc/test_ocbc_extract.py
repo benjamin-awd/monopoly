@@ -6,8 +6,7 @@ from monopoly.constants import StatementFields
 
 
 def test_ocbc_extract_unprotected_pdf(ocbc: Ocbc):
-    pages = ocbc.get_pages()
-    raw_df = ocbc.extract(pages).df
+    raw_df = ocbc.extract().df
 
     expected_df = pd.read_csv("tests/integration/fixtures/ocbc/expected.csv")
 
