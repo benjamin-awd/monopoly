@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class StatementProcessor(PdfParser):
-    def __init__(self, statement_config, file_path, pdf_config=None):
+    def __init__(self, statement_config, file_path, pdf_config = None):
         self.statement_config: StatementConfig = statement_config
         self.pdf_config: PdfConfig = pdf_config
 
