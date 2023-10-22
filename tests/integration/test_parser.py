@@ -1,6 +1,7 @@
 from pytest import raises
 
 from monopoly.banks import Hsbc
+from monopoly.config import BruteForceConfig
 from monopoly.pdf import PdfParser
 
 
@@ -9,6 +10,13 @@ def test_can_open_protected(parser: PdfParser):
     parser.password = "foobar123"
 
     parser.open()
+
+
+def test_can_brute_force_open_protected(parser: PdfParser):
+    brute_force_config = BruteForceConfig("foobar", "?d?d?d")
+    parser.file_path = "tests/integration/fixtures/protected.pdf"
+
+    parser.open(brute_force_config)
 
 
 def test_wrong_password_raises_error(parser: PdfParser):
