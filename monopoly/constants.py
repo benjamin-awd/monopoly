@@ -12,7 +12,6 @@ class BankNames(Enum):
     CITIBANK = "citibank"
     HSBC = "hsbc"
     OCBC = "ocbc"
-    EXAMPLE = "monopoly"
 
 
 class StatementFields(str, Enum):
