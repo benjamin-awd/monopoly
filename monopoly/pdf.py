@@ -38,6 +38,7 @@ class PdfParser:
         self.password = config.password
         self.page_range = slice(*config.page_range)
         self.page_bbox: tuple = config.page_bbox
+        self.psm: int = config.psm
         self.brute_force_mask = config.brute_force_mask
         self.static_string = config.static_string
         self.remove_vertical_text = True
@@ -141,7 +142,7 @@ class PdfParser:
         image = Image.frombytes("L", [pix.width, pix.height], pix.samples)
 
         logger.debug("Extracting string from image")
-        text = pytesseract.image_to_string(image, config="--psm 6")
+        text = pytesseract.image_to_string(image, config=f"--psm {self.psm}")
 
         return PdfPage(pix_map=pix, raw_text=text, image=image)
 
