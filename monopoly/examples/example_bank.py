@@ -7,7 +7,7 @@ from monopoly.constants import AccountType, BankNames
 class MonopolyBank(BankBase):
     """Dummy class to help with reading the example PDF statement"""
     statement_config = StatementConfig(
-        bank_name=BankNames.EXAMPLE,
+        bank_name="monopoly",
         account_type=AccountType.CREDIT,
         transaction_pattern=(
             r"(?P<date>\d+/\d+)\s*"
