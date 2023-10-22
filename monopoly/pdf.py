@@ -7,7 +7,7 @@ import pytesseract
 from pdf2john import PdfHashExtractor
 from PIL import Image
 
-from monopoly.config import PdfConfig
+from monopoly.config import BruteForceConfig, PdfConfig
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +24,12 @@ class PdfPage:
 
 
 class PdfParser:
-    def __init__(self, file_path: str, config: PdfConfig = None):
+    def __init__(
+        self,
+        file_path: str,
+        brute_force_config: BruteForceConfig = None,
+        pdf_config: PdfConfig = None,
+    ):
         """Class responsible for parsing PDFs and returning raw text
 
         The page_range variable determines which pages are extracted.
@@ -32,18 +37,17 @@ class PdfParser:
         """
         self.file_path = file_path
 
-        if config is None:
-            config = PdfConfig()
+        if pdf_config is None:
+            pdf_config = PdfConfig()
 
-        self.password = config.password
-        self.page_range = slice(*config.page_range)
-        self.page_bbox: tuple = config.page_bbox
-        self.psm: int = config.psm
-        self.brute_force_mask = config.brute_force_mask
-        self.static_string = config.static_string
+        self.password = pdf_config.password
+        self.page_range = slice(*pdf_config.page_range)
+        self.page_bbox: tuple = pdf_config.page_bbox
+        self.psm: int = pdf_config.psm
+        self.brute_force_config = brute_force_config
         self.remove_vertical_text = True
 
-    def open(self):
+    def open(self, brute_force_config: BruteForceConfig = None):
         """
         Opens and decrypts a PDF document
         """
@@ -63,12 +67,12 @@ class PdfParser:
 
         # This attempts to unlock statements based on a common password,
         # followed by the last few digits of a card
-        if not self.password and self.brute_force_mask and self.static_string:
+        if brute_force_config:
             logger.info("Unlocking PDF using a string prefix with mask")
             password = self.unlock_pdf(
                 pdf_file_path=self.file_path,
-                static_string=self.static_string,
-                mask=self.brute_force_mask,
+                static_string=brute_force_config.static_string,
+                mask=brute_force_config.mask,
             )
 
             document.authenticate(password)
@@ -84,9 +88,9 @@ class PdfParser:
 
         return None
 
-    def get_pages(self) -> list[PdfPage]:
+    def get_pages(self, brute_force_config=None) -> list[PdfPage]:
         logger.info("Extracting text from PDF")
-        document: fitz.Document = self.open()
+        document: fitz.Document = self.open(brute_force_config)
 
         num_pages = list(range(document.page_count))
         document.select(num_pages[self.page_range])

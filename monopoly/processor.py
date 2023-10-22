@@ -3,7 +3,7 @@ from datetime import datetime
 
 from pandas import DataFrame
 
-from monopoly.config import StatementConfig, settings
+from monopoly.config import BruteForceConfig, StatementConfig, settings
 from monopoly.constants import StatementFields
 from monopoly.pdf import PdfConfig, PdfParser
 from monopoly.statement import Statement
@@ -13,12 +13,15 @@ logger = logging.getLogger(__name__)
 
 
 class StatementProcessor(PdfParser):
-    def __init__(self, statement_config, file_path, pdf_config = None):
+    def __init__(
+        self, statement_config, file_path, pdf_config=None, brute_force_config=None
+    ):
         self.statement_config: StatementConfig = statement_config
         self.pdf_config: PdfConfig = pdf_config
+        self.brute_force_config: BruteForceConfig = brute_force_config
 
         # provide access to get_pages()
-        super().__init__(file_path, pdf_config)
+        super().__init__(file_path, brute_force_config, pdf_config)
 
     def extract(self) -> Statement:
         pages = self.get_pages()
