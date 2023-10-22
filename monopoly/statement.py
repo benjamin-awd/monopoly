@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class Transaction:
-    date: str
+    transaction_date: str
     description: str
     amount: float
 

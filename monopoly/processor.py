@@ -42,7 +42,7 @@ class StatementProcessor(PdfParser):
         self, df: DataFrame, statement_date: datetime
     ) -> DataFrame:
         logger.info("Transforming dates to ISO 8601")
-        df[StatementFields.DATE] = df.apply(
+        df[StatementFields.TRANSACTION_DATE] = df.apply(
             self._convert_date, statement_date=statement_date, axis=1
         )
         return df
@@ -53,7 +53,7 @@ class StatementProcessor(PdfParser):
         return parsed_date.day, parsed_date.month
 
     def _convert_date(self, row, statement_date: datetime):
-        row_day, row_month = self.parse_date(row[StatementFields.DATE])
+        row_day, row_month = self.parse_date(row[StatementFields.TRANSACTION_DATE])
 
         # Deal with mixed years from Jan/Dec
         if statement_date.month == 1 and row_month == 12:

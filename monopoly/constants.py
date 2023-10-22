@@ -16,7 +16,7 @@ class BankNames(Enum):
 
 
 class StatementFields(str, Enum):
-    DATE = "date"
+    TRANSACTION_DATE = "transaction_date"
     DESCRIPTION = "description"
     AMOUNT = "amount"
 
@@ -27,15 +27,17 @@ class EmailSubjectRegex(str, Enum):
 
 
 class TransactionPatterns(str, Enum):
-    OCBC = r"^(?P<date>\d+/\d+)\s*(?P<description>.*?)\s*(?P<amount>[\d.,]+)$"
+    OCBC = (
+        r"^(?P<transaction_date>\d+/\d+)\s*(?P<description>.*?)\s*(?P<amount>[\d.,]+)$"
+    )
     CITIBANK = (
-        r"^(?P<date>\b\d{2}\s\w{3}\b)\s*"
+        r"^(?P<transaction_date>\b\d{2}\s\w{3}\b)\s*"
         r"(?P<description>.*?)\s*"
         r"(?P<amount>[\d.,]+)$"
     )
     HSBC = (
-        r"^\d{2}\s\w{3}\s*"
-        r"(?P<date>\d{2}\s\w{3})\s.*?"
+        r"^(?P<posting_date>^\d{2}\s\w{3})\s*"
+        r"(?P<transaction_date>\d{2}\s\w{3})\s.*?"
         r"(?P<description>\w.*?)\s*"
         r"(?P<amount>[\d.,]+)$"
     )

@@ -1,4 +1,4 @@
-date,description,amount
+transaction_date,description,amount
 17 Jul,PUBLIC BUS 123 SINGAPORE SG,1.45
 22 Jul,AMZN Mktp US*12345 Amzn.com/bill WA,34.61
 24 Jul,DCC FEE,0.35
