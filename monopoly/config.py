@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from pydantic import ConfigDict, StringConstraints
-from pydantic.dataclasses import dataclass
+from pydantic.dataclasses import Field, dataclass
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from monopoly.constants import AccountType, BankNames
@@ -39,11 +39,31 @@ class StatementConfig:
 
 @dataclass
 class PdfConfig:
+    """Stores PDF configuration values for the `PdfParser` class
+
+    Attributes:
+    - `static_string` and `brute_force` mask are used together to unlock
+    PDF. For example, HSBC has a password format like 01Jan1999123456,
+    where 01Jan1999 is a static string that never changes, and
+    123456 reflects that last six digits of a credit card, which will
+    not be consistent across different credit card statements.
+    - `password`: The password used to unlock the PDF (if it is locked)
+    - `page_range`: A slice representing which pages to process. For
+    example, a range of (1, -1) will mean that the first and last pages
+    are skipped.
+    - `page_bbox`: A tuple representing the bounding box range for every
+    page. This is used to avoid weirdness like vertical text, and other
+    PDF artifacts that may affect parsing.
+    - `psm`: Page segmentation mode for Tesseract. Defaults to 6, which
+    which is: "assume a single uniform block of text"
+    """
+
     static_string: str = None
     brute_force_mask: str = None
     password: str = None
     page_range: tuple = (None, None)
     page_bbox: tuple = None
+    psm: int = Field(6, ge=0, le=13)
 
 
 settings = Settings()
