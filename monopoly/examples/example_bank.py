@@ -1,6 +1,6 @@
 from monopoly.banks.base import BankBase
 from monopoly.config import StatementConfig
-from monopoly.constants import AccountType, BankNames
+from monopoly.constants import AccountType
 
 
 # fmt: off

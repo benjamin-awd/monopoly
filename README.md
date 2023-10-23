@@ -15,6 +15,7 @@ Supported banks:
 - Citibank
 - HSBC
 - OCBC
+- Standard Chartered
 
 Only credit card statements are supported (for now)
 
