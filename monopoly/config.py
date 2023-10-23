@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     gcs_bucket: str = ""
     ocbc_pdf_password: str = ""
     citibank_pdf_password: str = ""
+    standard_chartered_pdf_password: str = ""
     hsbc_pdf_password_prefix: str = ""
     trusted_user_emails: list = []
 

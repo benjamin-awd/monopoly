@@ -4,7 +4,7 @@ from unittest.mock import PropertyMock
 
 import pytest
 
-from monopoly.banks import Citibank, Hsbc, Ocbc
+from monopoly.banks import Citibank, Hsbc, Ocbc, StandardChartered
 from monopoly.config import StatementConfig
 from monopoly.constants import AccountType, BankNames
 from monopoly.gmail import Message, MessageAttachment
@@ -29,6 +29,14 @@ def ocbc():
 def hsbc():
     hsbc = Hsbc(file_path="tests/integration/fixtures/hsbc/input.pdf")
     yield hsbc
+
+
+@pytest.fixture(scope="session")
+def standard_chartered():
+    standard_chartered = StandardChartered(
+        file_path="tests/integration/fixtures/standard_chartered/input.pdf"
+    )
+    yield standard_chartered
 
 
 @pytest.fixture(scope="function")

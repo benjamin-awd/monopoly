@@ -12,6 +12,7 @@ class BankNames(Enum):
     CITIBANK = "citibank"
     HSBC = "hsbc"
     OCBC = "ocbc"
+    STANDARD_CHARTERED = "standard_chartered"
 
 
 class StatementFields(str, Enum):
@@ -38,5 +39,12 @@ class TransactionPatterns(str, Enum):
         r"^(?P<posting_date>^\d{2}\s\w{3})\s*"
         r"(?P<transaction_date>\d{2}\s\w{3})\s.*?"
         r"(?P<description>\w.*?)\s*"
+        r"(?P<amount>[\d.,]+)$"
+    )
+    STANDARD_CHARTERED = (
+        r"^(?P<posting_date>\d{2}\s\w{3})\s+"
+        r"(?P<transaction_date>\d{2}\s\w{3})\s+"
+        r"(?P<description>\w.*)\s+"
+        r"(?P<transaction_ref>Transaction Ref[\d\s]+)\s+"
         r"(?P<amount>[\d.,]+)$"
     )
