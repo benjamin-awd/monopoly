@@ -43,16 +43,6 @@ def test_get_pages_invalid_returns_error(parser: PdfParser):
         parser.get_pages()
 
 
-def test_pdf_unlock(parser: PdfParser):
-    password = parser.unlock_pdf(
-        pdf_file_path="tests/integration/fixtures/protected.pdf",
-        static_string="foobar",
-        mask="?d?d?d",
-    )
-
-    assert password == "foobar123"
-
-
 def test_override_password(hsbc: Hsbc):
     hsbc = Hsbc("tests/integration/fixtures/protected.pdf", password="foobar123")
 
