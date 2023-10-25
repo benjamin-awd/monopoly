@@ -9,7 +9,7 @@ def example():
         file_path="monopoly/examples/example_statement.pdf",
     )
 
-    # This runs Tesseract on the PDF and
+    # This runs pdftotext on the PDF and
     # extracts transactions as raw text
     statement = bank.extract()
 

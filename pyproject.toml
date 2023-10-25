@@ -7,7 +7,6 @@ authors = ["benjamin-awd <benjamindornel@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.11"
 pandas = "2.1.0"
-pytesseract = "^0.3.10"
 google-api-python-client = "^2.98.0"
 google-auth-oauthlib = "^1.0.0"
 google-auth = "^2.22.0"
@@ -17,6 +16,7 @@ pydantic-settings = "^2.0.3"
 pymupdf = "^1.23.3"
 pydantic = "^2.4.2"
 pdf2john = "^0.1.2"
+pdftotext = "^2.2.2"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -30,6 +30,7 @@ pytest-xdist = "^3.3.1"
 pysnooper = "^1.2.0"
 google-api-python-client-stubs = "^1.17.0"
 pylint-pydantic = "^0.3.0"
+pillow = "^10.1.0"
 
 
 [tool.taskipy.tasks]

@@ -28,21 +28,21 @@ class EmailSubjectRegex(str, Enum):
 
 class TransactionPatterns(str, Enum):
     OCBC = (
-        r"^(?P<transaction_date>\d+/\d+)\s+(?P<description>.*?)\s+(?P<amount>[\d.,]+)$"
+        r"(?P<transaction_date>\d+/\d+)\s+(?P<description>.*?)\s+(?P<amount>[\d.,]+)$"
     )
     CITIBANK = (
-        r"^(?P<transaction_date>\b\d{2}\s\w{3}\b)\s+"
+        r"(?P<transaction_date>\b\d{2}\s\w{3}\b)\s+"
         r"(?P<description>.*?)\s+"
         r"(?P<amount>[\d.,]+)$"
     )
     HSBC = (
-        r"^(?P<posting_date>^\d{2}\s\w{3})\s+"
+        r"(?P<posting_date>\d{2}\s\w{3})\s+"
         r"(?P<transaction_date>\d{2}\s\w{3})\s.*?"
         r"(?P<description>\w.*?)\s+"
         r"(?P<amount>[\d.,]+)$"
     )
     STANDARD_CHARTERED = (
-        r"^(?P<posting_date>\d{2}\s\w{3})\s+"
+        r"(?P<posting_date>\d{2}\s\w{3})\s+"
         r"(?P<transaction_date>\d{2}\s\w{3})\s+"
         r"(?P<description>\w.*)\s+"
         r"(?P<transaction_ref>Transaction Ref[\d\s]+)\s+"

@@ -1,11 +1,11 @@
 import logging
 import subprocess
 from dataclasses import dataclass
+from io import BytesIO
 
 import fitz
-import pytesseract
+import pdftotext
 from pdf2john import PdfHashExtractor
-from PIL import Image
 
 from monopoly.config import BruteForceConfig, PdfConfig
 
@@ -14,9 +14,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class PdfPage:
-    pix_map: fitz.Pixmap
     raw_text: str
-    image: object
 
     @property
     def lines(self) -> list:
@@ -43,7 +41,6 @@ class PdfParser:
         self.password = pdf_config.password
         self.page_range = slice(*pdf_config.page_range)
         self.page_bbox: tuple = pdf_config.page_bbox
-        self.psm: int = pdf_config.psm
         self.brute_force_config = brute_force_config
         self.remove_vertical_text = True
 
@@ -90,12 +87,55 @@ class PdfParser:
 
     def get_pages(self, brute_force_config=None) -> list[PdfPage]:
         logger.info("Extracting text from PDF")
-        document: fitz.Document = self.open(brute_force_config)
+        document: fitz.Document = self.get_document(brute_force_config)
 
         num_pages = list(range(document.page_count))
         document.select(num_pages[self.page_range])
 
-        return [self._process_page(page) for page in document]
+        for page in document:
+            if self.page_bbox:
+                logger.debug("Cropping page")
+                page.set_cropbox(self.page_bbox)
+
+            if self.remove_vertical_text:
+                logger.debug("Removing vertical text")
+                page = self._remove_vertical_text(page)
+
+        pdf_byte_stream = BytesIO(document.tobytes())
+        pdf = pdftotext.PDF(pdf_byte_stream, physical=True)
+
+        return [PdfPage(page) for page in pdf]
+
+    def get_document(self, brute_force_config=None) -> list[fitz.Page]:
+        document: fitz.Document = self.open(brute_force_config)
+        return document
+
+    @staticmethod
+    def _remove_vertical_text(page: fitz.Page):
+        """Helper function to remove vertical text, based on writing direction (wdir).
+
+        This helps avoid situations where the PDF is oddly parsed, due to vertical text
+        inside the PDF.
+
+        An example of vertical text breaking a transaction:
+        ```
+        'HEALTHY HARVEST CAFÉ SINGAPORE SG',
+        'Co Reg No: 123456',
+        '10 NOV 9.80',
+        ```
+
+        Note:
+            The 'dir' key represents the tuple (cosine, sine) for the angle.
+            If line["dir"] != (1, 0), the text of its spans is rotated.
+
+        """
+        for block in page.get_text("dict", flags=fitz.TEXTFLAGS_TEXT)["blocks"]:
+            for line in block["lines"]:
+                writing_direction = line["dir"]
+                if writing_direction != (1, 0):
+                    page.add_redact_annot(line["bbox"])
+        page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE)
+        return page
 
     @staticmethod
     def unlock_pdf(pdf_file_path: str, static_string: str, mask: str):
@@ -128,40 +168,3 @@ class PdfParser:
         password = output.stdout.split("\n")[0].split(":")[-1]
 
         return password
-
-    def _process_page(self, page: fitz.Page) -> PdfPage:
-        logger.info("Processing: %s", page)
-        if self.page_bbox:
-            logger.debug("Cropping page")
-            page.set_cropbox(self.page_bbox)
-
-        if self.remove_vertical_text:
-            logger.debug("Removing vertical text")
-            page = self._remove_vertical_text(page)
-
-        logger.debug("Creating pixmap for page")
-        pix = page.get_pixmap(dpi=300, colorspace=fitz.csGRAY)
-
-        logger.debug("Converting pixmap to PIL image")
-        image = Image.frombytes("L", [pix.width, pix.height], pix.samples)
-
-        logger.debug("Extracting string from image")
-        text = pytesseract.image_to_string(image, config=f"--psm {self.psm}")
-
-        return PdfPage(pix_map=pix, raw_text=text, image=image)
-
-    @staticmethod
-    def _remove_vertical_text(page: fitz.Page):
-        """Helper function to remove vertical text, based on writing direction (wdir).
-
-        Note:
-            The 'dir' key represents the tuple (cosine, sine) for the angle.
-            If line["dir"] != (1, 0), the text of its spans is rotated.
-        """
-        for block in page.get_text("dict", flags=fitz.TEXTFLAGS_TEXT)["blocks"]:
-            for line in block["lines"]:
-                writing_direction = line["dir"]
-                if writing_direction != (1, 0):
-                    page.add_redact_annot(line["bbox"])
-        page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE)
-        return page

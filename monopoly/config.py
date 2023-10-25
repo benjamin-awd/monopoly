@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from pydantic import ConfigDict, Field, StringConstraints
+from pydantic import ConfigDict, StringConstraints
 from pydantic.dataclasses import dataclass
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -49,14 +49,11 @@ class PdfConfig:
     - `page_bbox`: A tuple representing the bounding box range for every
     page. This is used to avoid weirdness like vertical text, and other
     PDF artifacts that may affect parsing.
-    - `psm`: Page segmentation mode for Tesseract. Defaults to 6, which
-    which is: "assume a single uniform block of text"
     """
 
     password: str = None
     page_range: tuple = (None, None)
     page_bbox: tuple = None
-    psm: int = Field(6, ge=0, le=13)
 
 
 @dataclass
