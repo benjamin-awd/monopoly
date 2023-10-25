@@ -20,10 +20,10 @@ RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --without dev --n
 
 FROM base AS test
 
-RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root
-
 RUN apt-get update \
-  && apt-get -y install tesseract-ocr
+  && apt-get -y install build-essential libpoppler-cpp-dev pkg-config
+
+RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --no-root
 
 COPY --from=brew /home/linuxbrew/.linuxbrew/Cellar /home/linuxbrew/.linuxbrew/Cellar
 COPY --from=brew /home/linuxbrew/.linuxbrew/bin/john /home/linuxbrew/.linuxbrew/bin/john
@@ -49,7 +49,7 @@ COPY --from=brew /home/linuxbrew/.linuxbrew/lib /home/linuxbrew/.linuxbrew/lib
 ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH
 
 RUN apt-get update \
-  && apt-get -y install tesseract-ocr
+  && apt-get -y install build-essential libpoppler-cpp-dev pkg-config
 
 COPY monopoly ./monopoly
 

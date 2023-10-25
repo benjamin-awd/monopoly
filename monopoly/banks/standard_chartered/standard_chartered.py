@@ -22,5 +22,4 @@ class StandardChartered(BankBase):
         password=settings.standard_chartered_pdf_password,
         page_range=(0, -1),
         page_bbox=(0, 0, 580, 820),
-        psm=3,
     )

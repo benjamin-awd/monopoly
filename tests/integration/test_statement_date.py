@@ -11,7 +11,7 @@ def test_hsbc_statement_date_extraction(hsbc: Hsbc, statement: Statement):
     )
     statement.config.statement_date_format = hsbc.statement_config.statement_date_format
 
-    statement.pages[0] = PdfPage(pix_map=None, raw_text=page_content, image=None)
+    statement.pages[0] = PdfPage(raw_text=page_content)
 
     expected_date = "21 Jul 2023"
     statement_date = statement.statement_date
@@ -30,7 +30,7 @@ def test_ocbc_statement_date_extraction(ocbc: Ocbc, statement: Statement):
     )
     statement.config.statement_date_format = ocbc.statement_config.statement_date_format
 
-    statement.pages[0] = PdfPage(pix_map=None, raw_text=page_content, image=None)
+    statement.pages[0] = PdfPage(raw_text=page_content)
 
     expected_date = "01-08-2023"
     statement_date = statement.statement_date

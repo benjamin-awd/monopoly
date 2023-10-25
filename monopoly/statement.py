@@ -20,8 +20,12 @@ class Transaction:
     description: str
     amount: float
 
+    @field_validator("description", mode="after")
+    def remove_extra_whitespace(cls, value: str) -> str:
+        return " ".join(value.split())
+
     @field_validator("amount", mode="before")
-    def adjust_number_format(cls, value: object) -> object:
+    def adjust_number_format(cls, value: str) -> float:
         if isinstance(value, str):
             return value.replace(",", "")
         return value
@@ -52,6 +56,7 @@ class Statement:
                 next_line = lines[idx + 1]
                 if not re.search(self.config.transaction_pattern, next_line):
                     transaction.description += " " + next_line
+                    transaction = Transaction(**vars(transaction))
 
             return transaction
         return None

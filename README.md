@@ -9,7 +9,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 
-Monopoly is a Python library that extracts transactions from bank statement PDFs using Tesseract
+Monopoly is a Python library that extracts transactions from bank statement PDFs using `pdftotext`
 
 Supported banks:
 - Citibank

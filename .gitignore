@@ -12,6 +12,7 @@ credentials.json
 token.json
 _ignore*
 *.tfvars
+*.txt
 
 # allowed pdf files/fixtures
 !tests/integration/fixtures/*/**
