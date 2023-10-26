@@ -13,6 +13,7 @@ class BankNames(Enum):
     HSBC = "hsbc"
     OCBC = "ocbc"
     STANDARD_CHARTERED = "standard_chartered"
+    EXAMPLE = "monopoly"
 
 
 class StatementFields(str, Enum):
