@@ -9,6 +9,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Install pdftotext
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install build-essential libpoppler-cpp-dev pkg-config
+
       - name: Setup Python & Poetry
         uses: ./.github/actions/setup-python-poetry
         with:
