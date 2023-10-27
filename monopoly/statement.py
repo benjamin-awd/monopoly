@@ -41,12 +41,17 @@ class Statement:
     def transactions(self) -> list[dict]:
         transactions = []
         for page in self.pages:
-            for i, line in enumerate(page.lines):
-                transaction = self._process_line(line, page.lines, idx=i)
+            lines = self.process_lines(page)
+            for i, line in enumerate(lines):
+                transaction = self._process_line(line, lines, idx=i)
                 if transaction:
                     transactions.append(transaction)
 
         return transactions
+
+    @staticmethod
+    def process_lines(page: PdfPage) -> list:
+        return [line.lstrip() for line in page.lines]
 
     def _process_line(self, line: str, lines: list[str], idx: int) -> dict:
         if match := re.search(self.config.transaction_pattern, line):
