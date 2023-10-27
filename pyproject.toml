@@ -36,7 +36,6 @@ pillow = "^10.1.0"
 [tool.taskipy.tasks]
 format = "isort . && black ."
 lint = "flake8 monopoly && pylint monopoly"
-short_test = "pytest --ignore tests/integration/banks"
 full_test = "pytest -n auto"
 ci = "poetry run task format && poetry run task lint && poetry run task test"
 
