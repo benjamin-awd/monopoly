@@ -42,7 +42,6 @@ class PdfParser:
         self.page_range = slice(*pdf_config.page_range)
         self.page_bbox: tuple = pdf_config.page_bbox
         self.brute_force_config = brute_force_config
-        self.remove_vertical_text = True
 
     def open(self, brute_force_config: BruteForceConfig = None):
         """
@@ -97,9 +96,8 @@ class PdfParser:
                 logger.debug("Cropping page")
                 page.set_cropbox(self.page_bbox)
 
-            if self.remove_vertical_text:
-                logger.debug("Removing vertical text")
-                page = self._remove_vertical_text(page)
+            logger.debug("Removing vertical text")
+            page = self._remove_vertical_text(page)
 
         pdf_byte_stream = BytesIO(document.tobytes())
         pdf = pdftotext.PDF(pdf_byte_stream, physical=True)
