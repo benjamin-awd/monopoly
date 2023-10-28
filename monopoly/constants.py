@@ -38,7 +38,7 @@ class TransactionPatterns(str, Enum):
     )
     HSBC = (
         r"^(?P<posting_date>\d{2}\s\w{3})\s+"
-        r"(?P<transaction_date>\d{2}\s\w{3})\s.*?"
+        r"(?P<transaction_date>\d{2}\s\w{3})\s+"
         r"(?P<description>\w.*?)\s+"
         r"(?P<amount>[\d.,]+)$"
     )
