@@ -38,30 +38,37 @@ class EmailSubjectRegex(StrEnum):
     HSBC = r"Your.HSBC.*eStatement"
 
 
+class SharedPatterns(StrEnum):
+    AMOUNT = r"(?P<amount>[\d.,]+)$"
+    DESCRIPTION = r"(?P<description>.*?)\s+"
+
+
 class TransactionPatterns(StrEnum):
     DBS = (
         r"^(?P<transaction_date>\d{2}\s[A-Z]{3})\s+"
-        r"(?P<description>.*?)\s+"
-        r"(?P<amount>[\d.,]+)$"
+        + SharedPatterns.DESCRIPTION
+        + SharedPatterns.AMOUNT
     )
     OCBC = (
-        r"^(?P<transaction_date>\d+/\d+)\s+(?P<description>.*?)\s+(?P<amount>[\d.,]+)$"
+        r"^(?P<transaction_date>\d+/\d+)\s+"
+        + SharedPatterns.DESCRIPTION
+        + SharedPatterns.AMOUNT
     )
     CITIBANK = (
         r"^(?P<transaction_date>\b\d{2}\s\w{3}\b)\s+"
-        r"(?P<description>.*?)\s+"
-        r"(?P<amount>[\d.,]+)$"
+        + SharedPatterns.DESCRIPTION
+        + SharedPatterns.AMOUNT
     )
     HSBC = (
         r"^(?P<posting_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
         r"(?P<transaction_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
-        r"(?P<description>\w.*?)\s+"
-        r"(?P<amount>[\d.,]+)$"
+        + SharedPatterns.DESCRIPTION
+        + SharedPatterns.AMOUNT
     )
     STANDARD_CHARTERED = (
         r"^(?P<posting_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
         r"(?P<transaction_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
-        r"(?P<description>\w.*)\s+"
-        r"(?P<transaction_ref>Transaction\sRef\s\d+)\s+"
-        r"(?P<amount>[\d.,]+)$"
+        + SharedPatterns.DESCRIPTION
+        + r"(?P<transaction_ref>Transaction\sRef\s\d+)\s+"
+        + SharedPatterns.AMOUNT
     )
