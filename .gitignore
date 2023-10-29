@@ -15,8 +15,8 @@ _ignore*
 *.txt
 
 # allowed pdf files/fixtures
-!tests/integration/fixtures/*/**
-!tests/integration/fixtures/*.pdf
+!tests/integration/banks/**/*.csv
+!tests/integration/banks/**/*.pdf
 !monopoly/examples/*.pdf
 
 # john files

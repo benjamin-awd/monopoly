@@ -1,4 +1,5 @@
 from datetime import datetime
+from pathlib import Path
 
 import pandas as pd
 import pytest
@@ -22,13 +23,11 @@ from monopoly.statement import Statement
 )
 def test_bank_operations(bank_class: BankBase, total_amount, statement_date):
     bank_name = bank_class.statement_config.bank_name
-    bank: BankBase = bank_class(
-        file_path=f"tests/integration/fixtures/{bank_name}/input.pdf"
-    )
-    raw_data = pd.read_csv(f"tests/integration/fixtures/{bank_name}/raw.csv")
-    transformed_data = pd.read_csv(
-        f"tests/integration/fixtures/{bank_name}/transformed.csv"
-    )
+
+    fixture_directory = Path(__file__).parent / bank_name
+    bank: BankBase = bank_class(fixture_directory / "input.pdf")
+    raw_data = pd.read_csv(fixture_directory / "raw.csv")
+    transformed_data = pd.read_csv(fixture_directory / "transformed.csv")
 
     # Check extracted data is correct
     statement: Statement = bank.extract()
