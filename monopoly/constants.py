@@ -49,11 +49,6 @@ class TransactionPatterns(StrEnum):
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT
     )
-    OCBC = (
-        r"^(?P<transaction_date>\d+/\d+)\s+"
-        + SharedPatterns.DESCRIPTION
-        + SharedPatterns.AMOUNT
-    )
     CITIBANK = (
         r"^(?P<transaction_date>\b\d{2}\s\w{3}\b)\s+"
         + SharedPatterns.DESCRIPTION
@@ -62,6 +57,11 @@ class TransactionPatterns(StrEnum):
     HSBC = (
         r"^(?P<posting_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
         r"(?P<transaction_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
+        + SharedPatterns.DESCRIPTION
+        + SharedPatterns.AMOUNT
+    )
+    OCBC = (
+        r"^(?P<transaction_date>\d+/\d+)\s+"
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT
     )
