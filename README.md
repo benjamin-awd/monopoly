@@ -13,6 +13,7 @@ Monopoly is a Python library that extracts transactions from bank statement PDFs
 
 Supported banks:
 - Citibank
+- DBS
 - HSBC
 - OCBC
 - Standard Chartered
