@@ -9,7 +9,7 @@ from monopoly.banks import Ocbc
 from monopoly.statement import Statement, Transaction
 
 
-def test_ocbc_write_to_local_csv(ocbc: Ocbc, statement: Statement):
+def test_write_to_local_csv(ocbc: Ocbc, statement: Statement):
     transformed_df = pd.DataFrame(
         [
             Transaction("2024-01-12", "FAIRPRICE FINEST", 18.49),
