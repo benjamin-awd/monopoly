@@ -36,7 +36,7 @@ def process_bank_statement(message: Message, banks: dict):
         if re.search(bank_regex_pattern, subject):
             attachment = message.get_attachment()
 
-            with message.save(attachment) as file:
+            with message.save(attachment) as file:  # type: ignore
                 processor: StatementProcessor = bank_class(file_path=file)
                 statement = processor.extract()
                 transformed_df = processor.transform(statement)

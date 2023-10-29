@@ -2,6 +2,7 @@ import logging
 import subprocess
 from dataclasses import dataclass
 from io import BytesIO
+from typing import Optional
 
 import fitz
 import pdftotext
@@ -25,8 +26,8 @@ class PdfParser:
     def __init__(
         self,
         file_path: str,
-        brute_force_config: BruteForceConfig = None,
-        pdf_config: PdfConfig = None,
+        brute_force_config: Optional[BruteForceConfig] = None,
+        pdf_config: Optional[PdfConfig] = None,
     ):
         """Class responsible for parsing PDFs and returning raw text
 
@@ -40,10 +41,10 @@ class PdfParser:
 
         self.password = pdf_config.password
         self.page_range = slice(*pdf_config.page_range)
-        self.page_bbox: tuple = pdf_config.page_bbox
+        self.page_bbox = pdf_config.page_bbox
         self.brute_force_config = brute_force_config
 
-    def open(self, brute_force_config: BruteForceConfig = None):
+    def open(self, brute_force_config: Optional[BruteForceConfig] = None):
         """
         Opens and decrypts a PDF document
         """
@@ -136,7 +137,9 @@ class PdfParser:
         return page
 
     @staticmethod
-    def unlock_pdf(pdf_file_path: str, static_string: str, mask: str):
+    def unlock_pdf(
+        pdf_file_path: str, static_string: Optional[str], mask: Optional[str]
+    ):
         hash_extractor = PdfHashExtractor(pdf_file_path)
         pdf_hash = hash_extractor.parse()
 

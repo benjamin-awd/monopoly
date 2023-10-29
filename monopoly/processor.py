@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from typing import Optional
 
 from pandas import DataFrame
 
@@ -24,7 +25,7 @@ class StatementProcessor(PdfParser):
         super().__init__(file_path, brute_force_config, pdf_config)
 
     def extract(self) -> Statement:
-        pages = self.get_pages()
+        pages = self.get_pages(self.brute_force_config)
         statement = Statement(pages, self.statement_config)
 
         if not statement.transactions:
@@ -70,7 +71,7 @@ class StatementProcessor(PdfParser):
         self,
         df: DataFrame,
         statement: Statement,
-        csv_file_path: str = None,
+        csv_file_path: Optional[str] = None,
         upload_to_cloud: bool = False,
     ):
         csv_file_path = write_to_csv(
@@ -80,6 +81,6 @@ class StatementProcessor(PdfParser):
         if upload_to_cloud:
             upload_to_cloud_storage(
                 statement=statement,
-                source_filename=csv_file_path,
+                source_filename=csv_file_path,  # type: ignore
                 bucket_name=settings.gcs_bucket,
             )
