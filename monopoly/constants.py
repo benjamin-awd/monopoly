@@ -43,15 +43,15 @@ class TransactionPatterns(str, Enum):
         r"(?P<amount>[\d.,]+)$"
     )
     HSBC = (
-        r"^(?P<posting_date>\d{2}\s\w{3})\s+"
-        r"(?P<transaction_date>\d{2}\s\w{3})\s+"
+        r"^(?P<posting_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
+        r"(?P<transaction_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
         r"(?P<description>\w.*?)\s+"
         r"(?P<amount>[\d.,]+)$"
     )
     STANDARD_CHARTERED = (
-        r"^(?P<posting_date>\d{2}\s\w{3})\s+"
-        r"(?P<transaction_date>\d{2}\s\w{3})\s+"
+        r"^(?P<posting_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
+        r"(?P<transaction_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
         r"(?P<description>\w.*)\s+"
-        r"(?P<transaction_ref>Transaction Ref[\d\s]+)\s+"
+        r"(?P<transaction_ref>Transaction\sRef\s\d+)\s+"
         r"(?P<amount>[\d.,]+)$"
     )
