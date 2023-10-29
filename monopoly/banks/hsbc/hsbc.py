@@ -14,7 +14,7 @@ class Hsbc(BankBase):
         account_type=AccountType.CREDIT,
         transaction_pattern=TransactionPatterns.HSBC,
         transaction_date_format="%d %b",
-        statement_date_pattern=r"(\d{2}\s\w{3}\s\d{4})\s.*$",
+        statement_date_pattern=r"(\d{2}\s[A-Z]{3}\s\d{4})\s.*$",
         multiline_transactions=True,
         statement_date_format=r"%d %b %Y",
     )
