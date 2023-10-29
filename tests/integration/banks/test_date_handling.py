@@ -7,7 +7,7 @@ from monopoly.banks import Ocbc
 from monopoly.statement import Statement, Transaction
 
 
-def test_ocbc_transform_cross_year(ocbc: Ocbc, statement: Statement):
+def test_transform_cross_year(ocbc: Ocbc, statement: Statement):
     raw_df = pd.DataFrame(
         [
             Transaction("12/01", "FAIRPRICE FINEST", "18.49"),
@@ -28,7 +28,7 @@ def test_ocbc_transform_cross_year(ocbc: Ocbc, statement: Statement):
     assert_frame_equal(transformed_df, expected_data)
 
 
-def test_ocbc_transform_within_year(ocbc: Ocbc, statement: Statement):
+def test_transform_within_year(ocbc: Ocbc, statement: Statement):
     raw_df = pd.DataFrame(
         [
             Transaction("12/06", "FAIRPRICE FINEST", "18.49"),
