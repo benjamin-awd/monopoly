@@ -1,34 +1,44 @@
 import os
-from enum import Enum
+from enum import StrEnum, auto
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-class AccountType(Enum):
-    CREDIT = "credit"
+# pylint: disable=unused-argument,no-self-argument
+class AutoEnum(StrEnum):
+    """Generates lower case values for enums
+    e.g. CITIBANK -> citibank
+    """
+
+    def _generate_next_value_(name: str, *args):
+        return name.lower()
 
 
-class BankNames(Enum):
-    CITIBANK = "citibank"
-    DBS = "dbs"
-    HSBC = "hsbc"
-    OCBC = "ocbc"
-    STANDARD_CHARTERED = "standard_chartered"
-    EXAMPLE = "monopoly"
+class AccountType(AutoEnum):
+    CREDIT = auto()
 
 
-class StatementFields(str, Enum):
-    TRANSACTION_DATE = "transaction_date"
-    DESCRIPTION = "description"
-    AMOUNT = "amount"
+class BankNames(AutoEnum):
+    CITIBANK = auto()
+    DBS = auto()
+    HSBC = auto()
+    OCBC = auto()
+    STANDARD_CHARTERED = auto()
+    EXAMPLE = auto()
 
 
-class EmailSubjectRegex(str, Enum):
+class StatementFields(AutoEnum):
+    TRANSACTION_DATE = auto()
+    DESCRIPTION = auto()
+    AMOUNT = auto()
+
+
+class EmailSubjectRegex(StrEnum):
     OCBC = r"OCBC Bank: Your Credit Card e-Statement"
     HSBC = r"Your.HSBC.*eStatement"
 
 
-class TransactionPatterns(str, Enum):
+class TransactionPatterns(StrEnum):
     DBS = (
         r"^(?P<transaction_date>\d{2}\s[A-Z]{3})\s+"
         r"(?P<description>.*?)\s+"
