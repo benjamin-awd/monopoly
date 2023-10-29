@@ -10,6 +10,7 @@ class AccountType(Enum):
 
 class BankNames(Enum):
     CITIBANK = "citibank"
+    DBS = "dbs"
     HSBC = "hsbc"
     OCBC = "ocbc"
     STANDARD_CHARTERED = "standard_chartered"
@@ -28,6 +29,11 @@ class EmailSubjectRegex(str, Enum):
 
 
 class TransactionPatterns(str, Enum):
+    DBS = (
+        r"^(?P<transaction_date>\d{2}\s[A-Z]{3})\s+"
+        r"(?P<description>.*?)\s+"
+        r"(?P<amount>[\d.,]+)$"
+    )
     OCBC = (
         r"^(?P<transaction_date>\d+/\d+)\s+(?P<description>.*?)\s+(?P<amount>[\d.,]+)$"
     )

@@ -4,7 +4,7 @@ from unittest.mock import PropertyMock
 
 import pytest
 
-from monopoly.banks import Citibank, Hsbc, Ocbc, StandardChartered
+from monopoly.banks import Citibank, Dbs, Hsbc, Ocbc, StandardChartered
 from monopoly.config import StatementConfig
 from monopoly.constants import AccountType, BankNames
 from monopoly.gmail import Message, MessageAttachment
@@ -17,6 +17,12 @@ from monopoly.statement import Statement
 def citibank():
     citibank = Citibank(file_path="tests/integration/fixtures/citibank/input.pdf")
     yield citibank
+
+
+@pytest.fixture(scope="session")
+def dbs():
+    dbs = Dbs(file_path="tests/integration/fixtures/dbs/input.pdf")
+    yield dbs
 
 
 @pytest.fixture(scope="session")
