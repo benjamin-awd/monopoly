@@ -82,7 +82,7 @@ class PdfParser:
                 "Unable to unlock PDF password using static string and mask"
             )
 
-        return None
+        raise RuntimeError("Failed to open document")
 
     def get_pages(self, brute_force_config=None) -> list[PdfPage]:
         logger.info("Extracting text from PDF")
