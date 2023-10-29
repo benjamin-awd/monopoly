@@ -10,7 +10,7 @@ class AutoEnum(StrEnum):
     e.g. CITIBANK -> citibank
     """
 
-    def _generate_next_value_(name: str, *args):
+    def _generate_next_value_(name: str, *args):  # type: ignore
         return name.lower()
 
 

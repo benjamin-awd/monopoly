@@ -31,12 +31,14 @@ pysnooper = "^1.2.0"
 google-api-python-client-stubs = "^1.17.0"
 pylint-pydantic = "^0.3.0"
 pillow = "^10.1.0"
+mypy = "^1.6.1"
 
 
 [tool.taskipy.tasks]
 format = "isort . && black ."
 lint = "flake8 monopoly && pylint monopoly"
 full_test = "pytest -n auto"
+mypy = "mypy monopoly"
 ci = "poetry run task format && poetry run task lint && poetry run task test"
 
 [tool.pylint]
@@ -62,6 +64,25 @@ filterwarnings = [
     "ignore:Deprecated call to `pkg_resources\\.declare_namespace\\('.*'\\):DeprecationWarning",
     "ignore::DeprecationWarning:google.rpc",
 ]
+
+[tool.mypy]
+disable_error_code = [
+    "annotation-unchecked",
+]
+exclude = [
+    "gmail\\.py"
+]
+
+[[tool.mypy.overrides]]
+module = [
+    "fitz",
+    "pdftotext",
+    "pdf2john",
+    "pandas",
+    "google.cloud",
+    "google.oauth2.credentials"
+]
+ignore_missing_imports = true
 
 [build-system]
 requires = ["poetry-core"]

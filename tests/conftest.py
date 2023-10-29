@@ -67,7 +67,7 @@ def attachment():
     return MessageAttachment(filename="test.pdf", file_byte_string=b"Test data")
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def parser():
     parser = PdfParser(file_path=None)
     yield parser

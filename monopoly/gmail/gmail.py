@@ -28,7 +28,7 @@ class Gmail:
         if not gmail_service:
             self.gmail_service = get_gmail_service()
 
-    def get_emails(self, query="is:unread", latest=False) -> Message:
+    def get_emails(self, query="is:unread", latest=False) -> list[Message]:
         emails: list = (
             self.gmail_service.users()
             .messages()
@@ -72,8 +72,8 @@ class Gmail:
 
 class Message(Gmail):
     def __init__(self, data: dict, gmail_service: GmailResource):
-        self.message_id: str = data.get("id")
-        self.payload: dict = data.get("payload")
+        self.message_id: str | None = data.get("id")
+        self.payload: dict | None = data.get("payload")
         self.gmail_service = gmail_service
         self.trusted_user_emails = settings.trusted_user_emails
         super().__init__(gmail_service)
@@ -138,7 +138,7 @@ class Message(Gmail):
         for item in self.payload.get("headers"):
             if item["name"] == "Subject":
                 return item["value"]
-        return None
+        raise RuntimeError("Subject could not be found")
 
     @property
     def parts(self) -> list[MessagePart]:
@@ -171,7 +171,7 @@ class Message(Gmail):
 class MessagePart:
     def __init__(self, data: dict):
         self._data = data
-        self.part_id = data.get("partId")
+        self.part_id: str = data.get("partId")
         self.filename: str = data.get("filename")
         self.body: dict = data.get("body")
 

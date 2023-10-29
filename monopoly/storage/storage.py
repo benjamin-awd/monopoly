@@ -1,9 +1,10 @@
 import logging
 import os
 from datetime import datetime
+from typing import Optional
 from uuid import uuid4
 
-from google.cloud import storage
+from google.cloud import storage  # type: ignore
 from pandas import DataFrame
 
 from monopoly.config import StatementConfig
@@ -53,7 +54,7 @@ def upload_to_cloud_storage(
     logger.info("Uploaded to %s", blob_name)
 
 
-def write_to_csv(df: DataFrame, csv_file_path: str, statement: Statement):
+def write_to_csv(df: DataFrame, csv_file_path: Optional[str], statement: Statement):
     logger = logging.getLogger(__name__)
 
     if not csv_file_path:

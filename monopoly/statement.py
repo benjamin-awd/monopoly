@@ -25,7 +25,7 @@ class Transaction:
         return " ".join(value.split())
 
     @field_validator("amount", mode="before")
-    def adjust_number_format(cls, value: str) -> float:
+    def adjust_number_format(cls, value: str) -> str:
         if isinstance(value, str):
             return value.replace(",", "")
         return value
@@ -38,7 +38,7 @@ class Statement:
     config: StatementConfig
 
     @cached_property
-    def transactions(self) -> list[dict]:
+    def transactions(self) -> list[Transaction]:
         transactions = []
         for page in self.pages:
             lines = self.process_lines(page)
@@ -53,9 +53,11 @@ class Statement:
     def process_lines(page: PdfPage) -> list:
         return [line.lstrip() for line in page.lines]
 
-    def _process_line(self, line: str, lines: list[str], idx: int) -> dict:
+    def _process_line(
+        self, line: str, lines: list[str], idx: int
+    ) -> Transaction | None:
         if match := re.search(self.config.transaction_pattern, line):
-            transaction = Transaction(**match.groupdict())
+            transaction = Transaction(**match.groupdict())  # type: ignore
 
             if self.config.multiline_transactions and idx < len(lines) - 1:
                 next_line = lines[idx + 1]

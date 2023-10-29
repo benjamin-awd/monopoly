@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Optional
 
 from pydantic import ConfigDict, StringConstraints
 from pydantic.dataclasses import dataclass
@@ -51,9 +51,9 @@ class PdfConfig:
     PDF artifacts that may affect parsing.
     """
 
-    password: str = None
-    page_range: tuple = (None, None)
-    page_bbox: tuple = None
+    password: Optional[str] = None
+    page_range: tuple[Optional[int], Optional[int]] = (None, None)
+    page_bbox: Optional[tuple[float, float, float, float]] = None
 
 
 @dataclass
@@ -79,8 +79,8 @@ class BruteForceConfig:
     (the brute force mask).
     """
 
-    static_string: str = None
-    mask: str = None
+    static_string: Optional[str] = None
+    mask: Optional[str] = None
 
 
 settings = Settings()

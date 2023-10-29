@@ -23,6 +23,14 @@ def test_can_brute_force_open_protected(parser: PdfParser):
     parser.open(brute_force_config)
 
 
+def test_get_pages_with_brute_force_config(parser: PdfParser):
+    brute_force_config = BruteForceConfig("foobar", "?d?d?d")
+    parser.file_path = fixture_directory / "protected.pdf"
+
+    pages = parser.get_pages(brute_force_config)
+    assert len(pages) == 1
+
+
 def test_wrong_password_raises_error(parser: PdfParser):
     parser.file_path = fixture_directory / "protected.pdf"
     parser.password = "wrong_pw"
