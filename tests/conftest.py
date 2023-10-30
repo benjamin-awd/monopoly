@@ -7,7 +7,6 @@ import pytest
 from monopoly.banks import Citibank, Dbs, Hsbc, Ocbc, StandardChartered
 from monopoly.config import StatementConfig
 from monopoly.constants import AccountType, BankNames
-from monopoly.gmail import Message, MessageAttachment
 from monopoly.pdf import PdfPage, PdfParser
 from monopoly.processor import StatementProcessor
 from monopoly.statement import Statement
@@ -55,16 +54,6 @@ def processor(statement_config):
             statement_config=statement_config, pdf_config=None, file_path="foo"
         )
         yield processor
-
-
-@pytest.fixture(scope="session")
-def message():
-    return Message(data={}, gmail_service=mock.Mock())
-
-
-@pytest.fixture(scope="session")
-def attachment():
-    return MessageAttachment(filename="test.pdf", file_byte_string=b"Test data")
 
 
 @pytest.fixture(scope="function")

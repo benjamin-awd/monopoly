@@ -1,17 +1,16 @@
 [tool.poetry]
-name = "monopoly"
+name = "monopoly-sg"
 version = "0.1.0"
-description = ""
+description = "PDF parsing for Singaporean banks"
+repository = "https://github.com/benjamin-awd/monopoly"
 authors = ["benjamin-awd <benjamindornel@gmail.com>"]
+packages = [
+    { include = "monopoly" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"
 pandas = "2.1.0"
-google-api-python-client = "^2.98.0"
-google-auth-oauthlib = "^1.0.0"
-google-auth = "^2.22.0"
-google-cloud-storage = "^2.10.0"
-google-cloud-secret-manager = "^2.16.3"
 pydantic-settings = "^2.0.3"
 pymupdf = "^1.23.3"
 pydantic = "^2.4.2"
@@ -28,9 +27,7 @@ flake8 = "^6.1.0"
 pytest = "^7.4.1"
 pytest-xdist = "^3.3.1"
 pysnooper = "^1.2.0"
-google-api-python-client-stubs = "^1.17.0"
 pylint-pydantic = "^0.3.0"
-pillow = "^10.1.0"
 mypy = "^1.6.1"
 
 
@@ -69,9 +66,6 @@ filterwarnings = [
 disable_error_code = [
     "annotation-unchecked",
 ]
-exclude = [
-    "gmail\\.py"
-]
 
 [[tool.mypy.overrides]]
 module = [
@@ -79,8 +73,6 @@ module = [
     "pdftotext",
     "pdf2john",
     "pandas",
-    "google.cloud",
-    "google.oauth2.credentials"
 ]
 ignore_missing_imports = true
 

@@ -33,11 +33,6 @@ class StatementFields(AutoEnum):
     AMOUNT = auto()
 
 
-class EmailSubjectRegex(StrEnum):
-    OCBC = r"OCBC Bank: Your Credit Card e-Statement"
-    HSBC = r"Your.HSBC.*eStatement"
-
-
 class SharedPatterns(StrEnum):
     AMOUNT = r"(?P<amount>[\d.,]+)$"
     DESCRIPTION = r"(?P<description>.*?)\s+"
