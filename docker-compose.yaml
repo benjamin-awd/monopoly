@@ -5,7 +5,6 @@ services:
     container_name: monopoly
     image: monopoly
     volumes:
-      - $HOME/.config/gcloud:/root/.config/gcloud
       - ./monopoly:/monopoly
     env_file:
       .env

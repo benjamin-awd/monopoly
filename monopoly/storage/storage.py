@@ -4,7 +4,6 @@ from datetime import datetime
 from typing import Optional
 from uuid import uuid4
 
-from google.cloud import storage  # type: ignore
 from pandas import DataFrame
 
 from monopoly.config import StatementConfig
@@ -35,23 +34,6 @@ def generate_name(
         return f"{filename}.csv"
 
     raise ValueError("Invalid format_type")
-
-
-def upload_to_cloud_storage(
-    source_filename: str,
-    bucket_name: str,
-    statement: Statement,
-) -> None:
-    client = storage.Client()
-    logger = logging.getLogger(__name__)
-    bucket = client.get_bucket(bucket_name)
-
-    blob_name = generate_name("blob", statement.config, statement.statement_date)
-    blob = bucket.blob(blob_name)
-
-    logger.info(f"Attempting to upload to 'gs://{bucket_name}/{blob_name}'")
-    blob.upload_from_filename(source_filename)
-    logger.info("Uploaded to %s", blob_name)
 
 
 def write_to_csv(df: DataFrame, csv_file_path: Optional[str], statement: Statement):

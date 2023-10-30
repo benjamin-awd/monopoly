@@ -4,11 +4,11 @@ from typing import Optional
 
 from pandas import DataFrame
 
-from monopoly.config import BruteForceConfig, StatementConfig, settings
+from monopoly.config import BruteForceConfig, StatementConfig
 from monopoly.constants import StatementFields
 from monopoly.pdf import PdfConfig, PdfParser
 from monopoly.statement import Statement
-from monopoly.storage import upload_to_cloud_storage, write_to_csv
+from monopoly.storage import write_to_csv
 
 logger = logging.getLogger(__name__)
 
@@ -68,19 +68,10 @@ class StatementProcessor(PdfParser):
         return f"{row_year}-{row_month:02d}-{row_day:02d}"
 
     def load(
-        self,
-        df: DataFrame,
-        statement: Statement,
-        csv_file_path: Optional[str] = None,
-        upload_to_cloud: bool = False,
+        self, df: DataFrame, statement: Statement, csv_file_path: Optional[str] = None
     ):
         csv_file_path = write_to_csv(
             df=df, csv_file_path=csv_file_path, statement=statement
         )
 
-        if upload_to_cloud:
-            upload_to_cloud_storage(
-                statement=statement,
-                source_filename=csv_file_path,  # type: ignore
-                bucket_name=settings.gcs_bucket,
-            )
+        return csv_file_path
