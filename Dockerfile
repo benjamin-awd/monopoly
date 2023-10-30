@@ -30,6 +30,7 @@ COPY --from=brew /home/linuxbrew/.linuxbrew/bin/john /home/linuxbrew/.linuxbrew/
 COPY --from=brew /home/linuxbrew/.linuxbrew/lib /home/linuxbrew/.linuxbrew/lib
 ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH
 
+COPY README.md ./README.md
 COPY monopoly ./monopoly
 COPY tests ./tests
 RUN poetry install
@@ -37,20 +38,3 @@ RUN poetry install
 CMD ["python", "-m", "poetry", "run", "task", "test"]
 
 FROM base AS runtime
-
-ENV VIRTUAL_ENV=/app/.venv \
-    PATH="/app/.venv/bin:$PATH" \
-    PYTHONUNBUFFERED=1
-
-COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
-COPY --from=brew /home/linuxbrew/.linuxbrew/Cellar /home/linuxbrew/.linuxbrew/Cellar
-COPY --from=brew /home/linuxbrew/.linuxbrew/bin/john /home/linuxbrew/.linuxbrew/bin/john
-COPY --from=brew /home/linuxbrew/.linuxbrew/lib /home/linuxbrew/.linuxbrew/lib
-ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH
-
-RUN apt-get update \
-  && apt-get -y install build-essential libpoppler-cpp-dev pkg-config
-
-COPY monopoly ./monopoly
-
-CMD ["python", "-m", "monopoly.main"]
