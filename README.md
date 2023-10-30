@@ -1,4 +1,4 @@
-<img src="./docs/logo.svg"><br>
+![](https://raw.githubusercontent.com/benjamin-awd/monopoly/main/docs/logo.svg)
 
 -----------------
 
