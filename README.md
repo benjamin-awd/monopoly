@@ -56,7 +56,3 @@ cp .env.template .env
 ## Features
 - Monopoly can be run on Google Cloud as a scheduled Cloud Run job.
 - PDFs can be unlocked using explicitly defined passwords and/or a masking pattern like ?d?d?d
-
-Current cloud implementation:
-
-![Screenshot](docs/monopoly_gcp.png)
