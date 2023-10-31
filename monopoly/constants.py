@@ -36,22 +36,27 @@ class StatementFields(AutoEnum):
 class SharedPatterns(StrEnum):
     AMOUNT = r"(?P<amount>[\d.,]+)$"
     DESCRIPTION = r"(?P<description>.*?)\s+"
+    TRANSACTION_DATE_ABBREVIATED_ALL_CAPS = r"(?P<transaction_date>\d{2}\s[A-Z]{3})\s+"
+    TRANSACTION_DATE_ABBREVIATED_PROPER_CASE = (
+        r"(?P<transaction_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
+    )
+    POSTING_DATE_ABBREVIATED_PROPER = r"(?P<posting_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
 
 
 class TransactionPatterns(StrEnum):
     DBS = (
-        r"^(?P<transaction_date>\d{2}\s[A-Z]{3})\s+"
+        SharedPatterns.TRANSACTION_DATE_ABBREVIATED_ALL_CAPS
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT
     )
     CITIBANK = (
-        r"^(?P<transaction_date>\b\d{2}\s\w{3}\b)\s+"
+        SharedPatterns.TRANSACTION_DATE_ABBREVIATED_ALL_CAPS
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT
     )
     HSBC = (
-        r"^(?P<posting_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
-        r"(?P<transaction_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
+        SharedPatterns.POSTING_DATE_ABBREVIATED_PROPER
+        + SharedPatterns.TRANSACTION_DATE_ABBREVIATED_PROPER_CASE
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT
     )
@@ -61,8 +66,8 @@ class TransactionPatterns(StrEnum):
         + SharedPatterns.AMOUNT
     )
     STANDARD_CHARTERED = (
-        r"^(?P<posting_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
-        r"(?P<transaction_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
+        SharedPatterns.POSTING_DATE_ABBREVIATED_PROPER
+        + SharedPatterns.TRANSACTION_DATE_ABBREVIATED_PROPER_CASE
         + SharedPatterns.DESCRIPTION
         + r"(?P<transaction_ref>Transaction\sRef\s\d+)\s+"
         + SharedPatterns.AMOUNT
