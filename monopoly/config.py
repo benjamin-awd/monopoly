@@ -8,6 +8,18 @@ from monopoly.constants import AccountType, BankNames
 
 
 class Settings(BaseSettings):
+    """
+    Pydantic model that automatically populates variables from a .env file.
+
+    HSBC passwords differ per card (since HSBC uses the last 6 digits of each card).
+    If only a single statement from HSBC needs to be parsed, the hsbc_pdf_password
+    can be used.
+
+    If there are multiple statements from HSBC, the `hsbc_pdf_password_prefix` can
+    be used to automatically unlock PDFs, which is used as a static string
+    in the HSBC `brute_force_config`.
+    """
+
     ocbc_pdf_password: str = ""
     citibank_pdf_password: str = ""
     standard_chartered_pdf_password: str = ""
@@ -19,6 +31,10 @@ class Settings(BaseSettings):
 
 @dataclass
 class StatementConfig:
+    """
+    Stores configuration values for the `Statement` class
+    """
+
     bank_name: BankNames
     account_type: AccountType
     statement_date_format: Annotated[str, StringConstraints(pattern="%.+%.+%")]

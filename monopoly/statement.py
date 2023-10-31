@@ -16,6 +16,14 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class Transaction:
+    """
+    Holds transaction data, validates the data, and
+    performs various coercions like removing whitespace
+
+    The class attributes are consistent with the enum
+    values from StatementFields
+    """
+
     transaction_date: str
     description: str
     amount: float
@@ -26,6 +34,13 @@ class Transaction:
 
     @field_validator("amount", mode="before")
     def adjust_number_format(cls, value: str) -> str:
+        """
+        Replaces commas in string representation of floats
+        e.g. 1,234.00 -> 1234.00
+
+        This is necessary for Pydantic to coerce the amount
+        to a float from a string
+        """
         if isinstance(value, str):
             return value.replace(",", "")
         return value
@@ -33,6 +48,12 @@ class Transaction:
 
 @dataclass(config=arbitrary_config)
 class Statement:
+    """
+    A dataclass representation of a bank statement, containing
+    the PDF pages (thier raw text representation in a `list`),
+    and specific config per bank.
+    """
+
     pages: list[PdfPage]
     columns = [enum.value for enum in StatementFields]
     config: StatementConfig

@@ -14,6 +14,14 @@ logger = logging.getLogger(__name__)
 
 
 class StatementProcessor(PdfParser):
+    """
+    Handles extract, transform and load (ETL) logic for bank statements
+
+    Transactions are extracted from pages, before undergoing various
+    transformations like converting various date formats into ISO 8601.
+    Transformed statements are then written to a CSV file.
+    """
+
     def __init__(
         self, statement_config, file_path, pdf_config=None, brute_force_config=None
     ):
