@@ -15,6 +15,12 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class PdfPage:
+    """
+    Dataclass representation of a bank statement PDF page.
+    Contains the raw text of a PDF page, and allows access
+    to the raw text as a list via the `lines` property
+    """
+
     raw_text: str
 
     @property
@@ -29,7 +35,8 @@ class PdfParser:
         brute_force_config: Optional[BruteForceConfig] = None,
         pdf_config: Optional[PdfConfig] = None,
     ):
-        """Class responsible for parsing PDFs and returning raw text
+        """
+        Class responsible for parsing PDFs and returning raw text
 
         The page_range variable determines which pages are extracted.
         All pages are extracted by default.
@@ -140,6 +147,11 @@ class PdfParser:
     def unlock_pdf(
         pdf_file_path: str, static_string: Optional[str], mask: Optional[str]
     ):
+        """
+        Extracts the hashed representation for a set of PDF passwords (owner/user),
+        and attempts to automatically unlock/decrypt the PDF based on
+        the static string and mask using `john`
+        """
         hash_extractor = PdfHashExtractor(pdf_file_path)
         pdf_hash = hash_extractor.parse()
 
