@@ -20,6 +20,7 @@ class Hsbc(BankBase):
     )
 
     pdf_config = PdfConfig(
+        password=settings.hsbc_pdf_password,
         page_range=(0, -1),
         page_bbox=(0, 0, 379, 842),
     )

@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     ocbc_pdf_password: str = ""
     citibank_pdf_password: str = ""
     standard_chartered_pdf_password: str = ""
+    hsbc_pdf_password: str = ""
     hsbc_pdf_password_prefix: str = ""
 
     model_config = SettingsConfigDict(env_file=".env", extra="allow")
