@@ -90,6 +90,9 @@ class PdfParser:
                 "Unable to unlock PDF password using static string and mask"
             )
 
+        if document.is_encrypted:
+            raise RuntimeError("Document failed to open -- check password")
+
         raise RuntimeError("Failed to open document")
 
     def get_pages(self, brute_force_config=None) -> list[PdfPage]:
