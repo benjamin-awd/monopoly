@@ -26,16 +26,16 @@ def test_bank_operations(bank_class: BankBase, total_amount, statement_date):
 
     fixture_directory = Path(__file__).parent / bank_name
     bank: BankBase = bank_class(fixture_directory / "input.pdf")
-    raw_data = pd.read_csv(fixture_directory / "raw.csv")
-    transformed_data = pd.read_csv(fixture_directory / "transformed.csv")
+    expected_raw_data = pd.read_csv(fixture_directory / "raw.csv")
+    expected_transformed_data = pd.read_csv(fixture_directory / "transformed.csv")
 
     # Check extracted data is correct
     statement: Statement = bank.extract()
     raw_df = statement.df
-    assert_frame_equal(statement.df, raw_data)
+    assert_frame_equal(statement.df, expected_raw_data)
     assert round(raw_df[StatementFields.AMOUNT].sum(), 2) == total_amount
     assert statement.statement_date == statement_date
 
     # Check transformed data is correct
     transformed_df = bank.transform(statement)
-    assert_frame_equal(transformed_df, transformed_data)
+    assert_frame_equal(transformed_df, expected_transformed_data)
