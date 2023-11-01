@@ -16,7 +16,7 @@ pandas = "2.1.0"
 pydantic-settings = "^2.0.3"
 pymupdf = "^1.23.3"
 pydantic = "^2.4.2"
-pdf2john = "^0.1.2"
+pdf2john = "^0.1.5"
 pdftotext = "^2.2.2"
 
 
