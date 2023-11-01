@@ -1,6 +1,7 @@
 import logging
 import subprocess
 from dataclasses import dataclass
+from functools import cached_property
 from io import BytesIO
 from typing import Optional
 
@@ -56,7 +57,7 @@ class PdfParser:
         Opens and decrypts a PDF document
         """
         logger.info("Opening pdf from path %s", self.file_path)
-        document = fitz.Document(self.file_path)
+        document = self.document
 
         if not document.is_encrypted:
             return document
@@ -74,7 +75,6 @@ class PdfParser:
         if brute_force_config:
             logger.info("Unlocking PDF using a string prefix with mask")
             password = self.unlock_pdf(
-                pdf_file_path=self.file_path,
                 static_string=brute_force_config.static_string,
                 mask=brute_force_config.mask,
             )
@@ -97,7 +97,7 @@ class PdfParser:
 
     def get_pages(self, brute_force_config=None) -> list[PdfPage]:
         logger.info("Extracting text from PDF")
-        document: fitz.Document = self.get_document(brute_force_config)
+        document: fitz.Document = self.open(brute_force_config)
 
         num_pages = list(range(document.page_count))
         document.select(num_pages[self.page_range])
@@ -115,9 +115,20 @@ class PdfParser:
 
         return [PdfPage(page) for page in pdf]
 
-    def get_document(self, brute_force_config=None) -> list[fitz.Page]:
-        document: fitz.Document = self.open(brute_force_config)
-        return document
+    @cached_property
+    def document(self) -> fitz.Document:
+        """
+        Returns a Python representation of a PDF document.
+        """
+        return fitz.Document(self.file_path)
+
+    @cached_property
+    def pdf_hash_extractor(self) -> PdfHashExtractor:
+        """
+        Returns an instance of a PDF hash extractor, used
+        to read encryption metadata and generate a password hash
+        """
+        return PdfHashExtractor(self.file_path)
 
     @staticmethod
     def _remove_vertical_text(page: fitz.Page):
@@ -146,16 +157,13 @@ class PdfParser:
         page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE)
         return page
 
-    @staticmethod
-    def unlock_pdf(
-        pdf_file_path: str, static_string: Optional[str], mask: Optional[str]
-    ):
+    def unlock_pdf(self, static_string: Optional[str], mask: Optional[str]):
         """
         Extracts the hashed representation for a set of PDF passwords (owner/user),
         and attempts to automatically unlock/decrypt the PDF based on
         the static string and mask using `john`
         """
-        hash_extractor = PdfHashExtractor(pdf_file_path)
+        hash_extractor = self.pdf_hash_extractor
         pdf_hash = hash_extractor.parse()
 
         hash_path = ".hash"
