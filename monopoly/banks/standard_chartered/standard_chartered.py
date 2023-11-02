@@ -1,7 +1,12 @@
 import logging
 
 from monopoly.config import PdfConfig, StatementConfig, settings
-from monopoly.constants import AccountType, BankNames, TransactionPatterns
+from monopoly.constants import (
+    AccountType,
+    BankNames,
+    MetadataIdentifier,
+    TransactionPatterns,
+)
 
 from ..base import BankBase
 
@@ -23,3 +28,10 @@ class StandardChartered(BankBase):
         page_range=(0, -1),
         page_bbox=(0, 0, 580, 820),
     )
+
+    identifiers = [
+        MetadataIdentifier(
+            title="eStatement",
+            producer="iText",
+        )
+    ]

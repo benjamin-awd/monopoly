@@ -1,6 +1,8 @@
 import os
 from enum import StrEnum, auto
 
+from pydantic.dataclasses import dataclass
+
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -72,3 +74,21 @@ class TransactionPatterns(StrEnum):
         + r"(?P<transaction_ref>Transaction\sRef\s\d+)\s+"
         + SharedPatterns.AMOUNT
     )
+
+
+@dataclass
+class EncryptionIdentifier:
+    pdf_version: float
+    algorithm: int
+    revision: int
+    length: int
+    permissions: int
+
+
+@dataclass
+class MetadataIdentifier:
+    title: str = ""
+    author: str = ""
+    subject: str = ""
+    creator: str = ""
+    producer: str = ""

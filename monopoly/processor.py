@@ -13,6 +13,7 @@ from monopoly.storage import write_to_csv
 logger = logging.getLogger(__name__)
 
 
+# pylint: disable=too-many-arguments
 class StatementProcessor(PdfParser):
     """
     Handles extract, transform and load (ETL) logic for bank statements
@@ -20,17 +21,25 @@ class StatementProcessor(PdfParser):
     Transactions are extracted from pages, before undergoing various
     transformations like converting various date formats into ISO 8601.
     Transformed statements are then written to a CSV file.
+
+    Since the auto-detect function already creates a parser, this class
+    allows for the parser to be reused and avoid re-opening the PDF.
     """
 
     def __init__(
-        self, statement_config, file_path, pdf_config=None, brute_force_config=None
+        self,
+        statement_config: StatementConfig,
+        file_path: str,
+        pdf_config: Optional[PdfConfig] = None,
+        brute_force_config: Optional[BruteForceConfig] = None,
+        parser: Optional[PdfParser] = None,
     ):
-        self.statement_config: StatementConfig = statement_config
-        self.pdf_config: PdfConfig = pdf_config
-        self.brute_force_config: BruteForceConfig = brute_force_config
+        self.statement_config = statement_config
+        self.pdf_config = pdf_config
+        self.brute_force_config = brute_force_config
 
-        # provide access to get_pages()
-        super().__init__(file_path, brute_force_config, pdf_config)
+        if not parser:
+            super().__init__(file_path, brute_force_config, pdf_config)
 
     def extract(self) -> Statement:
         pages = self.get_pages(self.brute_force_config)

@@ -1,7 +1,13 @@
 import logging
 
 from monopoly.config import PdfConfig, StatementConfig
-from monopoly.constants import AccountType, BankNames, TransactionPatterns
+from monopoly.constants import (
+    AccountType,
+    BankNames,
+    EncryptionIdentifier,
+    MetadataIdentifier,
+    TransactionPatterns,
+)
 
 from ..base import BankBase
 
@@ -19,3 +25,10 @@ class Dbs(BankBase):
     )
 
     pdf_config = PdfConfig(page_range=(0, -1))
+
+    identifiers = [
+        EncryptionIdentifier(
+            pdf_version=1.4, algorithm=2, revision=3, length=128, permissions=-1852
+        ),
+        MetadataIdentifier(creator="Quadient CXM AG"),
+    ]
