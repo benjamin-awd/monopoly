@@ -16,7 +16,7 @@ pandas = "2.1.0"
 pydantic-settings = "^2.0.3"
 pymupdf = "^1.23.3"
 pydantic = "^2.4.2"
-pdf2john = "^0.1.5"
+pdf2john = "^0.1.8"
 pdftotext = "^2.2.2"
 
 
@@ -34,7 +34,7 @@ mypy = "^1.6.1"
 
 [tool.taskipy.tasks]
 format = "isort . && black ."
-lint = "flake8 monopoly && pylint monopoly"
+lint = "flake8 monopoly & pylint monopoly"
 test = "pytest ."
 mypy = "mypy monopoly"
 ci = "poetry run task format && poetry run task lint && poetry run task test"

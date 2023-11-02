@@ -1,7 +1,12 @@
 import logging
 
 from monopoly.config import PdfConfig, StatementConfig, settings
-from monopoly.constants import AccountType, BankNames, TransactionPatterns
+from monopoly.constants import (
+    AccountType,
+    BankNames,
+    MetadataIdentifier,
+    TransactionPatterns,
+)
 
 from ..base import BankBase
 
@@ -23,3 +28,10 @@ class Citibank(BankBase):
         page_bbox=(20, 0, 595, 840),
         page_range=(0, -3),
     )
+
+    identifiers = [
+        MetadataIdentifier(
+            creator="Ricoh Americas Corporation, AFP2PDF",
+            producer="Ricoh Americas Corporation, AFP2PDF",
+        )
+    ]

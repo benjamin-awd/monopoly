@@ -123,7 +123,7 @@ class PdfParser:
         return fitz.Document(self.file_path)
 
     @cached_property
-    def pdf_hash_extractor(self) -> PdfHashExtractor:
+    def extractor(self) -> PdfHashExtractor:
         """
         Returns an instance of a PDF hash extractor, used
         to read encryption metadata and generate a password hash
@@ -163,7 +163,7 @@ class PdfParser:
         and attempts to automatically unlock/decrypt the PDF based on
         the static string and mask using `john`
         """
-        hash_extractor = self.pdf_hash_extractor
+        hash_extractor = self.extractor
         pdf_hash = hash_extractor.parse()
 
         hash_path = ".hash"

@@ -632,13 +632,13 @@ files = [
 
 [[package]]
 name = "pdf2john"
-version = "0.1.5"
-description = ""
+version = "0.1.8"
+description = "A modern refactoring of the legacy pdf2john library"
 optional = false
 python-versions = ">=3.11,<4.0"
 files = [
-    {file = "pdf2john-0.1.5-py3-none-any.whl", hash = "sha256:07164c9fd3c4984a470ddcbfbf38e3b95c180560e1e8bc3fabd3f4b60b183b3d"},
-    {file = "pdf2john-0.1.5.tar.gz", hash = "sha256:5602e21e0e5ef774c1a9c3d4e1f3c403e497ce76d0b01c0f69b8b71ad0930e1a"},
+    {file = "pdf2john-0.1.8-py3-none-any.whl", hash = "sha256:04756ac72bed5192a92d0d4255c6279de7b1d4e58e0db28f7bbec1218486cc8c"},
+    {file = "pdf2john-0.1.8.tar.gz", hash = "sha256:fa148b453a2cf12da640333a8e01df10e4833ed82142c2402c34c4af368840d4"},
 ]
 
 [package.dependencies]
@@ -1447,4 +1447,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "3b1f14c3c717e12a4119888d07b5930f8d48df5c14a2f88a30e7594afccd97e9"
+content-hash = "cb38432ddd384590cea1eae6f8729eb2f0eed49c6638f0af9626ef74b90e2fcd"

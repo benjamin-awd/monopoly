@@ -1,7 +1,13 @@
 import logging
 
 from monopoly.config import PdfConfig, StatementConfig, settings
-from monopoly.constants import AccountType, BankNames, TransactionPatterns
+from monopoly.constants import (
+    AccountType,
+    BankNames,
+    EncryptionIdentifier,
+    MetadataIdentifier,
+    TransactionPatterns,
+)
 
 from ..base import BankBase
 
@@ -23,3 +29,12 @@ class Ocbc(BankBase):
         page_range=(0, -2),
         page_bbox=(0, 0, 560, 750),
     )
+
+    identifiers = [
+        EncryptionIdentifier(
+            pdf_version=1.4, algorithm=4, revision=4, length=128, permissions=-1036
+        ),
+        MetadataIdentifier(
+            creator="pdfgen", producer="Streamline PDFGen for OCBC Group"
+        ),
+    ]
