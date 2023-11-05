@@ -54,7 +54,7 @@ class StatementProcessor(PdfParser):
         return statement
 
     def transform(self, statement: Statement) -> DataFrame:
-        logger.info("Running transformation functions on DataFrame")
+        logger.debug("Running transformation functions on DataFrame")
         df = self._transform_date_to_iso(statement.df, statement.statement_date)
 
         return df
@@ -62,7 +62,7 @@ class StatementProcessor(PdfParser):
     def _transform_date_to_iso(
         self, df: DataFrame, statement_date: datetime
     ) -> DataFrame:
-        logger.info("Transforming dates to ISO 8601")
+        logger.debug("Transforming dates to ISO 8601")
         df[StatementFields.TRANSACTION_DATE] = df.apply(
             self._convert_date, statement_date=statement_date, axis=1
         )

@@ -91,7 +91,7 @@ class Statement:
 
     @cached_property
     def statement_date(self):
-        logger.info("Extracting statement date")
+        logger.debug("Extracting statement date")
         first_page = self.pages[0]
         for line in first_page.lines:
             if match := re.findall(self.config.statement_date_pattern, line):
