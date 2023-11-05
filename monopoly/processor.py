@@ -4,17 +4,28 @@ from typing import Optional
 
 from pandas import DataFrame
 
-from monopoly.config import BruteForceConfig, StatementConfig
+from monopoly.config import (
+    BruteForceConfig,
+    PdfConfig,
+    StatementConfig,
+    TransactionConfig,
+)
 from monopoly.constants import StatementFields
 from monopoly.csv import write_to_csv
-from monopoly.pdf import PdfConfig, PdfParser
+from monopoly.pdf import PdfParser
 from monopoly.statement import Statement
 
 logger = logging.getLogger(__name__)
 
 
-# pylint: disable=too-many-arguments
 class StatementProcessor(PdfParser):
+    statement_config: StatementConfig
+    transaction_config: TransactionConfig
+    pdf_config: Optional[PdfConfig] = None
+    brute_force_config: Optional[BruteForceConfig] = None
+    parser: Optional[PdfParser] = None
+    safety_check_enabled: bool = True
+
     """
     Handles extract, transform and load (ETL) logic for bank statements
 
@@ -26,28 +37,27 @@ class StatementProcessor(PdfParser):
     allows for the parser to be reused and avoid re-opening the PDF.
     """
 
-    def __init__(
-        self,
-        statement_config: StatementConfig,
-        file_path: str,
-        pdf_config: Optional[PdfConfig] = None,
-        brute_force_config: Optional[BruteForceConfig] = None,
-        parser: Optional[PdfParser] = None,
-        safety_check_enabled: bool = True,
-    ):
-        self.statement_config = statement_config
-        self.pdf_config = pdf_config
-        self.brute_force_config = brute_force_config
-        self.safety_check_enabled = safety_check_enabled
+    def __init__(self, file_path: str, parser: Optional[PdfParser] = None, **kwargs):
+        keys = [
+            "statement_config",
+            "transaction_config",
+            "pdf_config",
+            "brute_force_config",
+            "safety_check_enabled",
+        ]
+
+        for key, value in kwargs.items():
+            if key in keys:
+                setattr(self, key, value)
 
         if not parser:
-            super().__init__(file_path, brute_force_config, pdf_config)
+            super().__init__(file_path, self.brute_force_config, self.pdf_config)
 
     def extract(self) -> Statement:
         """Extracts transactions from the statement, and performs
         a safety check to make sure that total transactions add up"""
         pages = self.get_pages(self.brute_force_config)
-        statement = Statement(pages, self.statement_config)
+        statement = Statement(pages, self.statement_config, self.transaction_config)
 
         if not statement.transactions:
             raise ValueError("No transactions found - statement extraction failed")
@@ -85,7 +95,7 @@ class StatementProcessor(PdfParser):
 
         df = statement.df
         statement_date = statement.statement_date
-        date_format = self.statement_config.transaction_date_format
+        date_format = self.transaction_config.date_format
 
         def convert_date(row):
             parsed_date = datetime.strptime(

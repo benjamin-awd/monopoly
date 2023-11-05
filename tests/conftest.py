@@ -5,7 +5,7 @@ from unittest.mock import PropertyMock
 import pytest
 
 from monopoly.banks import Citibank, Dbs, Hsbc, Ocbc, StandardChartered
-from monopoly.config import StatementConfig
+from monopoly.config import StatementConfig, TransactionConfig
 from monopoly.constants import AccountType, BankNames
 from monopoly.pdf import PdfPage, PdfParser
 from monopoly.processor import StatementProcessor
@@ -45,13 +45,16 @@ def standard_chartered():
 
 
 @pytest.fixture(scope="function")
-def processor(statement_config):
+def processor(statement_config, transaction_config):
     with mock.patch.object(
         Statement, "statement_date", new_callable=PropertyMock
     ) as mock_statement_date:
         mock_statement_date.return_value = datetime(2023, 8, 1)
         processor = StatementProcessor(
-            statement_config=statement_config, pdf_config=None, file_path="foo"
+            statement_config=statement_config,
+            transaction_config=transaction_config,
+            pdf_config=None,
+            file_path="foo",
         )
         yield processor
 
@@ -63,10 +66,14 @@ def parser():
 
 
 @pytest.fixture(scope="function")
-def statement(monkeypatch, statement_config):
+def statement(monkeypatch, statement_config, transaction_config):
     monkeypatch.setattr("monopoly.processor.Statement.df", None)
     mock_page = mock.Mock(spec=PdfPage)
-    statement = Statement(pages=[mock_page], config=statement_config)
+    statement = Statement(
+        pages=[mock_page],
+        statement_config=statement_config,
+        transaction_config=transaction_config,
+    )
     yield statement
 
 
@@ -81,3 +88,12 @@ def statement_config():
         statement_date_pattern="",
     )
     yield statement_config
+
+
+@pytest.fixture(scope="session")
+def transaction_config():
+    transaction_config = TransactionConfig(
+        pattern="foo",
+        date_format=r"%d/%m",
+    )
+    yield transaction_config

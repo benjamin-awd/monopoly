@@ -1,6 +1,6 @@
 import logging
 
-from monopoly.config import PdfConfig, StatementConfig, settings
+from monopoly.config import PdfConfig, StatementConfig, TransactionConfig, settings
 from monopoly.constants import (
     AccountType,
     BankNames,
@@ -18,11 +18,14 @@ class Ocbc(BankBase):
     statement_config = StatementConfig(
         bank_name=BankNames.OCBC,
         account_type=AccountType.CREDIT,
-        transaction_pattern=TransactionPatterns.OCBC,
-        cashback_key=r"CASH REBATE",
-        transaction_date_format="%d/%m",
         statement_date_pattern=r"\d{2}\-\d{2}\-\d{4}",
         statement_date_format=r"%d-%m-%Y",
+    )
+
+    transaction_config = TransactionConfig(
+        pattern=TransactionPatterns.OCBC,
+        date_format="%d/%m",
+        cashback_key=r"CASH REBATE",
     )
 
     pdf_config = PdfConfig(

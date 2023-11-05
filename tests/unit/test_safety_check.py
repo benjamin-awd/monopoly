@@ -7,6 +7,7 @@ from monopoly.statement import Statement
 
 class MockBank(BankBase):
     statement_config = None
+    transaction_config = None
     safety_check_enabled = True
 
 
