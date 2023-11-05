@@ -6,9 +6,9 @@ from pandas import DataFrame
 
 from monopoly.config import BruteForceConfig, StatementConfig
 from monopoly.constants import StatementFields
+from monopoly.csv import write_to_csv
 from monopoly.pdf import PdfConfig, PdfParser
 from monopoly.statement import Statement
-from monopoly.storage import write_to_csv
 
 logger = logging.getLogger(__name__)
 
