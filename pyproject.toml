@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "monopoly-sg"
-version = "0.1.2"
+version = "0.2.0"
 description = "PDF parsing for Singaporean banks"
 repository = "https://github.com/benjamin-awd/monopoly"
 authors = ["benjamin-awd <benjamindornel@gmail.com>"]
@@ -9,6 +9,10 @@ packages = [
 ]
 license = "MIT"
 readme = "README.md"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3.11",
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"

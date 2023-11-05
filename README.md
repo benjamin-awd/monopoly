@@ -54,5 +54,7 @@ cp .env.template .env
 ```
 
 ## Features
-- Monopoly can be run on Google Cloud as a scheduled Cloud Run job.
-- PDFs can be unlocked using explicitly defined passwords and/or a masking pattern like ?d?d?d
+- Support for encrypted PDFs -- passwords can be passed in via a .env file, or passed directly via a bank class
+- PDFs can also be unlocked with a static string, and a masking pattern like ?d?d?d for banks like HSBC that use a common password prefix (DOB), but different passwords for each card
+- Cashback transactions from Citibank and OCBC are also supported, and appear as "negative" transactions
+- Monopoly can be run on Google Cloud as a scheduled Cloud Run job, which opens up more sophisticated use-cases like historical analysis and personal finance visualization
