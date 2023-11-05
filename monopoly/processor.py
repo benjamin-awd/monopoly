@@ -82,34 +82,27 @@ class StatementProcessor(PdfParser):
 
     def transform(self, statement: Statement) -> DataFrame:
         logger.debug("Running transformation functions on DataFrame")
-        df = self._transform_date_to_iso(statement.df, statement.statement_date)
 
-        return df
-
-    def _transform_date_to_iso(
-        self, df: DataFrame, statement_date: datetime
-    ) -> DataFrame:
-        logger.debug("Transforming dates to ISO 8601")
-        df[StatementFields.TRANSACTION_DATE] = df.apply(
-            self._convert_date, statement_date=statement_date, axis=1
-        )
-        return df
-
-    def parse_date(self, date_str):
+        df = statement.df
+        statement_date = statement.statement_date
         date_format = self.statement_config.transaction_date_format
-        parsed_date = datetime.strptime(date_str, date_format)
-        return parsed_date.day, parsed_date.month
 
-    def _convert_date(self, row, statement_date: datetime):
-        row_day, row_month = self.parse_date(row[StatementFields.TRANSACTION_DATE])
+        def convert_date(row):
+            parsed_date = datetime.strptime(
+                row[StatementFields.TRANSACTION_DATE], date_format
+            )
+            row_day, row_month = parsed_date.day, parsed_date.month
 
-        # Deal with mixed years from Jan/Dec
-        if statement_date.month == 1 and row_month == 12:
-            row_year = statement_date.year - 1
-        else:
-            row_year = statement_date.year
+            if statement_date.month == 1 and row_month == 12:
+                row_year = statement_date.year - 1
+            else:
+                row_year = statement_date.year
 
-        return f"{row_year}-{row_month:02d}-{row_day:02d}"
+            return f"{row_year}-{row_month:02d}-{row_day:02d}"
+
+        logger.debug("Transforming dates to ISO 8601")
+        df[StatementFields.TRANSACTION_DATE] = df.apply(convert_date, axis=1)
+        return df
 
     def load(
         self, df: DataFrame, statement: Statement, csv_file_path: Optional[str] = None
