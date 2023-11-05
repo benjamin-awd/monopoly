@@ -19,6 +19,7 @@ class Ocbc(BankBase):
         bank_name=BankNames.OCBC,
         account_type=AccountType.CREDIT,
         transaction_pattern=TransactionPatterns.OCBC,
+        cashback_key=r"CASH REBATE",
         transaction_date_format="%d/%m",
         statement_date_pattern=r"\d{2}\-\d{2}\-\d{4}",
         statement_date_format=r"%d-%m-%Y",
@@ -38,5 +39,3 @@ class Ocbc(BankBase):
             creator="pdfgen", producer="Streamline PDFGen for OCBC Group"
         ),
     ]
-
-    safety_check_enabled = False

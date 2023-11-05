@@ -33,16 +33,19 @@ class Transaction:
         return " ".join(value.split())
 
     @field_validator("amount", mode="before")
-    def adjust_number_format(cls, value: str) -> str:
+    def adjust_amount(cls, value: str) -> str:
         """
-        Replaces commas in string representation of floats
-        e.g. 1,234.00 -> 1234.00
-
-        This is necessary for Pydantic to coerce the amount
-        to a float from a string
+        Replaces commas, whitespaces and parentheses in string representation of floats
+        e.g.
+            1,234.00 -> 1234.00
+            (-10.00) -> -10.00
+            (-1.56 ) -> -1.56
         """
         if isinstance(value, str):
-            return value.replace(",", "")
+            # change cashback to negative transaction
+            if value.startswith("(") and value.endswith(")"):
+                value = "-" + value
+            return re.sub(r"[,)(\s]", "", value)
         return value
 
 
@@ -50,7 +53,7 @@ class Transaction:
 class Statement:
     """
     A dataclass representation of a bank statement, containing
-    the PDF pages (thier raw text representation in a `list`),
+    the PDF pages (their raw text representation in a `list`),
     and specific config per bank.
     """
 
@@ -78,16 +81,26 @@ class Statement:
         self, line: str, lines: list[str], idx: int
     ) -> Transaction | None:
         if match := re.search(self.config.transaction_pattern, line):
+            # if the cashback key isn't in the description, it's not
+            # a cashback transaction, and is of no interest to us
+            if self.is_enclosed_in_parentheses(match["amount"]):
+                if self.config.cashback_key not in match["description"]:
+                    return None
+
             transaction = Transaction(**match.groupdict())  # type: ignore
 
+            # handle transactions that span multiple lines
             if self.config.multiline_transactions and idx < len(lines) - 1:
                 next_line = lines[idx + 1]
                 if not re.search(self.config.transaction_pattern, next_line):
                     transaction.description += " " + next_line
                     transaction = Transaction(**vars(transaction))
-
             return transaction
         return None
+
+    @staticmethod
+    def is_enclosed_in_parentheses(amount: str) -> bool:
+        return amount.startswith("(") and amount.endswith(")")
 
     @cached_property
     def statement_date(self):

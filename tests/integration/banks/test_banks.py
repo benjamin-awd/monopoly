@@ -14,10 +14,10 @@ from monopoly.statement import Statement
 @pytest.mark.parametrize(
     "bank_class, total_amount, statement_date, safety_check_result",
     [
-        (Citibank, 1434.07, datetime(2022, 11, 15), False),
+        (Citibank, 1414.07, datetime(2022, 11, 15), True),
         (Dbs, 16969.17, datetime(2023, 10, 15), True),
         (Hsbc, 1218.2, datetime(2023, 7, 21), True),
-        (Ocbc, 703.48, datetime(2023, 8, 1), False),
+        (Ocbc, 702.1, datetime(2023, 8, 1), True),
         (StandardChartered, 82.45, datetime(2023, 5, 16), True),
     ],
 )
@@ -37,11 +37,11 @@ def test_bank_operations(
     # Check extracted data is correct
     statement: Statement = bank.extract()
 
-    assert safety_check_result == bank._perform_safety_check(statement)
     raw_df = statement.df
     assert_frame_equal(statement.df, expected_raw_data)
     assert round(raw_df[StatementFields.AMOUNT].sum(), 2) == total_amount
     assert statement.statement_date == statement_date
+    assert safety_check_result == bank._perform_safety_check(statement)
 
     # Check transformed data is correct
     transformed_df = bank.transform(statement)
