@@ -26,7 +26,7 @@ class MockBankTwo(BankBase):
     ]
 
 
-unencrypted_file_path = "monopoly/examples/example_statement.pdf"
+unencrypted_file_path = "tests/integration/banks/example/input.pdf"
 encrypted_file_path = "tests/integration/fixtures/protected.pdf"
 
 

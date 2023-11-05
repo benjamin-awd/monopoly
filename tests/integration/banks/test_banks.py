@@ -8,6 +8,7 @@ from pandas.testing import assert_frame_equal
 from monopoly.banks import Citibank, Dbs, Hsbc, Ocbc, StandardChartered
 from monopoly.banks.base import BankBase
 from monopoly.constants import StatementFields
+from monopoly.examples import MonopolyBank
 from monopoly.statement import Statement
 
 
@@ -19,6 +20,7 @@ from monopoly.statement import Statement
         (Hsbc, 1218.2, datetime(2023, 7, 21), True),
         (Ocbc, 702.1, datetime(2023, 8, 1), True),
         (StandardChartered, 82.45, datetime(2023, 5, 16), True),
+        (MonopolyBank, 703.48, datetime(2023, 7, 1), False),
     ],
 )
 def test_bank_operations(

@@ -6,7 +6,7 @@ def example():
     a single bank statement
     """
     bank = MonopolyBank(
-        file_path="monopoly/examples/example_statement.pdf",
+        file_path="tests/integration/banks/example/input.pdf",
     )
 
     # This runs pdftotext on the PDF and

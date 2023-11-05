@@ -3,9 +3,9 @@ from monopoly.config import StatementConfig, TransactionConfig
 from monopoly.constants import AccountType, BankNames
 
 
-# fmt: off
 class MonopolyBank(BankBase):
     """Dummy class to help with reading the example PDF statement"""
+
     statement_config = StatementConfig(
         bank_name=BankNames.EXAMPLE,
         account_type=AccountType.CREDIT,
