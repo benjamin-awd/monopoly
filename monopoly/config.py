@@ -41,6 +41,7 @@ class StatementConfig:
     transaction_pattern: str
     transaction_date_format: Annotated[str, StringConstraints(pattern="%")]
     statement_date_pattern: str
+    cashback_key: Optional[str] = None
     multiline_transactions: bool = False
 
     # Convert enums to strings

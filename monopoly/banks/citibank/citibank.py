@@ -18,6 +18,7 @@ class Citibank(BankBase):
         bank_name=BankNames.CITIBANK,
         account_type=AccountType.CREDIT,
         transaction_pattern=TransactionPatterns.CITIBANK,
+        cashback_key=r"CASH REBATE",
         transaction_date_format="%d %b",
         statement_date_pattern=r"Statement\sDate\s+(.*)",
         statement_date_format=r"%B %d, %Y",
@@ -35,5 +36,3 @@ class Citibank(BankBase):
             producer="Ricoh Americas Corporation, AFP2PDF",
         )
     ]
-
-    safety_check_enabled = False

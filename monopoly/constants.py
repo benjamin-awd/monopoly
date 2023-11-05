@@ -37,6 +37,7 @@ class StatementFields(AutoEnum):
 
 class SharedPatterns(StrEnum):
     AMOUNT = r"(?P<amount>[\d.,]+)$"
+    AMOUNT_WITH_CASHBACK = r"(?P<amount>[\d.,]+|\([\d.,\s]+\))$"
     DESCRIPTION = r"(?P<description>.*?)\s+"
     TRANSACTION_DATE_ABBREVIATED_ALL_CAPS = r"(?P<transaction_date>\d{2}\s[A-Z]{3})\s+"
     TRANSACTION_DATE_ABBREVIATED_PROPER_CASE = (
@@ -54,7 +55,7 @@ class TransactionPatterns(StrEnum):
     CITIBANK = (
         SharedPatterns.TRANSACTION_DATE_ABBREVIATED_ALL_CAPS
         + SharedPatterns.DESCRIPTION
-        + SharedPatterns.AMOUNT
+        + SharedPatterns.AMOUNT_WITH_CASHBACK
     )
     HSBC = (
         SharedPatterns.POSTING_DATE_ABBREVIATED_PROPER
@@ -65,7 +66,7 @@ class TransactionPatterns(StrEnum):
     OCBC = (
         r"^(?P<transaction_date>\d+/\d+)\s+"
         + SharedPatterns.DESCRIPTION
-        + SharedPatterns.AMOUNT
+        + SharedPatterns.AMOUNT_WITH_CASHBACK
     )
     STANDARD_CHARTERED = (
         SharedPatterns.POSTING_DATE_ABBREVIATED_PROPER
