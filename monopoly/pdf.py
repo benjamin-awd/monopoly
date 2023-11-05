@@ -82,7 +82,7 @@ class PdfParser:
             document.authenticate(password)
 
             if not document.is_encrypted:
-                logger.info("Successfully authenticated with password")
+                logger.debug("Successfully authenticated with password")
                 return document
 
             # If no successful authentication, raise an error
@@ -96,7 +96,7 @@ class PdfParser:
         raise RuntimeError("Failed to open document")
 
     def get_pages(self, brute_force_config=None) -> list[PdfPage]:
-        logger.info("Extracting text from PDF")
+        logger.debug("Extracting text from PDF")
         document: fitz.Document = self.open(brute_force_config)
 
         num_pages = list(range(document.page_count))
@@ -173,14 +173,24 @@ class PdfParser:
         mask_command = [
             f"john --format=PDF --mask={static_string}{mask} {hash_path} --pot=.pot"
         ]
-        process = subprocess.run(mask_command, shell=True, check=False)
+        process = subprocess.run(
+            mask_command,
+            shell=True,
+            check=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        )
 
         if not process.returncode == 0:
             raise ValueError(f"Return code is not 0: {process}")
 
         show_command = ["john", "--show", hash_path, "--pot=.pot"]
         output = subprocess.run(
-            show_command, capture_output=True, text=True, check=False
+            show_command,
+            text=True,
+            check=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
         )
 
         if not output.returncode == 0:

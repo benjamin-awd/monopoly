@@ -12,4 +12,7 @@ def get_logger() -> logging.Logger:
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     logger.setLevel(logging.INFO)
+
+    logging.getLogger("pdf2john").setLevel(logging.ERROR)
+    logging.getLogger("pyhanko").setLevel(logging.ERROR)
     return logger
