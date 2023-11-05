@@ -35,3 +35,5 @@ class Citibank(BankBase):
             producer="Ricoh Americas Corporation, AFP2PDF",
         )
     ]
+
+    safety_check_enabled = False

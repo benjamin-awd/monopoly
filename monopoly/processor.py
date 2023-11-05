@@ -33,15 +33,19 @@ class StatementProcessor(PdfParser):
         pdf_config: Optional[PdfConfig] = None,
         brute_force_config: Optional[BruteForceConfig] = None,
         parser: Optional[PdfParser] = None,
+        safety_check_enabled: bool = True,
     ):
         self.statement_config = statement_config
         self.pdf_config = pdf_config
         self.brute_force_config = brute_force_config
+        self.safety_check_enabled = safety_check_enabled
 
         if not parser:
             super().__init__(file_path, brute_force_config, pdf_config)
 
     def extract(self) -> Statement:
+        """Extracts transactions from the statement, and performs
+        a safety check to make sure that total transactions add up"""
         pages = self.get_pages(self.brute_force_config)
         statement = Statement(pages, self.statement_config)
 
@@ -51,7 +55,30 @@ class StatementProcessor(PdfParser):
         if not statement.statement_date:
             raise ValueError("No statement date found")
 
+        if self.safety_check_enabled:
+            result = self._perform_safety_check(statement)
+            if not result:
+                logger.warning(
+                    "Unable to verify that all transactions have been extracted"
+                )
+
         return statement
+
+    def _perform_safety_check(self, statement: Statement):
+        """Checks that the total sum of all transactions is present
+        somewhere within the document.
+
+        Text is re-extracted from the page, as some bank-specific bounding-box
+        configurations (e.g. HSBC) may preclude the total from being extracted
+        """
+        decimal_numbers = set()
+        for page in self.document:
+            lines = page.get_textpage().extractText().split("\n")
+            decimal_numbers.update(statement.get_decimal_numbers(lines))
+        total_amount = round(statement.df[StatementFields.AMOUNT].sum(), 2)
+        if total_amount not in decimal_numbers:
+            return False
+        return True
 
     def transform(self, statement: Statement) -> DataFrame:
         logger.debug("Running transformation functions on DataFrame")

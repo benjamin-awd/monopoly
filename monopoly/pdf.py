@@ -24,7 +24,7 @@ class PdfPage:
 
     raw_text: str
 
-    @property
+    @cached_property
     def lines(self) -> list[str]:
         return list(filter(None, self.raw_text.split("\n")))
 

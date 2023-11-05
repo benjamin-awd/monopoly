@@ -38,3 +38,5 @@ class Ocbc(BankBase):
             creator="pdfgen", producer="Streamline PDFGen for OCBC Group"
         ),
     ]
+
+    safety_check_enabled = False
