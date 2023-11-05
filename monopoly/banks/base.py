@@ -24,6 +24,7 @@ class BankBase(StatementProcessor):
         self.brute_force_config = getattr(
             self, "brute_force_config", BruteForceConfig()
         )
+        self.safety_check_enabled = getattr(self, "safety_check_enabled", True)
 
         # this allows the user to override the default pydantic password
         # and supply their own password via the bank subclasses
@@ -32,6 +33,7 @@ class BankBase(StatementProcessor):
 
         super().__init__(
             statement_config=self.statement_config,
+            safety_check_enabled=self.safety_check_enabled,
             brute_force_config=self.brute_force_config,
             pdf_config=self.pdf_config,
             file_path=file_path,

@@ -102,6 +102,22 @@ class Statement:
                 )
         return None
 
+    @staticmethod
+    def get_decimal_numbers(lines: list[str]) -> set[float]:
+        """Returns all decimal numbers in a statement. This is used
+        to perform a safety check, to make sure no transactions have been missed"""
+
+        number_pattern = re.compile(r"[\d.,]+")
+        decimal_pattern = re.compile(r"\d+\.\d+$")
+        numbers = set()
+        for line in lines:
+            numbers.update(re.findall(number_pattern, line))
+            numbers = {number.replace(",", "") for number in numbers}
+            decimal_numbers = {
+                float(number) for number in numbers if decimal_pattern.match(number)
+            }
+        return decimal_numbers
+
     @cached_property
     def df(self) -> DataFrame:
         return DataFrame(self.transactions, columns=self.columns)
