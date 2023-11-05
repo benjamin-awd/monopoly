@@ -1,6 +1,6 @@
 import logging
 
-from monopoly.config import PdfConfig, StatementConfig, settings
+from monopoly.config import PdfConfig, StatementConfig, TransactionConfig, settings
 from monopoly.constants import (
     AccountType,
     BankNames,
@@ -17,11 +17,14 @@ class Citibank(BankBase):
     statement_config = StatementConfig(
         bank_name=BankNames.CITIBANK,
         account_type=AccountType.CREDIT,
-        transaction_pattern=TransactionPatterns.CITIBANK,
-        cashback_key=r"CASH REBATE",
-        transaction_date_format="%d %b",
         statement_date_pattern=r"Statement\sDate\s+(.*)",
         statement_date_format=r"%B %d, %Y",
+    )
+
+    transaction_config = TransactionConfig(
+        pattern=TransactionPatterns.CITIBANK,
+        cashback_key=r"CASH REBATE",
+        date_format="%d %b",
     )
 
     pdf_config = PdfConfig(

@@ -30,6 +30,14 @@ class Settings(BaseSettings):
 
 
 @dataclass
+class TransactionConfig:
+    pattern: str
+    date_format: Annotated[str, StringConstraints(pattern="%")]
+    cashback_key: Optional[str] = None
+    multiline_transactions: bool = False
+
+
+@dataclass
 class StatementConfig:
     """
     Stores configuration values for the `Statement` class
@@ -38,11 +46,7 @@ class StatementConfig:
     bank_name: BankNames
     account_type: AccountType
     statement_date_format: Annotated[str, StringConstraints(pattern="%.+%.+%")]
-    transaction_pattern: str
-    transaction_date_format: Annotated[str, StringConstraints(pattern="%")]
     statement_date_pattern: str
-    cashback_key: Optional[str] = None
-    multiline_transactions: bool = False
 
     # Convert enums to strings
     def __post_init__(self):

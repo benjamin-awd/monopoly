@@ -40,7 +40,9 @@ def write_to_csv(df: DataFrame, csv_file_path: Optional[str], statement: Stateme
     logger = logging.getLogger(__name__)
 
     if not csv_file_path:
-        filename = generate_name("file", statement.config, statement.statement_date)
+        filename = generate_name(
+            "file", statement.statement_config, statement.statement_date
+        )
         csv_file_path = os.path.join(ROOT_DIR, "output", filename)
         logger.info("Writing CSV to file path: %s", csv_file_path)
 

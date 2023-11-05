@@ -33,6 +33,7 @@ class BankBase(StatementProcessor):
 
         super().__init__(
             statement_config=self.statement_config,
+            transaction_config=self.transaction_config,
             safety_check_enabled=self.safety_check_enabled,
             brute_force_config=self.brute_force_config,
             pdf_config=self.pdf_config,

@@ -1,6 +1,12 @@
 import logging
 
-from monopoly.config import BruteForceConfig, PdfConfig, StatementConfig, settings
+from monopoly.config import (
+    BruteForceConfig,
+    PdfConfig,
+    StatementConfig,
+    TransactionConfig,
+    settings,
+)
 from monopoly.constants import (
     AccountType,
     BankNames,
@@ -18,11 +24,15 @@ class Hsbc(BankBase):
     statement_config = StatementConfig(
         bank_name=BankNames.HSBC,
         account_type=AccountType.CREDIT,
-        transaction_pattern=TransactionPatterns.HSBC,
-        transaction_date_format="%d %b",
         statement_date_pattern=r"(\d{2}\s[A-Z]{3}\s\d{4})\s.*$",
-        multiline_transactions=True,
         statement_date_format=r"%d %b %Y",
+    )
+
+    transaction_config = TransactionConfig(
+        pattern=TransactionPatterns.HSBC,
+        date_format="%d %b",
+        cashback_key=r"CASH REBATE",
+        multiline_transactions=True,
     )
 
     pdf_config = PdfConfig(

@@ -1,6 +1,6 @@
 import logging
 
-from monopoly.config import PdfConfig, StatementConfig, settings
+from monopoly.config import PdfConfig, StatementConfig, TransactionConfig, settings
 from monopoly.constants import (
     AccountType,
     BankNames,
@@ -17,10 +17,14 @@ class StandardChartered(BankBase):
     statement_config = StatementConfig(
         bank_name=BankNames.STANDARD_CHARTERED,
         account_type=AccountType.CREDIT,
-        transaction_pattern=TransactionPatterns.STANDARD_CHARTERED,
-        transaction_date_format="%d %b",
         statement_date_pattern=r"\d{2}\s\w+\s\d{4}",
         statement_date_format=r"%d %B %Y",
+    )
+
+    transaction_config = TransactionConfig(
+        pattern=TransactionPatterns.STANDARD_CHARTERED,
+        date_format="%d %b",
+        cashback_key=r"CASH REBATE",
     )
 
     pdf_config = PdfConfig(

@@ -7,6 +7,7 @@ from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
 
 class MockBankOne(BankBase):
     statement_config = None
+    transaction_config = None
     identifiers = [
         EncryptionIdentifier(
             pdf_version=1.7, algorithm=5, revision=6, length=256, permissions=-1028
@@ -17,6 +18,7 @@ class MockBankOne(BankBase):
 
 class MockBankTwo(BankBase):
     statement_config = None
+    transaction_config = None
     identifiers = [
         MetadataIdentifier(
             creator="Adobe Acrobat 23.3", producer="Adobe Acrobat Pro (64-bit)"
