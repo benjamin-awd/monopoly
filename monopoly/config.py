@@ -1,6 +1,6 @@
 from typing import Annotated, Optional
 
-from pydantic import ConfigDict, StringConstraints
+from pydantic import StringConstraints
 from pydantic.dataclasses import dataclass
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -96,5 +96,3 @@ class BruteForceConfig:
 
 
 settings = Settings()
-
-arbitrary_config = ConfigDict(arbitrary_types_allowed=True)

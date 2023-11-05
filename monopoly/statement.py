@@ -7,7 +7,7 @@ from pandas import DataFrame
 from pydantic import field_validator
 from pydantic.dataclasses import dataclass
 
-from monopoly.config import StatementConfig, arbitrary_config
+from monopoly.config import StatementConfig
 from monopoly.constants import StatementFields
 from monopoly.pdf import PdfPage
 
@@ -49,7 +49,7 @@ class Transaction:
         return value
 
 
-@dataclass(config=arbitrary_config)
+@dataclass
 class Statement:
     """
     A dataclass representation of a bank statement, containing
