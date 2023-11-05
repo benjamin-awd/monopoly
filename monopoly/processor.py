@@ -64,21 +64,21 @@ class StatementProcessor(PdfParser):
 
         return statement
 
-    def _perform_safety_check(self, statement: Statement):
+    def _perform_safety_check(self, statement: Statement) -> bool:
         """Checks that the total sum of all transactions is present
-        somewhere within the document.
+        somewhere within the document
 
         Text is re-extracted from the page, as some bank-specific bounding-box
         configurations (e.g. HSBC) may preclude the total from being extracted
+
+        Returns `False` if the total does not exist in the document.
         """
         decimal_numbers = set()
         for page in self.document:
             lines = page.get_textpage().extractText().split("\n")
             decimal_numbers.update(statement.get_decimal_numbers(lines))
         total_amount = round(statement.df[StatementFields.AMOUNT].sum(), 2)
-        if total_amount not in decimal_numbers:
-            return False
-        return True
+        return total_amount in decimal_numbers
 
     def transform(self, statement: Statement) -> DataFrame:
         logger.debug("Running transformation functions on DataFrame")
