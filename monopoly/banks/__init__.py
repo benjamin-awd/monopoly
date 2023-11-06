@@ -26,11 +26,7 @@ def auto_detect_bank(file_path: str) -> BankBase:
         if is_bank_identified(metadata, bank):
             return bank(file_path=parser.file_path, parser=parser)
 
-    raise ValueError(
-        f"Could not find a bank for {parser.file_path}."
-        f"This may be due a bank PDF update, leading to obsolete identifiers."
-        f"To get around this, create a manual instance of the bank class."
-    )
+    raise ValueError(f"Could not find a bank for {parser.file_path}")
 
 
 def is_bank_identified(metadata, bank: Type[BankBase]) -> bool:
