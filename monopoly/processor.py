@@ -11,9 +11,9 @@ from monopoly.config import (
     TransactionConfig,
 )
 from monopoly.constants import StatementFields
-from monopoly.csv import write_to_csv
 from monopoly.pdf import PdfParser
 from monopoly.statement import Statement
+from monopoly.write import write_to_csv
 
 logger = logging.getLogger(__name__)
 
