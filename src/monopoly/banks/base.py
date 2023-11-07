@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Optional
 
 from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
@@ -11,7 +12,7 @@ class BankBase(StatementProcessor):
 
     def __init__(
         self,
-        file_path: str,
+        file_path: Path,
         identifiers: Optional[list[EncryptionIdentifier | MetadataIdentifier]] = None,
         password: Optional[str] = None,
         parser: Optional[PdfParser] = None,

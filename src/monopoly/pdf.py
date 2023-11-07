@@ -3,6 +3,7 @@ import subprocess
 from dataclasses import dataclass
 from functools import cached_property
 from io import BytesIO
+from pathlib import Path
 from typing import Optional
 
 import fitz
@@ -32,7 +33,7 @@ class PdfPage:
 class PdfParser:
     def __init__(
         self,
-        file_path: str,
+        file_path: Path,
         brute_force_config: Optional[BruteForceConfig] = None,
         pdf_config: Optional[PdfConfig] = None,
     ):

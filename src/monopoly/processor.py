@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from pathlib import Path
 from typing import Optional
 
 from pandas import DataFrame
@@ -37,7 +38,7 @@ class StatementProcessor(PdfParser):
     allows for the parser to be reused and avoid re-opening the PDF.
     """
 
-    def __init__(self, file_path: str, parser: Optional[PdfParser] = None, **kwargs):
+    def __init__(self, file_path: Path, parser: Optional[PdfParser] = None, **kwargs):
         keys = [
             "statement_config",
             "transaction_config",
