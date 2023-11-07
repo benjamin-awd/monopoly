@@ -5,7 +5,7 @@ description = "PDF parsing for Singaporean banks"
 repository = "https://github.com/benjamin-awd/monopoly"
 authors = ["benjamin-awd <benjamindornel@gmail.com>"]
 packages = [
-    { include = "monopoly" },
+    { include = "monopoly", from = "src" },
 ]
 license = "MIT"
 readme = "README.md"
@@ -38,9 +38,9 @@ mypy = "^1.6.1"
 
 [tool.taskipy.tasks]
 format = "isort . && black ."
-lint = "flake8 monopoly & pylint monopoly"
+lint = "flake8 src & pylint src"
 test = "pytest ."
-mypy = "mypy monopoly"
+mypy = "mypy src"
 ci = "poetry run task format && poetry run task lint && poetry run task test"
 
 [tool.pylint]

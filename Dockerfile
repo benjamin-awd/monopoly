@@ -31,7 +31,7 @@ COPY --from=brew /home/linuxbrew/.linuxbrew/lib /home/linuxbrew/.linuxbrew/lib
 ENV PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH
 
 COPY README.md ./README.md
-COPY monopoly ./monopoly
+COPY src/monopoly ./src/monopoly
 COPY tests ./tests
 RUN poetry install
 
