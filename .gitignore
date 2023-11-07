@@ -18,6 +18,7 @@ dist
 # allowed pdf files/fixtures
 !tests/integration/banks/**/*.csv
 !tests/integration/banks/**/*.pdf
+!tests/unit/test_cli/**/*.pdf
 !monopoly/examples/*.pdf
 
 # john files

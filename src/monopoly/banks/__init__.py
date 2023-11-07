@@ -1,4 +1,5 @@
 from dataclasses import Field, fields
+from pathlib import Path
 from typing import Type
 
 from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
@@ -14,7 +15,7 @@ from .standard_chartered import StandardChartered
 banks: list[Type[BankBase]] = [Citibank, Dbs, Hsbc, Ocbc, StandardChartered]
 
 
-def auto_detect_bank(file_path: str) -> BankBase:
+def auto_detect_bank(file_path: Path) -> BankBase:
     """
     Reads the encryption metadata or actual metadata (if the PDF is not encrypted),
     and checks for a bank based on unique identifiers.
