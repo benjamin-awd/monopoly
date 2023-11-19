@@ -15,7 +15,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.11, <3.12"
 pandas = "2.1.0"
 pydantic-settings = "^2.0.3"
 pymupdf = "^1.23.3"
