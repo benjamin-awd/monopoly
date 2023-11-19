@@ -26,16 +26,9 @@ Clone the repo
 git clone https://github.com/benjamin-awd/monopoly.git
 ```
 
-Install dependencies using [Homebrew](https://brew.sh/)
+Install dependencies using apt & [Homebrew](https://brew.sh/)
 ```bash
-brew bundle
-```
-
-Create a virtual environment and install Python dependencies
-```bash
-pyenv virtualenv 3.11.4 monopoly
-pyenv shell monopoly
-poetry install
+make setup
 ```
 
 ## Usage
