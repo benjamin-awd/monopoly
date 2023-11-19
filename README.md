@@ -21,14 +21,14 @@ Supported banks:
 Only credit card statements are supported (for now)
 
 ## Install
-Install dependencies using [Homebrew](https://brew.sh/)
-```bash
-brew bundle
-```
-
 Clone the repo
 ```bash
 git clone https://github.com/benjamin-awd/monopoly.git
+```
+
+Install dependencies using [Homebrew](https://brew.sh/)
+```bash
+brew bundle
 ```
 
 Create a virtual environment and install Python dependencies
