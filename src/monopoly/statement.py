@@ -61,6 +61,7 @@ class Statement:
     columns = [enum.value for enum in StatementFields]
     statement_config: StatementConfig
     transaction_config: TransactionConfig
+    prev_month_balance = None
 
     @cached_property
     def transactions(self) -> list[Transaction]:
@@ -72,6 +73,20 @@ class Statement:
                 if transaction:
                     transactions.append(transaction)
 
+        # TODO: this breaks for statements that do not actually have a prev month balance
+        # e.g. the first statement for a new credit card.
+        # in such cases, no error should be raised
+        if not self.prev_month_balance:
+            raise ValueError("Unable to find previous month's balance")
+
+        first_transaction_date = transactions[0].transaction_date
+        prev_month_balance_transaction = Transaction(
+            **self.prev_month_balance, transaction_date=first_transaction_date
+        )
+        prev_month_balance_transaction.amount = -abs(
+            prev_month_balance_transaction.amount
+        )
+        transactions.insert(0, prev_month_balance_transaction)
         return transactions
 
     @staticmethod
@@ -81,6 +96,10 @@ class Statement:
     def _process_line(
         self, line: str, lines: list[str], idx: int
     ) -> Transaction | None:
+        if not self.prev_month_balance:
+            if match := re.search(self.statement_config.prev_balance_pattern, line):
+                self.prev_month_balance = match.groupdict()
+
         if match := re.search(self.transaction_config.pattern, line):
             # if the cashback key isn't in the description, it's not
             # a cashback transaction, and is of no interest to us
@@ -104,16 +123,21 @@ class Statement:
         return amount.startswith("(") and amount.endswith(")")
 
     @cached_property
-    def statement_date(self):
+    def raw_statement_date(self):
         config = self.statement_config
         logger.debug("Extracting statement date")
         first_page = self.pages[0]
         for line in first_page.lines:
             if match := re.findall(config.statement_date_pattern, line):
-                statement_date = match[0]
                 logger.debug("Statement date found")
-                return datetime.strptime(statement_date, config.statement_date_format)
+                return match[0]
+        logger.debug("Statement date not found")
         return None
+
+    @cached_property
+    def statement_date(self):
+        config = self.statement_config
+        return datetime.strptime(self.raw_statement_date, config.statement_date_format)
 
     @staticmethod
     def get_decimal_numbers(lines: list[str]) -> set[float]:

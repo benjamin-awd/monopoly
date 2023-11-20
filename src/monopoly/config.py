@@ -67,6 +67,7 @@ class StatementConfig:
     account_type: AccountType
     statement_date_format: Annotated[str, StringConstraints(pattern="%.+%.+%")]
     statement_date_pattern: str
+    prev_balance_pattern: str
 
     # Convert enums to strings
     def __post_init__(self):

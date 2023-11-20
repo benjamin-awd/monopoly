@@ -36,7 +36,7 @@ class StatementFields(AutoEnum):
 
 
 class SharedPatterns(StrEnum):
-    AMOUNT = r"(?P<amount>[\d.,]+)$"
+    AMOUNT = r"(?P<amount>[\d.,]+)(?:CR)?$"
     AMOUNT_WITH_CASHBACK = r"(?P<amount>[\d.,]+|\([\d.,\s]+\))$"
     DESCRIPTION = r"(?P<description>.*?)\s+"
     TRANSACTION_DATE_ABBREVIATED_ALL_CAPS = r"(?P<transaction_date>\d{2}\s[A-Z]{3})\s+"
@@ -44,6 +44,10 @@ class SharedPatterns(StrEnum):
         r"(?P<transaction_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
     )
     POSTING_DATE_ABBREVIATED_PROPER = r"(?P<posting_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
+
+
+class StatementBalancePatterns(StrEnum):
+    HSBC = r"(?P<description>Previous\sStatement\sBalance?)\s+" + SharedPatterns.AMOUNT
 
 
 class TransactionPatterns(StrEnum):

@@ -86,6 +86,7 @@ def statement_config():
         transaction_pattern="foo",
         transaction_date_format=r"%d/%m",
         statement_date_pattern="",
+        prev_balance_pattern="foo",
     )
     yield statement_config
 

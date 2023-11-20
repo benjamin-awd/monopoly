@@ -20,6 +20,7 @@ class Ocbc(BankBase):
         account_type=AccountType.CREDIT,
         statement_date_pattern=r"\d{2}\-\d{2}\-\d{4}",
         statement_date_format=r"%d-%m-%Y",
+        prev_balance_pattern=r"LAST\sMONTH'S\sBALANCE",
     )
 
     transaction_config = TransactionConfig(

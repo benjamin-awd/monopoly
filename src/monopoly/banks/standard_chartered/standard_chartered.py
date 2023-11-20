@@ -19,6 +19,7 @@ class StandardChartered(BankBase):
         account_type=AccountType.CREDIT,
         statement_date_pattern=r"\d{2}\s\w+\s\d{4}",
         statement_date_format=r"%d %B %Y",
+        prev_balance_pattern="foo",
     )
 
     transaction_config = TransactionConfig(

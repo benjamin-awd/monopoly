@@ -19,6 +19,7 @@ class Citibank(BankBase):
         account_type=AccountType.CREDIT,
         statement_date_pattern=r"Statement\sDate\s+(.*)",
         statement_date_format=r"%B %d, %Y",
+        prev_balance_pattern="foo",
     )
 
     transaction_config = TransactionConfig(
