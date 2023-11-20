@@ -7,6 +7,7 @@ from monopoly.constants import (
     EncryptionIdentifier,
     MetadataIdentifier,
     TransactionPatterns,
+    StatementBalancePatterns
 )
 
 from ..base import BankBase
@@ -20,6 +21,7 @@ class Dbs(BankBase):
         account_type=AccountType.CREDIT,
         statement_date_pattern=r"(\d{2}\s[A-Za-z]{3}\s\d{4})",
         statement_date_format=r"%d %b %Y",
+        prev_balance_pattern=StatementBalancePatterns.DBS,
     )
 
     transaction_config = TransactionConfig(

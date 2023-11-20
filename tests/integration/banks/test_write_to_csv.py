@@ -4,14 +4,15 @@ from datetime import datetime
 
 import pandas as pd
 from pandas.testing import assert_frame_equal
-
+from monopoly.constants import StatementFields
 from monopoly.banks import Ocbc
 from monopoly.statement import Statement, Transaction
 
 
 def test_write_to_local_csv(ocbc: Ocbc, statement: Statement):
     transformed_df = pd.DataFrame(
-        [
+        columns=[enum.value for enum in StatementFields],
+        data=[
             Transaction("2024-01-12", "FAIRPRICE FINEST", 18.49),
             Transaction("2023-12-28", "DA PAOLO GASTRONOMIA", 19.69),
         ]

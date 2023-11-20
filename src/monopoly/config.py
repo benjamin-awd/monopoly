@@ -43,17 +43,12 @@ class TransactionConfig:
         06/07 URBAN TRANSIT CO. SINGAPORE SG  1.38
     - `date_format` represents the datetime format that a specific bank uses
     for transactions. For example, "%d/%m" will match 06/07
-    - `cashback_key` is the identifier that is used to differentiate cashback
-    transactions from items we don't want to capture like AXS bill payments.
-    e.g. if the cashback_key="CASH REBATE", we'll treat transactions containing
-    "CASH REBATE" as cashback transactions, and include it in the statement
     - `multiline_transactions` controls whether Monopoly tries to concatenate
     transactions that are split across two lines
     """
 
     pattern: str
     date_format: Annotated[str, StringConstraints(pattern="%")]
-    cashback_key: Optional[str] = None
     multiline_transactions: bool = False
 
 
@@ -67,6 +62,7 @@ class StatementConfig:
     account_type: AccountType
     statement_date_format: Annotated[str, StringConstraints(pattern="%.+%.+%")]
     statement_date_pattern: str
+    prev_balance_pattern: str
 
     # Convert enums to strings
     def __post_init__(self):
