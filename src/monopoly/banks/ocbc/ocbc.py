@@ -7,6 +7,7 @@ from monopoly.constants import (
     EncryptionIdentifier,
     MetadataIdentifier,
     TransactionPatterns,
+    StatementBalancePatterns
 )
 
 from ..base import BankBase
@@ -20,12 +21,12 @@ class Ocbc(BankBase):
         account_type=AccountType.CREDIT,
         statement_date_pattern=r"\d{2}\-\d{2}\-\d{4}",
         statement_date_format=r"%d-%m-%Y",
+        prev_balance_pattern=StatementBalancePatterns.OCBC,
     )
 
     transaction_config = TransactionConfig(
         pattern=TransactionPatterns.OCBC,
         date_format="%d/%m",
-        cashback_key=r"CASH REBATE",
     )
 
     pdf_config = PdfConfig(

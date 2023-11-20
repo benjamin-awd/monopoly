@@ -2,9 +2,10 @@ import logging
 import re
 from datetime import datetime
 from functools import cached_property
+from typing import Optional
 
 from pandas import DataFrame
-from pydantic import field_validator
+from pydantic import field_validator, model_validator
 from pydantic.dataclasses import dataclass
 
 from monopoly.config import StatementConfig, TransactionConfig
@@ -27,13 +28,14 @@ class Transaction:
     transaction_date: str
     description: str
     amount: float
+    suffix: Optional[str] = None
 
     @field_validator("description", mode="after")
     def remove_extra_whitespace(cls, value: str) -> str:
         return " ".join(value.split())
 
     @field_validator("amount", mode="before")
-    def adjust_amount(cls, value: str) -> str:
+    def prepare_amount_for_float_coercion(cls, amount: str) -> str:
         """
         Replaces commas, whitespaces and parentheses in string representation of floats
         e.g.
@@ -41,12 +43,21 @@ class Transaction:
             (-10.00) -> -10.00
             (-1.56 ) -> -1.56
         """
-        if isinstance(value, str):
+        if isinstance(amount, str):
             # change cashback to negative transaction
-            if value.startswith("(") and value.endswith(")"):
-                value = "-" + value
-            return re.sub(r"[,)(\s]", "", value)
-        return value
+            if amount.startswith("(") and amount.endswith(")"):
+                amount = "-" + amount
+            return re.sub(r"[,)(\s]", "", amount)
+        return amount
+
+    @model_validator(mode="after")
+    def convert_credit_amount_to_negative(self) -> "Transaction":
+        """
+        Converts transactions with a suffix of "CR" to negative
+        """
+        if self.suffix == "CR":
+            self.amount = -abs(self.amount)
+        return self
 
 
 @dataclass
@@ -61,33 +72,29 @@ class Statement:
     columns = [enum.value for enum in StatementFields]
     statement_config: StatementConfig
     transaction_config: TransactionConfig
+    prev_month_balance = None
 
     @cached_property
     def transactions(self) -> list[Transaction]:
-        transactions = []
+        transactions: list[Transaction] = []
+
         for page in self.pages:
             lines = self.process_lines(page)
             for i, line in enumerate(lines):
                 transaction = self._process_line(line, lines, idx=i)
                 if transaction:
                     transactions.append(transaction)
-
+        transactions = self._add_prev_month_balance(transactions)
         return transactions
-
-    @staticmethod
-    def process_lines(page: PdfPage) -> list:
-        return [line.lstrip() for line in page.lines]
 
     def _process_line(
         self, line: str, lines: list[str], idx: int
     ) -> Transaction | None:
-        if match := re.search(self.transaction_config.pattern, line):
-            # if the cashback key isn't in the description, it's not
-            # a cashback transaction, and is of no interest to us
-            if Statement.is_enclosed_in_parentheses(match["amount"]):
-                if self.transaction_config.cashback_key not in match["description"]:
-                    return None
+        if not self.prev_month_balance:
+            if match := re.search(self.statement_config.prev_balance_pattern, line):
+                self.prev_month_balance = match.groupdict()
 
+        if match := re.search(self.transaction_config.pattern, line):
             transaction = Transaction(**match.groupdict())  # type: ignore
 
             # handle transactions that span multiple lines
@@ -95,25 +102,46 @@ class Statement:
                 next_line = lines[idx + 1]
                 if not re.search(self.transaction_config.pattern, next_line):
                     transaction.description += " " + next_line
-                    transaction = Transaction(**vars(transaction))
             return transaction
         return None
 
+    def _add_prev_month_balance(
+        self, transactions: list[Transaction]
+    ) -> list[Transaction]:
+        """
+        Converts the previous month's statement balance into a transaction,
+        if it exists in the statement.
+        """
+        if self.prev_month_balance:
+            first_transaction_date = transactions[0].transaction_date
+            prev_month_balance_transaction = Transaction(
+                **self.prev_month_balance,  # type: ignore
+                transaction_date=first_transaction_date,
+            )
+            transactions.insert(0, prev_month_balance_transaction)
+        if not self.prev_month_balance:
+            logger.debug("Unable to find previous month's balance")
+        return transactions
+
     @staticmethod
-    def is_enclosed_in_parentheses(amount: str) -> bool:
-        return amount.startswith("(") and amount.endswith(")")
+    def process_lines(page: PdfPage) -> list:
+        return [line.lstrip() for line in page.lines]
 
     @cached_property
-    def statement_date(self):
+    def raw_statement_date(self) -> str:
         config = self.statement_config
         logger.debug("Extracting statement date")
         first_page = self.pages[0]
         for line in first_page.lines:
             if match := re.findall(config.statement_date_pattern, line):
-                statement_date = match[0]
                 logger.debug("Statement date found")
-                return datetime.strptime(statement_date, config.statement_date_format)
-        return None
+                return match[0]
+        raise ValueError("Statement date not found")
+
+    @cached_property
+    def statement_date(self):
+        config = self.statement_config
+        return datetime.strptime(self.raw_statement_date, config.statement_date_format)
 
     @staticmethod
     def get_decimal_numbers(lines: list[str]) -> set[float]:

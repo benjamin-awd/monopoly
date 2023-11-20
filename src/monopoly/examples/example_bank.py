@@ -1,6 +1,6 @@
 from monopoly.banks.base import BankBase
 from monopoly.config import StatementConfig, TransactionConfig
-from monopoly.constants import AccountType, BankNames
+from monopoly.constants import AccountType, BankNames, SharedPatterns
 
 
 class MonopolyBank(BankBase):
@@ -11,13 +11,15 @@ class MonopolyBank(BankBase):
         account_type=AccountType.CREDIT,
         statement_date_pattern=r"\d{2}\-\d{2}\-\d{4}",
         statement_date_format=r"%d-%m-%Y",
+        prev_balance_pattern=(
+            r"(?P<description>LAST MONTH'S BALANCE?)\s+" + SharedPatterns.AMOUNT
+        ),
     )
 
     transaction_config = TransactionConfig(
         pattern=(
             r"(?P<transaction_date>\d+/\d+)\s*"
-            r"(?P<description>.*?)\s*"
-            r"(?P<amount>[\d.,]+)$"
+            r"(?P<description>.*?)\s*" + SharedPatterns.AMOUNT
         ),
         date_format=r"%d/%m",
     )

@@ -67,11 +67,7 @@ class StatementProcessor(PdfParser):
             raise ValueError("No statement date found")
 
         if self.safety_check_enabled:
-            result = self._perform_safety_check(statement)
-            if not result:
-                logger.warning(
-                    "Unable to verify that all transactions have been extracted"
-                )
+            self._perform_safety_check(statement)
 
         return statement
 
@@ -89,7 +85,15 @@ class StatementProcessor(PdfParser):
             lines = page.get_textpage().extractText().split("\n")
             decimal_numbers.update(statement.get_decimal_numbers(lines))
         total_amount = round(statement.df[StatementFields.AMOUNT].sum(), 2)
-        return total_amount in decimal_numbers
+
+        result = total_amount in decimal_numbers
+        if not result:
+            logger.warning(
+                "Total amount %s cannot be found in document - %s",
+                total_amount,
+                "transactions may be missing or inaccurate",
+            )
+        return result
 
     def transform(self, statement: Statement) -> DataFrame:
         logger.debug("Running transformation functions on DataFrame")

@@ -12,7 +12,7 @@ class AutoEnum(StrEnum):
     e.g. CITIBANK -> citibank
     """
 
-    def _generate_next_value_(name: str, *args):  # type: ignore
+    def _generate_next_value_(name: str, *_):  # type: ignore
         return name.lower()
 
 
@@ -36,7 +36,12 @@ class StatementFields(AutoEnum):
 
 
 class SharedPatterns(StrEnum):
-    AMOUNT = r"(?P<amount>[\d.,]+)$"
+    """
+    AMOUNT matches the following patterns:
+    1,123.12 | 123.12 | (123.12) | ( 123.12) | 123.12 CR
+    """
+
+    AMOUNT = r"(?P<amount>[\d.,]+|\([\d.,\s]+\)$)\s*(?P<suffix>CR|DR)?$"
     AMOUNT_WITH_CASHBACK = r"(?P<amount>[\d.,]+|\([\d.,\s]+\))$"
     DESCRIPTION = r"(?P<description>.*?)\s+"
     TRANSACTION_DATE_ABBREVIATED_ALL_CAPS = r"(?P<transaction_date>\d{2}\s[A-Z]{3})\s+"
@@ -44,6 +49,18 @@ class SharedPatterns(StrEnum):
         r"(?P<transaction_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
     )
     POSTING_DATE_ABBREVIATED_PROPER = r"(?P<posting_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
+
+
+class StatementBalancePatterns(StrEnum):
+    DBS = r"(?P<description>PREVIOUS BALANCE?)\s+" + SharedPatterns.AMOUNT
+    CITIBANK = (
+        r"(?P<description>BALANCE PREVIOUS STATEMENT?)\s+" + SharedPatterns.AMOUNT
+    )
+    HSBC = r"(?P<description>Previous Statement Balance?)\s+" + SharedPatterns.AMOUNT
+    OCBC = r"(?P<description>LAST MONTH'S BALANCE?)\s+" + SharedPatterns.AMOUNT
+    STANDARD_CHARTERED = (
+        r"(?P<description>BALANCE FROM PREVIOUS STATEMENT?)\s+" + SharedPatterns.AMOUNT
+    )
 
 
 class TransactionPatterns(StrEnum):
@@ -72,7 +89,7 @@ class TransactionPatterns(StrEnum):
         SharedPatterns.POSTING_DATE_ABBREVIATED_PROPER
         + SharedPatterns.TRANSACTION_DATE_ABBREVIATED_PROPER_CASE
         + SharedPatterns.DESCRIPTION
-        + r"(?P<transaction_ref>Transaction\sRef\s\d+)\s+"
+        + r"(?:(?P<transaction_ref>Transaction\sRef\s\d+)?)\s+"
         + SharedPatterns.AMOUNT
     )
 

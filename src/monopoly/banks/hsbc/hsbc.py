@@ -12,6 +12,7 @@ from monopoly.constants import (
     BankNames,
     EncryptionIdentifier,
     MetadataIdentifier,
+    StatementBalancePatterns,
     TransactionPatterns,
 )
 
@@ -25,13 +26,13 @@ class Hsbc(BankBase):
         bank_name=BankNames.HSBC,
         account_type=AccountType.CREDIT,
         statement_date_pattern=r"(\d{2}\s[A-Z]{3}\s\d{4})\s.*$",
+        prev_balance_pattern=StatementBalancePatterns.HSBC,
         statement_date_format=r"%d %b %Y",
     )
 
     transaction_config = TransactionConfig(
         pattern=TransactionPatterns.HSBC,
         date_format="%d %b",
-        cashback_key=r"CASH REBATE",
         multiline_transactions=True,
     )
 

@@ -6,6 +6,7 @@ from monopoly.constants import (
     BankNames,
     MetadataIdentifier,
     TransactionPatterns,
+    StatementBalancePatterns
 )
 
 from ..base import BankBase
@@ -19,11 +20,11 @@ class Citibank(BankBase):
         account_type=AccountType.CREDIT,
         statement_date_pattern=r"Statement\sDate\s+(.*)",
         statement_date_format=r"%B %d, %Y",
+        prev_balance_pattern=StatementBalancePatterns.CITIBANK,
     )
 
     transaction_config = TransactionConfig(
         pattern=TransactionPatterns.CITIBANK,
-        cashback_key=r"CASH REBATE",
         date_format="%d %b",
     )
 

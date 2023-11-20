@@ -6,6 +6,7 @@ from monopoly.constants import (
     BankNames,
     MetadataIdentifier,
     TransactionPatterns,
+    StatementBalancePatterns,
 )
 
 from ..base import BankBase
@@ -19,12 +20,12 @@ class StandardChartered(BankBase):
         account_type=AccountType.CREDIT,
         statement_date_pattern=r"\d{2}\s\w+\s\d{4}",
         statement_date_format=r"%d %B %Y",
+        prev_balance_pattern=StatementBalancePatterns.STANDARD_CHARTERED,
     )
 
     transaction_config = TransactionConfig(
         pattern=TransactionPatterns.STANDARD_CHARTERED,
         date_format="%d %b",
-        cashback_key=r"CASH REBATE",
     )
 
     pdf_config = PdfConfig(

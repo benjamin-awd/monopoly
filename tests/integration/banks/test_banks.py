@@ -13,21 +13,20 @@ from monopoly.statement import Statement
 
 
 @pytest.mark.parametrize(
-    "bank_class, total_amount, statement_date, safety_check_result",
+    "bank_class, total_amount, statement_date",
     [
-        (Citibank, 1414.07, datetime(2022, 11, 15), True),
-        (Dbs, 16969.17, datetime(2023, 10, 15), True),
-        (Hsbc, 1218.2, datetime(2023, 7, 21), True),
-        (Ocbc, 702.1, datetime(2023, 8, 1), True),
-        (StandardChartered, 82.45, datetime(2023, 5, 16), True),
-        (MonopolyBank, 703.48, datetime(2023, 7, 1), False),
+        (Citibank, 1414.07, datetime(2022, 11, 15)),
+        (Dbs, 16969.17, datetime(2023, 10, 15)),
+        (Hsbc, 1218.2, datetime(2023, 7, 21)),
+        (Ocbc, 702.1, datetime(2023, 8, 1)),
+        (StandardChartered, 82.45, datetime(2023, 5, 16)),
+        (MonopolyBank, 702.1, datetime(2023, 7, 1)),
     ],
 )
 def test_bank_operations(
     bank_class: BankBase,
     total_amount: float,
     statement_date: datetime,
-    safety_check_result: bool,
 ):
     bank_name = bank_class.statement_config.bank_name
 
@@ -43,7 +42,7 @@ def test_bank_operations(
     assert_frame_equal(statement.df, expected_raw_data)
     assert round(raw_df[StatementFields.AMOUNT].sum(), 2) == total_amount
     assert statement.statement_date == statement_date
-    assert safety_check_result == bank._perform_safety_check(statement)
+    assert bank._perform_safety_check(statement)
 
     # Check transformed data is correct
     transformed_df = bank.transform(statement)
