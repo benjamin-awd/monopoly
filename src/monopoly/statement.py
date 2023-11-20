@@ -68,9 +68,7 @@ class Statement:
         for page in self.pages:
             lines = self.process_lines(page)
             for i, line in enumerate(lines):
-                transaction = self._process_line(
-                    self.transaction_config, line, lines, idx=i
-                )
+                transaction = self._process_line(line, lines, idx=i)
                 if transaction:
                     transactions.append(transaction)
 
@@ -80,23 +78,22 @@ class Statement:
     def process_lines(page: PdfPage) -> list:
         return [line.lstrip() for line in page.lines]
 
-    @staticmethod
     def _process_line(
-        transaction_config: TransactionConfig, line: str, lines: list[str], idx: int
+        self, line: str, lines: list[str], idx: int
     ) -> Transaction | None:
-        if match := re.search(transaction_config.pattern, line):
+        if match := re.search(self.transaction_config.pattern, line):
             # if the cashback key isn't in the description, it's not
             # a cashback transaction, and is of no interest to us
             if Statement.is_enclosed_in_parentheses(match["amount"]):
-                if transaction_config.cashback_key not in match["description"]:
+                if self.transaction_config.cashback_key not in match["description"]:
                     return None
 
             transaction = Transaction(**match.groupdict())  # type: ignore
 
             # handle transactions that span multiple lines
-            if transaction_config.multiline_transactions and idx < len(lines) - 1:
+            if self.transaction_config.multiline_transactions and idx < len(lines) - 1:
                 next_line = lines[idx + 1]
-                if not re.search(transaction_config.pattern, next_line):
+                if not re.search(self.transaction_config.pattern, next_line):
                     transaction.description += " " + next_line
                     transaction = Transaction(**vars(transaction))
             return transaction
