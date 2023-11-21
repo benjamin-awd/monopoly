@@ -7,3 +7,4 @@ setup:
 
 	# install poetry dependencies
 	poetry install
+	poetry env use 3.11
