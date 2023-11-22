@@ -2,11 +2,12 @@ import logging
 import re
 from datetime import datetime
 from functools import cached_property
-from typing import Optional
+from typing import Any, Optional
 
 from pandas import DataFrame
 from pydantic import field_validator, model_validator
 from pydantic.dataclasses import dataclass
+from pydantic_core import ArgsKwargs
 
 from monopoly.config import StatementConfig, TransactionConfig
 from monopoly.constants import StatementFields
@@ -15,6 +16,7 @@ from monopoly.pdf import PdfPage
 logger = logging.getLogger(__name__)
 
 
+# pylint: disable=bad-classmethod-argument
 @dataclass
 class Transaction:
     """
@@ -44,18 +46,30 @@ class Transaction:
             (-1.56 ) -> -1.56
         """
         if isinstance(amount, str):
-            # change cashback to negative transaction
-            if amount.startswith("(") and amount.endswith(")"):
-                amount = "-" + amount
             return re.sub(r"[,)(\s]", "", amount)
         return amount
 
+    @model_validator(mode="before")  # type: ignore
+    def treat_parenthesis_enclosure_as_credit(self: ArgsKwargs | Any) -> "ArgsKwargs":
+        """
+        Treat amounts enclosed by parentheses (e.g. cashback) as a credit entry
+        """
+        if self.kwargs:
+            amount: str = self.kwargs["amount"]
+            if isinstance(amount, str):
+                if amount.startswith("(") and amount.endswith(")"):
+                    self.kwargs["suffix"] = "CR"
+        return self
+
     @model_validator(mode="after")
-    def convert_credit_amount_to_negative(self) -> "Transaction":
+    def convert_credit_amount_to_negative(self: "Transaction") -> "Transaction":
         """
         Converts transactions with a suffix of "CR" to negative
         """
         if self.suffix == "CR":
+            self.amount = abs(self.amount)
+
+        else:
             self.amount = -abs(self.amount)
         return self
 
@@ -77,7 +91,6 @@ class Statement:
     @cached_property
     def transactions(self) -> list[Transaction]:
         transactions: list[Transaction] = []
-
         for page in self.pages:
             lines = self.process_lines(page)
             for i, line in enumerate(lines):

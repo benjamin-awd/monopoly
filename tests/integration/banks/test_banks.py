@@ -15,12 +15,12 @@ from monopoly.statement import Statement
 @pytest.mark.parametrize(
     "bank_class, total_amount, statement_date",
     [
-        (Citibank, 1414.07, datetime(2022, 11, 15)),
-        (Dbs, 16969.17, datetime(2023, 10, 15)),
-        (Hsbc, 1218.2, datetime(2023, 7, 21)),
-        (Ocbc, 702.1, datetime(2023, 8, 1)),
-        (StandardChartered, 82.45, datetime(2023, 5, 16)),
-        (MonopolyBank, 702.1, datetime(2023, 7, 1)),
+        (Citibank, -1414.07, datetime(2022, 11, 15)),
+        (Dbs, -16969.17, datetime(2023, 10, 15)),
+        (Hsbc, -1218.2, datetime(2023, 7, 21)),
+        (Ocbc, -702.1, datetime(2023, 8, 1)),
+        (StandardChartered, -82.45, datetime(2023, 5, 16)),
+        (MonopolyBank, -702.1, datetime(2023, 7, 1)),
     ],
 )
 def test_bank_operations(
