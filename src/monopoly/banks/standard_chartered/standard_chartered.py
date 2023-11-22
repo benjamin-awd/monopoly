@@ -5,8 +5,8 @@ from monopoly.constants import (
     AccountType,
     BankNames,
     MetadataIdentifier,
-    TransactionPatterns,
     StatementBalancePatterns,
+    TransactionPatterns,
 )
 
 from ..base import BankBase
@@ -18,8 +18,8 @@ class StandardChartered(BankBase):
     statement_config = StatementConfig(
         bank_name=BankNames.STANDARD_CHARTERED,
         account_type=AccountType.CREDIT,
-        statement_date_pattern=r"\d{2}\s\w+\s\d{4}",
-        statement_date_format=r"%d %B %Y",
+        date_pattern=r"\d{2}\s\w+\s\d{4}",
+        date_format=r"%d %B %Y",
         prev_balance_pattern=StatementBalancePatterns.STANDARD_CHARTERED,
     )
 

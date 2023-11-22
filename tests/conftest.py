@@ -82,10 +82,10 @@ def statement_config():
     statement_config = StatementConfig(
         account_type=AccountType.CREDIT,
         bank_name=BankNames.OCBC,
-        statement_date_format=r"%d-%m-%Y",
+        date_format=r"%d-%m-%Y",
         transaction_pattern="foo",
         transaction_date_format=r"%d/%m",
-        statement_date_pattern="",
+        date_pattern="",
         prev_balance_pattern="foo",
     )
     yield statement_config

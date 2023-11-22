@@ -9,8 +9,8 @@ class MonopolyBank(BankBase):
     statement_config = StatementConfig(
         bank_name=BankNames.EXAMPLE,
         account_type=AccountType.CREDIT,
-        statement_date_pattern=r"\d{2}\-\d{2}\-\d{4}",
-        statement_date_format=r"%d-%m-%Y",
+        date_pattern=r"\d{2}\-\d{2}\-\d{4}",
+        date_format=r"%d-%m-%Y",
         prev_balance_pattern=(
             r"(?P<description>LAST MONTH'S BALANCE?)\s+" + SharedPatterns.AMOUNT
         ),

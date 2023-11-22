@@ -133,7 +133,7 @@ class Statement:
         logger.debug("Extracting statement date")
         first_page = self.pages[0]
         for line in first_page.lines:
-            if match := re.findall(config.statement_date_pattern, line):
+            if match := re.findall(config.date_pattern, line):
                 logger.debug("Statement date found")
                 return match[0]
         raise ValueError("Statement date not found")
@@ -141,7 +141,7 @@ class Statement:
     @cached_property
     def statement_date(self):
         config = self.statement_config
-        return datetime.strptime(self.raw_statement_date, config.statement_date_format)
+        return datetime.strptime(self.raw_statement_date, config.date_format)
 
     @staticmethod
     def get_decimal_numbers(lines: list[str]) -> set[float]:
