@@ -5,8 +5,8 @@ from monopoly.constants import (
     AccountType,
     BankNames,
     MetadataIdentifier,
+    StatementBalancePatterns,
     TransactionPatterns,
-    StatementBalancePatterns
 )
 
 from ..base import BankBase
@@ -18,8 +18,8 @@ class Citibank(BankBase):
     statement_config = StatementConfig(
         bank_name=BankNames.CITIBANK,
         account_type=AccountType.CREDIT,
-        statement_date_pattern=r"Statement\sDate\s+(.*)",
-        statement_date_format=r"%B %d, %Y",
+        date_pattern=r"Statement\sDate\s+(.*)",
+        date_format=r"%B %d, %Y",
         prev_balance_pattern=StatementBalancePatterns.CITIBANK,
     )
 

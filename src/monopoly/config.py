@@ -60,8 +60,8 @@ class StatementConfig:
 
     bank_name: BankNames
     account_type: AccountType
-    statement_date_format: Annotated[str, StringConstraints(pattern="%.+%.+%")]
-    statement_date_pattern: str
+    date_format: Annotated[str, StringConstraints(pattern="%.+%.+%")]
+    date_pattern: str
     prev_balance_pattern: str
 
     # Convert enums to strings

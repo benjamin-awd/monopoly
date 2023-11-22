@@ -25,17 +25,12 @@ def test_statement_date_extraction(
     fixture_directory = Path(__file__).parent / bank_name
     bank: BankBase = bank_class(fixture_directory / "input.pdf")
 
-    statement.statement_config.statement_date_pattern = (
-        bank.statement_config.statement_date_pattern
-    )
-    statement.statement_config.statement_date_format = (
-        bank.statement_config.statement_date_format
-    )
+    statement.statement_config.date_pattern = bank.statement_config.date_pattern
+    statement.statement_config.date_format = bank.statement_config.date_format
     statement.pages[0] = PdfPage(raw_text=page_content)
 
     statement_date = statement.statement_date
     assert statement.raw_statement_date.casefold() == expected_date.casefold()
     assert (
-        statement_date.strftime(statement.statement_config.statement_date_format)
-        == expected_date
+        statement_date.strftime(statement.statement_config.date_format) == expected_date
     )
