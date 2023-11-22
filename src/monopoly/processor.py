@@ -84,7 +84,7 @@ class StatementProcessor(PdfParser):
         for page in self.document:
             lines = page.get_textpage().extractText().split("\n")
             decimal_numbers.update(statement.get_decimal_numbers(lines))
-        total_amount = round(statement.df[StatementFields.AMOUNT].sum(), 2)
+        total_amount = abs(round(statement.df[StatementFields.AMOUNT].sum(), 2))
 
         result = total_amount in decimal_numbers
         if not result:
