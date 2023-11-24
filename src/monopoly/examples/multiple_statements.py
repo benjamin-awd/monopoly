@@ -14,7 +14,7 @@ def ocbc_example():
         )
         statement = bank.extract()
         transformed_df = bank.transform(statement)
-        bank.load(transformed_df, statement)
+        bank.load(transformed_df, statement, output_directory="src/monopoly/examples")
 
 
 if __name__ == "__main__":

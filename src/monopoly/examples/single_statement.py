@@ -17,9 +17,8 @@ def example():
     transformed_df = bank.transform(statement)
     print(transformed_df)
 
-    # Files are saved to an output directory
-    # monopoly/output/monopoly-credit-2023-08.csv
-    bank.load(transformed_df, statement)
+    # Parsed transactions writen to a CSV file in the "example" directory
+    bank.load(transformed_df, statement, output_directory="src/monopoly/examples")
 
 
 if __name__ == "__main__":
