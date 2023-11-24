@@ -34,9 +34,9 @@ make setup
 ## Usage
 Monopoly can be run as a Python package, allowing you to extract, transform and write bank statements to a CSV file.
 
-To see how Monopoly works, you can run this [example](monopoly/examples/single_statement.py)
+To see how Monopoly works, you can run this example
 ```bash
-python3 monopoly/examples/single_statement.py
+python3 src/monopoly/examples/single_statement.py
 ```
 
 If your PDF is encrypted, you'll have to add the password to a .env file in the root directory, which is automatically read by monopoly
@@ -48,6 +48,6 @@ cp .env.template .env
 
 ## Features
 - Support for encrypted PDFs -- passwords can be passed in via a .env file, or passed directly via a bank class
-- PDFs can also be unlocked with a static string, and a masking pattern like ?d?d?d for banks like HSBC that use a common password prefix (DOB), but different passwords for each card
-- Cashback transactions from Citibank and OCBC are also supported, and appear as "negative" transactions
+  - PDFs can also be unlocked with a static string, and a masking pattern like ?d?d?d for banks like HSBC that use a common password prefix (DOB), but different passwords for each card
+- Support for cashback transactions and refunds
 - Monopoly can be run on Google Cloud as a scheduled Cloud Run job, which opens up more sophisticated use-cases like historical analysis and personal finance visualization
