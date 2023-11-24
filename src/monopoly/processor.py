@@ -1,4 +1,5 @@
 import logging
+import os
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
@@ -14,7 +15,7 @@ from monopoly.config import (
 from monopoly.constants import StatementFields
 from monopoly.pdf import PdfParser
 from monopoly.statement import Statement
-from monopoly.write import write_to_csv
+from monopoly.write import generate_name
 
 logger = logging.getLogger(__name__)
 
@@ -119,11 +120,13 @@ class StatementProcessor(PdfParser):
         df[StatementFields.TRANSACTION_DATE] = df.apply(convert_date, axis=1)
         return df
 
-    def load(
-        self, df: DataFrame, statement: Statement, csv_file_path: Optional[str] = None
-    ):
-        csv_file_path = write_to_csv(
-            df=df, csv_file_path=csv_file_path, statement=statement
+    def load(self, df: DataFrame, statement: Statement, output_directory: Path):
+        filename = generate_name(
+            "file", statement.statement_config, statement.statement_date
         )
 
-        return csv_file_path
+        output_path = os.path.join(output_directory, filename)
+        logger.info("Writing CSV to file path: %s", output_path)
+        df.to_csv(output_path, index=False)
+
+        return output_path

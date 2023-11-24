@@ -1,9 +1,6 @@
-import os
 from enum import StrEnum, auto
 
 from pydantic.dataclasses import dataclass
-
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # pylint: disable=unused-argument,no-self-argument
