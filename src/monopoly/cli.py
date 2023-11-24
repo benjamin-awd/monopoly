@@ -1,17 +1,19 @@
 from pathlib import Path
-from typing import Collection, Iterable
+from typing import Collection, Iterable, Optional
 
 import click
 
 from monopoly.banks import auto_detect_bank
 
 
-def run(files: Collection[Path]):
+def run(files: Collection[Path], output_directory: Optional[Path] = None):
     for file in files:
         bank = auto_detect_bank(file)
         statement = bank.extract()
         transformed_df = bank.transform(statement)
-        bank.load(transformed_df, statement)
+        if not output_directory:
+            output_directory = file.parent
+        bank.load(transformed_df, statement, output_directory)
 
 
 def get_statement_paths(files: Iterable[Path]) -> set[Path]:
@@ -32,7 +34,13 @@ def get_statement_paths(files: Iterable[Path]) -> set[Path]:
     nargs=-1,
     type=click.Path(exists=True, allow_dash=True, resolve_path=True, path_type=Path),
 )
-def monopoly(files: list[Path]):
+@click.option(
+    "-o",
+    "--output",
+    type=click.Path(exists=True, allow_dash=True, resolve_path=True, path_type=Path),
+    help="Specify output folder",
+)
+def monopoly(files: list[Path], output: Path):
     """
     Monopoly helps convert your bank statements from PDF to CSV.
 
@@ -40,7 +48,7 @@ def monopoly(files: list[Path]):
     """
     if files:
         matched_files = get_statement_paths(files)
-        run(matched_files)
+        run(matched_files, output)
 
     else:
         print("No command received")
