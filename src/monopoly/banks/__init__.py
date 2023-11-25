@@ -1,3 +1,4 @@
+import logging
 from dataclasses import Field, fields
 from pathlib import Path
 from typing import Type
@@ -14,6 +15,8 @@ from .standard_chartered import StandardChartered
 
 banks: list[Type[BankBase]] = [Citibank, Dbs, Hsbc, Ocbc, StandardChartered]
 
+logger = logging.getLogger(__name__)
+
 
 def auto_detect_bank(file_path: Path) -> BankBase:
     """
@@ -22,23 +25,30 @@ def auto_detect_bank(file_path: Path) -> BankBase:
     """
     parser = PdfParser(file_path)
     for bank in banks:
-        metadata = bank.get_identifier(parser)
+        metadata_items = bank.get_identifiers(parser)
 
-        if is_bank_identified(metadata, bank):
+        if is_bank_identified(metadata_items, bank):
             return bank(file_path=parser.file_path, parser=parser)
 
     raise ValueError(f"Could not find a bank for {parser.file_path}")
 
 
-def is_bank_identified(metadata, bank: Type[BankBase]) -> bool:
+def is_bank_identified(metadata_items: list, bank: Type[BankBase]) -> bool:
+    """
+    Checks if a bank is identified based on a list of metadata items.
+    """
     if bank.identifiers:
-        for identifier in bank.identifiers:
-            if all(
+        for identifier, metadata in zip(bank.identifiers, metadata_items):
+            logger.info(
+                "Comparing bank %s identifier %s against PDF metadata %s",
+                bank.__name__,
+                identifier,
+                metadata,
+            )
+            return all(
                 check_identifier_field(field, metadata, identifier)
                 for field in fields(metadata)
-            ):
-                return True
-
+            )
     return False
 
 
@@ -46,7 +56,10 @@ def check_identifier_field(
     field: Field,
     metadata: EncryptionIdentifier | MetadataIdentifier,
     identifier: EncryptionIdentifier | MetadataIdentifier,
-):
+) -> bool:
+    """
+    Checks if a field in the metadata matches the corresponding identifier field.
+    """
     # Only compare matching identifier types
     if type(metadata) is type(identifier):
         field_value = getattr(metadata, field.name)
