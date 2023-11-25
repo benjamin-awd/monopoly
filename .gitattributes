@@ -1,1 +1,2 @@
 tests/integration/banks/**/input.pdf filter=git-crypt diff=git-crypt
+tests/integration/banks/.gc_check filter=git-crypt diff=git-crypt
