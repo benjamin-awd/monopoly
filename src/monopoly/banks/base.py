@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
 from monopoly.pdf import BruteForceConfig, PdfConfig, PdfParser
@@ -13,11 +13,12 @@ class BankBase(StatementProcessor):
     def __init__(
         self,
         file_path: Path,
-        identifiers: Optional[list[EncryptionIdentifier | MetadataIdentifier]] = None,
         password: Optional[str] = None,
         parser: Optional[PdfParser] = None,
     ):
-        self.identifiers = identifiers
+        self.identifiers: Optional[
+            list[EncryptionIdentifier | MetadataIdentifier]
+        ] = None
         self.parser = parser
 
         # optional config
@@ -42,7 +43,8 @@ class BankBase(StatementProcessor):
         )
 
     @staticmethod
-    def get_identifier(parser: PdfParser) -> EncryptionIdentifier | MetadataIdentifier:
+    def get_identifiers(parser: PdfParser) -> list[Any]:
+        identifiers = []
         # pylint: disable=protected-access
         if parser.extractor.encrypt_dict:
             extractor = parser.extractor
@@ -55,7 +57,7 @@ class BankBase(StatementProcessor):
                 extractor.length,
                 extractor.permissions,
             )
-            return encryption_identifier
+            identifiers.append(encryption_identifier)
 
         if metadata := parser.document.metadata:
             metadata_identifier = MetadataIdentifier(
@@ -65,6 +67,9 @@ class BankBase(StatementProcessor):
                 metadata.get("creator"),
                 metadata.get("producer"),
             )
-            return metadata_identifier
+            identifiers.append(metadata_identifier)  # type: ignore
 
-        raise ValueError(f"Could not get identifier for {parser.file_path}")
+        if not identifiers:
+            raise ValueError(f"Could not get identifier for {parser.file_path}")
+
+        return identifiers
