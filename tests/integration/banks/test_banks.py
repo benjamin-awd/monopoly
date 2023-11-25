@@ -4,6 +4,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
+from test_utils.skip import skip_if_encrypted
 
 from monopoly.banks import Citibank, Dbs, Hsbc, Ocbc, StandardChartered
 from monopoly.banks.base import BankBase
@@ -12,6 +13,7 @@ from monopoly.examples import MonopolyBank
 from monopoly.statement import Statement
 
 
+@skip_if_encrypted
 @pytest.mark.parametrize(
     "bank_class, total_amount, statement_date",
     [
