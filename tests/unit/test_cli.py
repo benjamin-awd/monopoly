@@ -1,14 +1,34 @@
+import subprocess
 from pathlib import Path
 from unittest.mock import DEFAULT, MagicMock, patch
 
 import pytest
+from click.testing import CliRunner
 
-from monopoly.cli import get_statement_paths, run
+from monopoly.cli import get_statement_paths, monopoly, run
 
 
 @pytest.fixture
 def test_directory() -> Path:
     return Path("tests/unit/test_cli").resolve()
+
+
+def run_cli_command(commands: list[str]) -> subprocess.CompletedProcess:
+    process = subprocess.run(
+        commands,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        universal_newlines=True,
+        shell=True,
+    )
+    return process
+
+
+def test_help_command() -> None:
+    cli_runner = CliRunner(mix_stderr=False)
+    help_results = cli_runner.invoke(monopoly, args="--help")
+    assert help_results.exit_code == 0
+    assert help_results.stdout.startswith("Usage: monopoly")
 
 
 class MockBank(MagicMock):

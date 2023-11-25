@@ -51,4 +51,47 @@ def monopoly(files: list[Path], output: Path):
         run(matched_files, output)
 
     else:
-        print("No command received")
+        show_welcome_message()
+
+
+def show_welcome_message():
+    art = r"""
+     __  __                               _
+    |  \/  | ___  _ __   ___  _ __   ___ | |_   _
+    | |\/| |/ _ \| '_ \ / _ \| '_ \ / _ \| | | | |
+    | |  | | (_) | | | | (_) | |_) | (_) | | |_| |
+    |_|  |_|\___/|_| |_|\___/| .__/ \___/|_|\__, |
+                             |_|            |___/
+    """
+
+    click.echo(art)
+    message = "Monopoly helps convert your bank statements from PDF to CSV"
+    click.echo(message)
+    commands = [
+        (
+            "monopoly .",
+            "process all statements nested in current dir",
+        ),
+        (
+            "monopoly path/to/file.pdf",
+            "process a specific statement in a directory",
+        ),
+        (
+            "monopoly . --output <dir>",
+            "saves all results to specific directory",
+        ),
+        (
+            "monopoly --help",
+            "show more options and other usage information",
+        ),
+    ]
+    margin = max(len(cmd) for cmd, _ in commands)
+    for cmd, desc in commands:
+        styled_cmd = click.style(
+            text=f"{cmd}{' ' * (margin - len(cmd))}",
+            fg="white",
+            bg="bright_black",
+            bold=True,
+        )
+        click.echo(message=f"    {styled_cmd} {desc}")
+    click.echo()
