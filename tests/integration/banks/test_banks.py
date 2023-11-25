@@ -9,7 +9,6 @@ from test_utils.skip import skip_if_encrypted
 from monopoly.banks import Citibank, Dbs, Hsbc, Ocbc, StandardChartered
 from monopoly.banks.base import BankBase
 from monopoly.constants import StatementFields
-from monopoly.examples import MonopolyBank
 from monopoly.statement import Statement
 
 
@@ -22,7 +21,6 @@ from monopoly.statement import Statement
         (Hsbc, -1218.2, datetime(2023, 7, 21)),
         (Ocbc, -702.1, datetime(2023, 8, 1)),
         (StandardChartered, -82.45, datetime(2023, 5, 16)),
-        (MonopolyBank, -702.1, datetime(2023, 7, 1)),
     ],
 )
 def test_bank_operations(

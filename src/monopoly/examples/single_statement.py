@@ -1,11 +1,11 @@
-from monopoly.examples import MonopolyBank
+from monopoly.banks import ExampleBank
 
 
 def example():
     """Example showing how monopoly can be used to extract data from
     a single bank statement
     """
-    bank = MonopolyBank(
+    bank = ExampleBank(
         file_path="tests/integration/banks/example/input.pdf",
     )
 
