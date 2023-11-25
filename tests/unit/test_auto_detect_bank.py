@@ -1,4 +1,5 @@
 from pytest import raises
+from test_utils.skip import skip_if_encrypted
 
 from monopoly.banks import auto_detect_bank
 from monopoly.banks.base import BankBase
@@ -30,6 +31,7 @@ unencrypted_file_path = "tests/integration/banks/example/input.pdf"
 encrypted_file_path = "tests/integration/fixtures/protected.pdf"
 
 
+@skip_if_encrypted
 def test_auto_detect_unencrypted_bank_identified(
     monkeypatch, file_path: str = unencrypted_file_path
 ):
@@ -52,6 +54,7 @@ def test_auto_detect_encrypted_bank_identified(
     assert isinstance(bank_instance, MockBankOne)
 
 
+@skip_if_encrypted
 def test_auto_detect_bank_not_identified(
     monkeypatch, file_path: str = unencrypted_file_path
 ):
