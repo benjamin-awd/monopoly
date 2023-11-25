@@ -10,15 +10,14 @@ class BankBase(StatementProcessor):
     """Helper class to handle initialization of common variables
     that are shared between bank classes"""
 
+    identifiers: list[EncryptionIdentifier | MetadataIdentifier]
+
     def __init__(
         self,
         file_path: Path,
         password: Optional[str] = None,
         parser: Optional[PdfParser] = None,
     ):
-        self.identifiers: Optional[
-            list[EncryptionIdentifier | MetadataIdentifier]
-        ] = None
         self.parser = parser
 
         # optional config
@@ -60,13 +59,7 @@ class BankBase(StatementProcessor):
             identifiers.append(encryption_identifier)
 
         if metadata := parser.document.metadata:
-            metadata_identifier = MetadataIdentifier(
-                metadata.get("title"),
-                metadata.get("author"),
-                metadata.get("subject"),
-                metadata.get("creator"),
-                metadata.get("producer"),
-            )
+            metadata_identifier = MetadataIdentifier(**metadata)
             identifiers.append(metadata_identifier)  # type: ignore
 
         if not identifiers:

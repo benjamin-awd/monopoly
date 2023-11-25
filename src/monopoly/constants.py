@@ -19,11 +19,11 @@ class AccountType(AutoEnum):
 
 class BankNames(AutoEnum):
     CITIBANK = auto()
+    EXAMPLE = auto()
     DBS = auto()
     HSBC = auto()
     OCBC = auto()
     STANDARD_CHARTERED = auto()
-    EXAMPLE = auto()
 
 
 class StatementFields(AutoEnum):

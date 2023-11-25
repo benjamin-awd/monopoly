@@ -1,9 +1,14 @@
 from monopoly.banks.base import BankBase
 from monopoly.config import StatementConfig, TransactionConfig
-from monopoly.constants import AccountType, BankNames, SharedPatterns
+from monopoly.constants import (
+    AccountType,
+    BankNames,
+    MetadataIdentifier,
+    SharedPatterns,
+)
 
 
-class MonopolyBank(BankBase):
+class ExampleBank(BankBase):
     """Dummy class to help with reading the example PDF statement"""
 
     statement_config = StatementConfig(
@@ -23,3 +28,9 @@ class MonopolyBank(BankBase):
         ),
         date_format=r"%d/%m",
     )
+
+    identifiers = [
+        MetadataIdentifier(
+            creator="Adobe Acrobat 23.3", producer="Adobe Acrobat Pro (64-bit)"
+        )
+    ]
