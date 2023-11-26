@@ -113,7 +113,10 @@ class StatementProcessor(PdfParser):
 
     def load(self, df: DataFrame, statement: Statement, output_directory: Path):
         filename = generate_name(
-            "file", statement.statement_config, statement.statement_date
+            file_path=self.file_path,
+            format_type="file",
+            config=statement.statement_config,
+            statement_date=statement.statement_date,
         )
 
         output_path = output_directory / filename
