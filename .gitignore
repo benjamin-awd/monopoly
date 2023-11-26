@@ -20,8 +20,3 @@ dist
 !tests/integration/banks/**/*.pdf
 !tests/unit/test_cli/**/*.pdf
 !**/examples/*.pdf
-
-# john files
-john.log
-.hash
-.pot
