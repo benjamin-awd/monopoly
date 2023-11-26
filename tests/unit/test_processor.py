@@ -31,7 +31,10 @@ def test_load(statement, mock_generate_name, mock_to_csv):
     output_path = bank_class.load(df, statement, Path("/output_directory"))
 
     mock_generate_name.assert_called_once_with(
-        "file", statement.statement_config, datetime(2023, 1, 1)
+        file_path="foo",
+        format_type="file",
+        config=statement.statement_config,
+        statement_date=datetime(2023, 1, 1),
     )
     expected = Path("/output_directory/test_file.csv")
     mock_to_csv.assert_called_once_with(expected, index=False)
