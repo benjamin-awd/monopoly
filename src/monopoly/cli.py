@@ -1,3 +1,4 @@
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 from typing import Collection, Iterable, Optional
 
@@ -7,26 +8,36 @@ from tqdm import tqdm
 from monopoly.banks import auto_detect_bank
 
 
+def process_statement(file: Path, output_directory: Optional[Path]):
+    bank = auto_detect_bank(file)
+    statement = bank.extract()
+    transformed_df = bank.transform(statement)
+
+    # saves processed statements to the same directory by default
+    if not output_directory:
+        output_directory = file.parent
+
+    output_file = bank.load(transformed_df, statement, output_directory)
+    return file.name, output_file.name
+
+
 def run(input_files: Collection[Path], output_directory: Optional[Path] = None):
-    files = tqdm(
-        input_files,
-        desc="Processing statements",
-        ncols=80,
-        bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt}",
-    )
-    results = []
-    for file in files:
-        bank = auto_detect_bank(file)
-        statement = bank.extract()
-        transformed_df = bank.transform(statement)
+    with ProcessPoolExecutor() as executor:
+        results = list(
+            tqdm(
+                executor.map(
+                    process_statement,
+                    input_files,
+                    [output_directory] * len(input_files),
+                ),
+                total=len(input_files),
+                desc="Processing statements",
+                ncols=80,
+                bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt}",
+            )
+        )
 
-        # saves processed statements to same directory by default
-        if not output_directory:
-            output_directory = file.parent
-
-        output_file = bank.load(transformed_df, statement, output_directory)
-        results.append((file.name, output_file.name))
-    click.echo(click.style(f"{len(files)} statement(s) processed", bold=True))
+    click.echo(click.style(f"{len(input_files)} statement(s) processed", bold=True))
     for raw_statement, processed_statement in sorted(results):
         click.echo(f"{raw_statement} -> {processed_statement}")
 

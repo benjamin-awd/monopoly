@@ -6,7 +6,7 @@ from unittest.mock import DEFAULT, MagicMock, patch
 import pytest
 from click.testing import CliRunner
 
-from monopoly.cli import get_statement_paths, monopoly, run
+from monopoly.cli import get_statement_paths, monopoly, process_statement
 
 
 @pytest.fixture
@@ -43,7 +43,7 @@ class MockBank(MagicMock):
         pass
 
 
-def test_run(monkeypatch):
+def test_process_statement(monkeypatch):
     def mock_auto_detect_bank(file_path: Path):
         assert "statement.pdf" in str(file_path)
         return MockBank()
@@ -51,10 +51,10 @@ def test_run(monkeypatch):
     monkeypatch.setattr("monopoly.cli.auto_detect_bank", mock_auto_detect_bank)
 
     # Mock paths
-    files = [Path("path/to/statement.pdf").resolve()]
+    file = Path("path/to/statement.pdf")
 
     with patch.multiple(MockBank, extract=DEFAULT, transform=DEFAULT, load=DEFAULT):
-        run(files)
+        process_statement(file, "foo")
 
         assert isinstance(MockBank.extract, MagicMock)
         assert isinstance(MockBank.transform, MagicMock)
