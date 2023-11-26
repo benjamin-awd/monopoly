@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
-from monopoly.pdf import BruteForceConfig, PdfConfig, PdfParser
+from monopoly.pdf import PdfConfig, PdfParser
 from monopoly.processor import StatementProcessor
 
 
@@ -15,28 +15,24 @@ class BankBase(StatementProcessor):
     def __init__(
         self,
         file_path: Path,
-        password: Optional[str] = None,
+        passwords: Optional[list[str]] = None,
         parser: Optional[PdfParser] = None,
     ):
         self.parser = parser
 
         # optional config
         self.pdf_config = getattr(self, "pdf_config", PdfConfig())
-        self.brute_force_config = getattr(
-            self, "brute_force_config", BruteForceConfig()
-        )
         self.safety_check_enabled = getattr(self, "safety_check_enabled", True)
 
         # this allows the user to override the default pydantic password
         # and supply their own password via the bank subclasses
-        if password:
-            self.pdf_config.password = password
+        if passwords:
+            self.pdf_config.passwords = passwords
 
         super().__init__(
             statement_config=self.statement_config,
             transaction_config=self.transaction_config,
             safety_check_enabled=self.safety_check_enabled,
-            brute_force_config=self.brute_force_config,
             pdf_config=self.pdf_config,
             file_path=file_path,
         )

@@ -10,21 +10,12 @@ from monopoly.constants import AccountType, BankNames
 class Settings(BaseSettings):
     """
     Pydantic model that automatically populates variables from a .env file.
-
-    HSBC passwords differ per card (since HSBC uses the last 6 digits of each card).
-    If only a single statement from HSBC needs to be parsed, the hsbc_pdf_password
-    can be used.
-
-    If there are multiple statements from HSBC, the `hsbc_pdf_password_prefix` can
-    be used to automatically unlock PDFs, which is used as a static string
-    in the HSBC `brute_force_config`.
     """
 
-    ocbc_pdf_password: str = ""
-    citibank_pdf_password: str = ""
-    standard_chartered_pdf_password: str = ""
-    hsbc_pdf_password: str = ""
-    hsbc_pdf_password_prefix: str = ""
+    ocbc_pdf_passwords: Optional[list[str]] = None
+    citibank_pdf_passwords: Optional[list[str]] = None
+    standard_chartered_pdf_passwords: Optional[list[str]] = None
+    hsbc_pdf_passwords: Optional[list[str]] = None
 
     model_config = SettingsConfigDict(env_file=".env", extra="allow")
 
@@ -83,36 +74,9 @@ class PdfConfig:
     PDF artifacts that may affect parsing.
     """
 
-    password: Optional[str] = None
+    passwords: Optional[list[str]] = None
     page_range: tuple[Optional[int], Optional[int]] = (None, None)
     page_bbox: Optional[tuple[float, float, float, float]] = None
-
-
-@dataclass
-class BruteForceConfig:
-    """
-    Stores configuration values to help automatically unlock PDFs.
-
-    Attributes:
-    - `static_string`: A static string used in PDF passwords.
-
-      Example: For a password format like "01Jan1999123456," the static string
-      might be "01Jan1999," which remains constant across all HSBC statements
-      for a particular user.
-
-    - `mask`: A mask used for generating variations in the password.
-
-      Example: In the same password format "01Jan1999123456," the mask
-      represents the last six digits (e.g., "123456"). The masking pattern
-      used in this case should be `?d?d?d?d?d?d`.
-
-    These attributes are used together to automatically unlock PDFs where a portion
-    of the password remains consistent (the static string) while another part varies
-    (the brute force mask).
-    """
-
-    static_string: Optional[str] = None
-    mask: Optional[str] = None
 
 
 settings = Settings()

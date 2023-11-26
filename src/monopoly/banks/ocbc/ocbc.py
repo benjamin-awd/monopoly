@@ -30,7 +30,7 @@ class Ocbc(BankBase):
     )
 
     pdf_config = PdfConfig(
-        password=settings.ocbc_pdf_password,
+        passwords=settings.ocbc_pdf_passwords,
         page_range=(0, -2),
         page_bbox=(0, 0, 560, 750),
     )

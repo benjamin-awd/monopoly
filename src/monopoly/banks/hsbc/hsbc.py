@@ -1,12 +1,6 @@
 import logging
 
-from monopoly.config import (
-    BruteForceConfig,
-    PdfConfig,
-    StatementConfig,
-    TransactionConfig,
-    settings,
-)
+from monopoly.config import PdfConfig, StatementConfig, TransactionConfig, settings
 from monopoly.constants import (
     AccountType,
     BankNames,
@@ -37,12 +31,8 @@ class Hsbc(BankBase):
     )
 
     pdf_config = PdfConfig(
-        password=settings.hsbc_pdf_password,
+        passwords=settings.hsbc_pdf_passwords,
         page_bbox=(0, 0, 379, 842),
-    )
-
-    brute_force_config = BruteForceConfig(
-        static_string=settings.hsbc_pdf_password_prefix, mask="?d?d?d?d?d?d"
     )
 
     identifiers = [

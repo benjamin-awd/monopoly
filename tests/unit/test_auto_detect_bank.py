@@ -32,8 +32,8 @@ def mock_pdf_parser():
 
 
 @pytest.fixture
-def mock_pdf_hash_extractor():
-    with patch("monopoly.pdf.PdfHashExtractor") as mock_extractor:
+def mock_encrypt_metadata_extractor():
+    with patch("monopoly.pdf.EncryptionMetadataExtractor") as mock_extractor:
         # Customize the mock behavior if needed
         mock_instance = mock_extractor.return_value
         mock_instance.pdf._header_version = (1, 0)
@@ -69,7 +69,7 @@ encrypted_file_path = "tests/integration/fixtures/protected.pdf"
 def test_auto_detect_unencrypted_bank_identified(
     monkeypatch,
     mock_pdf_parser,
-    mock_pdf_hash_extractor,
+    mock_encrypt_metadata_extractor,
     file_path: str = unencrypted_file_path,
 ):
     mock_banks_list = [MockBankOne, MockBankTwo]
@@ -95,7 +95,7 @@ def test_auto_detect_encrypted_bank_identified(
 def test_auto_detect_bank_not_identified(
     monkeypatch,
     mock_pdf_parser,
-    mock_pdf_hash_extractor,
+    mock_encrypt_metadata_extractor,
     file_path: str = unencrypted_file_path,
 ):
     mock_banks_list = [MockBankOne]
