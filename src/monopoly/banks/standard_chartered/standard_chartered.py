@@ -29,7 +29,7 @@ class StandardChartered(BankBase):
     )
 
     pdf_config = PdfConfig(
-        password=settings.standard_chartered_pdf_password,
+        passwords=settings.standard_chartered_pdf_passwords,
         page_range=(0, -1),
         page_bbox=(0, 0, 580, 820),
     )

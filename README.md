@@ -39,15 +39,18 @@ To see how Monopoly works, you can run this example
 python3 src/monopoly/examples/single_statement.py
 ```
 
-If your PDF is encrypted, you'll have to add the password to a .env file in the root directory, which is automatically read by monopoly
-
-You can use the .env.template and then update values in the .env file
+If you need to run monopoly on a password protected file, ensure that passwords are set in the .env file:
+```sh
+cp .env.template env
 ```
-cp .env.template .env
+
+If you have multiple statements from the same bank with different passwords (e.g. HSBC statements), make sure to set both passwords in an array format like so:
+```sh
+HSBC_PDF_PASSWORDS=["password1","password2"]
 ```
 
 ## Features
-- Support for encrypted PDFs -- passwords can be passed in via a .env file, or passed directly via a bank class
-  - PDFs can also be unlocked with a static string, and a masking pattern like ?d?d?d for banks like HSBC that use a common password prefix (DOB), but different passwords for each card
+- Unlocks PDFs using user-provided credentials
+- Statements can be parsed with the CLI, or manually with the bank processor class.
 - Support for cashback transactions and refunds
 - Monopoly can be run on Google Cloud as a scheduled Cloud Run job, which opens up more sophisticated use-cases like historical analysis and personal finance visualization

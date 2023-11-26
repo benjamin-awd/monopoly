@@ -22,11 +22,10 @@ jobs:
           python-version: "3.11"
           poetry-version: "1.6.1"
 
-      - name: Install git crypt/john & run tests
+      - name: Install git crypt & run tests
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          brew fetch git-crypt & brew fetch john-jumbo
-          brew install git-crypt john-jumbo
+          brew install git-crypt
           echo '${{ secrets.GIT_CRYPT_KEY }}' | base64 --decode > /tmp/git-crypt-key
           git-crypt unlock /tmp/git-crypt-key
           rm /tmp/git-crypt-key

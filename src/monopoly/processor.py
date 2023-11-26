@@ -5,12 +5,7 @@ from typing import Optional
 
 from pandas import DataFrame
 
-from monopoly.config import (
-    BruteForceConfig,
-    PdfConfig,
-    StatementConfig,
-    TransactionConfig,
-)
+from monopoly.config import PdfConfig, StatementConfig, TransactionConfig
 from monopoly.constants import StatementFields
 from monopoly.pdf import PdfParser
 from monopoly.statement import Statement
@@ -23,10 +18,8 @@ class StatementProcessor(PdfParser):
     statement_config: StatementConfig
     transaction_config: TransactionConfig
     pdf_config: Optional[PdfConfig] = None
-    brute_force_config: Optional[BruteForceConfig] = None
     parser: Optional[PdfParser] = None
     safety_check_enabled: bool = True
-
     """
     Handles extract, transform and load (ETL) logic for bank statements
 
@@ -43,7 +36,6 @@ class StatementProcessor(PdfParser):
             "statement_config",
             "transaction_config",
             "pdf_config",
-            "brute_force_config",
             "safety_check_enabled",
         ]
 
@@ -52,12 +44,12 @@ class StatementProcessor(PdfParser):
                 setattr(self, key, value)
 
         if not parser:
-            super().__init__(file_path, self.brute_force_config, self.pdf_config)
+            super().__init__(file_path, self.pdf_config)
 
     def extract(self) -> Statement:
         """Extracts transactions from the statement, and performs
         a safety check to make sure that total transactions add up"""
-        pages = self.get_pages(self.brute_force_config)
+        pages = self.get_pages()
         statement = Statement(pages, self.statement_config, self.transaction_config)
 
         if not statement.transactions:
