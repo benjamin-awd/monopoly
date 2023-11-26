@@ -24,6 +24,7 @@ pydantic = "^2.4.2"
 pdf2john = "^0.1.8"
 pdftotext = "^2.2.2"
 click = "^8.1.7"
+tqdm = "4.65"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -36,6 +37,7 @@ pytest = "^7.4.1"
 pysnooper = "^1.2.0"
 pylint-pydantic = "^0.3.0"
 mypy = "^1.6.1"
+types-tqdm = "^4.66.0.5"
 
 
 [tool.taskipy.tasks]

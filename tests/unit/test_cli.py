@@ -1,3 +1,4 @@
+import os
 import subprocess
 from pathlib import Path
 from unittest.mock import DEFAULT, MagicMock, patch
@@ -44,13 +45,13 @@ class MockBank(MagicMock):
 
 def test_run(monkeypatch):
     def mock_auto_detect_bank(file_path: Path):
-        assert "input.pdf" in str(file_path)
+        assert "statement.pdf" in str(file_path)
         return MockBank()
 
     monkeypatch.setattr("monopoly.cli.auto_detect_bank", mock_auto_detect_bank)
 
     # Mock paths
-    files = [Path("tests/integration/banks/example/input.pdf").resolve()]
+    files = [Path("path/to/statement.pdf").resolve()]
 
     with patch.multiple(MockBank, extract=DEFAULT, transform=DEFAULT, load=DEFAULT):
         run(files)
@@ -63,6 +64,39 @@ def test_run(monkeypatch):
         MockBank.extract.assert_called_once()
         MockBank.transform.assert_called_once()
         MockBank.load.assert_called_once()
+
+
+def test_monopoly_output():
+    cli_runner = CliRunner()
+    with open("tests/integration/banks/citibank/input.pdf", "rb") as source_file:
+        file_content = source_file.read()
+
+    with cli_runner.isolated_filesystem() as tmp_dir:
+        with open(f"{tmp_dir}/input.pdf", "wb") as destination_file:
+            destination_file.write(file_content)
+
+        result_dir = "results"
+        os.mkdir(result_dir)
+        result = cli_runner.invoke(
+            monopoly, [".", "--output", f"{tmp_dir}/{result_dir}"]
+        )
+
+        assert result.exit_code == 0
+        assert "1 statement(s) processed" in result.output
+        assert "input.pdf -> citibank-credit-2022-11.csv" in result.output
+
+
+def test_monopoly_no_pdf():
+    cli_runner = CliRunner()
+
+    with cli_runner.isolated_filesystem():
+        with open("file.txt", "w") as f:
+            f.write("not a pdf file")
+
+        result = cli_runner.invoke(monopoly, ["file.txt"])
+
+    assert result.exit_code == 1
+    assert "Could not find .pdf files" in result.output
 
 
 def test_get_statement_paths(test_directory: Path) -> None:

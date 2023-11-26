@@ -2,18 +2,33 @@ from pathlib import Path
 from typing import Collection, Iterable, Optional
 
 import click
+from tqdm import tqdm
 
 from monopoly.banks import auto_detect_bank
 
 
-def run(files: Collection[Path], output_directory: Optional[Path] = None):
+def run(input_files: Collection[Path], output_directory: Optional[Path] = None):
+    files = tqdm(
+        input_files,
+        desc="Processing statements",
+        ncols=80,
+        bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt}",
+    )
+    results = []
     for file in files:
         bank = auto_detect_bank(file)
         statement = bank.extract()
         transformed_df = bank.transform(statement)
+
+        # saves processed statements to same directory by default
         if not output_directory:
             output_directory = file.parent
-        bank.load(transformed_df, statement, output_directory)
+
+        output_file = bank.load(transformed_df, statement, output_directory)
+        results.append((file.name, output_file.name))
+    click.echo(click.style(f"{len(files)} statement(s) processed", bold=True))
+    for raw_statement, processed_statement in sorted(results):
+        click.echo(f"{raw_statement} -> {processed_statement}")
 
 
 def get_statement_paths(files: Iterable[Path]) -> set[Path]:
@@ -40,7 +55,8 @@ def get_statement_paths(files: Iterable[Path]) -> set[Path]:
     type=click.Path(exists=True, allow_dash=True, resolve_path=True, path_type=Path),
     help="Specify output folder",
 )
-def monopoly(files: list[Path], output: Path):
+@click.pass_context
+def monopoly(ctx: click.Context, files: list[Path], output: Path):
     """
     Monopoly helps convert your bank statements from PDF to CSV.
 
@@ -48,8 +64,17 @@ def monopoly(files: list[Path], output: Path):
     """
     if files:
         matched_files = get_statement_paths(files)
-        run(matched_files, output)
 
+        if matched_files:
+            run(matched_files, output)
+            ctx.exit(0)
+
+        else:
+            click.echo(
+                click.style("Could not find .pdf files", fg="yellow", bold=True),
+                err=True,
+            )
+            ctx.exit(1)
     else:
         show_welcome_message()
 
@@ -78,7 +103,7 @@ def show_welcome_message():
         ),
         (
             "monopoly . --output <dir>",
-            "saves all results to specific directory",
+            "saves all results to a specific directory",
         ),
         (
             "monopoly --help",
