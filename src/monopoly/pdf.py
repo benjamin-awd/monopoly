@@ -57,7 +57,7 @@ class PdfParser:
         """
         Opens and decrypts a PDF document
         """
-        logger.info("Opening pdf from path %s", self.file_path)
+        logger.debug("Opening pdf from path %s", self.file_path)
         document = self.document
 
         if not document.is_encrypted:
@@ -74,7 +74,7 @@ class PdfParser:
         # This attempts to unlock statements based on a common password,
         # followed by the last few digits of a card
         if brute_force_config:
-            logger.info("Unlocking PDF using a string prefix with mask")
+            logger.debug("Unlocking PDF using a string prefix with mask")
             password = self.unlock_pdf(
                 static_string=brute_force_config.static_string,
                 mask=brute_force_config.mask,

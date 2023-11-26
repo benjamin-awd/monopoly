@@ -1252,6 +1252,37 @@ files = [
 ]
 
 [[package]]
+name = "tqdm"
+version = "4.65.0"
+description = "Fast, Extensible Progress Meter"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "tqdm-4.65.0-py3-none-any.whl", hash = "sha256:c4f53a17fe37e132815abceec022631be8ffe1b9381c2e6e30aa70edc99e9671"},
+    {file = "tqdm-4.65.0.tar.gz", hash = "sha256:1871fb68a86b8fb3b59ca4cdd3dcccbc7e6d613eeed31f4c332531977b89beb5"},
+]
+
+[package.dependencies]
+colorama = {version = "*", markers = "platform_system == \"Windows\""}
+
+[package.extras]
+dev = ["py-make (>=0.1.0)", "twine", "wheel"]
+notebook = ["ipywidgets (>=6)"]
+slack = ["slack-sdk"]
+telegram = ["requests"]
+
+[[package]]
+name = "types-tqdm"
+version = "4.66.0.5"
+description = "Typing stubs for tqdm"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "types-tqdm-4.66.0.5.tar.gz", hash = "sha256:74bd7e469238c28816300f72a9b713d02036f6b557734616430adb7b7e74112c"},
+    {file = "types_tqdm-4.66.0.5-py3-none-any.whl", hash = "sha256:d2c38085bec440e8ad1e94e8619f7cb3d1dd0a7ee06a863ccd0610a5945046ef"},
+]
+
+[[package]]
 name = "typing-extensions"
 version = "4.7.1"
 description = "Backported and Experimental Type Hints for Python 3.7+"
@@ -1320,4 +1351,4 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11, <3.12"
-content-hash = "0c297193ea00260529e2d6b9216b9233ce9acd7931583f903ef66a59cde50034"
+content-hash = "91055c0f7e7eaae45fceb85e74b2eb5dc592d09f28fc0aeb3a9d2248f4f456d3"

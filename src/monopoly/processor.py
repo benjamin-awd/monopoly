@@ -1,5 +1,4 @@
 import logging
-import os
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
@@ -125,8 +124,8 @@ class StatementProcessor(PdfParser):
             "file", statement.statement_config, statement.statement_date
         )
 
-        output_path = os.path.join(output_directory, filename)
-        logger.info("Writing CSV to file path: %s", output_path)
+        output_path = output_directory / filename
+        logger.debug("Writing CSV to file path: %s", output_path)
         df.to_csv(output_path, index=False)
 
         return output_path

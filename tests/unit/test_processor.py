@@ -33,5 +33,6 @@ def test_load(statement, mock_generate_name, mock_to_csv):
     mock_generate_name.assert_called_once_with(
         "file", statement.statement_config, datetime(2023, 1, 1)
     )
-    mock_to_csv.assert_called_once_with("/output_directory/test_file.csv", index=False)
-    assert output_path == "/output_directory/test_file.csv"
+    expected = Path("/output_directory/test_file.csv")
+    mock_to_csv.assert_called_once_with(expected, index=False)
+    assert output_path == expected
