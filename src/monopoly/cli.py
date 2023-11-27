@@ -237,7 +237,7 @@ def show_welcome_message():
         ),
         (
             "monopoly path/to/file.pdf",
-            "process a specific statement in a directory",
+            "process a specific bank statement",
         ),
         (
             "monopoly . --output <dir>",
