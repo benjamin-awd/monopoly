@@ -26,7 +26,7 @@ class Result:
 @dataclass
 class Report:
     """
-    Helper class to parse stored results, and display them
+    A helper class for parsing and displaying processed bank statements.
     """
 
     results: list[Result]
@@ -79,7 +79,25 @@ class Report:
             click.echo(f"{res.source_file_name} -> {res.processed_statement}")
 
 
-def process_statement(file: Path, output_directory: Optional[Path], print_df: bool):
+def process_statement(
+    file: Path, output_directory: Optional[Path], print_df: bool
+) -> Optional[Result]:
+    """
+    Extracts, transforms, and loads transactions from bank statements.
+
+    Parameters:
+        file: The path to the bank statement file.
+        output_directory: The directory to save the processed statement.
+            Defaults to the parent directory of the input file if not provided.
+        print_df: If True, the transformed DataFrame is printed to the console
+            in a tabular format. No file is generated in this case.
+
+    Returns:
+        Optional[Result]: If print_df is False, returns a Result object containing
+        information about the processed statement. If an error occurs during processing,
+        returns a Result object with error information.
+    """
+
     try:
         bank = auto_detect_bank(file)
         statement = bank.extract()
@@ -110,6 +128,13 @@ def run(
     output_directory: Optional[Path] = None,
     print_df: bool = False,
 ):
+    """
+    Process a collection of input files concurrently
+
+    If any statements are processed successfully or encounter errors, a Report object
+    is created and its display_report() method is called to provide a summary
+    of the processing outcomes.
+    """
     with ProcessPoolExecutor() as executor:
         results = list(
             tqdm(
@@ -129,11 +154,16 @@ def run(
         )
 
     if any(results):
-        report = Report([res for res in results if res])
+        # filter out null values, for cases where print_df is True
+        # and processing errors occur to avoid pydantic validation errors
+        report = Report(results)
         report.display_report()
 
 
 def get_statement_paths(files: Iterable[Path]) -> set[Path]:
+    """
+    Recursively collects paths to PDF files from a given collection of paths.
+    """
     matched_files = set()
     for path in files:
         if path.is_file() and str(path).endswith(".pdf"):
