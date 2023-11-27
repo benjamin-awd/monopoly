@@ -1,24 +1,101 @@
+import traceback
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 from typing import Collection, Iterable, Optional
 
 import click
+from fitz import FileDataError
+from pydantic.dataclasses import dataclass
+from pyhanko.pdf_utils.reader import PdfReadError
 from tqdm import tqdm
 
 from monopoly.banks import auto_detect_bank
 
 
+@dataclass
+class Result:
+    """
+    Stores information about processed bank statement
+    """
+
+    source_file_name: str
+    processed_statement: Optional[str] = None
+    error_info: Optional[dict[str, str]] = None
+
+
+@dataclass
+class Report:
+    """
+    Helper class to parse stored results, and display them
+    """
+
+    results: list[Result]
+
+    @property
+    def processed_results(self) -> list[Result]:
+        return sorted(
+            [r for r in self.results if not r.error_info],
+            key=lambda x: x.source_file_name,
+        )
+
+    @property
+    def errored_results(self) -> list[Result]:
+        return sorted(
+            [r for r in self.results if r.error_info], key=lambda x: x.source_file_name
+        )
+
+    @property
+    def number_processed(self) -> int:
+        return len(self.processed_results)
+
+    @property
+    def number_errored(self) -> int:
+        return len(self.errored_results)
+
+    def display_report(self) -> None:
+        """
+        Parses all results, displaying the number of successfully
+        processed statements and any errors.
+        """
+        if self.number_errored > 0:
+            error_msg = (
+                f"{self.number_errored} statement(s) had errors while processing"
+            )
+            click.echo(click.style(error_msg, fg="red", bold=True))
+        if self.number_processed > 0:
+            changed_msg = f"{self.number_processed} statement(s) processed"
+            click.echo(click.style(changed_msg, bold=True))
+
+        for res in self.errored_results:
+            click.echo(
+                click.style(
+                    f"{res.source_file_name}: " f"{res.error_info['message']}",
+                    fg="red",  # type: ignore
+                )
+            )
+
+        for res in self.processed_results:
+            click.echo(f"{res.source_file_name} -> {res.processed_statement}")
+
+
 def process_statement(file: Path, output_directory: Optional[Path]):
-    bank = auto_detect_bank(file)
-    statement = bank.extract()
-    transformed_df = bank.transform(statement)
+    try:
+        bank = auto_detect_bank(file)
+        statement = bank.extract()
+        transformed_df = bank.transform(statement)
 
-    # saves processed statements to the same directory by default
-    if not output_directory:
-        output_directory = file.parent
+        # saves processed statements to the same directory by default
+        if not output_directory:
+            output_directory = file.parent
 
-    output_file = bank.load(transformed_df, statement, output_directory)
-    return file.name, output_file.name
+        output_file = bank.load(transformed_df, statement, output_directory)
+        return Result(file.name, output_file.name)
+    except (FileDataError, PdfReadError) as err:
+        error_info = {
+            "message": str(err),
+            "traceback": traceback.format_exc(),
+        }
+        return Result(file.name, error_info=error_info)
 
 
 def run(input_files: Collection[Path], output_directory: Optional[Path] = None):
@@ -32,14 +109,14 @@ def run(input_files: Collection[Path], output_directory: Optional[Path] = None):
                 ),
                 total=len(input_files),
                 desc="Processing statements",
+                leave=False,
+                delay=0.5,
                 ncols=80,
                 bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt}",
             )
         )
-
-    click.echo(click.style(f"{len(input_files)} statement(s) processed", bold=True))
-    for raw_statement, processed_statement in sorted(results):
-        click.echo(f"{raw_statement} -> {processed_statement}")
+    report = Report(results)
+    report.display_report()
 
 
 def get_statement_paths(files: Iterable[Path]) -> set[Path]:

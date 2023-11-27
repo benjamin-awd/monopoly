@@ -141,7 +141,7 @@ class Statement:
         return [line.lstrip() for line in page.lines]
 
     @cached_property
-    def raw_statement_date(self) -> str:
+    def source_file_name_date(self) -> str:
         config = self.statement_config
         logger.debug("Extracting statement date")
         first_page = self.pages[0]
@@ -154,7 +154,7 @@ class Statement:
     @cached_property
     def statement_date(self):
         config = self.statement_config
-        return datetime.strptime(self.raw_statement_date, config.date_format)
+        return datetime.strptime(self.source_file_name_date, config.date_format)
 
     @staticmethod
     def get_decimal_numbers(lines: list[str]) -> set[float]:
