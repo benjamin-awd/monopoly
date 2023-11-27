@@ -1,17 +1,52 @@
 import os
 import subprocess
 from pathlib import Path
-from unittest.mock import DEFAULT, MagicMock, patch
+from typing import Type
+from unittest.mock import Mock
 
 import pytest
 from click.testing import CliRunner
 
-from monopoly.cli import get_statement_paths, monopoly, process_statement
+from monopoly.banks import BankBase
+from monopoly.cli import (
+    Report,
+    Result,
+    get_statement_paths,
+    monopoly,
+    process_statement,
+)
+
+
+@pytest.fixture
+def mock_results():
+    result1 = Result(
+        source_file_name="statement1.pdf", processed_statement="processed1.csv"
+    )
+    result2 = Result(source_file_name="statement2.pdf", error_info={"message": "Error"})
+    return [result1, result2]
 
 
 @pytest.fixture
 def test_directory() -> Path:
     return Path("tests/unit/test_cli").resolve()
+
+
+def test_display_report(mock_results, capsys):
+    # Create a Report object with mock results
+    report = Report(results=mock_results)
+
+    # Call the display_report method
+    report.display_report()
+
+    # Capture and check the printed output
+    captured = capsys.readouterr()
+    printed_output = captured.out.strip().split("\n")
+
+    # Check assertions based on the mock results
+    assert "1 statement(s) had errors while processing" in printed_output
+    assert "1 statement(s) processed" in printed_output
+    assert "statement1.pdf -> processed1.csv" in printed_output
+    assert "statement2.pdf: Error" in printed_output
 
 
 def run_cli_command(commands: list[str]) -> subprocess.CompletedProcess:
@@ -32,38 +67,23 @@ def test_help_command() -> None:
     assert help_results.stdout.startswith("Usage: monopoly")
 
 
-class MockBank(MagicMock):
-    def extract(self):
-        pass
-
-    def transform(self):
-        pass
-
-    def load(self):
-        pass
-
-
 def test_process_statement(monkeypatch):
-    def mock_auto_detect_bank(file_path: Path):
+    bank: BankBase | Type[Mock] = Mock(spec=BankBase)
+
+    def mock_auto_detect_bank(file_path: Path) -> Mock:
         assert "statement.pdf" in str(file_path)
-        return MockBank()
+        bank.load.return_value = Path("foo")
+        return bank
 
     monkeypatch.setattr("monopoly.cli.auto_detect_bank", mock_auto_detect_bank)
 
-    # Mock paths
     file = Path("path/to/statement.pdf")
 
-    with patch.multiple(MockBank, extract=DEFAULT, transform=DEFAULT, load=DEFAULT):
-        process_statement(file, "foo")
+    process_statement(file, "foo")
 
-        assert isinstance(MockBank.extract, MagicMock)
-        assert isinstance(MockBank.transform, MagicMock)
-        assert isinstance(MockBank.load, MagicMock)
-
-        # Assertions
-        MockBank.extract.assert_called_once()
-        MockBank.transform.assert_called_once()
-        MockBank.load.assert_called_once()
+    bank.extract.assert_called_once()
+    bank.transform.assert_called_once()
+    bank.load.assert_called_once()
 
 
 def test_monopoly_output():

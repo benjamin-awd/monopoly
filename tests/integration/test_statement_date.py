@@ -30,7 +30,7 @@ def test_statement_date_extraction(
     statement.pages[0] = PdfPage(raw_text=page_content)
 
     statement_date = statement.statement_date
-    assert statement.raw_statement_date.casefold() == expected_date.casefold()
+    assert statement.source_file_name_date.casefold() == expected_date.casefold()
     assert (
         statement_date.strftime(statement.statement_config.date_format) == expected_date
     )
