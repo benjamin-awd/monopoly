@@ -20,7 +20,7 @@ from monopoly.cli import (
 @pytest.fixture
 def mock_results():
     result1 = Result(
-        source_file_name="statement1.pdf", processed_statement="processed1.csv"
+        source_file_name="statement1.pdf", target_file_name="processed1.csv"
     )
     result2 = Result(source_file_name="statement2.pdf", error_info={"message": "Error"})
     return [result1, result2]
