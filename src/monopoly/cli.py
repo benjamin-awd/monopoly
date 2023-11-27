@@ -19,7 +19,7 @@ class Result:
     """
 
     source_file_name: str
-    processed_statement: Optional[str] = None
+    target_file_name: Optional[str] = None
     error_info: Optional[dict[str, str]] = None
 
 
@@ -76,7 +76,7 @@ class Report:
             )
 
         for res in self.processed_results:
-            click.echo(f"{res.source_file_name} -> {res.processed_statement}")
+            click.echo(f"{res.source_file_name} -> {res.target_file_name}")
 
 
 def process_statement(
@@ -156,7 +156,7 @@ def run(
     if any(results):
         # filter out null values, for cases where print_df is True
         # and processing errors occur to avoid pydantic validation errors
-        report = Report(results)
+        report = Report([res for res in results if res])
         report.display_report()
 
 
