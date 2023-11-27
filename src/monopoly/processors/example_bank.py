@@ -1,4 +1,3 @@
-from monopoly.banks.base import BankBase
 from monopoly.config import StatementConfig, TransactionConfig
 from monopoly.constants import (
     AccountType,
@@ -6,9 +5,10 @@ from monopoly.constants import (
     MetadataIdentifier,
     SharedPatterns,
 )
+from monopoly.processors.base import ProcessorBase
 
 
-class ExampleBank(BankBase):
+class ExampleBankProcessor(ProcessorBase):
     """Dummy class to help with reading the example PDF statement"""
 
     statement_config = StatementConfig(

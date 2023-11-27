@@ -1,8 +1,8 @@
 from unittest.mock import Mock
 
-from monopoly.banks.base import BankBase
 from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
 from monopoly.pdf import PdfParser
+from monopoly.processors.base import ProcessorBase
 
 
 class TestGetIdentifier:
@@ -17,7 +17,7 @@ class TestGetIdentifier:
         parser.document = Mock()
         parser.document.metadata = None
 
-        identifiers = BankBase.get_identifiers(parser)
+        identifiers = ProcessorBase.get_identifiers(parser)
 
         expected_identifier = EncryptionIdentifier(
             pdf_version=1.6, algorithm=4, revision=4, length=128, permissions=-1804
@@ -38,7 +38,7 @@ class TestGetIdentifier:
         parser.extractor = Mock()
         parser.extractor.encrypt_dict = None
         parser.document = document_mock
-        identifiers = BankBase.get_identifiers(parser)
+        identifiers = ProcessorBase.get_identifiers(parser)
 
         expected_identifier = MetadataIdentifier(
             title="foo",

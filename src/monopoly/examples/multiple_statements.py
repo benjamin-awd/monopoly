@@ -1,6 +1,6 @@
 from glob import glob
 
-from monopoly.banks import Ocbc
+from monopoly.processors import Ocbc
 
 
 def ocbc_example():
@@ -9,12 +9,14 @@ def ocbc_example():
     """
     ocbc_statements = glob("statements/ocbc/*.pdf")
     for file_path in ocbc_statements:
-        bank = Ocbc(
+        processor = Ocbc(
             file_path=file_path,
         )
-        statement = bank.extract()
-        transformed_df = bank.transform(statement)
-        bank.load(transformed_df, statement, output_directory="src/monopoly/examples")
+        statement = processor.extract()
+        transformed_df = processor.transform(statement)
+        processor.load(
+            transformed_df, statement, output_directory="src/monopoly/examples"
+        )
 
 
 if __name__ == "__main__":

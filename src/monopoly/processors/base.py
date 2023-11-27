@@ -6,9 +6,9 @@ from monopoly.pdf import PdfConfig, PdfParser
 from monopoly.processor import StatementProcessor
 
 
-class BankBase(StatementProcessor):
+class ProcessorBase(StatementProcessor):
     """Helper class to handle initialization of common variables
-    that are shared between bank classes"""
+    that are shared between bank processor classes"""
 
     identifiers: list[EncryptionIdentifier | MetadataIdentifier]
 

@@ -7,18 +7,18 @@ from typing import Type
 from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
 from monopoly.pdf import PdfParser
 
-from .base import BankBase
+from .base import ProcessorBase
 from .citibank import Citibank
 from .dbs import Dbs
-from .example_bank import ExampleBank
+from .example_bank import ExampleBankProcessor
 from .hsbc import Hsbc
 from .ocbc import Ocbc
 from .standard_chartered import StandardChartered
 
-banks: list[Type[BankBase]] = [
+processors: list[Type[ProcessorBase]] = [
     Citibank,
     Dbs,
-    ExampleBank,
+    ExampleBankProcessor,
     Hsbc,
     Ocbc,
     StandardChartered,
@@ -28,31 +28,31 @@ banks: list[Type[BankBase]] = [
 logger = logging.getLogger(__name__)
 
 
-def auto_detect_bank(file_path: Path) -> BankBase:
+def detect_processor(file_path: Path) -> ProcessorBase:
     """
     Reads the encryption metadata or actual metadata (if the PDF is not encrypted),
     and checks for a bank based on unique identifiers.
     """
     parser = PdfParser(file_path)
-    for bank in banks:
-        metadata_items = bank.get_identifiers(parser)
-        if is_bank_identified(metadata_items, bank):
-            return bank(file_path=parser.file_path, parser=parser)
+    for processor in processors:
+        metadata_items = processor.get_identifiers(parser)
+        if is_bank_identified(metadata_items, processor):
+            return processor(file_path=parser.file_path, parser=parser)
 
     raise ValueError(f"Could not find a bank for {parser.file_path}")
 
 
 def is_bank_identified(
     metadata_items: list[EncryptionIdentifier | MetadataIdentifier],
-    bank: Type[BankBase],
+    processor: Type[ProcessorBase],
 ) -> bool:
     """
     Checks if a bank is identified based on a list of metadata items.
     """
-    for identifier, metadata in product(bank.identifiers, metadata_items):
+    for identifier, metadata in product(processor.identifiers, metadata_items):
         logger.debug(
             "Comparing bank %s identifier %s against PDF metadata %s",
-            bank.__name__,
+            processor.__name__,
             identifier,
             metadata,
         )

@@ -1,4 +1,4 @@
-from monopoly.banks import Hsbc, Ocbc
+from monopoly.processors import Hsbc, Ocbc
 from monopoly.statement import Statement, Transaction
 
 

@@ -3,7 +3,7 @@ from datetime import datetime
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
-from monopoly.banks import Ocbc
+from monopoly.processors import Ocbc
 from monopoly.statement import Statement, Transaction
 
 

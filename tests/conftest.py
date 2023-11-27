@@ -4,11 +4,11 @@ from unittest.mock import PropertyMock
 
 import pytest
 
-from monopoly.banks import Citibank, Dbs, Hsbc, Ocbc, StandardChartered
 from monopoly.config import StatementConfig, TransactionConfig
 from monopoly.constants import AccountType, BankNames
 from monopoly.pdf import PdfPage, PdfParser
 from monopoly.processor import StatementProcessor
+from monopoly.processors import Citibank, Dbs, Hsbc, Ocbc, StandardChartered
 from monopoly.statement import Statement
 
 
