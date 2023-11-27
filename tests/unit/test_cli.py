@@ -46,7 +46,7 @@ def test_display_report(mock_results, capsys):
     assert "1 statement(s) had errors while processing" in printed_output
     assert "1 statement(s) processed" in printed_output
     assert "statement1.pdf -> processed1.csv" in printed_output
-    assert "statement2.pdf: Error" in printed_output
+    assert "statement2.pdf -- Error" in printed_output
 
 
 def run_cli_command(commands: list[str]) -> subprocess.CompletedProcess:
@@ -79,7 +79,7 @@ def test_process_statement(monkeypatch):
 
     file = Path("path/to/statement.pdf")
 
-    process_statement(file, "foo")
+    process_statement(file, "foo", False)
 
     bank.extract.assert_called_once()
     bank.transform.assert_called_once()

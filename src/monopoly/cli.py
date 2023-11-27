@@ -69,8 +69,9 @@ class Report:
         for res in self.errored_results:
             click.echo(
                 click.style(
-                    f"{res.source_file_name}: " f"{res.error_info['message']}",
-                    fg="red",  # type: ignore
+                    f"{res.source_file_name} -- "
+                    f"{res.error_info['message']}",  # type: ignore
+                    fg="red",
                 )
             )
 
@@ -78,11 +79,17 @@ class Report:
             click.echo(f"{res.source_file_name} -> {res.processed_statement}")
 
 
-def process_statement(file: Path, output_directory: Optional[Path]):
+def process_statement(file: Path, output_directory: Optional[Path], print_df: bool):
     try:
         bank = auto_detect_bank(file)
         statement = bank.extract()
         transformed_df = bank.transform(statement)
+
+        if print_df:
+            click.echo(f"{file.name}")
+            click.echo(transformed_df.to_markdown(tablefmt="psql", numalign="right"))
+            click.echo()
+            return None
 
         # saves processed statements to the same directory by default
         if not output_directory:
@@ -98,7 +105,11 @@ def process_statement(file: Path, output_directory: Optional[Path]):
         return Result(file.name, error_info=error_info)
 
 
-def run(input_files: Collection[Path], output_directory: Optional[Path] = None):
+def run(
+    input_files: Collection[Path],
+    output_directory: Optional[Path] = None,
+    print_df: bool = False,
+):
     with ProcessPoolExecutor() as executor:
         results = list(
             tqdm(
@@ -106,6 +117,7 @@ def run(input_files: Collection[Path], output_directory: Optional[Path] = None):
                     process_statement,
                     input_files,
                     [output_directory] * len(input_files),
+                    [print_df] * len(input_files),
                 ),
                 total=len(input_files),
                 desc="Processing statements",
@@ -115,8 +127,10 @@ def run(input_files: Collection[Path], output_directory: Optional[Path] = None):
                 bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt}",
             )
         )
-    report = Report(results)
-    report.display_report()
+
+    if any(results):
+        report = Report([res for res in results if res])
+        report.display_report()
 
 
 def get_statement_paths(files: Iterable[Path]) -> set[Path]:
@@ -143,8 +157,14 @@ def get_statement_paths(files: Iterable[Path]) -> set[Path]:
     type=click.Path(exists=True, allow_dash=True, resolve_path=True, path_type=Path),
     help="Specify output folder",
 )
+@click.option(
+    "-p",
+    "--pprint",
+    is_flag=True,
+    help="Print the processed statement(s)",
+)
 @click.pass_context
-def monopoly(ctx: click.Context, files: list[Path], output: Path):
+def monopoly(ctx: click.Context, files: list[Path], output: Path, pprint: bool):
     """
     Monopoly helps convert your bank statements from PDF to CSV.
 
@@ -154,7 +174,7 @@ def monopoly(ctx: click.Context, files: list[Path], output: Path):
         matched_files = get_statement_paths(files)
 
         if matched_files:
-            run(matched_files, output)
+            run(matched_files, output, pprint)
             ctx.exit(0)
 
         else:
@@ -192,6 +212,10 @@ def show_welcome_message():
         (
             "monopoly . --output <dir>",
             "saves all results to a specific directory",
+        ),
+        (
+            "monopoly . --pprint",
+            "prints results instead of saving them",
         ),
         (
             "monopoly --help",
