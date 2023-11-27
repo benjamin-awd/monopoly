@@ -2,8 +2,8 @@ from pathlib import Path
 
 from pytest import raises
 
-from monopoly.banks import Hsbc
 from monopoly.pdf import PdfParser
+from monopoly.processors import Hsbc
 
 fixture_directory = Path(__file__).parent / "fixtures"
 

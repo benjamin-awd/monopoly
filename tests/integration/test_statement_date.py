@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pytest
 
-from monopoly.banks import BankBase, Hsbc, Ocbc
 from monopoly.pdf import PdfPage
+from monopoly.processors import Hsbc, Ocbc, ProcessorBase
 from monopoly.statement import Statement
 
 
@@ -15,7 +15,7 @@ from monopoly.statement import Statement
     ],
 )
 def test_statement_date_extraction(
-    bank_class: BankBase,
+    bank_class: ProcessorBase,
     page_content: list[str],
     expected_date: str,
     statement: Statement,
@@ -23,10 +23,10 @@ def test_statement_date_extraction(
     bank_name = bank_class.statement_config.bank_name
 
     fixture_directory = Path(__file__).parent / bank_name
-    bank: BankBase = bank_class(fixture_directory / "input.pdf")
+    processor: ProcessorBase = bank_class(fixture_directory / "input.pdf")
 
-    statement.statement_config.date_pattern = bank.statement_config.date_pattern
-    statement.statement_config.date_format = bank.statement_config.date_format
+    statement.statement_config.date_pattern = processor.statement_config.date_pattern
+    statement.statement_config.date_format = processor.statement_config.date_format
     statement.pages[0] = PdfPage(raw_text=page_content)
 
     statement_date = statement.statement_date

@@ -10,12 +10,12 @@ from monopoly.constants import (
     TransactionPatterns,
 )
 
-from ..base import BankBase
+from ..base import ProcessorBase
 
 logger = logging.getLogger(__name__)
 
 
-class Ocbc(BankBase):
+class Ocbc(ProcessorBase):
     statement_config = StatementConfig(
         bank_name=BankNames.OCBC,
         account_type=AccountType.CREDIT,

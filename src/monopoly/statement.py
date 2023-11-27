@@ -79,7 +79,7 @@ class Statement:
     """
     A dataclass representation of a bank statement, containing
     the PDF pages (their raw text representation in a `list`),
-    and specific config per bank.
+    and specific config per processor.
     """
 
     pages: list[PdfPage]

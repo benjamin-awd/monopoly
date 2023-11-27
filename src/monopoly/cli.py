@@ -9,7 +9,7 @@ from pydantic.dataclasses import dataclass
 from pyhanko.pdf_utils.reader import PdfReadError
 from tqdm import tqdm
 
-from monopoly.banks import auto_detect_bank
+from monopoly.processors import detect_processor
 
 
 @dataclass
@@ -99,9 +99,9 @@ def process_statement(
     """
 
     try:
-        bank = auto_detect_bank(file)
-        statement = bank.extract()
-        transformed_df = bank.transform(statement)
+        processor = detect_processor(file)
+        statement = processor.extract()
+        transformed_df = processor.transform(statement)
 
         if print_df:
             click.echo(f"{file.name}")
@@ -113,7 +113,7 @@ def process_statement(
         if not output_directory:
             output_directory = file.parent
 
-        output_file = bank.load(transformed_df, statement, output_directory)
+        output_file = processor.load(transformed_df, statement, output_directory)
         return Result(file.name, output_file.name)
     except (FileDataError, PdfReadError) as err:
         error_info = {

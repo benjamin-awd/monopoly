@@ -10,12 +10,12 @@ from monopoly.constants import (
     TransactionPatterns,
 )
 
-from ..base import BankBase
+from ..base import ProcessorBase
 
 logger = logging.getLogger(__name__)
 
 
-class Hsbc(BankBase):
+class Hsbc(ProcessorBase):
     statement_config = StatementConfig(
         bank_name=BankNames.HSBC,
         account_type=AccountType.CREDIT,
