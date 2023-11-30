@@ -1,10 +1,8 @@
 setup:
 	# install brew dependencies
-	brew bundle
-
-	# install pdftotext dependencies
-	sudo apt-get update && sudo apt install build-essential libpoppler-cpp-dev pkg-config -y
+	brew bundle --verbose
 
 	# install poetry dependencies
-	poetry install
 	poetry env use 3.11
+	poetry shell
+	poetry install
