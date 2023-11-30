@@ -11,6 +11,8 @@
 
 Monopoly is a Python library that converts Singapore bank statement PDFs to CSV using pdftotext
 
+![](https://raw.githubusercontent.com/benjamin-awd/monopoly/main/docs/monopoly.gif)
+
 Supported banks:
 - Citibank
 - DBS
