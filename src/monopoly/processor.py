@@ -112,6 +112,9 @@ class StatementProcessor(PdfParser):
         return df
 
     def load(self, df: DataFrame, statement: Statement, output_directory: Path):
+        if isinstance(output_directory, str):
+            output_directory = Path(output_directory)
+
         filename = generate_name(
             file_path=self.file_path,
             format_type="file",
