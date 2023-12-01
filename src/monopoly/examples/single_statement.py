@@ -6,7 +6,7 @@ def example():
     a single bank statement
     """
     processor = ExampleBankProcessor(
-        file_path="tests/integration/banks/example/input.pdf",
+        file_path="src/monopoly/examples/example_statement.pdf",
     )
 
     # This runs pdftotext on the PDF and

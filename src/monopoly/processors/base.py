@@ -29,6 +29,9 @@ class ProcessorBase(StatementProcessor):
         if passwords:
             self.pdf_config.passwords = passwords
 
+        if isinstance(file_path, str):
+            file_path = Path(file_path)
+
         super().__init__(
             statement_config=self.statement_config,
             transaction_config=self.transaction_config,
