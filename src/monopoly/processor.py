@@ -98,12 +98,11 @@ class StatementProcessor(PdfParser):
             parsed_date = datetime.strptime(
                 row[StatementFields.TRANSACTION_DATE], date_format
             )
+            row_year = statement_date.year
             row_day, row_month = parsed_date.day, parsed_date.month
 
             if statement_date.month == 1 and row_month == 12:
                 row_year = statement_date.year - 1
-            else:
-                row_year = statement_date.year
 
             return f"{row_year}-{row_month:02d}-{row_day:02d}"
 
