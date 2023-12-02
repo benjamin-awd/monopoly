@@ -141,20 +141,12 @@ class Statement:
         return [line.lstrip() for line in page.lines]
 
     @cached_property
-    def source_file_name_date(self) -> str:
+    def statement_date(self) -> datetime:
         config = self.statement_config
-        logger.debug("Extracting statement date")
-        first_page = self.pages[0]
-        for line in first_page.lines:
-            if match := re.findall(config.date_pattern, line):
-                logger.debug("Statement date found")
-                return match[0]
+        first_page = self.pages[0].raw_text
+        if match := re.findall(config.date_pattern, first_page):
+            return datetime.strptime(match[0], config.date_format)
         raise ValueError("Statement date not found")
-
-    @cached_property
-    def statement_date(self):
-        config = self.statement_config
-        return datetime.strptime(self.source_file_name_date, config.date_format)
 
     @staticmethod
     def get_decimal_numbers(lines: list[str]) -> set[float]:
