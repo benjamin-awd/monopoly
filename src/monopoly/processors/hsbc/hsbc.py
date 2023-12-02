@@ -19,7 +19,7 @@ class Hsbc(ProcessorBase):
     statement_config = StatementConfig(
         bank_name=BankNames.HSBC,
         account_type=AccountType.CREDIT,
-        date_pattern=r"(\d{2}\s[A-Z]{3}\s\d{4})\s.*$",
+        date_pattern=r"Statement From (\d{2}\s[A-Z]{3}\s\d{4}) to",
         prev_balance_pattern=StatementBalancePatterns.HSBC,
         date_format=r"%d %b %Y",
     )
