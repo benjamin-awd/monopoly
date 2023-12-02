@@ -103,7 +103,7 @@ def test_monopoly_output():
 
         assert result.exit_code == 0
         assert "1 statement(s) processed" in result.output
-        assert "input.pdf -> citibank-credit-2022-11-53e302.csv" in result.output
+        assert "input.pdf -> citibank-credit-2022-11-e47be3.csv" in result.output
 
 
 def test_monopoly_no_pdf():

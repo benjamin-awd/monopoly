@@ -1,8 +1,20 @@
 from datetime import datetime
-from hashlib import md5
+from hashlib import sha256
 from pathlib import Path
 
 from monopoly.config import StatementConfig
+
+
+def generate_hash(file_path: Path) -> str:
+    """
+    Generates a hash of the raw PDF content
+    """
+    with open(file_path, "rb") as file:
+        file_content = file.read()
+        hash_object = sha256()
+        hash_object.update(file_content)
+        file_hash = hash_object.hexdigest()[0:6]
+    return file_hash
 
 
 def generate_name(
@@ -21,7 +33,7 @@ def generate_name(
     account_type = config.account_type
     year = statement_date.year
     month = statement_date.month
-    file_uuid = md5(file_path.name.encode("utf-8")).hexdigest()[:6]
+    file_uuid = generate_hash(file_path)
 
     file_suffix = "csv"
 
