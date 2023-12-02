@@ -51,6 +51,7 @@ class StatementProcessor(PdfParser):
         a safety check to make sure that total transactions add up"""
         pages = self.get_pages()
         statement = Statement(pages, self.statement_config, self.transaction_config)
+        statement = self._post_process(statement)
 
         if not statement.transactions:
             raise ValueError("No transactions found - statement extraction failed")
@@ -61,6 +62,18 @@ class StatementProcessor(PdfParser):
         if self.safety_check_enabled:
             self._perform_safety_check(statement)
 
+        return statement
+
+    def _post_process(self, statement: Statement):
+        """
+        Perform post processing on the statement
+
+        This includes injecting the previous month's balance as a transaction
+        """
+        if statement.prev_month_balance:
+            first_transaction_date = statement.transactions[0].transaction_date
+            statement.prev_month_balance.transaction_date = first_transaction_date
+            statement.transactions.insert(0, statement.prev_month_balance)
         return statement
 
     def _perform_safety_check(self, statement: Statement) -> bool:
