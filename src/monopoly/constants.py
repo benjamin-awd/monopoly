@@ -39,6 +39,7 @@ class SharedPatterns(StrEnum):
     """
 
     AMOUNT = r"(?P<amount>[\d.,]+|\([\d.,\s]+\)$)\s*(?P<suffix>CR|DR)?$"
+    AMOUNT_WITHOUT_EOL = r"(?P<amount>[\d.,]+|\([\d.,\s]+\)$)\s*(?P<suffix>CR|DR)?"
     AMOUNT_WITH_CASHBACK = r"(?P<amount>[\d.,]+|\([\d.,\s]+\))$"
     DESCRIPTION = r"(?P<description>.*?)\s+"
     TRANSACTION_DATE_ABBREVIATED_ALL_CAPS = r"(?P<transaction_date>\d{2}\s[A-Z]{3})\s+"
@@ -49,14 +50,21 @@ class SharedPatterns(StrEnum):
 
 
 class StatementBalancePatterns(StrEnum):
-    DBS = r"(?P<description>PREVIOUS BALANCE?)\s+" + SharedPatterns.AMOUNT
+    DBS = r"(?P<description>PREVIOUS BALANCE?)\s+" + SharedPatterns.AMOUNT_WITHOUT_EOL
     CITIBANK = (
-        r"(?P<description>BALANCE PREVIOUS STATEMENT?)\s+" + SharedPatterns.AMOUNT
+        r"(?P<description>BALANCE PREVIOUS STATEMENT?)\s+"
+        + SharedPatterns.AMOUNT_WITHOUT_EOL
     )
-    HSBC = r"(?P<description>Previous Statement Balance?)\s+" + SharedPatterns.AMOUNT
-    OCBC = r"(?P<description>LAST MONTH'S BALANCE?)\s+" + SharedPatterns.AMOUNT
+    HSBC = (
+        r"(?P<description>Previous Statement Balance?)\s+"
+        + SharedPatterns.AMOUNT_WITHOUT_EOL
+    )
+    OCBC = (
+        r"(?P<description>LAST MONTH'S BALANCE?)\s+" + SharedPatterns.AMOUNT_WITHOUT_EOL
+    )
     STANDARD_CHARTERED = (
-        r"(?P<description>BALANCE FROM PREVIOUS STATEMENT?)\s+" + SharedPatterns.AMOUNT
+        r"(?P<description>BALANCE FROM PREVIOUS STATEMENT?)\s+"
+        + SharedPatterns.AMOUNT_WITHOUT_EOL
     )
 
 

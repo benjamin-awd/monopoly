@@ -86,7 +86,6 @@ class Statement:
     columns = [enum.value for enum in StatementFields]
     statement_config: StatementConfig
     transaction_config: TransactionConfig
-    prev_month_balance = None
 
     @cached_property
     def transactions(self) -> list[Transaction]:
@@ -97,16 +96,11 @@ class Statement:
                 transaction = self._process_line(line, lines, idx=i)
                 if transaction:
                     transactions.append(transaction)
-        transactions = self._add_prev_month_balance(transactions)
         return transactions
 
     def _process_line(
         self, line: str, lines: list[str], idx: int
     ) -> Transaction | None:
-        if not self.prev_month_balance:
-            if match := re.search(self.statement_config.prev_balance_pattern, line):
-                self.prev_month_balance = match.groupdict()
-
         if match := re.search(self.transaction_config.pattern, line):
             transaction = Transaction(**match.groupdict())  # type: ignore
 
@@ -118,23 +112,25 @@ class Statement:
             return transaction
         return None
 
-    def _add_prev_month_balance(
-        self, transactions: list[Transaction]
-    ) -> list[Transaction]:
+    @cached_property
+    def prev_month_balance(self) -> Transaction | None:
         """
-        Converts the previous month's statement balance into a transaction,
+        Returns the previous month's statement balance as a transaction,
         if it exists in the statement.
+
+        The date defaults to the first day and month of the statement year,
+        which is later replaced with a more accurate date by the statement processor.
         """
-        if self.prev_month_balance:
-            first_transaction_date = transactions[0].transaction_date
-            prev_month_balance_transaction = Transaction(
-                **self.prev_month_balance,  # type: ignore
-                transaction_date=first_transaction_date,
-            )
-            transactions.insert(0, prev_month_balance_transaction)
-        if not self.prev_month_balance:
+        prev_balance_pattern = self.statement_config.prev_balance_pattern
+        raw_text = self.pages[0].raw_text + self.pages[1].raw_text
+        if match := re.search(prev_balance_pattern, raw_text):
+            groupdict = match.groupdict()
+            statement_year = self.statement_date.year
+            groupdict[StatementFields.TRANSACTION_DATE] = f"{statement_year}-01-01"
+            return Transaction(**groupdict)  # type: ignore
+        if match:
             logger.debug("Unable to find previous month's balance")
-        return transactions
+        return None
 
     @staticmethod
     def process_lines(page: PdfPage) -> list:
