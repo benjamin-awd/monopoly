@@ -88,7 +88,7 @@ def test_process_statement(monkeypatch):
 
 def test_monopoly_output():
     cli_runner = CliRunner()
-    with open("tests/integration/banks/citibank/input.pdf", "rb") as source_file:
+    with open("tests/integration/banks/citibank/credit/input.pdf", "rb") as source_file:
         file_content = source_file.read()
 
     with cli_runner.isolated_filesystem() as tmp_dir:

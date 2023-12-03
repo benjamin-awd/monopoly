@@ -20,17 +20,21 @@ def test_statement_date_extraction(
     expected_date: str,
     statement: Statement,
 ):
-    bank_name = bank_class.statement_config.bank_name
+    bank_name = bank_class.credit_config.bank_name
 
     fixture_directory = Path(__file__).parent / bank_name
     processor: ProcessorBase = bank_class(fixture_directory / "input.pdf")
 
-    statement.statement_config.date_pattern = processor.statement_config.date_pattern
-    statement.statement_config.date_format = processor.statement_config.date_format
+    statement.statement_config.statement_date_pattern = (
+        processor.credit_config.statement_date_pattern
+    )
+    statement.statement_config.statement_date_format = (
+        processor.credit_config.statement_date_format
+    )
     statement.pages[0] = PdfPage(raw_text=page_content)
 
     actual_statement_date = statement.statement_date.strftime(
-        statement.statement_config.date_format
+        statement.statement_config.statement_date_format
     )
 
     assert actual_statement_date == expected_date

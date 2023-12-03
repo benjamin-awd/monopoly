@@ -5,8 +5,8 @@ from typing import Optional
 
 from pandas import DataFrame
 
-from monopoly.config import PdfConfig, StatementConfig, TransactionConfig
-from monopoly.constants import StatementFields
+from monopoly.config import PdfConfig, StatementConfig
+from monopoly.constants import AccountType, StatementFields
 from monopoly.pdf import PdfParser
 from monopoly.statement import Statement
 from monopoly.write import generate_name
@@ -15,8 +15,8 @@ logger = logging.getLogger(__name__)
 
 
 class StatementProcessor(PdfParser):
-    statement_config: StatementConfig
-    transaction_config: TransactionConfig
+    credit_config: StatementConfig
+    debit_config: Optional[StatementConfig]
     pdf_config: Optional[PdfConfig] = None
     parser: Optional[PdfParser] = None
     safety_check_enabled: bool = True
@@ -33,8 +33,8 @@ class StatementProcessor(PdfParser):
 
     def __init__(self, file_path: Path, parser: Optional[PdfParser] = None, **kwargs):
         keys = [
-            "statement_config",
-            "transaction_config",
+            "credit_config",
+            "debit_config",
             "pdf_config",
             "safety_check_enabled",
         ]
@@ -50,8 +50,7 @@ class StatementProcessor(PdfParser):
         """Extracts transactions from the statement, and performs
         a safety check to make sure that total transactions add up"""
         pages = self.get_pages()
-        statement = Statement(pages, self.statement_config, self.transaction_config)
-        statement = self._post_process(statement)
+        statement = Statement(pages, self.credit_config, self.debit_config)
 
         if not statement.transactions:
             raise ValueError("No transactions found - statement extraction failed")
@@ -59,16 +58,16 @@ class StatementProcessor(PdfParser):
         if not statement.statement_date:
             raise ValueError("No statement date found")
 
+        statement = self._inject_prev_month_balance(statement)
+
         if self.safety_check_enabled:
             self._perform_safety_check(statement)
 
         return statement
 
-    def _post_process(self, statement: Statement):
+    def _inject_prev_month_balance(self, statement: Statement):
         """
-        Perform post processing on the statement
-
-        This includes injecting the previous month's balance as a transaction
+        Injects the previous month's balance as a transaction, if it exists
         """
         if statement.prev_month_balance:
             first_transaction_date = statement.transactions[0].transaction_date
@@ -85,19 +84,41 @@ class StatementProcessor(PdfParser):
 
         Returns `False` if the total does not exist in the document.
         """
-        decimal_numbers = set()
+        numbers = set()
+        df = statement.df
+        amount = StatementFields.AMOUNT
+        warning_message = (
+            "Safety check failed - transactions may be missing or inaccurate"
+        )
         for page in self.document:
             lines = page.get_textpage().extractText().split("\n")
-            decimal_numbers.update(statement.get_decimal_numbers(lines))
-        total_amount = abs(round(statement.df[StatementFields.AMOUNT].sum(), 2))
+            numbers.update(statement.get_decimal_numbers(lines))
 
-        result = total_amount in decimal_numbers
-        if not result:
-            logger.warning(
+        total_amount = abs(round(df[amount].sum(), 2))
+
+        if statement.account_type == AccountType.DEBIT:
+            logger.debug(
                 "Total amount %s cannot be found in document - %s",
                 total_amount,
-                "transactions may be missing or inaccurate",
+                "checking to see if debit/credit sum is present in document",
             )
+            debit_sum = round(abs(df[df[amount] > 0][amount].sum()), 2)
+            credit_sum = round(abs(df[df[amount] < 0][amount].sum()), 2)
+            result = (debit_sum in numbers) == (credit_sum in numbers)
+            if not result:
+                logger.warning(msg=warning_message)
+
+        # handling for credit statement
+        else:
+            result = total_amount in numbers
+            if not result:
+                logger.warning(
+                    msg=(
+                        warning_message,
+                        "Total amount %s cannot be found in document",
+                    ),
+                    args=total_amount,
+                )
         return result
 
     def transform(self, statement: Statement) -> DataFrame:
@@ -105,7 +126,7 @@ class StatementProcessor(PdfParser):
 
         df = statement.df
         statement_date = statement.statement_date
-        date_format = self.transaction_config.date_format
+        date_format = statement.statement_config.transaction_date_format
 
         def convert_date(row):
             parsed_date = datetime.strptime(
@@ -128,6 +149,7 @@ class StatementProcessor(PdfParser):
             output_directory = Path(output_directory)
 
         filename = generate_name(
+            account_type=statement.account_type,
             file_path=self.file_path,
             format_type="file",
             config=statement.statement_config,

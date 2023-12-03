@@ -1,12 +1,11 @@
 import logging
 
-from monopoly.config import PdfConfig, StatementConfig, TransactionConfig, settings
+from monopoly.config import PdfConfig, StatementConfig, settings
 from monopoly.constants import (
-    AccountType,
     BankNames,
+    CreditTransactionPatterns,
     MetadataIdentifier,
     StatementBalancePatterns,
-    TransactionPatterns,
 )
 
 from ..base import ProcessorBase
@@ -15,18 +14,16 @@ logger = logging.getLogger(__name__)
 
 
 class StandardChartered(ProcessorBase):
-    statement_config = StatementConfig(
+    credit_config = StatementConfig(
         bank_name=BankNames.STANDARD_CHARTERED,
-        account_type=AccountType.CREDIT,
-        date_pattern=r"\d{2}\s\w+\s\d{4}",
-        date_format=r"%d %B %Y",
+        statement_date_pattern=r"\d{2}\s\w+\s\d{4}",
+        statement_date_format=r"%d %B %Y",
         prev_balance_pattern=StatementBalancePatterns.STANDARD_CHARTERED,
+        transaction_pattern=CreditTransactionPatterns.STANDARD_CHARTERED,
+        transaction_date_format="%d %b",
     )
 
-    transaction_config = TransactionConfig(
-        pattern=TransactionPatterns.STANDARD_CHARTERED,
-        date_format="%d %b",
-    )
+    debit_config = None
 
     pdf_config = PdfConfig(
         passwords=settings.standard_chartered_pdf_passwords,

@@ -41,8 +41,8 @@ def mock_encrypt_metadata_extractor():
 
 
 class MockProcessorOne(ProcessorBase):
-    statement_config = None
-    transaction_config = None
+    debit_config = None
+    credit_config = None
     identifiers = [
         EncryptionIdentifier(
             pdf_version=1.7, algorithm=5, revision=6, length=256, permissions=-1028
@@ -52,8 +52,8 @@ class MockProcessorOne(ProcessorBase):
 
 
 class MockProcessorTwo(ProcessorBase):
-    statement_config = None
-    transaction_config = None
+    debit_config = None
+    credit_config = None
     identifiers = [
         MetadataIdentifier(
             creator="Adobe Acrobat 23.3", producer="Adobe Acrobat Pro (64-bit)"

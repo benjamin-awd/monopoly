@@ -1,33 +1,26 @@
-from monopoly.config import StatementConfig, TransactionConfig
-from monopoly.constants import (
-    AccountType,
-    BankNames,
-    MetadataIdentifier,
-    SharedPatterns,
-)
+from monopoly.config import StatementConfig
+from monopoly.constants import BankNames, MetadataIdentifier, SharedPatterns
 from monopoly.processors.base import ProcessorBase
 
 
 class ExampleBankProcessor(ProcessorBase):
     """Dummy class to help with reading the example PDF statement"""
 
-    statement_config = StatementConfig(
+    credit_config = StatementConfig(
         bank_name=BankNames.EXAMPLE,
-        account_type=AccountType.CREDIT,
-        date_pattern=r"\d{2}\-\d{2}\-\d{4}",
-        date_format=r"%d-%m-%Y",
+        statement_date_pattern=r"\d{2}\-\d{2}\-\d{4}",
+        statement_date_format=r"%d-%m-%Y",
         prev_balance_pattern=(
             r"(?P<description>LAST MONTH'S BALANCE?)\s+" + SharedPatterns.AMOUNT
         ),
-    )
-
-    transaction_config = TransactionConfig(
-        pattern=(
+        transaction_pattern=(
             r"(?P<transaction_date>\d+/\d+)\s*"
             r"(?P<description>.*?)\s*" + SharedPatterns.AMOUNT
         ),
-        date_format=r"%d/%m",
+        transaction_date_format=r"%d/%m",
     )
+
+    debit_config = None
 
     identifiers = [
         MetadataIdentifier(
