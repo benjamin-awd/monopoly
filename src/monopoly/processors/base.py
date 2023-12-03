@@ -33,8 +33,8 @@ class ProcessorBase(StatementProcessor):
             file_path = Path(file_path)
 
         super().__init__(
-            statement_config=self.statement_config,
-            transaction_config=self.transaction_config,
+            credit_config=self.credit_config,
+            debit_config=self.debit_config,
             safety_check_enabled=self.safety_check_enabled,
             pdf_config=self.pdf_config,
             file_path=file_path,

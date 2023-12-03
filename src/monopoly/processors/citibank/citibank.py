@@ -1,12 +1,11 @@
 import logging
 
-from monopoly.config import PdfConfig, StatementConfig, TransactionConfig, settings
+from monopoly.config import PdfConfig, StatementConfig, settings
 from monopoly.constants import (
-    AccountType,
     BankNames,
+    CreditTransactionPatterns,
     MetadataIdentifier,
     StatementBalancePatterns,
-    TransactionPatterns,
 )
 
 from ..base import ProcessorBase
@@ -15,18 +14,16 @@ logger = logging.getLogger(__name__)
 
 
 class Citibank(ProcessorBase):
-    statement_config = StatementConfig(
+    credit_config = StatementConfig(
         bank_name=BankNames.CITIBANK,
-        account_type=AccountType.CREDIT,
-        date_pattern=r"Statement\sDate\s+(.*)",
-        date_format=r"%B %d, %Y",
+        statement_date_pattern=r"Statement\sDate\s+(.*)",
+        statement_date_format=r"%B %d, %Y",
         prev_balance_pattern=StatementBalancePatterns.CITIBANK,
+        transaction_pattern=CreditTransactionPatterns.CITIBANK,
+        transaction_date_format="%d %b",
     )
 
-    transaction_config = TransactionConfig(
-        pattern=TransactionPatterns.CITIBANK,
-        date_format="%d %b",
-    )
+    debit_config = None
 
     pdf_config = PdfConfig(
         passwords=settings.citibank_pdf_passwords,

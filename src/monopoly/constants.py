@@ -15,6 +15,7 @@ class AutoEnum(StrEnum):
 
 class AccountType(AutoEnum):
     CREDIT = auto()
+    DEBIT = auto()
 
 
 class BankNames(AutoEnum):
@@ -38,9 +39,13 @@ class SharedPatterns(StrEnum):
     1,123.12 | 123.12 | (123.12) | ( 123.12) | 123.12 CR
     """
 
-    AMOUNT = r"(?P<amount>[\d.,]+|\([\d.,\s]+\)$)\s*(?P<suffix>CR|DR)?$"
-    AMOUNT_WITHOUT_EOL = r"(?P<amount>[\d.,]+|\([\d.,\s]+\)$)\s*(?P<suffix>CR|DR)?"
+    AMOUNT = r"(?P<amount>[\d.,]+)\s*"
+    AMOUNT_EXTENDED = r"(?P<amount>[\d.,]+|\([\d.,\s]+\)$)\s*(?P<suffix>CR|DR)?$"
+    AMOUNT_EXTENDED_WITHOUT_EOL = (
+        r"(?P<amount>[\d.,]+|\([\d.,\s]+\)$)\s*(?P<suffix>CR|DR)?"
+    )
     AMOUNT_WITH_CASHBACK = r"(?P<amount>[\d.,]+|\([\d.,\s]+\))$"
+    BALANCE = r"(?:(?P<balance>[\d.,]+)\s*)?$"
     DESCRIPTION = r"(?P<description>.*?)\s+"
     TRANSACTION_DATE_ABBREVIATED_ALL_CAPS = r"(?P<transaction_date>\d{2}\s[A-Z]{3})\s+"
     TRANSACTION_DATE_ABBREVIATED_PROPER_CASE = (
@@ -50,29 +55,33 @@ class SharedPatterns(StrEnum):
 
 
 class StatementBalancePatterns(StrEnum):
-    DBS = r"(?P<description>PREVIOUS BALANCE?)\s+" + SharedPatterns.AMOUNT_WITHOUT_EOL
+    DBS = (
+        r"(?P<description>PREVIOUS BALANCE?)\s+"
+        + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+    )
     CITIBANK = (
         r"(?P<description>BALANCE PREVIOUS STATEMENT?)\s+"
-        + SharedPatterns.AMOUNT_WITHOUT_EOL
+        + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
     )
     HSBC = (
         r"(?P<description>Previous Statement Balance?)\s+"
-        + SharedPatterns.AMOUNT_WITHOUT_EOL
+        + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
     )
     OCBC = (
-        r"(?P<description>LAST MONTH'S BALANCE?)\s+" + SharedPatterns.AMOUNT_WITHOUT_EOL
+        r"(?P<description>LAST MONTH'S BALANCE?)\s+"
+        + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
     )
     STANDARD_CHARTERED = (
         r"(?P<description>BALANCE FROM PREVIOUS STATEMENT?)\s+"
-        + SharedPatterns.AMOUNT_WITHOUT_EOL
+        + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
     )
 
 
-class TransactionPatterns(StrEnum):
+class CreditTransactionPatterns(StrEnum):
     DBS = (
         SharedPatterns.TRANSACTION_DATE_ABBREVIATED_ALL_CAPS
         + SharedPatterns.DESCRIPTION
-        + SharedPatterns.AMOUNT
+        + SharedPatterns.AMOUNT_EXTENDED
     )
     CITIBANK = (
         SharedPatterns.TRANSACTION_DATE_ABBREVIATED_ALL_CAPS
@@ -83,10 +92,10 @@ class TransactionPatterns(StrEnum):
         SharedPatterns.POSTING_DATE_ABBREVIATED_PROPER
         + SharedPatterns.TRANSACTION_DATE_ABBREVIATED_PROPER_CASE
         + SharedPatterns.DESCRIPTION
-        + SharedPatterns.AMOUNT
+        + SharedPatterns.AMOUNT_EXTENDED
     )
     OCBC = (
-        r"^(?P<transaction_date>\d+/\d+)\s+"
+        r"(?P<transaction_date>\d+/\d+)\s+"
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT_WITH_CASHBACK
     )
@@ -95,7 +104,23 @@ class TransactionPatterns(StrEnum):
         + SharedPatterns.TRANSACTION_DATE_ABBREVIATED_PROPER_CASE
         + SharedPatterns.DESCRIPTION
         + r"(?:(?P<transaction_ref>Transaction\sRef\s\d+)?)\s+"
+        + SharedPatterns.AMOUNT_EXTENDED
+    )
+
+
+class DebitTransactionPatterns(StrEnum):
+    DBS = (
+        SharedPatterns.TRANSACTION_DATE_ABBREVIATED_PROPER_CASE
+        + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT
+        + SharedPatterns.BALANCE
+    )
+    OCBC = (
+        SharedPatterns.TRANSACTION_DATE_ABBREVIATED_ALL_CAPS
+        + r"(?P<value_date>\d{2}\s[A-Z]{3})\s+"
+        + SharedPatterns.DESCRIPTION
+        + SharedPatterns.AMOUNT
+        + SharedPatterns.BALANCE
     )
 
 

@@ -1,13 +1,13 @@
 import logging
 
-from monopoly.config import PdfConfig, StatementConfig, TransactionConfig, settings
+from monopoly.config import PdfConfig, StatementConfig, settings
 from monopoly.constants import (
-    AccountType,
     BankNames,
+    CreditTransactionPatterns,
+    DebitTransactionPatterns,
     EncryptionIdentifier,
     MetadataIdentifier,
     StatementBalancePatterns,
-    TransactionPatterns,
 )
 
 from ..base import ProcessorBase
@@ -16,22 +16,28 @@ logger = logging.getLogger(__name__)
 
 
 class Ocbc(ProcessorBase):
-    statement_config = StatementConfig(
+    credit_config = StatementConfig(
         bank_name=BankNames.OCBC,
-        account_type=AccountType.CREDIT,
-        date_pattern=r"\d{2}\-\d{2}\-\d{4}",
-        date_format=r"%d-%m-%Y",
+        statement_date_pattern=r"\d{2}\-\d{2}\-\d{4}",
+        statement_date_format=r"%d-%m-%Y",
         prev_balance_pattern=StatementBalancePatterns.OCBC,
+        transaction_pattern=CreditTransactionPatterns.OCBC,
+        transaction_date_format="%d/%m",
     )
 
-    transaction_config = TransactionConfig(
-        pattern=TransactionPatterns.OCBC,
-        date_format="%d/%m",
+    debit_config = StatementConfig(
+        bank_name=BankNames.OCBC,
+        statement_date_pattern=r"(\d+\s[A-Za-z]{3}\s\d{4})",
+        statement_date_format=r"%d %b %Y",
+        debit_account_identifier=r"(Withdrawal.*Deposit.*Balance)",
+        transaction_pattern=DebitTransactionPatterns.OCBC,
+        transaction_date_format="%d %b",
+        multiline_transactions=True,
     )
 
     pdf_config = PdfConfig(
         passwords=settings.ocbc_pdf_passwords,
-        page_range=(0, -2),
+        page_range=(0, -1),
         page_bbox=(0, 0, 560, 750),
     )
 

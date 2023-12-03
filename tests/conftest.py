@@ -4,7 +4,7 @@ from unittest.mock import PropertyMock
 
 import pytest
 
-from monopoly.config import StatementConfig, TransactionConfig
+from monopoly.config import StatementConfig
 from monopoly.constants import AccountType, BankNames
 from monopoly.pdf import PdfPage, PdfParser
 from monopoly.processor import StatementProcessor
@@ -45,14 +45,13 @@ def standard_chartered():
 
 
 @pytest.fixture(scope="function")
-def processor(statement_config, transaction_config):
+def processor(statement_config):
     with mock.patch.object(
         Statement, "statement_date", new_callable=PropertyMock
     ) as mock_statement_date:
         mock_statement_date.return_value = datetime(2023, 8, 1)
         processor = StatementProcessor(
             statement_config=statement_config,
-            transaction_config=transaction_config,
             pdf_config=None,
             file_path="foo",
         )
@@ -66,13 +65,12 @@ def parser():
 
 
 @pytest.fixture(scope="function")
-def statement(monkeypatch, statement_config, transaction_config):
+def statement(monkeypatch, statement_config):
     monkeypatch.setattr("monopoly.processor.Statement.df", None)
     mock_page = mock.Mock(spec=PdfPage)
+    mock_page.lines = ["foo\nbar"]
     statement = Statement(
-        pages=[mock_page],
-        statement_config=statement_config,
-        transaction_config=transaction_config,
+        pages=[mock_page], credit_config=statement_config, debit_config=None
     )
     yield statement
 
@@ -82,19 +80,11 @@ def statement_config():
     statement_config = StatementConfig(
         account_type=AccountType.CREDIT,
         bank_name=BankNames.OCBC,
-        date_format=r"%d-%m-%Y",
+        statement_date_format=r"%d-%m-%Y",
         transaction_pattern="foo",
         transaction_date_format=r"%d/%m",
-        date_pattern="",
+        statement_date_pattern="",
         prev_balance_pattern="foo",
+        debit_account_identifier="debitidentifier123",
     )
     yield statement_config
-
-
-@pytest.fixture(scope="session")
-def transaction_config():
-    transaction_config = TransactionConfig(
-        pattern="foo",
-        date_format=r"%d/%m",
-    )
-    yield transaction_config

@@ -13,6 +13,7 @@ token.json
 _ignore*
 *.tfvars
 *.txt
+.coverage
 dist
 
 # allowed pdf files/fixtures

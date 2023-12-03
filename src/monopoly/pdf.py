@@ -26,7 +26,7 @@ class PdfPage:
 
     @cached_property
     def lines(self) -> list[str]:
-        return list(filter(None, self.raw_text.split("\n")))
+        return self.raw_text.split("\n")
 
 
 class PdfParser:
@@ -85,10 +85,18 @@ class PdfParser:
             logger.debug("Removing vertical text")
             page = self._remove_vertical_text(page)
 
-        pdf_byte_stream = BytesIO(document.tobytes())
-        pdf = pdftotext.PDF(pdf_byte_stream, physical=True)
+        try:
+            pdf_byte_stream = BytesIO(document.tobytes())
+            pdf = pdftotext.PDF(pdf_byte_stream, physical=True)
+            return [PdfPage(page) for page in pdf]
 
-        return [PdfPage(page) for page in pdf]
+        # parse file without using bytestream as fallback
+        # some statements (e.g. OCBC) debit cause pdftotext to fail
+        # likely due to non-english characters
+        except pdftotext.Error:
+            with open(self.file_path, "rb") as file:
+                pdf = pdftotext.PDF(file, physical=True)
+            return [PdfPage(page) for page in pdf]
 
     @cached_property
     def document(self) -> fitz.Document:

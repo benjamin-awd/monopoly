@@ -18,7 +18,11 @@ def generate_hash(file_path: Path) -> str:
 
 
 def generate_name(
-    file_path: Path, format_type: str, config: StatementConfig, statement_date: datetime
+    file_path: Path,
+    format_type: str,
+    config: StatementConfig,
+    account_type: str,
+    statement_date: datetime,
 ) -> str:
     """
     Generates a new file name, depending on: bank, account type, statement date,
@@ -30,7 +34,6 @@ def generate_name(
     month will not overwrite each other.
     """
     bank_name = config.bank_name
-    account_type = config.account_type
     year = statement_date.year
     month = statement_date.month
     file_uuid = generate_hash(file_path)

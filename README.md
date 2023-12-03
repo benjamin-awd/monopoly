@@ -14,13 +14,13 @@ Monopoly is a Python library that converts Singapore bank statement PDFs to CSV 
 ![](https://raw.githubusercontent.com/benjamin-awd/monopoly/main/docs/monopoly.gif)
 
 Supported banks:
-- Citibank
-- DBS
-- HSBC
-- OCBC
-- Standard Chartered
-
-Only credit card statements are supported (for now)
+| Bank                | Credit Statement    | Debit Statement     |
+| --------------------| --------------------| --------------------|
+| Citibank            | :white_check_mark:  | :x:                 |
+| DBS                 | :white_check_mark:  | :white_check_mark:  |
+| HSBC                | :white_check_mark:  | :x:                 |
+| OCBC                | :white_check_mark:  | :white_check_mark:  |
+| Standard Chartered  | :white_check_mark:  | :x:                 |
 
 ## Install
 Clone the repo

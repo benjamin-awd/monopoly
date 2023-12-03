@@ -4,7 +4,7 @@ from pydantic import StringConstraints
 from pydantic.dataclasses import dataclass
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from monopoly.constants import AccountType, BankNames
+from monopoly.constants import BankNames
 
 
 class Settings(BaseSettings):
@@ -20,45 +20,41 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="allow")
 
 
+# pylint: disable=too-many-instance-attributes
 @dataclass
-class TransactionConfig:
+class StatementConfig:
     """
-    Stores configurations for transactions within the statement
+    Dataclass storing configuration values for debit and credit card statements
 
-    - `pattern` refers to the regex pattern used to capture transactions,
+    - `transaction_pattern` refers to the regex pattern used to capture transactions,
     where a pattern like:
         "(?P<transaction_date>\\d+/\\d+)\\s*"
         "(?P<description>.*?)\\s*"
         "(?P<amount>[\\d.,]+)$"
     is used to capture a transaction like:
         06/07 URBAN TRANSIT CO. SINGAPORE SG  1.38
-    - `date_format` represents the datetime format that a specific bank uses
+    - `transaction_date_format` represents the datetime format that a specific bank uses
     for transactions. For example, "%d/%m" will match 06/07
     - `multiline_transactions` controls whether Monopoly tries to concatenate
     transactions that are split across two lines
-    """
-
-    pattern: str
-    date_format: Annotated[str, StringConstraints(pattern="%")]
-    multiline_transactions: bool = False
-
-
-@dataclass
-class StatementConfig:
-    """
-    Stores configuration values for the `Statement` class
+    - `debit_account_identifier` is a regex pattern that is used to determine whether
+    a statement from a bank is a debit or credit card statement.
+    - `prev_balance_pattern` is a regex pattern used to match the previous balance
+    line in a bank statement, which is later converted into a transaction.
     """
 
     bank_name: BankNames
-    account_type: AccountType
-    date_format: Annotated[str, StringConstraints(pattern="%.+%.+%")]
-    date_pattern: str
-    prev_balance_pattern: str
+    transaction_pattern: str
+    transaction_date_format: Annotated[str, StringConstraints(pattern="%")]
+    statement_date_pattern: str
+    statement_date_format: Annotated[str, StringConstraints(pattern="%.+%.+%")]
+    multiline_transactions: bool = False
+    debit_account_identifier: Optional[str] = None
+    prev_balance_pattern: Optional[str] = None
 
     # Convert enums to strings
     def __post_init__(self):
         self.bank_name = self.bank_name.value
-        self.account_type = self.account_type.value
 
 
 @dataclass

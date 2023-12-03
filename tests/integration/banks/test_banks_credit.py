@@ -23,18 +23,17 @@ from monopoly.statement import Statement
         (StandardChartered, -82.45, datetime(2023, 5, 16)),
     ],
 )
-def test_bank_operations(
+def test_bank_credit_statements(
     bank_processor: ProcessorBase,
     total_amount: float,
     statement_date: datetime,
 ):
-    processor_name = bank_processor.statement_config.bank_name
+    processor_name = bank_processor.credit_config.bank_name
+    test_directory = Path(__file__).parent / processor_name / "credit"
 
-    fixture_directory = Path(__file__).parent / processor_name
-
-    processor: ProcessorBase = bank_processor(fixture_directory / "input.pdf")
-    expected_raw_data = pd.read_csv(fixture_directory / "raw.csv")
-    expected_transformed_data = pd.read_csv(fixture_directory / "transformed.csv")
+    processor: ProcessorBase = bank_processor(test_directory / "input.pdf")
+    expected_raw_data = pd.read_csv(test_directory / "raw.csv")
+    expected_transformed_data = pd.read_csv(test_directory / "transformed.csv")
 
     # Check extracted data is correct
     statement: Statement = processor.extract()

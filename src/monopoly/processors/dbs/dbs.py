@@ -1,13 +1,13 @@
 import logging
 
-from monopoly.config import PdfConfig, StatementConfig, TransactionConfig
+from monopoly.config import PdfConfig, StatementConfig
 from monopoly.constants import (
-    AccountType,
     BankNames,
+    CreditTransactionPatterns,
+    DebitTransactionPatterns,
     EncryptionIdentifier,
     MetadataIdentifier,
     StatementBalancePatterns,
-    TransactionPatterns,
 )
 
 from ..base import ProcessorBase
@@ -16,17 +16,24 @@ logger = logging.getLogger(__name__)
 
 
 class Dbs(ProcessorBase):
-    statement_config = StatementConfig(
+    credit_config = StatementConfig(
         bank_name=BankNames.DBS,
-        account_type=AccountType.CREDIT,
-        date_pattern=r"(\d{2}\s[A-Za-z]{3}\s\d{4})",
-        date_format=r"%d %b %Y",
+        statement_date_pattern=r"(\d{2}\s[A-Za-z]{3}\s\d{4})",
+        statement_date_format=r"%d %b %Y",
+        transaction_date_format=r"%d %b",
+        multiline_transactions=True,
+        transaction_pattern=CreditTransactionPatterns.DBS,
         prev_balance_pattern=StatementBalancePatterns.DBS,
     )
 
-    transaction_config = TransactionConfig(
-        pattern=TransactionPatterns.DBS,
-        date_format="%d %b",
+    debit_config = StatementConfig(
+        bank_name=BankNames.DBS,
+        statement_date_pattern=r"(\d{2}\s[A-Za-z]{3}\s\d{4})",
+        statement_date_format=r"%d %b %Y",
+        transaction_date_format=r"%d %b",
+        multiline_transactions=True,
+        debit_account_identifier=r"(WITHDRAWAL.*DEPOSIT.*BALANCE)",
+        transaction_pattern=DebitTransactionPatterns.DBS,
     )
 
     pdf_config = PdfConfig(page_range=(0, -1))

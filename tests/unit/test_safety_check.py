@@ -6,8 +6,8 @@ from monopoly.statement import Statement
 
 
 class MockProcessor(ProcessorBase):
-    statement_config = None
-    transaction_config = None
+    credit_config = None
+    debit_config = None
     safety_check_enabled = True
 
 
@@ -16,6 +16,7 @@ def test_safety_check(statement: Statement):
     document = fitz.Document()
     page = document.new_page()
     text = "Page 1\n3\nfoo\n02 May\n2.27\n27 Apr\n2.67\ntotal amount 31.50"
+    page.lines = text.split("\n")
     page.insert_text(point=(0, 0), text=text)
     statement.pages[0] = page
 
