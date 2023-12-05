@@ -28,8 +28,9 @@ Clone the repo
 git clone https://github.com/benjamin-awd/monopoly.git
 ```
 
-Install dependencies using apt & [Homebrew](https://brew.sh/)
+Install dependencies using [Homebrew](https://brew.sh/)
 ```bash
+brew install make
 make setup
 ```
 
