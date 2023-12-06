@@ -23,7 +23,7 @@ class DebitStatement(Statement):
         pages: list[PdfPage],
         debit_config: DebitStatementConfig,
     ):
-        super().__init__(document, pages, None, debit_config)  # type: ignore
+        super().__init__(document, pages, debit_config)
 
     def _process_line(
         self,
@@ -66,9 +66,9 @@ class DebitStatement(Statement):
 
     @cached_property
     def debit_header(self) -> str | None:
-        if self.debit_config and self.debit_config.debit_account_identifier:
+        if self.statement_config and self.statement_config.debit_account_identifier:
             for line in self.pages[0].lines:
-                if re.search(self.debit_config.debit_account_identifier, line):
+                if re.search(self.statement_config.debit_account_identifier, line):
                     return line.lower()
         return None
 

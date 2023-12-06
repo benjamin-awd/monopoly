@@ -21,7 +21,7 @@ def generate_name(
     file_path: Path,
     format_type: str,
     config: StatementConfig,
-    account_type: str,
+    statement_type: str,
     statement_date: datetime,
 ) -> str:
     """
@@ -41,13 +41,13 @@ def generate_name(
     file_suffix = "csv"
 
     filename = (
-        f"{bank_name}-{account_type}-{year}-{month:02d}-{file_uuid}.{file_suffix}"
+        f"{bank_name}-{statement_type}-{year}-{month:02d}-{file_uuid}.{file_suffix}"
     )
 
     if format_type == "blob":
         return (
             f"bank_name={bank_name}/"
-            f"account_type={account_type}/"
+            f"account_type={statement_type}/"
             f"year={year}/"
             f"month={month}/"
             f"filename"

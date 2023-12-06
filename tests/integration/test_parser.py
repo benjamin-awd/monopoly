@@ -1,4 +1,5 @@
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 from pytest import raises
 
@@ -40,10 +41,11 @@ def test_get_pages_invalid_returns_error(parser: PdfParser):
 
 
 def test_override_password(hsbc: Hsbc):
-    hsbc = Hsbc(fixture_directory / "protected.pdf", passwords=["foobar123"])
-
-    document = hsbc.open()
-    assert not document.is_encrypted
+    with patch.object(PdfParser, "get_pages") as mock_get_pages:
+        mock_get_pages.return_value = MagicMock()
+        hsbc = Hsbc(fixture_directory / "protected.pdf", passwords=["foobar123"])
+        document = hsbc.parser.open()
+        assert not document.is_encrypted
 
 
 def test_error_raised_if_override_is_wrong():
