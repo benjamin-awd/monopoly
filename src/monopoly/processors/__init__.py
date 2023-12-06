@@ -37,7 +37,7 @@ def detect_processor(file_path: Path) -> ProcessorBase:
     for processor in processors:
         metadata_items = processor.get_identifiers(parser)
         if is_bank_identified(metadata_items, processor):
-            return processor(file_path=parser.file_path, parser=parser)
+            return processor(file_path=file_path)
 
     raise ValueError(f"Could not find a bank for {parser.file_path}")
 

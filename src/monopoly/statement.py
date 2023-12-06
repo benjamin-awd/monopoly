@@ -10,8 +10,8 @@ from pydantic import field_validator, model_validator
 from pydantic.dataclasses import dataclass
 from pydantic_core import ArgsKwargs
 
-from monopoly.config import StatementConfig
-from monopoly.constants import AccountType, StatementFields
+from monopoly.config import CreditStatementConfig, DebitStatementConfig
+from monopoly.constants import StatementFields
 from monopoly.pdf import PdfPage
 
 logger = logging.getLogger(__name__)
@@ -88,22 +88,12 @@ class Statement:
         self,
         document: fitz.Document,
         pages: list[PdfPage],
-        credit_config: StatementConfig,
-        debit_config: Optional[StatementConfig],
+        statement_config: CreditStatementConfig | DebitStatementConfig,
     ):
+        self.statement_config = statement_config
         self.columns: list[str] = [enum.value for enum in StatementFields]
         self.pages = pages
         self.document = document
-        self.credit_config = credit_config
-        self.debit_config = debit_config
-
-    @cached_property
-    def statement_config(self) -> StatementConfig:
-        if self.account_type == AccountType.DEBIT:
-            if self.debit_config:
-                return self.debit_config
-            raise RuntimeError("Statement config not defined")
-        return self.credit_config
 
     @cached_property
     def transactions(self) -> list[Transaction]:
@@ -179,15 +169,6 @@ class Statement:
         if match := re.findall(config.statement_date_pattern, first_page):
             return datetime.strptime(match[0], config.statement_date_format)
         raise ValueError("Statement date not found")
-
-    @cached_property
-    def account_type(self) -> str:
-        config = self.debit_config
-        if config and config.debit_account_identifier:
-            for line in self.pages[0].lines:
-                if re.search(config.debit_account_identifier, line):
-                    return AccountType.DEBIT
-        return AccountType.CREDIT
 
     @staticmethod
     def get_decimal_numbers(lines: list[str]) -> set[float]:

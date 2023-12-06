@@ -1,8 +1,11 @@
+import re
+from functools import cached_property
 from pathlib import Path
 from typing import Any, Optional
 
-from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
-from monopoly.pdf import PdfConfig, PdfParser
+from monopoly.config import PdfConfig, CreditStatementConfig, DebitStatementConfig
+from monopoly.constants import AccountType, EncryptionIdentifier, MetadataIdentifier
+from monopoly.pdf import PdfParser
 from monopoly.processor import StatementProcessor
 
 
@@ -11,32 +14,53 @@ class ProcessorBase(StatementProcessor):
     that are shared between bank processor classes"""
 
     identifiers: list[EncryptionIdentifier | MetadataIdentifier]
+    credit_config: CreditStatementConfig
+    debit_config: DebitStatementConfig
+    pdf_config: PdfConfig = PdfConfig()
+    passwords: Optional[list[str]] = None
 
     def __init__(
         self,
         file_path: Path,
         passwords: Optional[list[str]] = None,
-        parser: Optional[PdfParser] = None,
     ):
-        self.parser = parser
-
-        # optional config
-        self.pdf_config = getattr(self, "pdf_config", PdfConfig())
-
         # this allows the user to override the default pydantic password
         # and supply their own password via the bank subclasses
         if passwords:
             self.pdf_config.passwords = passwords
 
+        parser = PdfParser(file_path, self.pdf_config)
+
+        self.pages = parser.get_pages()
+        self.document = parser.document
+
         if isinstance(file_path, str):
             file_path = Path(file_path)
 
         super().__init__(
-            credit_config=self.credit_config,
-            debit_config=self.debit_config,
-            pdf_config=self.pdf_config,
+            parser=parser,
             file_path=file_path,
         )
+
+    @cached_property
+    def statement_config(self) -> CreditStatementConfig | DebitStatementConfig:
+        if self.debit_header and self.debit_config:
+            return self.debit_config
+        return self.credit_config
+
+    @cached_property
+    def statement_type(self) -> str:
+        if self.debit_header and self.debit_config:
+            return AccountType.DEBIT
+        return AccountType.CREDIT
+
+    @cached_property
+    def debit_header(self) -> str | None:
+        if self.debit_config and self.debit_config.debit_account_identifier:
+            for line in self.pages[0].lines:
+                if re.search(self.debit_config.debit_account_identifier, line):
+                    return line.lower()
+        return None
 
     @staticmethod
     def get_identifiers(parser: PdfParser) -> list[Any]:

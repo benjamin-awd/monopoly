@@ -23,7 +23,7 @@ class CreditStatement(Statement):
         pages: list[PdfPage],
         credit_config: CreditStatementConfig,
     ):
-        super().__init__(document, pages, credit_config, None)
+        super().__init__(document, pages, credit_config)
 
     @cached_property
     def prev_month_balance(self) -> Transaction | None:
@@ -33,7 +33,7 @@ class CreditStatement(Statement):
 
         The date is later replaced with a more accurate date by the statement processor.
         """
-        if prev_balance_pattern := self.credit_config.prev_balance_pattern:
+        if prev_balance_pattern := self.statement_config.prev_balance_pattern:
             raw_text = self.pages[0].raw_text + self.pages[1].raw_text
             if match := re.search(prev_balance_pattern, raw_text):
                 groupdict = match.groupdict()

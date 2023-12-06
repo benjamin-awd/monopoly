@@ -22,9 +22,8 @@ def test_statement_date_extraction(
 ):
     bank_name = bank_class.credit_config.bank_name
 
-    fixture_directory = Path(__file__).parent / bank_name
-    processor: ProcessorBase = bank_class(fixture_directory / "input.pdf")
-
+    fixture_directory = Path(__file__).parent / "banks" / bank_name
+    processor: ProcessorBase = bank_class(fixture_directory / "credit/input.pdf")
     statement.statement_config.statement_date_pattern = (
         processor.credit_config.statement_date_pattern
     )

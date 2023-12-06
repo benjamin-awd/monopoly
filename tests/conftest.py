@@ -1,10 +1,9 @@
 from datetime import datetime
-from unittest import mock
-from unittest.mock import PropertyMock
+from unittest.mock import MagicMock, Mock, PropertyMock, patch
 
 import pytest
 
-from monopoly.config import StatementConfig
+from monopoly.config import CreditStatementConfig
 from monopoly.constants import AccountType, BankNames
 from monopoly.credit_statement import CreditStatement
 from monopoly.debit_statement import DebitStatement
@@ -16,39 +15,72 @@ from monopoly.statement import Statement
 
 @pytest.fixture(scope="session")
 def citibank():
-    citibank = Citibank(file_path="tests/integration/fixtures/citibank/input.pdf")
+    citibank = Citibank(file_path="tests/integration/banks/citibank/credit/input.pdf")
     yield citibank
 
 
 @pytest.fixture(scope="session")
 def dbs():
-    dbs = Dbs(file_path="tests/integration/fixtures/dbs/input.pdf")
+    dbs = Dbs(file_path="tests/integration/banks/dbs/credit/input.pdf")
     yield dbs
 
 
 @pytest.fixture(scope="session")
 def ocbc():
-    ocbc = Ocbc(file_path="tests/integration/fixtures/ocbc/input.pdf")
+    ocbc = Ocbc(file_path="tests/integration/banks/ocbc/credit/input.pdf")
     yield ocbc
 
 
 @pytest.fixture(scope="session")
 def hsbc():
-    hsbc = Hsbc(file_path="tests/integration/fixtures/hsbc/input.pdf")
+    hsbc = Hsbc(file_path="tests/integration/banks/hsbc/credit/input.pdf")
     yield hsbc
 
 
 @pytest.fixture(scope="session")
 def standard_chartered():
     standard_chartered = StandardChartered(
-        file_path="tests/integration/fixtures/standard_chartered/input.pdf"
+        file_path="tests/integration/banks/standard_chartered/credit/input.pdf"
     )
     yield standard_chartered
 
 
+@pytest.fixture
+def mock_get_pages():
+    with patch.object(PdfParser, "get_pages") as mock_get_pages:
+        mock_get_pages.return_value = MagicMock()
+        yield mock_get_pages
+
+
+@pytest.fixture
+def mock_get_statement_config():
+    with patch(
+        "monopoly.processors.base.ProcessorBase.statement_config",
+        new_callable=PropertyMock,
+    ) as mock_get_statement_config:
+        mock_get_statement_config.return_value = None
+        yield mock_get_statement_config
+
+
+@pytest.fixture
+def mock_document():
+    with patch(
+        "monopoly.pdf.PdfParser.document", new_callable=PropertyMock
+    ) as mock_document:
+        mock_document_instance = mock_document.return_value
+        # Set the metadata attribute to the desired value
+        type(mock_document_instance).metadata = PropertyMock(
+            return_value={
+                "creator": "Adobe Acrobat 23.3",
+                "producer": "Adobe Acrobat Pro (64-bit)",
+            }
+        )
+        yield mock_document
+
+
 @pytest.fixture(scope="function")
 def processor(statement_config):
-    with mock.patch.object(
+    with patch.object(
         Statement, "statement_date", new_callable=PropertyMock
     ) as mock_statement_date:
         mock_statement_date.return_value = datetime(2023, 8, 1)
@@ -69,7 +101,7 @@ def parser():
 @pytest.fixture(scope="function")
 def credit_statement(monkeypatch, statement_config):
     monkeypatch.setattr("monopoly.processor.Statement.df", None)
-    mock_page = mock.Mock(spec=PdfPage)
+    mock_page = Mock(spec=PdfPage)
     mock_page.lines = ["foo\nbar"]
     statement = CreditStatement(
         document=None, pages=[mock_page], credit_config=statement_config
@@ -80,7 +112,7 @@ def credit_statement(monkeypatch, statement_config):
 @pytest.fixture(scope="function")
 def debit_statement(monkeypatch, statement_config):
     monkeypatch.setattr("monopoly.processor.Statement.df", None)
-    mock_page = mock.Mock(spec=PdfPage)
+    mock_page = Mock(spec=PdfPage)
     mock_page.lines = ["foo\nbar"]
     statement = DebitStatement(
         document=None, pages=[mock_page], debit_config=statement_config
@@ -91,20 +123,19 @@ def debit_statement(monkeypatch, statement_config):
 @pytest.fixture(scope="function")
 def statement(monkeypatch, statement_config):
     monkeypatch.setattr("monopoly.processor.Statement.df", None)
-    mock_page = mock.Mock(spec=PdfPage)
+    mock_page = MagicMock(spec=PdfPage)
     mock_page.lines = ["foo\nbar"]
     statement = Statement(
-        document=None,
         pages=[mock_page],
-        credit_config=statement_config,
-        debit_config=None,
+        document=None,
+        statement_config=statement_config,
     )
     yield statement
 
 
 @pytest.fixture(scope="session")
 def statement_config():
-    statement_config = StatementConfig(
+    statement_config = CreditStatementConfig(
         account_type=AccountType.CREDIT,
         bank_name=BankNames.OCBC,
         statement_date_format=r"%d-%m-%Y",

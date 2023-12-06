@@ -4,7 +4,7 @@ from pydantic import StringConstraints
 from pydantic.dataclasses import dataclass
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from monopoly.constants import AccountType, BankNames
+from monopoly.constants import BankNames
 
 
 class Settings(BaseSettings):
@@ -50,21 +50,15 @@ class StatementConfig:
     statement_date_format: Annotated[str, StringConstraints(pattern="%.+%.+%")]
     multiline_transactions: bool = False
     debit_account_identifier: Optional[str] = None
-    prev_balance_pattern: Optional[str] = None
-
-    # Convert enums to strings
-    def __post_init__(self):
-        self.bank_name = self.bank_name.value
 
 
 @dataclass
 class DebitStatementConfig(StatementConfig):
-    statement_type = AccountType.DEBIT
+    pass
 
 
 @dataclass
 class CreditStatementConfig(StatementConfig):
-    statement_type = AccountType.CREDIT
     prev_balance_pattern: Optional[str] = None
 
 
