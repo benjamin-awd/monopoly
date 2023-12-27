@@ -60,7 +60,6 @@ class StatementConfig:
 @dataclass
 class DebitStatementConfig(StatementConfig):
     statement_type = AccountType.DEBIT
-    debit_account_identifier: Optional[str] = None
 
 
 @dataclass
