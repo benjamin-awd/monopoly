@@ -7,9 +7,9 @@ from pandas.testing import assert_frame_equal
 from test_utils.skip import skip_if_encrypted
 
 from monopoly.constants import StatementFields
+from monopoly.credit_statement import CreditStatement
 from monopoly.processors import Citibank, Dbs, Hsbc, Ocbc, StandardChartered
 from monopoly.processors.base import ProcessorBase
-from monopoly.statement import Statement
 
 
 @skip_if_encrypted
@@ -36,13 +36,13 @@ def test_bank_credit_statements(
     expected_transformed_data = pd.read_csv(test_directory / "transformed.csv")
 
     # Check extracted data is correct
-    statement: Statement = processor.extract()
+    statement: CreditStatement = processor.extract()
 
     raw_df = statement.df
     assert_frame_equal(statement.df, expected_raw_data)
     assert round(raw_df[StatementFields.AMOUNT].sum(), 2) == total_amount
     assert statement.statement_date == statement_date
-    assert processor._perform_safety_check(statement)
+    assert statement.perform_safety_check()
 
     # Check transformed data is correct
     transformed_df = processor.transform(statement)

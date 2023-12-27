@@ -4,6 +4,7 @@ from datetime import datetime
 from functools import cached_property
 from typing import Any, Optional
 
+import fitz
 from pandas import DataFrame
 from pydantic import field_validator, model_validator
 from pydantic.dataclasses import dataclass
@@ -81,14 +82,18 @@ class Statement:
     and specific config per processor.
     """
 
+    warning_message = "Safety check failed - transactions may be missing or inaccurate"
+
     def __init__(
         self,
+        document: fitz.Document,
         pages: list[PdfPage],
         credit_config: StatementConfig,
         debit_config: Optional[StatementConfig],
     ):
         self.columns: list[str] = [enum.value for enum in StatementFields]
         self.pages = pages
+        self.document = document
         self.credit_config = credit_config
         self.debit_config = debit_config
 
@@ -203,3 +208,23 @@ class Statement:
     @cached_property
     def df(self) -> DataFrame:
         return DataFrame(self.transactions, columns=self.columns)
+
+    def perform_safety_check(self) -> bool:
+        """Placeholder for perform_safety_check method, which should
+        exist in any child class of Statement"""
+        raise NotImplementedError(
+            "Subclasses must implement perform_safety_check method"
+        )
+
+    def get_all_numbers_from_document(self) -> set:
+        """
+        Iterates over each page in a statement, and retrieves
+        all decimal numbers in each page. This is used by child classes with
+        implementations of perform_safety_check()
+        """
+        numbers = set()
+
+        for page in self.document:
+            lines = page.get_textpage().extractText().split("\n")
+            numbers.update(self.get_decimal_numbers(lines))
+        return numbers
