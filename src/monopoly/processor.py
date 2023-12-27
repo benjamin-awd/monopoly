@@ -1,13 +1,16 @@
 import logging
+import re
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
 from pandas import DataFrame
 
-from monopoly.config import PdfConfig, StatementConfig
+from monopoly.config import CreditStatementConfig, DebitStatementConfig, PdfConfig
 from monopoly.constants import AccountType, StatementFields
-from monopoly.pdf import PdfParser
+from monopoly.credit_statement import CreditStatement
+from monopoly.debit_statement import DebitStatement
+from monopoly.pdf import PdfPage, PdfParser
 from monopoly.statement import Statement
 from monopoly.write import generate_name
 
@@ -15,8 +18,8 @@ logger = logging.getLogger(__name__)
 
 
 class StatementProcessor(PdfParser):
-    credit_config: StatementConfig
-    debit_config: Optional[StatementConfig]
+    credit_config: CreditStatementConfig
+    debit_config: Optional[DebitStatementConfig]
     pdf_config: Optional[PdfConfig] = None
     parser: Optional[PdfParser] = None
     safety_check_enabled: bool = True
@@ -50,7 +53,8 @@ class StatementProcessor(PdfParser):
         """Extracts transactions from the statement, and performs
         a safety check to make sure that total transactions add up"""
         pages = self.get_pages()
-        statement = Statement(pages, self.credit_config, self.debit_config)
+        account_type = self._get_account_type(pages)
+        statement = self._get_statement(account_type, pages)
 
         if not statement.transactions:
             raise ValueError("No transactions found - statement extraction failed")
@@ -58,22 +62,26 @@ class StatementProcessor(PdfParser):
         if not statement.statement_date:
             raise ValueError("No statement date found")
 
-        statement = self._inject_prev_month_balance(statement)
-
         if self.safety_check_enabled:
             self._perform_safety_check(statement)
 
         return statement
 
-    def _inject_prev_month_balance(self, statement: Statement):
-        """
-        Injects the previous month's balance as a transaction, if it exists
-        """
-        if statement.prev_month_balance:
-            first_transaction_date = statement.transactions[0].transaction_date
-            statement.prev_month_balance.transaction_date = first_transaction_date
-            statement.transactions.insert(0, statement.prev_month_balance)
-        return statement
+    def _get_statement(
+        self, account_type, pages: list[PdfPage]
+    ) -> DebitStatement | CreditStatement:
+        if account_type == AccountType.CREDIT:
+            return CreditStatement(pages, self.credit_config)
+
+        return DebitStatement(pages, self.debit_config)  # type: ignore
+
+    def _get_account_type(self, pages: list[PdfPage]) -> str:
+        config = self.debit_config
+        if config and config.debit_account_identifier:
+            for line in pages[0].lines:
+                if re.search(config.debit_account_identifier, line):
+                    return AccountType.DEBIT
+        return AccountType.CREDIT
 
     def _perform_safety_check(self, statement: Statement) -> bool:
         """Checks that the total sum of all transactions is present

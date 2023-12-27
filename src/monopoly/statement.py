@@ -88,8 +88,6 @@ class Statement:
         debit_config: Optional[StatementConfig],
     ):
         self.columns: list[str] = [enum.value for enum in StatementFields]
-        self.withdrawal_pos: int = 0
-        self.deposit_pos: int = 0
         self.pages = pages
         self.credit_config = credit_config
         self.debit_config = debit_config
@@ -126,10 +124,6 @@ class Statement:
     ) -> Transaction | None:
         if match := pattern.search(line):
             groupdict = match.groupdict()
-            # perform special handling for debit statements
-            if self.account_type == AccountType.DEBIT:
-                suffix = self.get_debit_suffix(line, pattern)
-                groupdict["suffix"] = suffix
 
             if self.statement_config.multiline_transactions and idx < len(lines) - 1:
                 description = self.get_multiline_description(line, lines, idx, pattern)
@@ -173,40 +167,6 @@ class Statement:
 
         return groupdict[StatementFields.DESCRIPTION]
 
-    def get_debit_suffix(self, line: str, pattern: re.Pattern):
-        """
-        Gets the accounting suffix for debit card statements
-
-        This is necessary, since the amount in the row does not have any
-        identifier apart from column position.
-        """
-        if match := pattern.search(line):
-            amount = match[StatementFields.AMOUNT]
-            pos = line.find(amount)
-            withdrawal_diff = abs(pos - self.withdrawal_pos)
-            deposit_diff = abs(pos - self.deposit_pos)
-            if withdrawal_diff > deposit_diff:
-                return "CR"
-            return "DR"
-        return None
-
-    @cached_property
-    def prev_month_balance(self) -> Transaction | None:
-        """
-        Returns the previous month's statement balance as a transaction,
-        if it exists in the statement.
-
-        The date is later replaced with a more accurate date by the statement processor.
-        """
-        if prev_balance_pattern := self.statement_config.prev_balance_pattern:
-            raw_text = self.pages[0].raw_text + self.pages[1].raw_text
-            if match := re.search(prev_balance_pattern, raw_text):
-                groupdict = match.groupdict()
-                groupdict[StatementFields.TRANSACTION_DATE] = "1900-01-01"
-                return Transaction(**groupdict)  # type: ignore
-            logger.debug("Unable to find previous month's balance")
-        return None
-
     @cached_property
     def statement_date(self) -> datetime:
         config = self.statement_config
@@ -221,9 +181,6 @@ class Statement:
         if config and config.debit_account_identifier:
             for line in self.pages[0].lines:
                 if re.search(config.debit_account_identifier, line):
-                    header = line.lower()
-                    self.withdrawal_pos = header.find("withdrawal")
-                    self.deposit_pos = header.find("deposit")
                     return AccountType.DEBIT
         return AccountType.CREDIT
 

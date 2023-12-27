@@ -42,7 +42,7 @@ class SharedPatterns(StrEnum):
     AMOUNT = r"(?P<amount>[\d.,]+)\s*"
     AMOUNT_EXTENDED = r"(?P<amount>[\d.,]+|\([\d.,\s]+\)$)\s*(?P<suffix>CR|DR)?$"
     AMOUNT_EXTENDED_WITHOUT_EOL = (
-        r"(?P<amount>[\d.,]+|\([\d.,\s]+\)$)\s*(?P<suffix>CR|DR)?"
+        r"(?P<amount>[\d.,]+|\([\d.,\s]+\))\s*(?P<suffix>CR|DR)?"
     )
     AMOUNT_WITH_CASHBACK = r"(?P<amount>[\d.,]+|\([\d.,\s]+\))$"
     BALANCE = r"(?:(?P<balance>[\d.,]+)\s*)?$"
@@ -112,14 +112,14 @@ class DebitTransactionPatterns(StrEnum):
     DBS = (
         SharedPatterns.TRANSACTION_DATE_ABBREVIATED_PROPER_CASE
         + SharedPatterns.DESCRIPTION
-        + SharedPatterns.AMOUNT
+        + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
         + SharedPatterns.BALANCE
     )
     OCBC = (
         SharedPatterns.TRANSACTION_DATE_ABBREVIATED_ALL_CAPS
         + r"(?P<value_date>\d{2}\s[A-Z]{3})\s+"
         + SharedPatterns.DESCRIPTION
-        + SharedPatterns.AMOUNT
+        + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
         + SharedPatterns.BALANCE
     )
 
