@@ -60,7 +60,7 @@ class StatementProcessor(PdfParser):
         if not statement.statement_date:
             raise ValueError("No statement date found")
 
-        self._perform_safety_check(statement)
+        statement.perform_safety_check()
 
         return statement
 
@@ -68,9 +68,9 @@ class StatementProcessor(PdfParser):
         self, account_type, pages: list[PdfPage]
     ) -> DebitStatement | CreditStatement:
         if account_type == AccountType.CREDIT:
-            return CreditStatement(pages, self.credit_config)
+            return CreditStatement(self.document, pages, self.credit_config)
 
-        return DebitStatement(pages, self.debit_config)  # type: ignore
+        return DebitStatement(self.document, pages, self.debit_config)  # type: ignore
 
     def _get_account_type(self, pages: list[PdfPage]) -> str:
         config = self.debit_config
@@ -79,50 +79,6 @@ class StatementProcessor(PdfParser):
                 if re.search(config.debit_account_identifier, line):
                     return AccountType.DEBIT
         return AccountType.CREDIT
-
-    def _perform_safety_check(self, statement: Statement) -> bool:
-        """Checks that the total sum of all transactions is present
-        somewhere within the document
-
-        Text is re-extracted from the page, as some bank-specific bounding-box
-        configurations (e.g. HSBC) may preclude the total from being extracted
-
-        Returns `False` if the total does not exist in the document.
-        """
-        numbers = set()
-        df = statement.df
-        amount = StatementFields.AMOUNT
-        warning_message = (
-            "Safety check failed - transactions may be missing or inaccurate"
-        )
-        for page in self.document:
-            lines = page.get_textpage().extractText().split("\n")
-            numbers.update(statement.get_decimal_numbers(lines))
-
-        total_amount = abs(round(df[amount].sum(), 2))
-
-        if statement.account_type == AccountType.DEBIT:
-            logger.debug(
-                "Total amount %s cannot be found in document - %s",
-                total_amount,
-                "checking to see if debit/credit sum is present in document",
-            )
-            debit_sum = round(abs(df[df[amount] > 0][amount].sum()), 2)
-            credit_sum = round(abs(df[df[amount] < 0][amount].sum()), 2)
-            result = (debit_sum in numbers) == (credit_sum in numbers)
-            if not result:
-                logger.warning(warning_message)
-
-        # handling for credit statement
-        else:
-            result = total_amount in numbers
-            if not result:
-                logger.warning(
-                    "%s: total amount %s cannot be found in document",
-                    warning_message,
-                    total_amount,
-                )
-        return result
 
     def transform(self, statement: Statement) -> DataFrame:
         logger.debug("Running transformation functions on DataFrame")

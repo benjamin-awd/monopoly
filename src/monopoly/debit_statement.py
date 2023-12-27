@@ -2,6 +2,8 @@ import logging
 import re
 from functools import cached_property
 
+import fitz
+
 from monopoly.config import DebitStatementConfig
 from monopoly.constants import StatementFields
 from monopoly.pdf import PdfPage
@@ -17,10 +19,11 @@ class DebitStatement(Statement):
 
     def __init__(
         self,
+        document: fitz.Document,
         pages: list[PdfPage],
         debit_config: DebitStatementConfig,
     ):
-        super().__init__(pages, None, debit_config)  # type: ignore
+        super().__init__(document, pages, None, debit_config)  # type: ignore
 
     def _process_line(
         self,
@@ -80,3 +83,26 @@ class DebitStatement(Statement):
         if self.debit_header:
             return self.debit_header.find("deposit")
         raise ValueError("Debit header missing")
+
+    def perform_safety_check(self) -> bool:
+        """
+        Checks that debit and credit transaction sums
+        exist as a number within the statement
+        """
+        df = self.df
+        amount = StatementFields.AMOUNT
+
+        numbers = self.get_all_numbers_from_document()
+
+        # add a zero, for cases where the debit statement
+        # either is completely debit or credit transactions
+        numbers.update([0])
+
+        debit_sum = round(abs(df[df[amount] > 0][amount].sum()), 2)
+        credit_sum = round(abs(df[df[amount] < 0][amount].sum()), 2)
+        result = (debit_sum in numbers) == (credit_sum in numbers)
+
+        if not result:
+            logger.warning(self.warning_message)
+
+        return result

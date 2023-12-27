@@ -7,9 +7,9 @@ from pandas.testing import assert_frame_equal
 from test_utils.skip import skip_if_encrypted
 
 from monopoly.constants import StatementFields
+from monopoly.debit_statement import DebitStatement
 from monopoly.processors import Dbs, Ocbc
 from monopoly.processors.base import ProcessorBase
-from monopoly.statement import Statement
 
 
 @skip_if_encrypted
@@ -34,7 +34,7 @@ def test_bank_debit_statements(
     expected_transformed_data = pd.read_csv(test_directory / "transformed.csv")
 
     # Check extracted data is correct
-    statement: Statement = processor.extract()
+    statement: DebitStatement = processor.extract()
 
     df = statement.df
     amount = StatementFields.AMOUNT
@@ -46,7 +46,7 @@ def test_bank_debit_statements(
     assert debit_sum == expected_debit_sum
     assert credit_sum == expected_credit_sum
     assert statement.statement_date == statement_date
-    assert processor._perform_safety_check(statement)
+    assert statement.perform_safety_check()
 
     # Check transformed data is correct
     transformed_df = processor.transform(statement)

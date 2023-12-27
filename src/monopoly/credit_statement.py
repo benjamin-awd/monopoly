@@ -2,6 +2,8 @@ import logging
 import re
 from functools import cached_property
 
+import fitz
+
 from monopoly.config import CreditStatementConfig
 from monopoly.constants import AccountType, StatementFields
 from monopoly.pdf import PdfPage
@@ -17,10 +19,11 @@ class CreditStatement(Statement):
 
     def __init__(
         self,
+        document: fitz.Document,
         pages: list[PdfPage],
         credit_config: CreditStatementConfig,
     ):
-        super().__init__(pages, credit_config, debit_config=None)
+        super().__init__(document, pages, credit_config, None)
 
     @cached_property
     def prev_month_balance(self) -> Transaction | None:
@@ -57,3 +60,28 @@ class CreditStatement(Statement):
     def transactions(self) -> list[Transaction]:
         transactions = self._inject_prev_month_balance(super().transactions)
         return transactions
+
+    def perform_safety_check(self) -> bool:
+        """Checks that the total sum of all transactions is present
+        somewhere within the document
+
+        Text is re-extracted from the page, as some bank-specific bounding-box
+        configurations (e.g. HSBC) may preclude the total from being extracted
+
+        Returns `False` if the total does not exist in the document.
+        """
+        df = self.df
+        amount = StatementFields.AMOUNT
+        numbers = self.get_all_numbers_from_document()
+
+        total_amount = abs(round(df[amount].sum(), 2))
+
+        result = total_amount in numbers
+        if not result:
+            logger.warning(
+                "%s: total amount %s cannot be found in document",
+                self.warning_message,
+                total_amount,
+            )
+
+        return result

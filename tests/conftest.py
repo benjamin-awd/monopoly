@@ -6,6 +6,8 @@ import pytest
 
 from monopoly.config import StatementConfig
 from monopoly.constants import AccountType, BankNames
+from monopoly.credit_statement import CreditStatement
+from monopoly.debit_statement import DebitStatement
 from monopoly.pdf import PdfPage, PdfParser
 from monopoly.processor import StatementProcessor
 from monopoly.processors import Citibank, Dbs, Hsbc, Ocbc, StandardChartered
@@ -65,12 +67,37 @@ def parser():
 
 
 @pytest.fixture(scope="function")
+def credit_statement(monkeypatch, statement_config):
+    monkeypatch.setattr("monopoly.processor.Statement.df", None)
+    mock_page = mock.Mock(spec=PdfPage)
+    mock_page.lines = ["foo\nbar"]
+    statement = CreditStatement(
+        document=None, pages=[mock_page], credit_config=statement_config
+    )
+    yield statement
+
+
+@pytest.fixture(scope="function")
+def debit_statement(monkeypatch, statement_config):
+    monkeypatch.setattr("monopoly.processor.Statement.df", None)
+    mock_page = mock.Mock(spec=PdfPage)
+    mock_page.lines = ["foo\nbar"]
+    statement = DebitStatement(
+        document=None, pages=[mock_page], debit_config=statement_config
+    )
+    yield statement
+
+
+@pytest.fixture(scope="function")
 def statement(monkeypatch, statement_config):
     monkeypatch.setattr("monopoly.processor.Statement.df", None)
     mock_page = mock.Mock(spec=PdfPage)
     mock_page.lines = ["foo\nbar"]
     statement = Statement(
-        pages=[mock_page], credit_config=statement_config, debit_config=None
+        document=None,
+        pages=[mock_page],
+        credit_config=statement_config,
+        debit_config=None,
     )
     yield statement
 
