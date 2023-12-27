@@ -22,7 +22,6 @@ class StatementProcessor(PdfParser):
     debit_config: Optional[DebitStatementConfig]
     pdf_config: Optional[PdfConfig] = None
     parser: Optional[PdfParser] = None
-    safety_check_enabled: bool = True
     """
     Handles extract, transform and load (ETL) logic for bank statements
 
@@ -39,7 +38,6 @@ class StatementProcessor(PdfParser):
             "credit_config",
             "debit_config",
             "pdf_config",
-            "safety_check_enabled",
         ]
 
         for key, value in kwargs.items():
@@ -62,8 +60,7 @@ class StatementProcessor(PdfParser):
         if not statement.statement_date:
             raise ValueError("No statement date found")
 
-        if self.safety_check_enabled:
-            self._perform_safety_check(statement)
+        self._perform_safety_check(statement)
 
         return statement
 

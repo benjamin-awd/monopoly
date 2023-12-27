@@ -22,7 +22,6 @@ class ProcessorBase(StatementProcessor):
 
         # optional config
         self.pdf_config = getattr(self, "pdf_config", PdfConfig())
-        self.safety_check_enabled = getattr(self, "safety_check_enabled", True)
 
         # this allows the user to override the default pydantic password
         # and supply their own password via the bank subclasses
@@ -35,7 +34,6 @@ class ProcessorBase(StatementProcessor):
         super().__init__(
             credit_config=self.credit_config,
             debit_config=self.debit_config,
-            safety_check_enabled=self.safety_check_enabled,
             pdf_config=self.pdf_config,
             file_path=file_path,
         )

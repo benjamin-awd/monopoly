@@ -8,7 +8,6 @@ from monopoly.statement import Statement
 class MockProcessor(ProcessorBase):
     credit_config = None
     debit_config = None
-    safety_check_enabled = True
 
 
 def test_safety_check(statement: Statement):
