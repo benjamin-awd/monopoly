@@ -15,7 +15,8 @@ class ExampleBankProcessor(ProcessorBase):
         ),
         transaction_pattern=(
             r"(?P<transaction_date>\d+/\d+)\s*"
-            r"(?P<description>.*?)\s*" + SharedPatterns.AMOUNT
+            + SharedPatterns.DESCRIPTION
+            + SharedPatterns.AMOUNT_EXTENDED
         ),
         transaction_date_format=r"%d/%m",
     )

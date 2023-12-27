@@ -106,18 +106,16 @@ class StatementProcessor(PdfParser):
             credit_sum = round(abs(df[df[amount] < 0][amount].sum()), 2)
             result = (debit_sum in numbers) == (credit_sum in numbers)
             if not result:
-                logger.warning(msg=warning_message)
+                logger.warning(warning_message)
 
         # handling for credit statement
         else:
             result = total_amount in numbers
             if not result:
                 logger.warning(
-                    msg=(
-                        warning_message,
-                        "Total amount %s cannot be found in document",
-                    ),
-                    args=total_amount,
+                    "%s: total amount %s cannot be found in document",
+                    warning_message,
+                    total_amount,
                 )
         return result
 
