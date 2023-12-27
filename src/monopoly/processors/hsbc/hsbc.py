@@ -1,6 +1,6 @@
 import logging
 
-from monopoly.config import PdfConfig, StatementConfig, settings
+from monopoly.config import CreditStatementConfig, PdfConfig, settings
 from monopoly.constants import (
     BankNames,
     CreditTransactionPatterns,
@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 class Hsbc(ProcessorBase):
-    credit_config = StatementConfig(
+    credit_config = CreditStatementConfig(
         bank_name=BankNames.HSBC,
         statement_date_pattern=r"Statement From (\d{2}\s[A-Z]{3}\s\d{4}) to",
         prev_balance_pattern=StatementBalancePatterns.HSBC,
