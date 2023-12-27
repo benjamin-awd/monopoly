@@ -1,6 +1,6 @@
 import logging
 
-from monopoly.config import PdfConfig, StatementConfig, settings
+from monopoly.config import CreditStatementConfig, PdfConfig, settings
 from monopoly.constants import (
     BankNames,
     CreditTransactionPatterns,
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 class Citibank(ProcessorBase):
-    credit_config = StatementConfig(
+    credit_config = CreditStatementConfig(
         bank_name=BankNames.CITIBANK,
         statement_date_pattern=r"Statement\sDate\s+(.*)",
         statement_date_format=r"%B %d, %Y",

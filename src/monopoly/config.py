@@ -4,7 +4,7 @@ from pydantic import StringConstraints
 from pydantic.dataclasses import dataclass
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from monopoly.constants import BankNames
+from monopoly.constants import AccountType, BankNames
 
 
 class Settings(BaseSettings):
@@ -55,6 +55,18 @@ class StatementConfig:
     # Convert enums to strings
     def __post_init__(self):
         self.bank_name = self.bank_name.value
+
+
+@dataclass
+class DebitStatementConfig(StatementConfig):
+    statement_type = AccountType.DEBIT
+    debit_account_identifier: Optional[str] = None
+
+
+@dataclass
+class CreditStatementConfig(StatementConfig):
+    statement_type = AccountType.CREDIT
+    prev_balance_pattern: Optional[str] = None
 
 
 @dataclass
