@@ -60,6 +60,12 @@ class ProcessorBase(StatementProcessor):
 
     @cached_property
     def debit_header(self) -> str | None:
+        """Returns the 'header' line of the debit statement
+
+        Used to determine whether a statement is a debit statement, and also
+        determine whether transactions in a debit statement should be treated as a
+        debit or credit entry
+        """
         if self.debit_config and self.debit_config.debit_statement_identifier:
             for line in self.pages[0].lines:
                 if re.search(self.debit_config.debit_statement_identifier, line):
@@ -68,6 +74,10 @@ class ProcessorBase(StatementProcessor):
 
     @staticmethod
     def get_identifiers(parser: PdfParser) -> list[Any]:
+        """Retrives encryption and metadata identifiers from a bank statement PDF
+
+        Used to automatically select the correct bank processing class
+        """
         identifiers = []
         # pylint: disable=protected-access
         if parser.extractor.encrypt_dict:
