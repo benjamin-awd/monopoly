@@ -2,14 +2,13 @@ import logging
 from datetime import datetime
 from pathlib import Path
 
-import fitz
 from pandas import DataFrame
 
 from monopoly.config import CreditStatementConfig, DebitStatementConfig
-from monopoly.constants import AccountType, StatementFields
+from monopoly.constants import StatementFields
 from monopoly.credit_statement import CreditStatement
 from monopoly.debit_statement import DebitStatement
-from monopoly.pdf import PdfPage, PdfParser
+from monopoly.pdf import PdfParser
 from monopoly.statement import Statement
 from monopoly.write import generate_name
 
@@ -27,22 +26,22 @@ class StatementProcessor:
 
     credit_config: CreditStatementConfig
     debit_config: DebitStatementConfig
-    pages: list[PdfPage]
-    document: fitz.Document
-    statement_type: str
+    statement: CreditStatement | DebitStatement
 
     def __init__(
         self,
         file_path: Path,
         parser: PdfParser,
+        statement: CreditStatement | DebitStatement,
     ):
         self.file_path = file_path
         self.parser = parser
+        self.statement = statement
 
     def extract(self) -> CreditStatement | DebitStatement:
         """Extracts transactions from the statement, and performs
         a safety check to make sure that total transactions add up"""
-        statement = self._get_statement()
+        statement = self.statement
 
         if not statement.transactions:
             raise ValueError("No transactions found - statement extraction failed")
@@ -53,12 +52,6 @@ class StatementProcessor:
         statement.perform_safety_check()
 
         return statement
-
-    def _get_statement(self) -> DebitStatement | CreditStatement:
-        if self.statement_type == AccountType.CREDIT:
-            return CreditStatement(self.document, self.pages, self.credit_config)
-
-        return DebitStatement(self.document, self.pages, self.debit_config)
 
     def transform(self, statement: Statement) -> DataFrame:
         logger.debug("Running transformation functions on DataFrame")
@@ -83,15 +76,20 @@ class StatementProcessor:
         df[StatementFields.TRANSACTION_DATE] = df.apply(convert_date, axis=1)
         return df
 
-    def load(self, df: DataFrame, statement: Statement, output_directory: Path):
+    def load(
+        self,
+        df: DataFrame,
+        statement: CreditStatement | DebitStatement,
+        output_directory: Path,
+    ):
         if isinstance(output_directory, str):
             output_directory = Path(output_directory)
 
         filename = generate_name(
             file_path=self.file_path,
             format_type="file",
-            config=statement.statement_config,
-            statement_type=self.statement_type,
+            statement_config=statement.statement_config,
+            statement_type=statement.statement_type,
             statement_date=statement.statement_date,
         )
 

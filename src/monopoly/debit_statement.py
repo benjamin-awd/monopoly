@@ -5,7 +5,7 @@ from functools import cached_property
 import fitz
 
 from monopoly.config import DebitStatementConfig
-from monopoly.constants import StatementFields
+from monopoly.constants import AccountType, StatementFields
 from monopoly.pdf import PdfPage
 from monopoly.statement import Statement, Transaction
 
@@ -24,6 +24,7 @@ class DebitStatement(Statement):
         debit_config: DebitStatementConfig,
     ):
         self.config = debit_config
+        self.statement_type = AccountType.DEBIT
         super().__init__(document, pages, debit_config)
 
     def _process_line(

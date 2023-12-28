@@ -24,6 +24,7 @@ class CreditStatement(Statement):
         credit_config: CreditStatementConfig,
     ):
         self.config = credit_config
+        self.statement_type = AccountType.CREDIT
         super().__init__(document, pages, credit_config)
 
     @cached_property
