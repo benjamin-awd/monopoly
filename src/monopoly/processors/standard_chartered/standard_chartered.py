@@ -23,8 +23,6 @@ class StandardChartered(ProcessorBase):
         transaction_date_format="%d %b",
     )
 
-    debit_config = None
-
     pdf_config = PdfConfig(
         passwords=settings.standard_chartered_pdf_passwords,
         page_range=(0, -1),

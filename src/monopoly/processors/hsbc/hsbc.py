@@ -25,8 +25,6 @@ class Hsbc(ProcessorBase):
         multiline_transactions=True,
     )
 
-    debit_config = None
-
     pdf_config = PdfConfig(
         passwords=settings.hsbc_pdf_passwords,
         page_bbox=(0, 0, 379, 842),
