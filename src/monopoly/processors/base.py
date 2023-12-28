@@ -12,7 +12,12 @@ from monopoly.statements import CreditStatement, DebitStatement
 
 class ProcessorBase(StatementProcessor):
     """Helper class to handle initialization of common variables
-    that are shared between bank processor classes"""
+    that are shared between bank processor classes
+
+    Also, helps to parse the statement, and create a Credit or Debit
+    Statement class object depending on whether a regex match is found
+    for the debit_statement_identifier variable
+    """
 
     # overwritten if pdf_config exists in bank class
     pdf_config: PdfConfig = PdfConfig()
@@ -55,9 +60,9 @@ class ProcessorBase(StatementProcessor):
 
     @cached_property
     def debit_header(self) -> str | None:
-        if self.debit_config and self.debit_config.debit_account_identifier:
+        if self.debit_config and self.debit_config.debit_statement_identifier:
             for line in self.pages[0].lines:
-                if re.search(self.debit_config.debit_account_identifier, line):
+                if re.search(self.debit_config.debit_statement_identifier, line):
                     return line.lower()
         return None
 

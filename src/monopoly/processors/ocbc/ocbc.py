@@ -34,7 +34,7 @@ class Ocbc(ProcessorBase):
         bank_name=BankNames.OCBC,
         statement_date_pattern=r"(\d+\s[A-Za-z]{3}\s\d{4})",
         statement_date_format=r"%d %b %Y",
-        debit_account_identifier=r"(Withdrawal.*Deposit.*Balance)",
+        debit_statement_identifier=r"(Withdrawal.*Deposit.*Balance)",
         transaction_pattern=DebitTransactionPatterns.OCBC,
         transaction_date_format="%d %b",
         multiline_transactions=True,
