@@ -20,7 +20,7 @@ def generate_hash(file_path: Path) -> str:
 def generate_name(
     file_path: Path,
     format_type: str,
-    config: StatementConfig,
+    statement_config: StatementConfig,
     statement_type: str,
     statement_date: datetime,
 ) -> str:
@@ -33,7 +33,7 @@ def generate_name(
     The appeneded UUID ensures that two statements from the same bank in a
     month will not overwrite each other.
     """
-    bank_name = config.bank_name
+    bank_name = statement_config.bank_name
     year = statement_date.year
     month = statement_date.month
     file_uuid = generate_hash(file_path)

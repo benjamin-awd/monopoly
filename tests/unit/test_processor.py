@@ -42,7 +42,7 @@ def test_load(
     mock_generate_name.assert_called_once_with(
         file_path=Path("foo"),
         format_type="file",
-        config=credit_statement.statement_config,
+        statement_config=credit_statement.statement_config,
         statement_type=AccountType.CREDIT,
         statement_date=datetime(2023, 1, 1),
     )
