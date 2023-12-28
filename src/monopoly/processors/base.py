@@ -3,7 +3,7 @@ from functools import cached_property
 from pathlib import Path
 from typing import Any, Optional
 
-from monopoly.config import PdfConfig, CreditStatementConfig, DebitStatementConfig
+from monopoly.config import CreditStatementConfig, DebitStatementConfig, PdfConfig
 from monopoly.constants import AccountType, EncryptionIdentifier, MetadataIdentifier
 from monopoly.pdf import PdfParser
 from monopoly.processor import StatementProcessor
@@ -33,6 +33,7 @@ class ProcessorBase(StatementProcessor):
 
         self.pages = parser.get_pages()
         self.document = parser.document
+        self.statement_type = self.get_statement_type()
 
         if isinstance(file_path, str):
             file_path = Path(file_path)
@@ -48,8 +49,9 @@ class ProcessorBase(StatementProcessor):
             return self.debit_config
         return self.credit_config
 
-    @cached_property
-    def statement_type(self) -> str:
+    def get_statement_type(self) -> str:
+        if not hasattr(self, "debit_config"):
+            return AccountType.CREDIT
         if self.debit_header and self.debit_config:
             return AccountType.DEBIT
         return AccountType.CREDIT

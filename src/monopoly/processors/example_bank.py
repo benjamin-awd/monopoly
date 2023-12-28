@@ -21,8 +21,6 @@ class ExampleBankProcessor(ProcessorBase):
         transaction_date_format=r"%d/%m",
     )
 
-    debit_config = None
-
     identifiers = [
         MetadataIdentifier(
             creator="Adobe Acrobat 23.3", producer="Adobe Acrobat Pro (64-bit)"

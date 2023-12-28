@@ -23,8 +23,6 @@ class Citibank(ProcessorBase):
         transaction_date_format="%d %b",
     )
 
-    debit_config = None
-
     pdf_config = PdfConfig(
         passwords=settings.citibank_pdf_passwords,
         page_bbox=(20, 0, 595, 840),

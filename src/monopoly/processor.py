@@ -1,12 +1,11 @@
 import logging
-import re
 from datetime import datetime
 from pathlib import Path
 
 import fitz
 from pandas import DataFrame
 
-from monopoly.config import CreditStatementConfig, DebitStatementConfig, PdfConfig
+from monopoly.config import CreditStatementConfig, DebitStatementConfig
 from monopoly.constants import AccountType, StatementFields
 from monopoly.credit_statement import CreditStatement
 from monopoly.debit_statement import DebitStatement
@@ -26,9 +25,11 @@ class StatementProcessor:
     Transformed statements are then written to a CSV file.
     """
 
-    statement_config: CreditStatementConfig | DebitStatementConfig
+    credit_config: CreditStatementConfig
+    debit_config: DebitStatementConfig
     pages: list[PdfPage]
     document: fitz.Document
+    statement_type: str
 
     def __init__(
         self,
@@ -41,8 +42,7 @@ class StatementProcessor:
     def extract(self) -> CreditStatement | DebitStatement:
         """Extracts transactions from the statement, and performs
         a safety check to make sure that total transactions add up"""
-        account_type = self._get_account_type(self.pages)
-        statement = self._get_statement(account_type)
+        statement = self._get_statement()
 
         if not statement.transactions:
             raise ValueError("No transactions found - statement extraction failed")
@@ -54,19 +54,11 @@ class StatementProcessor:
 
         return statement
 
-    def _get_statement(self, account_type) -> DebitStatement | CreditStatement:
-        if account_type == AccountType.CREDIT:
-            return CreditStatement(self.document, self.pages, self.statement_config)
+    def _get_statement(self) -> DebitStatement | CreditStatement:
+        if self.statement_type == AccountType.CREDIT:
+            return CreditStatement(self.document, self.pages, self.credit_config)
 
-        return DebitStatement(self.document, self.pages, self.statement_config)
-
-    def _get_account_type(self, pages: list[PdfPage]) -> str:
-        config = self.statement_config
-        if config and config.debit_account_identifier:
-            for line in pages[0].lines:
-                if re.search(config.debit_account_identifier, line):
-                    return AccountType.DEBIT
-        return AccountType.CREDIT
+        return DebitStatement(self.document, self.pages, self.debit_config)
 
     def transform(self, statement: Statement) -> DataFrame:
         logger.debug("Running transformation functions on DataFrame")
