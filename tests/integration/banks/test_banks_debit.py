@@ -7,9 +7,8 @@ from pandas.testing import assert_frame_equal
 from test_utils.skip import skip_if_encrypted
 
 from monopoly.constants import StatementFields
-from monopoly.debit_statement import DebitStatement
-from monopoly.processors import Dbs, Ocbc
-from monopoly.processors.base import ProcessorBase
+from monopoly.processors import Dbs, Ocbc, ProcessorBase
+from monopoly.statements import DebitStatement
 
 
 @skip_if_encrypted

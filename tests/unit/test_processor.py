@@ -7,7 +7,7 @@ from pandas import DataFrame
 
 from monopoly.constants import AccountType
 from monopoly.processors import ExampleBankProcessor
-from monopoly.statement import Statement
+from monopoly.statements import BaseStatement
 
 
 @pytest.fixture
@@ -25,7 +25,7 @@ def mock_to_csv():
 
 
 def test_load(
-    credit_statement: Statement,
+    credit_statement: BaseStatement,
     mock_get_pages,
     mock_document,
     mock_generate_name,

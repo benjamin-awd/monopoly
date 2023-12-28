@@ -1,7 +1,7 @@
-from monopoly.statement import Statement
+from monopoly.statements import BaseStatement
 
 
-def test_get_decimal_numbers(statement: Statement):
+def test_get_decimal_numbers(statement: BaseStatement):
     lines = [
         "These are some sample lines 123.45 and 67.89",
         "Another line with a decimal number 0.56 but not here 123",

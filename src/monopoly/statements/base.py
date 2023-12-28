@@ -75,7 +75,7 @@ class Transaction:
         return self
 
 
-class Statement:
+class BaseStatement:
     """
     A dataclass representation of a bank statement, containing
     the PDF pages (their raw text representation in a `list`),

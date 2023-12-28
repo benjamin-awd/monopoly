@@ -1,4 +1,4 @@
-from monopoly.statement import Transaction
+from monopoly.statements import Transaction
 
 
 def test_transaction_handles_comma():

@@ -1,9 +1,8 @@
 import fitz
 import pandas as pd
 
-from monopoly.credit_statement import CreditStatement
-from monopoly.debit_statement import DebitStatement
 from monopoly.processors import ProcessorBase
+from monopoly.statements import CreditStatement, DebitStatement
 
 
 class MockProcessor(ProcessorBase):
