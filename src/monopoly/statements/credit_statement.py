@@ -7,12 +7,13 @@ import fitz
 from monopoly.config import CreditStatementConfig
 from monopoly.constants import AccountType, StatementFields
 from monopoly.pdf import PdfPage
-from monopoly.statement import Statement, Transaction
+
+from .base import BaseStatement, Transaction
 
 logger = logging.getLogger(__name__)
 
 
-class CreditStatement(Statement):
+class CreditStatement(BaseStatement):
     """
     A dataclass representation of a credit statement
     """

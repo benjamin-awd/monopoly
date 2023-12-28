@@ -4,7 +4,7 @@ import pytest
 
 from monopoly.pdf import PdfPage
 from monopoly.processors import Hsbc, Ocbc, ProcessorBase
-from monopoly.statement import Statement
+from monopoly.statements import BaseStatement
 
 
 @pytest.mark.parametrize(
@@ -18,7 +18,7 @@ def test_statement_date_extraction(
     bank_class: ProcessorBase,
     page_content: list[str],
     expected_date: str,
-    statement: Statement,
+    statement: BaseStatement,
 ):
     bank_name = bank_class.credit_config.bank_name
 

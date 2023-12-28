@@ -5,12 +5,10 @@ import pytest
 
 from monopoly.config import CreditStatementConfig
 from monopoly.constants import AccountType, BankNames
-from monopoly.credit_statement import CreditStatement
-from monopoly.debit_statement import DebitStatement
 from monopoly.pdf import PdfPage, PdfParser
 from monopoly.processor import StatementProcessor
 from monopoly.processors import Citibank, Dbs, Hsbc, Ocbc, StandardChartered
-from monopoly.statement import Statement
+from monopoly.statements import BaseStatement, CreditStatement, DebitStatement
 
 
 @pytest.fixture(scope="session")
@@ -81,7 +79,7 @@ def mock_document():
 @pytest.fixture(scope="function")
 def processor(statement_config):
     with patch.object(
-        Statement, "statement_date", new_callable=PropertyMock
+        BaseStatement, "statement_date", new_callable=PropertyMock
     ) as mock_statement_date:
         mock_statement_date.return_value = datetime(2023, 8, 1)
         processor = StatementProcessor(
@@ -100,7 +98,7 @@ def parser():
 
 @pytest.fixture(scope="function")
 def credit_statement(monkeypatch, statement_config):
-    monkeypatch.setattr("monopoly.processor.Statement.df", None)
+    monkeypatch.setattr("monopoly.statements.base.BaseStatement.df", None)
     mock_page = Mock(spec=PdfPage)
     mock_page.lines = ["foo\nbar"]
     statement = CreditStatement(
@@ -111,7 +109,7 @@ def credit_statement(monkeypatch, statement_config):
 
 @pytest.fixture(scope="function")
 def debit_statement(monkeypatch, statement_config):
-    monkeypatch.setattr("monopoly.processor.Statement.df", None)
+    monkeypatch.setattr("monopoly.statements.base.BaseStatement.df", None)
     mock_page = Mock(spec=PdfPage)
     mock_page.lines = ["foo\nbar"]
     statement = DebitStatement(
@@ -122,10 +120,10 @@ def debit_statement(monkeypatch, statement_config):
 
 @pytest.fixture(scope="function")
 def statement(monkeypatch, statement_config):
-    monkeypatch.setattr("monopoly.processor.Statement.df", None)
+    monkeypatch.setattr("monopoly.statements.base.BaseStatement.df", None)
     mock_page = MagicMock(spec=PdfPage)
     mock_page.lines = ["foo\nbar"]
-    statement = Statement(
+    statement = BaseStatement(
         pages=[mock_page],
         document=None,
         statement_config=statement_config,

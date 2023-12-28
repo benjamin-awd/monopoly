@@ -5,10 +5,9 @@ from typing import Any, Optional
 
 from monopoly.config import CreditStatementConfig, DebitStatementConfig, PdfConfig
 from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
-from monopoly.credit_statement import CreditStatement
-from monopoly.debit_statement import DebitStatement
 from monopoly.pdf import PdfParser
 from monopoly.processor import StatementProcessor
+from monopoly.statements import CreditStatement, DebitStatement
 
 
 class ProcessorBase(StatementProcessor):

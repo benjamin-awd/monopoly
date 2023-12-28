@@ -1,9 +1,9 @@
 from monopoly.constants import CreditTransactionPatterns
 from monopoly.pdf import PdfPage
-from monopoly.statement import Statement, Transaction
+from monopoly.statements import BaseStatement, Transaction
 
 
-def test_statement_process_refund(statement: Statement):
+def test_statement_process_refund(statement: BaseStatement):
     page_content = (
         "08 SEP  AIRBNB * FOO123  456 GB  (343.01)\n"
         "14 AUG  AIRBNB * FOO123  456 GB  343.01\n"

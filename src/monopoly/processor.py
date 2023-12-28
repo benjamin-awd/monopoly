@@ -6,10 +6,8 @@ from pandas import DataFrame
 
 from monopoly.config import CreditStatementConfig, DebitStatementConfig
 from monopoly.constants import StatementFields
-from monopoly.credit_statement import CreditStatement
-from monopoly.debit_statement import DebitStatement
 from monopoly.pdf import PdfParser
-from monopoly.statement import Statement
+from monopoly.statements import CreditStatement, DebitStatement
 from monopoly.write import generate_name
 
 logger = logging.getLogger(__name__)
@@ -53,7 +51,7 @@ class StatementProcessor:
 
         return statement
 
-    def transform(self, statement: Statement) -> DataFrame:
+    def transform(self, statement: CreditStatement | DebitStatement) -> DataFrame:
         logger.debug("Running transformation functions on DataFrame")
 
         df = statement.df
