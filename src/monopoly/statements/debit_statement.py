@@ -69,9 +69,9 @@ class DebitStatement(BaseStatement):
 
     @cached_property
     def debit_header(self) -> str | None:
-        if self.config and self.config.debit_account_identifier:
+        if self.config and self.config.debit_statement_identifier:
             for line in self.pages[0].lines:
-                if re.search(self.config.debit_account_identifier, line):
+                if re.search(self.config.debit_statement_identifier, line):
                     return line.lower()
         return None
 

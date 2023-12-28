@@ -141,6 +141,6 @@ def statement_config():
         transaction_date_format=r"%d/%m",
         statement_date_pattern="",
         prev_balance_pattern="foo",
-        debit_account_identifier="debitidentifier123",
+        debit_statement_identifier="debitidentifier123",
     )
     yield statement_config

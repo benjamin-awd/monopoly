@@ -32,7 +32,7 @@ class Dbs(ProcessorBase):
         statement_date_format=r"%d %b %Y",
         transaction_date_format=r"%d %b",
         multiline_transactions=True,
-        debit_account_identifier=r"(WITHDRAWAL.*DEPOSIT.*BALANCE)",
+        debit_statement_identifier=r"(WITHDRAWAL.*DEPOSIT.*BALANCE)",
         transaction_pattern=DebitTransactionPatterns.DBS,
     )
 

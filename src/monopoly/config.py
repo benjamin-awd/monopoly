@@ -24,7 +24,8 @@ class Settings(BaseSettings):
 @dataclass
 class StatementConfig:
     """
-    Dataclass storing configuration values for debit and credit card statements
+    Base configuration class storing configuration values for debit and
+    credit card statements
 
     - `transaction_pattern` refers to the regex pattern used to capture transactions,
     where a pattern like:
@@ -37,10 +38,8 @@ class StatementConfig:
     for transactions. For example, "%d/%m" will match 06/07
     - `multiline_transactions` controls whether Monopoly tries to concatenate
     transactions that are split across two lines
-    - `debit_account_identifier` is a regex pattern that is used to determine whether
+    - `debit_statement_identifier` is a regex pattern that is used to determine whether
     a statement from a bank is a debit or credit card statement.
-    - `prev_balance_pattern` is a regex pattern used to match the previous balance
-    line in a bank statement, which is later converted into a transaction.
     """
 
     bank_name: BankNames
@@ -49,16 +48,25 @@ class StatementConfig:
     statement_date_pattern: str
     statement_date_format: Annotated[str, StringConstraints(pattern="%.+%.+%")]
     multiline_transactions: bool = False
-    debit_account_identifier: Optional[str] = None
+    debit_statement_identifier: Optional[str] = None
 
 
 @dataclass
 class DebitStatementConfig(StatementConfig):
-    pass
+    """
+    Dataclass storing configuration values unique to debit statements
+    """
 
 
 @dataclass
 class CreditStatementConfig(StatementConfig):
+    """
+    Dataclass storing configuration values unique to credit statements
+
+    - `prev_balance_pattern` is a regex pattern used to match the previous balance
+    line in a credit statements, which is then treated as a transaction.
+    """
+
     prev_balance_pattern: Optional[str] = None
 
 
