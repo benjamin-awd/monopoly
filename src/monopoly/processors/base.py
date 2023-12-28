@@ -13,11 +13,9 @@ class ProcessorBase(StatementProcessor):
     """Helper class to handle initialization of common variables
     that are shared between bank processor classes"""
 
-    identifiers: list[EncryptionIdentifier | MetadataIdentifier]
-    credit_config: CreditStatementConfig
-    debit_config: DebitStatementConfig
+    # overwritten if pdf_config exists in bank class
     pdf_config: PdfConfig = PdfConfig()
-    passwords: Optional[list[str]] = None
+    identifiers: list[EncryptionIdentifier | MetadataIdentifier]
 
     def __init__(
         self,
