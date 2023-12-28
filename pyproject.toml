@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "monopoly-sg"
-version = "0.5.0"
+version = "0.6.0"
 description = "PDF parsing for Singaporean banks"
 repository = "https://github.com/benjamin-awd/monopoly"
 authors = ["benjamin-awd <benjamindornel@gmail.com>"]
