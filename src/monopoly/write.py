@@ -50,7 +50,7 @@ def generate_name(
             f"account_type={statement_type}/"
             f"year={year}/"
             f"month={month}/"
-            f"filename"
+            f"{filename}"
         )
 
     if format_type == "file":
