@@ -40,5 +40,22 @@ def test_debit_safety_check(debit_statement: DebitStatement):
     debit_statement.df = pd.DataFrame(data={"amount": [11.5, 20.0, -2.5]})
 
     # the safety check should return True, since the total amount of 31.50
-    # is present in the text
+    # is present as a credit sum
     assert debit_statement.perform_safety_check()
+
+
+def test_debit_safety_check_failure(debit_statement: DebitStatement):
+    document = fitz.Document()
+    page = document.new_page()
+    text = "Page 1\n3\nfoo\n02 May\n-999\n27 Apr\n456\nrandom transaction 123"
+    page.lines = text.split("\n")
+    page.insert_text(point=(0, 0), text=text)
+    debit_statement.pages[0] = page
+
+    debit_statement.document = document
+
+    debit_statement.df = pd.DataFrame(data={"amount": [11.5, 20.0, -2.5]})
+
+    # the safety check should return False, since the debit sum and credit sum
+    # is not present as a number
+    assert not debit_statement.perform_safety_check()
