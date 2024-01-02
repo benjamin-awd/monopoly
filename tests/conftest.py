@@ -97,45 +97,33 @@ def parser():
     yield parser
 
 
-@pytest.fixture(scope="function")
-def credit_statement(monkeypatch, statement_config):
+def setup_statement_fixture(
+    statement_cls: BaseStatement | DebitStatement | CreditStatement,
+    monkeypatch,
+    statement_config,
+):
     monkeypatch.setattr("monopoly.statements.base.BaseStatement.df", None)
     mock_page = Mock(spec=PdfPage)
     mock_page.lines = ["foo\nbar"]
     document = MagicMock(spec=fitz.Document)
     document.name = "mock_document.pdf"
-    statement = CreditStatement(
-        document=document, pages=[mock_page], credit_config=statement_config
-    )
+    statement = statement_cls(document, [mock_page], statement_config)
     yield statement
+
+
+@pytest.fixture(scope="function")
+def credit_statement(monkeypatch, statement_config):
+    yield from setup_statement_fixture(CreditStatement, monkeypatch, statement_config)
 
 
 @pytest.fixture(scope="function")
 def debit_statement(monkeypatch, statement_config):
-    monkeypatch.setattr("monopoly.statements.base.BaseStatement.df", None)
-    mock_page = Mock(spec=PdfPage)
-    mock_page.lines = ["foo\nbar"]
-    document = MagicMock(spec=fitz.Document)
-    document.name = "mock_document.pdf"
-    statement = DebitStatement(
-        document=document, pages=[mock_page], debit_config=statement_config
-    )
-    yield statement
+    yield from setup_statement_fixture(DebitStatement, monkeypatch, statement_config)
 
 
 @pytest.fixture(scope="function")
 def statement(monkeypatch, statement_config):
-    monkeypatch.setattr("monopoly.statements.base.BaseStatement.df", None)
-    mock_page = MagicMock(spec=PdfPage)
-    mock_page.lines = ["foo\nbar"]
-    document = MagicMock(spec=fitz.Document)
-    document.name = "mock_document.pdf"
-    statement = BaseStatement(
-        pages=[mock_page],
-        document=document,
-        statement_config=statement_config,
-    )
-    yield statement
+    yield from setup_statement_fixture(BaseStatement, monkeypatch, statement_config)
 
 
 @pytest.fixture(scope="session")
