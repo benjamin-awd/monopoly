@@ -103,7 +103,8 @@ class DebitStatement(BaseStatement):
 
         debit_sum = round(abs(df[df[amount] > 0][amount].sum()), 2)
         credit_sum = round(abs(df[df[amount] < 0][amount].sum()), 2)
-        result = (debit_sum in numbers) == (credit_sum in numbers)
+
+        result = all([debit_sum in numbers, credit_sum in numbers])
 
         if not result:
             logger.warning(self.warning_message)
