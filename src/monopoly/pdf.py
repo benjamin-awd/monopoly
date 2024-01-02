@@ -85,12 +85,20 @@ class PdfParser:
             logger.debug("Removing vertical text")
             page = self._remove_vertical_text(page)
 
-        # garbage=2 needs to be set so that duplicate objects are merged
-        # this prevents pdftotext from failing due to missing xrefs/null values
-        pdf_byte_stream = BytesIO(document.tobytes(garbage=2))
-        pdf = pdftotext.PDF(pdf_byte_stream, physical=True)
+        # certain statements require garbage collection, so that duplicate objects
+        # do not cause pdftotext to fail due to missing xrefs/null values
+        # however, setting `garbage=2` may cause issues with other statements
+        # so an initial attempt should be made to run using `garbage=0`
+        garbage_values = [0, 2]
 
-        return [PdfPage(page) for page in pdf]
+        for garbage in garbage_values:
+            try:
+                pdf_byte_stream = BytesIO(document.tobytes(garbage=garbage))
+                pdf = pdftotext.PDF(pdf_byte_stream, physical=True)
+                return [PdfPage(page) for page in pdf]
+            except pdftotext.Error:
+                continue
+        raise RuntimeError("Unable to retrieve pages")
 
     @cached_property
     def document(self) -> fitz.Document:
