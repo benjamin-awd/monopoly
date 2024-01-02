@@ -1,6 +1,7 @@
 from datetime import datetime
 from unittest.mock import MagicMock, Mock, PropertyMock, patch
 
+import fitz
 import pytest
 
 from monopoly.config import CreditStatementConfig
@@ -101,8 +102,10 @@ def credit_statement(monkeypatch, statement_config):
     monkeypatch.setattr("monopoly.statements.base.BaseStatement.df", None)
     mock_page = Mock(spec=PdfPage)
     mock_page.lines = ["foo\nbar"]
+    document = MagicMock(spec=fitz.Document)
+    document.name = "mock_document.pdf"
     statement = CreditStatement(
-        document=None, pages=[mock_page], credit_config=statement_config
+        document=document, pages=[mock_page], credit_config=statement_config
     )
     yield statement
 
@@ -112,8 +115,10 @@ def debit_statement(monkeypatch, statement_config):
     monkeypatch.setattr("monopoly.statements.base.BaseStatement.df", None)
     mock_page = Mock(spec=PdfPage)
     mock_page.lines = ["foo\nbar"]
+    document = MagicMock(spec=fitz.Document)
+    document.name = "mock_document.pdf"
     statement = DebitStatement(
-        document=None, pages=[mock_page], debit_config=statement_config
+        document=document, pages=[mock_page], debit_config=statement_config
     )
     yield statement
 
@@ -123,9 +128,11 @@ def statement(monkeypatch, statement_config):
     monkeypatch.setattr("monopoly.statements.base.BaseStatement.df", None)
     mock_page = MagicMock(spec=PdfPage)
     mock_page.lines = ["foo\nbar"]
+    document = MagicMock(spec=fitz.Document)
+    document.name = "mock_document.pdf"
     statement = BaseStatement(
         pages=[mock_page],
-        document=None,
+        document=document,
         statement_config=statement_config,
     )
     yield statement

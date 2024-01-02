@@ -2,6 +2,7 @@ import logging
 import re
 from datetime import datetime
 from functools import cached_property
+from pathlib import Path
 from typing import Any, Optional
 
 import fitz
@@ -82,8 +83,6 @@ class BaseStatement:
     and specific config per processor.
     """
 
-    warning_message = "Safety check failed - transactions may be missing or inaccurate"
-
     def __init__(
         self,
         document: fitz.Document,
@@ -94,6 +93,10 @@ class BaseStatement:
         self.columns: list[str] = [enum.value for enum in StatementFields]
         self.pages = pages
         self.document = document
+        self.warning_message = (
+            f"Safety check for {Path(document.name).stem} failed - "
+            "transactions may be missing or inaccurate"
+        )
 
     @cached_property
     def transactions(self) -> list[Transaction]:
