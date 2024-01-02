@@ -42,7 +42,6 @@ class Ocbc(ProcessorBase):
 
     pdf_config = PdfConfig(
         passwords=settings.ocbc_pdf_passwords,
-        page_range=(0, -1),
     )
 
     identifiers = [

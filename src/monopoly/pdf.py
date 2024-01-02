@@ -89,6 +89,7 @@ class PdfParser:
         # this prevents pdftotext from failing due to missing xrefs/null values
         pdf_byte_stream = BytesIO(document.tobytes(garbage=2))
         pdf = pdftotext.PDF(pdf_byte_stream, physical=True)
+
         return [PdfPage(page) for page in pdf]
 
     @cached_property
