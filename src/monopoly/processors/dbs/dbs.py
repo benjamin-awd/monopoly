@@ -1,6 +1,6 @@
 import logging
 
-from monopoly.config import CreditStatementConfig, DebitStatementConfig, PdfConfig
+from monopoly.config import CreditStatementConfig, DebitStatementConfig
 from monopoly.constants import (
     BankNames,
     CreditTransactionPatterns,
@@ -35,8 +35,6 @@ class Dbs(ProcessorBase):
         debit_statement_identifier=r"(WITHDRAWAL.*DEPOSIT.*BALANCE)",
         transaction_pattern=DebitTransactionPatterns.DBS,
     )
-
-    pdf_config = PdfConfig(page_range=(0, -1))
 
     identifiers = [
         EncryptionIdentifier(
