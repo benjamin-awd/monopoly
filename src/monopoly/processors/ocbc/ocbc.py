@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 class Ocbc(ProcessorBase):
     credit_config = CreditStatementConfig(
         bank_name=BankNames.OCBC,
-        statement_date_pattern=r"\d{2}\-\d{2}\-\d{4}",
+        statement_date_pattern=r"(\d{2}\-\d{2}\-\d{4})",
         statement_date_format=r"%d-%m-%Y",
         prev_balance_pattern=StatementBalancePatterns.OCBC,
         transaction_pattern=CreditTransactionPatterns.OCBC,

@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 class Hsbc(ProcessorBase):
     credit_config = CreditStatementConfig(
         bank_name=BankNames.HSBC,
-        statement_date_pattern=r"Statement From (\d{2}\s[A-Z]{3}\s\d{4}) to",
+        statement_date_pattern=r"Statement From .* to (\d{2}\s[A-Z]{3}\s\d{4})",
         prev_balance_pattern=StatementBalancePatterns.HSBC,
         statement_date_format=r"%d %b %Y",
         transaction_pattern=CreditTransactionPatterns.HSBC,
