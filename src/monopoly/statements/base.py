@@ -169,8 +169,8 @@ class BaseStatement:
     def statement_date(self) -> datetime:
         config = self.statement_config
         first_page = self.pages[0].raw_text
-        if match := re.findall(config.statement_date_pattern, first_page):
-            return datetime.strptime(match[0], config.statement_date_format)
+        if match := re.search(config.statement_date_pattern, first_page):
+            return datetime.strptime(match.group(1), config.statement_date_format)
         raise ValueError("Statement date not found")
 
     @staticmethod

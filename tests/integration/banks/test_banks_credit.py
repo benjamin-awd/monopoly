@@ -18,7 +18,7 @@ from monopoly.statements import CreditStatement
     [
         (Citibank, -1414.07, datetime(2022, 11, 15)),
         (Dbs, -16969.17, datetime(2023, 10, 15)),
-        (Hsbc, -1218.2, datetime(2023, 7, 21)),
+        (Hsbc, -1218.2, datetime(2023, 8, 20)),
         (Ocbc, -702.1, datetime(2023, 8, 1)),
         (StandardChartered, -82.45, datetime(2023, 5, 16)),
     ],

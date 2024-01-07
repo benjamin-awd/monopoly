@@ -10,7 +10,7 @@ from monopoly.statements import BaseStatement
 @pytest.mark.parametrize(
     "bank_class, page_content, expected_date",
     [
-        (Hsbc, "Statement From 21 JUL 2023 to 20 AUG 2023", "21 Jul 2023"),
+        (Hsbc, "Statement From 21 JUL 2023 to 20 AUG 2023", "20 Aug 2023"),
         (Ocbc, "01-08-2023 24-08-2023 S$12,345 S$12,345 S$50.00", "01-08-2023"),
     ],
 )
