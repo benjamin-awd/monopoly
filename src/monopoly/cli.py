@@ -176,6 +176,7 @@ def get_statement_paths(files: Iterable[Path]) -> set[Path]:
 
 
 @click.command()
+@click.version_option(package_name="monopoly-sg")
 @click.argument(
     "files",
     nargs=-1,
