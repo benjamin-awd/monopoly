@@ -92,8 +92,7 @@ def test_process_statement(monkeypatch):
     processor.load.assert_called_once()
 
 
-def test_monopoly_output():
-    cli_runner = CliRunner()
+def test_monopoly_output(cli_runner: CliRunner):
     with open("tests/integration/banks/citibank/credit/input.pdf", "rb") as source_file:
         file_content = source_file.read()
 
@@ -112,9 +111,7 @@ def test_monopoly_output():
         assert "input.pdf -> citibank-credit-2022-11-e47be3.csv" in result.output
 
 
-def test_monopoly_no_pdf():
-    cli_runner = CliRunner()
-
+def test_monopoly_no_pdf(cli_runner: CliRunner):
     with cli_runner.isolated_filesystem():
         with open("file.txt", "w") as f:
             f.write("not a pdf file")
@@ -125,7 +122,7 @@ def test_monopoly_no_pdf():
     assert "Could not find .pdf files" in result.output
 
 
-def test_get_statement_paths(test_directory: Path) -> None:
+def test_get_statement_paths(test_directory: Path):
     path = test_directory
     expected = {
         path / "top_level.pdf",
@@ -136,8 +133,7 @@ def test_get_statement_paths(test_directory: Path) -> None:
     assert res == expected
 
 
-def test_version_command():
-    cli_runner = CliRunner()
+def test_version_command(cli_runner: CliRunner):
     results = cli_runner.invoke(monopoly, args="--version")
     assert results.exit_code == 0
     assert results.stdout.startswith("monopoly, version ")
