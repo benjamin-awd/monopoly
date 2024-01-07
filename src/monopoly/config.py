@@ -1,23 +1,29 @@
 from typing import Annotated, Optional
 
-from pydantic import StringConstraints
+from pydantic import BaseModel, StringConstraints
 from pydantic.dataclasses import dataclass
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from monopoly.constants import BankNames
 
 
-class Settings(BaseSettings):
-    """
-    Pydantic model that automatically populates variables from a .env file.
-    """
-
+class PdfPasswords(BaseModel):
     ocbc_pdf_passwords: Optional[list[str]] = None
     citibank_pdf_passwords: Optional[list[str]] = None
     standard_chartered_pdf_passwords: Optional[list[str]] = None
     hsbc_pdf_passwords: Optional[list[str]] = None
 
     model_config = SettingsConfigDict(env_file=".env", extra="allow")
+
+
+class Settings(BaseSettings):
+    """
+    Pydantic model that automatically populates variables from a .env file,
+    or an environment variable called `passwords`.
+    e.g. export PASSWORDS='{"OCBC_PDF_PASSWORDS": ...}'
+    """
+
+    passwords: PdfPasswords
 
 
 # pylint: disable=too-many-instance-attributes
@@ -88,4 +94,4 @@ class PdfConfig:
     page_bbox: Optional[tuple[float, float, float, float]] = None
 
 
-settings = Settings()
+settings = Settings().passwords
