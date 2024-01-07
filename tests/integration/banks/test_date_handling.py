@@ -12,6 +12,7 @@ def test_transform_cross_year(ocbc: Ocbc, statement: BaseStatement):
         [
             Transaction("12/01", "FAIRPRICE FINEST", "18.49"),
             Transaction("28/12", "DA PAOLO GASTRONOMIA", "19.69"),
+            Transaction("28/11", "KOPITIAM", "5.00"),
         ]
     )
     statement.statement_date = datetime(2024, 1, 1)
@@ -22,6 +23,7 @@ def test_transform_cross_year(ocbc: Ocbc, statement: BaseStatement):
         [
             Transaction("2024-01-12", "FAIRPRICE FINEST", 18.49),
             Transaction("2023-12-28", "DA PAOLO GASTRONOMIA", 19.69),
+            Transaction("2023-11-28", "KOPITIAM", 5.00),
         ]
     )
 
