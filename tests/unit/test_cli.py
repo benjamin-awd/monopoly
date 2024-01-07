@@ -1,4 +1,5 @@
 import os
+import re
 import subprocess
 from pathlib import Path
 from typing import Type
@@ -31,6 +32,22 @@ def test_directory() -> Path:
     return Path("tests/unit/test_cli").resolve()
 
 
+@pytest.fixture
+def cli_runner():
+    yield CliRunner()
+
+
+def run_cli_command(commands: list[str]) -> subprocess.CompletedProcess:
+    process = subprocess.run(
+        commands,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        universal_newlines=True,
+        shell=True,
+    )
+    return process
+
+
 def test_display_report(mock_results, capsys):
     # Create a Report object with mock results
     report = Report(results=mock_results)
@@ -47,17 +64,6 @@ def test_display_report(mock_results, capsys):
     assert "1 statement(s) processed" in printed_output
     assert "statement1.pdf -> processed1.csv" in printed_output
     assert "statement2.pdf -- Error" in printed_output
-
-
-def run_cli_command(commands: list[str]) -> subprocess.CompletedProcess:
-    process = subprocess.run(
-        commands,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        universal_newlines=True,
-        shell=True,
-    )
-    return process
 
 
 def test_help_command() -> None:
@@ -128,3 +134,13 @@ def test_get_statement_paths(test_directory: Path) -> None:
     }
     res = get_statement_paths(test_directory.iterdir())
     assert res == expected
+
+
+def test_version_command():
+    cli_runner = CliRunner()
+    results = cli_runner.invoke(monopoly, args="--version")
+    assert results.exit_code == 0
+    assert results.stdout.startswith("monopoly, version ")
+    semver_pattern = r"\d+\.\d+.\d+"
+    match = re.search(semver_pattern, results.stdout)
+    assert match, "Semantic version number not in output"
