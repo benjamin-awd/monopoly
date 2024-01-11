@@ -1,6 +1,7 @@
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+from pydantic import SecretStr
 from pytest import raises
 
 from monopoly.pdf import PdfParser
@@ -11,14 +12,14 @@ fixture_directory = Path(__file__).parent / "fixtures"
 
 def test_can_open_protected(parser: PdfParser):
     parser.file_path = fixture_directory / "protected.pdf"
-    parser.passwords = ["foobar123"]
+    parser.passwords = [SecretStr("foobar123")]
 
     parser.open()
 
 
 def test_wrong_password_raises_error(parser: PdfParser):
     parser.file_path = fixture_directory / "protected.pdf"
-    parser.passwords = ["wrong_pw"]
+    parser.passwords = [SecretStr("wrong_pw")]
 
     with raises(ValueError, match="Wrong password"):
         parser.open()
@@ -43,12 +44,16 @@ def test_get_pages_invalid_returns_error(parser: PdfParser):
 def test_override_password(hsbc: Hsbc):
     with patch.object(PdfParser, "get_pages") as mock_get_pages:
         mock_get_pages.return_value = MagicMock()
-        hsbc = Hsbc(fixture_directory / "protected.pdf", passwords=["foobar123"])
+        hsbc = Hsbc(
+            fixture_directory / "protected.pdf", passwords=[SecretStr("foobar123")]
+        )
         document = hsbc.parser.open()
         assert not document.is_encrypted
 
 
 def test_error_raised_if_override_is_wrong():
     with raises(ValueError, match="Wrong password"):
-        hsbc = Hsbc(fixture_directory / "protected.pdf", passwords=["wrongpw"])
+        hsbc = Hsbc(
+            fixture_directory / "protected.pdf", passwords=[SecretStr("wrongpw")]
+        )
         hsbc.open()

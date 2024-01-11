@@ -1,17 +1,17 @@
 from typing import Annotated, Optional
 
-from pydantic import BaseModel, StringConstraints
+from pydantic import SecretStr, StringConstraints
 from pydantic.dataclasses import dataclass
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from monopoly.constants import BankNames
 
 
-class PdfPasswords(BaseModel):
-    ocbc_pdf_passwords: Optional[list[str]] = None
-    citibank_pdf_passwords: Optional[list[str]] = None
-    standard_chartered_pdf_passwords: Optional[list[str]] = None
-    hsbc_pdf_passwords: Optional[list[str]] = None
+class PdfPasswords(BaseSettings):
+    ocbc_pdf_passwords: list[SecretStr] = [SecretStr("")]
+    citibank_pdf_passwords: list[SecretStr] = [SecretStr("")]
+    standard_chartered_pdf_passwords: list[SecretStr] = [SecretStr("")]
+    hsbc_pdf_passwords: list[SecretStr] = [SecretStr("")]
 
     model_config = SettingsConfigDict(env_file=".env", extra="allow")
 
@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     e.g. export PASSWORDS='{"OCBC_PDF_PASSWORDS": ...}'
     """
 
-    passwords: PdfPasswords
+    passwords: PdfPasswords = PdfPasswords()
 
 
 # pylint: disable=too-many-instance-attributes
@@ -89,7 +89,7 @@ class PdfConfig:
     PDF artifacts that may affect parsing.
     """
 
-    passwords: Optional[list[str]] = None
+    passwords: Optional[list[SecretStr]] = None
     page_range: tuple[Optional[int], Optional[int]] = (None, None)
     page_bbox: Optional[tuple[float, float, float, float]] = None
 

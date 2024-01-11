@@ -62,7 +62,7 @@ class PdfParser:
 
         if self.passwords:
             for password in self.passwords:
-                document.authenticate(password)
+                document.authenticate(password.get_secret_value())
 
                 if not document.is_encrypted:
                     logger.debug("Successfully authenticated with password")

@@ -3,6 +3,8 @@ from functools import cached_property
 from pathlib import Path
 from typing import Any, Optional
 
+from pydantic import SecretStr
+
 from monopoly.config import CreditStatementConfig, DebitStatementConfig, PdfConfig
 from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
 from monopoly.pdf import PdfParser
@@ -26,7 +28,7 @@ class ProcessorBase(StatementProcessor):
     def __init__(
         self,
         file_path: Path,
-        passwords: Optional[list[str]] = None,
+        passwords: Optional[list[SecretStr]] = None,
     ):
         # this allows the user to override the default pydantic password
         # and supply their own password via the bank subclasses
