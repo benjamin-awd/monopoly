@@ -104,7 +104,8 @@ def setup_statement_fixture(
 ):
     monkeypatch.setattr("monopoly.statements.base.BaseStatement.df", None)
     mock_page = Mock(spec=PdfPage)
-    mock_page.lines = ["foo\nbar"]
+    mock_page.lines = ["foo", "bar"]
+    mock_page.raw_text = ["foo\nbar"]
     document = MagicMock(spec=fitz.Document)
     document.name = "mock_document.pdf"
     statement = statement_cls(document, [mock_page], statement_config)

@@ -1,6 +1,7 @@
 import logging
 import re
 from functools import cached_property
+from typing import Any
 
 import fitz
 
@@ -29,21 +30,24 @@ class CreditStatement(BaseStatement):
         super().__init__(document, pages, credit_config)
 
     @cached_property
-    def prev_month_balance(self) -> Transaction | None:
+    def prev_month_balance(self) -> list[Transaction]:
         """
         Returns the previous month's statement balance as a transaction,
         if it exists in the statement.
 
         The date is later replaced with a more accurate date by the statement processor.
         """
+        prev_balances = []
         if prev_balance_pattern := self.config.prev_balance_pattern:
-            raw_text = self.pages[0].raw_text + self.pages[1].raw_text
-            if match := re.search(prev_balance_pattern, raw_text):
-                groupdict = match.groupdict()
+            raw_text = "".join(page.raw_text for page in self.pages)
+            matches = re.finditer(prev_balance_pattern, raw_text)
+
+            for match in matches:
+                groupdict: dict[str, Any] = match.groupdict()
                 groupdict[StatementFields.TRANSACTION_DATE] = "1900-01-01"
-                return Transaction(**groupdict)  # type: ignore
-            logger.debug("Unable to find previous month's balance")
-        return None
+                prev_balances.append(Transaction(**groupdict))
+
+        return prev_balances
 
     @cached_property
     def account_type(self) -> str:
@@ -55,8 +59,9 @@ class CreditStatement(BaseStatement):
         """
         if self.prev_month_balance:
             first_transaction_date = transactions[0].transaction_date
-            self.prev_month_balance.transaction_date = first_transaction_date
-            transactions.insert(0, self.prev_month_balance)
+            for prev_month_balance in self.prev_month_balance:
+                prev_month_balance.transaction_date = first_transaction_date
+                transactions.insert(0, prev_month_balance)
         return transactions
 
     @cached_property
