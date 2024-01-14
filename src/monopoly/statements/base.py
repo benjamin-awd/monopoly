@@ -93,9 +93,9 @@ class BaseStatement:
         self.columns: list[str] = [enum.value for enum in StatementFields]
         self.pages = pages
         self.document = document
-        self.warning_message = (
+        self.failed_safety_message = (
             f"Safety check for {Path(document.name).stem} failed - "
-            "transactions may be missing or inaccurate"
+            "transactions may be inaccurate"
         )
 
     @cached_property
@@ -213,3 +213,7 @@ class BaseStatement:
             lines = page.get_textpage().extractText().split("\n")
             numbers.update(self.get_decimal_numbers(lines))
         return numbers
+
+
+class SafetyCheckError(Exception):
+    """Raise when safety check fails"""
