@@ -1,9 +1,16 @@
 import os
 from textwrap import dedent
+from unittest import mock
 
 import pytest
 
 from monopoly.config import PdfPasswords, Settings
+
+
+@pytest.fixture
+def mock_env():
+    with mock.patch.dict(os.environ, clear=True):
+        yield
 
 
 @pytest.fixture
@@ -29,7 +36,7 @@ def test_load_from_environment_variable():
     ] == expected_passwords
 
 
-def test_load_from_env_file(create_temporary_env_file):
+def test_load_from_env_file(create_temporary_env_file, mock_env):
     env_file = create_temporary_env_file
     settings = PdfPasswords(_env_file=env_file)
     expected_ocbc_passwords = ["password1", "password2"]

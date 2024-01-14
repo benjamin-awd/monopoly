@@ -121,13 +121,13 @@ class BaseStatement:
         pattern: re.Pattern,
     ) -> Transaction | None:
         if match := pattern.search(line):
-            groupdict = match.groupdict()
+            groupdict: dict = match.groupdict()
 
             if self.statement_config.multiline_transactions and idx < len(lines) - 1:
                 description = self.get_multiline_description(line, lines, idx, pattern)
                 groupdict[StatementFields.DESCRIPTION] = description
 
-            transaction = Transaction(**groupdict)  # type: ignore
+            transaction = Transaction(**groupdict)
             return transaction
         return None
 
