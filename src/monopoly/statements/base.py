@@ -158,6 +158,7 @@ class BaseStatement:
             # from the description
             if match := re.search(r"^[a-zA-Z0-9_ ][^\d]*", next_line):
                 description = match.group(0).lower().strip()
+                # specifically for DBS debit statements
                 if description in ("total", "balance carried forward"):
                     break
 
