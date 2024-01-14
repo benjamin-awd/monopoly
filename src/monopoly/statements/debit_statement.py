@@ -77,15 +77,33 @@ class DebitStatement(BaseStatement):
 
     @cached_property
     def withdrawal_pos(self) -> int:
-        if self.debit_header:
-            return self.debit_header.find("withdrawal")
-        raise ValueError("Debit header missing")
+        return self.get_header_pos("withdrawal")
 
     @cached_property
     def deposit_pos(self) -> int:
-        if self.debit_header:
-            return self.debit_header.find("deposit")
-        raise ValueError("Debit header missing")
+        return self.get_header_pos("deposit")
+
+    def get_header_pos(self, column_name: str) -> int:
+        """
+        Returns position of the 'WITHDRAWAL' or 'DEPOSIT' header on a bank statement
+
+        An assumption is made here that numbers are right aligned, meaning
+        that if an amount matches with the end of the withdrawal string position,
+        the item is in fact a withdrawal
+
+        e.g.
+        ```
+        DATE         DESCRIPTION          WITHDRAWAL         DEPOSIT
+        15 OCT       bill payment             322.07
+        16 OCT       item                                     123.12
+        ```
+        """
+        result = self.debit_header.find(column_name) + len(column_name)
+        if not result:
+            raise ValueError(
+                f"Debit header {column_name} missing in {self.debit_header}"
+            )
+        return result
 
     def perform_safety_check(self) -> bool:
         """
