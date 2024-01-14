@@ -1,8 +1,10 @@
 import fitz
 import pandas as pd
+import pytest
 
 from monopoly.processors import ProcessorBase
 from monopoly.statements import CreditStatement, DebitStatement
+from monopoly.statements.base import SafetyCheckError
 
 
 class MockProcessor(ProcessorBase):
@@ -56,6 +58,7 @@ def test_debit_safety_check_failure(debit_statement: DebitStatement):
 
     debit_statement.df = pd.DataFrame(data={"amount": [11.5, 20.0, -2.5]})
 
-    # the safety check should return False, since the debit sum and credit sum
-    # is not present as a number
-    assert not debit_statement.perform_safety_check()
+    # the safety check should fail, since the debit sum and credit sum
+    # are not present as a number
+    with pytest.raises(SafetyCheckError):
+        debit_statement.perform_safety_check()

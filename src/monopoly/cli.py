@@ -68,7 +68,7 @@ class Report:
             click.echo(
                 click.style(
                     f"{res.source_file_name} -- "
-                    f"{res.error_info['message']}",  # type: ignore
+                    f"{res.error_info['message'][:120]}",  # type: ignore
                     fg="red",
                 )
             )

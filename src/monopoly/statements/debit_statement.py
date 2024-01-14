@@ -8,7 +8,7 @@ from monopoly.config import DebitStatementConfig
 from monopoly.constants import AccountType, StatementFields
 from monopoly.pdf import PdfPage
 
-from .base import BaseStatement, Transaction
+from .base import BaseStatement, SafetyCheckError, Transaction
 
 logger = logging.getLogger(__name__)
 
@@ -98,7 +98,8 @@ class DebitStatement(BaseStatement):
         16 OCT       item                                     123.12
         ```
         """
-        result = self.debit_header.find(column_name) + len(column_name)
+        if self.debit_header:
+            result = self.debit_header.find(column_name) + len(column_name)
         if not result:
             raise ValueError(
                 f"Debit header {column_name} missing in {self.debit_header}"
@@ -125,6 +126,6 @@ class DebitStatement(BaseStatement):
         result = all([debit_sum in numbers, credit_sum in numbers])
 
         if not result:
-            logger.warning(self.warning_message)
+            raise SafetyCheckError(self.failed_safety_message)
 
         return result

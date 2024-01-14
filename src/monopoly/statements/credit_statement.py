@@ -9,7 +9,7 @@ from monopoly.config import CreditStatementConfig
 from monopoly.constants import AccountType, StatementFields
 from monopoly.pdf import PdfPage
 
-from .base import BaseStatement, Transaction
+from .base import BaseStatement, SafetyCheckError, Transaction
 
 logger = logging.getLogger(__name__)
 
@@ -86,10 +86,8 @@ class CreditStatement(BaseStatement):
 
         result = total_amount in numbers
         if not result:
-            logger.warning(
-                "%s: total amount %s cannot be found in document",
-                self.warning_message,
-                total_amount,
+            raise SafetyCheckError(
+                f"Total amount {total_amount} cannot be found in credit statement"
             )
 
         return result
