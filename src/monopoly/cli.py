@@ -4,9 +4,7 @@ from pathlib import Path
 from typing import Collection, Iterable, Optional
 
 import click
-from fitz import FileDataError
 from pydantic.dataclasses import dataclass
-from pyhanko.pdf_utils.reader import PdfReadError
 from tqdm import tqdm
 
 from monopoly.processors import detect_processor
@@ -115,9 +113,10 @@ def process_statement(
 
         output_file = processor.load(transformed_df, statement, output_directory)
         return Result(file.name, output_file.name)
-    except (FileDataError, PdfReadError) as err:
+
+    except Exception as err:  # pylint: disable=broad-exception-caught
         error_info = {
-            "message": str(err),
+            "message": f"{type(err).__name__}: {str(err)}",
             "traceback": traceback.format_exc(),
         }
         return Result(file.name, error_info=error_info)
