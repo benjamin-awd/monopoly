@@ -22,9 +22,9 @@ def test_multiple_prev_month_balance(credit_statement):
 
     pattern = r"(?P<description>LAST MONTH'S BALANCE?)\s+(?P<amount>[\d.,]+)"
     credit_statement.config.prev_balance_pattern = pattern
-    credit_statement.pages[
-        0
-    ].raw_text = "LAST MONTH'S BALANCE   84.89\nfoo\nLAST MONTH'S BALANCE  123.12"
+    credit_statement.pages[0].raw_text = (
+        "LAST MONTH'S BALANCE   84.89\nfoo\nLAST MONTH'S BALANCE  123.12"
+    )
 
     result = credit_statement.prev_month_balance
     assert result == expected
