@@ -65,7 +65,7 @@ class StatementProcessor:
             Implements cross-year logic by attributing transactions from
             October, November, and December to the previous year if
             the statement month is January.
-            e.g. if the statement month is Jan 2024, transactions from
+            e.g. if the statement month is Jan/Feb 2024, transactions from
             Oct/Nov/Dec should be attributed to the previous year.
             """
             parsed_date = datetime.strptime(
@@ -74,7 +74,7 @@ class StatementProcessor:
             row_year = statement_date.year
             row_day, row_month = parsed_date.day, parsed_date.month
 
-            if statement_date.month == 1 and row_month != 1:
+            if statement_date.month in (1, 2) and row_month != 1:
                 row_year = statement_date.year - 1
 
             return f"{row_year}-{row_month:02d}-{row_day:02d}"
