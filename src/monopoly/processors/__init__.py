@@ -2,8 +2,11 @@ import logging
 from dataclasses import Field, fields
 from itertools import product
 from pathlib import Path
-from typing import Type
+from typing import Optional, Type
 
+from pydantic import SecretStr
+
+from monopoly.config import PdfConfig
 from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
 from monopoly.pdf import PdfParser
 
@@ -28,16 +31,18 @@ processors: list[Type[ProcessorBase]] = [
 logger = logging.getLogger(__name__)
 
 
-def detect_processor(file_path: Path) -> ProcessorBase:
+def detect_processor(
+    file_path: Path, passwords: Optional[list[SecretStr]] = None
+) -> ProcessorBase:
     """
     Reads the encryption metadata or actual metadata (if the PDF is not encrypted),
     and checks for a bank based on unique identifiers.
     """
-    parser = PdfParser(file_path)
+    parser = PdfParser(file_path, pdf_config=PdfConfig(passwords=passwords))
     for processor in processors:
         metadata_items = processor.get_identifiers(parser)
         if is_bank_identified(metadata_items, processor):
-            return processor(file_path=file_path)
+            return processor(file_path=file_path, passwords=passwords)
 
     raise ValueError(f"Could not find a bank for {parser.file_path}")
 
