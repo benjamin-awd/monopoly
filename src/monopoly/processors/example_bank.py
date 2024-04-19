@@ -8,7 +8,7 @@ class ExampleBankProcessor(ProcessorBase):
 
     credit_config = CreditStatementConfig(
         bank_name=BankNames.EXAMPLE,
-        statement_date_pattern=r"\d{2}\-\d{2}\-\d{4}",
+        statement_date_pattern=r"(\d{2}\-\d{2}\-\d{4})",
         statement_date_format=r"%d-%m-%Y",
         prev_balance_pattern=(
             r"(?P<description>LAST MONTH'S BALANCE?)\s+" + SharedPatterns.AMOUNT
