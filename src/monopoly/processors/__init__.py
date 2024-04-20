@@ -31,6 +31,10 @@ processors: list[Type[ProcessorBase]] = [
 logger = logging.getLogger(__name__)
 
 
+class UnsupportedBankError(Exception):
+    """Raised when a processor cannot be found for a specific bank"""
+
+
 def detect_processor(
     file_path: Path, passwords: Optional[list[SecretStr]] = None
 ) -> ProcessorBase:
@@ -44,7 +48,7 @@ def detect_processor(
         if is_bank_identified(metadata_items, processor):
             return processor(file_path=file_path, passwords=passwords)
 
-    raise ValueError(f"Could not find a bank for {parser.file_path}")
+    raise UnsupportedBankError("This bank is currently unsupported")
 
 
 def is_bank_identified(
