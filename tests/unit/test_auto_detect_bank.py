@@ -5,7 +5,7 @@ from pytest import raises
 from test_utils.skip import skip_if_encrypted
 
 from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
-from monopoly.processors import detect_processor
+from monopoly.processors import UnsupportedBankError, detect_processor
 from monopoly.processors.base import ProcessorBase
 
 
@@ -116,5 +116,5 @@ def test_detect_processor_not_identified(
     mock_processors_list = [MockProcessorThree]
     monkeypatch.setattr("monopoly.processors.processors", mock_processors_list)
 
-    with raises(ValueError, match=f"Could not find a bank for {file_path}"):
+    with raises(UnsupportedBankError, match="This bank is currently unsupported"):
         detect_processor(file_path=file_path)
