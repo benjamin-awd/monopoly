@@ -8,6 +8,7 @@ from typing import Optional
 import fitz
 import pdftotext
 from pdf2john import PdfHashExtractor as EncryptionMetadataExtractor
+from pydantic import SecretStr
 
 from monopoly.config import PdfConfig
 
@@ -27,6 +28,18 @@ class PdfPage:
     @cached_property
     def lines(self) -> list[str]:
         return self.raw_text.split("\n")
+
+
+class WrongPasswordError(Exception):
+    """Exception raised when an incorrect password is provided"""
+
+
+class MissingPasswordError(Exception):
+    """Exception raised when the document is encrypted, but no password is provided"""
+
+
+class BadPasswordFormatError(Exception):
+    """Exception raised passwords are not provided in a proper format"""
 
 
 class PdfParser:
@@ -60,15 +73,25 @@ class PdfParser:
         if not document.is_encrypted:
             return document
 
-        if self.passwords:
-            for password in self.passwords:
-                document.authenticate(password.get_secret_value())
+        if not self.passwords:
+            raise MissingPasswordError("No password found in PDF configuration")
 
-                if not document.is_encrypted:
-                    logger.debug("Successfully authenticated with password")
-                    return document
+        if not any(str(password) for password in self.passwords):
+            raise MissingPasswordError("Password in PDF configuration is empty")
 
-        raise ValueError(f"Wrong password - unable to open document {document}")
+        if not isinstance(self.passwords, list):
+            raise BadPasswordFormatError("Passwords should be stored in a list")
+
+        if not all(isinstance(item, SecretStr) for item in self.passwords):
+            raise BadPasswordFormatError("Passwords should be stored as SecretStr")
+
+        for password in self.passwords:
+            document.authenticate(password.get_secret_value())
+
+            if not document.is_encrypted:
+                logger.debug("Successfully authenticated with password")
+                return document
+        raise WrongPasswordError(f"Could not open document: {document.name}")
 
     def get_pages(self) -> list[PdfPage]:
         logger.debug("Extracting text from PDF")
