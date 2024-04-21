@@ -47,7 +47,7 @@ class ProcessorBase(StatementProcessor):
             file_path = Path(file_path)
 
         super().__init__(
-            parser=parser, file_path=file_path, statement=self.get_statement()
+            parser=parser, file_name=self.document.name, statement=self.get_statement()
         )
 
     @cached_property

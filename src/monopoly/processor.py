@@ -28,11 +28,11 @@ class StatementProcessor:
 
     def __init__(
         self,
-        file_path: Path,
+        file_name: str,
         parser: PdfParser,
         statement: CreditStatement | DebitStatement,
     ):
-        self.file_path = file_path
+        self.file_name = file_name
         self.parser = parser
         self.statement = statement
 
@@ -96,7 +96,7 @@ class StatementProcessor:
             output_directory = Path(output_directory)
 
         filename = generate_name(
-            file_path=self.file_path,
+            document=self.parser.document,
             format_type="file",
             statement_config=statement.statement_config,
             statement_type=statement.statement_type,

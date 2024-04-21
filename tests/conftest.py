@@ -67,13 +67,13 @@ def mock_document():
         "monopoly.pdf.PdfParser.document", new_callable=PropertyMock
     ) as mock_document:
         mock_document_instance = mock_document.return_value
-        # Set the metadata attribute to the desired value
         type(mock_document_instance).metadata = PropertyMock(
             return_value={
                 "creator": "Adobe Acrobat 23.3",
                 "producer": "Adobe Acrobat Pro (64-bit)",
             }
         )
+        type(mock_document_instance).name = PropertyMock(return_value="foo")
         yield mock_document
 
 
