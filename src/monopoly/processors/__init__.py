@@ -36,17 +36,25 @@ class UnsupportedBankError(Exception):
 
 
 def detect_processor(
-    file_path: Path, passwords: Optional[list[SecretStr]] = None
+    file_path: Optional[Path] = None,
+    file_bytes: Optional[bytes] = None,
+    passwords: Optional[list[SecretStr]] = None,
 ) -> ProcessorBase:
     """
     Reads the encryption metadata or actual metadata (if the PDF is not encrypted),
     and checks for a bank based on unique identifiers.
     """
-    parser = PdfParser(file_path, pdf_config=PdfConfig(passwords=passwords))
+    parser = PdfParser(
+        file_path=file_path,
+        file_bytes=file_bytes,
+        pdf_config=PdfConfig(passwords=passwords),
+    )
     for processor in processors:
         metadata_items = processor.get_identifiers(parser)
         if is_bank_identified(metadata_items, processor):
-            return processor(file_path=file_path, passwords=passwords)
+            return processor(
+                file_path=file_path, file_bytes=file_bytes, passwords=passwords
+            )
 
     raise UnsupportedBankError("This bank is currently unsupported")
 

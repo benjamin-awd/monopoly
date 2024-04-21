@@ -45,7 +45,8 @@ class BadPasswordFormatError(Exception):
 class PdfParser:
     def __init__(
         self,
-        file_path: Path,
+        file_path: Optional[Path] = None,
+        file_bytes: Optional[bytes] = None,
         pdf_config: Optional[PdfConfig] = None,
     ):
         """
@@ -55,6 +56,7 @@ class PdfParser:
         All pages are extracted by default.
         """
         self.file_path = file_path
+        self.file_bytes = file_bytes
 
         if pdf_config is None:
             pdf_config = PdfConfig()
@@ -67,7 +69,6 @@ class PdfParser:
         """
         Opens and decrypts a PDF document
         """
-        logger.debug("Opening pdf from path %s", self.file_path)
         document = self.document
 
         if not document.is_encrypted:
@@ -128,7 +129,13 @@ class PdfParser:
         """
         Returns a Python representation of a PDF document.
         """
-        return fitz.Document(self.file_path)
+        if self.file_path:
+            return fitz.Document(filename=self.file_path)
+
+        if self.file_bytes:
+            return fitz.Document(stream=self.file_bytes)
+
+        raise RuntimeError("Either file path or file bytestream must be passed")
 
     @cached_property
     def extractor(self) -> EncryptionMetadataExtractor:
@@ -136,7 +143,13 @@ class PdfParser:
         Returns an instance of pdf2john, used to retrieve and return
         the encryption metadata from a PDF's encryption dictionary
         """
-        return EncryptionMetadataExtractor(self.file_path)
+        if self.file_path:
+            return EncryptionMetadataExtractor(file_name=self.file_path)
+
+        if self.file_bytes:
+            return EncryptionMetadataExtractor(file_bytes=self.file_bytes)
+
+        raise RuntimeError("Either file path or file bytestream must be passed")
 
     @staticmethod
     def _remove_vertical_text(page: fitz.Page):

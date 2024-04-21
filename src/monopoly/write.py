@@ -18,7 +18,7 @@ def generate_hash(file_path: Path) -> str:
 
 
 def generate_name(
-    file_path: Path,
+    file_path: str,
     format_type: str,
     statement_config: StatementConfig,
     statement_type: str,

@@ -27,7 +27,8 @@ class ProcessorBase(StatementProcessor):
 
     def __init__(
         self,
-        file_path: Path,
+        file_path: Optional[Path] = None,
+        file_bytes: Optional[bytes] = None,
         passwords: Optional[list[SecretStr]] = None,
     ):
         # this allows the user to override the default pydantic password
@@ -35,7 +36,9 @@ class ProcessorBase(StatementProcessor):
         if passwords:
             self.pdf_config.passwords = passwords
 
-        parser = PdfParser(file_path, self.pdf_config)
+        parser = PdfParser(
+            file_path=file_path, file_bytes=file_bytes, pdf_config=self.pdf_config
+        )
 
         self.pages = parser.get_pages()
         self.document = parser.document

@@ -15,6 +15,13 @@ from monopoly.processors import Hsbc
 fixture_directory = Path(__file__).parent / "fixtures"
 
 
+def test_can_open_file_stream(parser: PdfParser):
+    with open(fixture_directory / "4_pages_blank.pdf", "rb") as file:
+        parser.file_bytes = file.read()
+        document = parser.open()
+        assert len(document) == 4
+
+
 def test_can_open_protected(parser: PdfParser):
     parser.file_path = fixture_directory / "protected.pdf"
     parser.passwords = [SecretStr("foobar123")]
