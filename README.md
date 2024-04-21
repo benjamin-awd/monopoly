@@ -1,15 +1,12 @@
 ![](https://raw.githubusercontent.com/benjamin-awd/monopoly/main/docs/logo.svg)
 
 -----------------
-
+[![Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://monopoly.streamlit.app)
 [![Tests](https://github.com/benjamin-awd/monopoly/actions/workflows/tests.yaml/badge.svg?branch=main&event=push)](https://github.com/benjamin-awd/monopoly/actions/workflows/tests.yaml)
 [![CI](https://github.com/benjamin-awd/monopoly/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/benjamin-awd/monopoly/actions/workflows/ci.yaml)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Linting: pylint](https://img.shields.io/badge/linting-pylint-orange)](https://github.com/pylint-dev/pylint)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-
-Monopoly is a Python library that converts Singapore bank statement PDFs to CSV using pdftotext
+Monopoly is a Python library & CLI that converts Singapore bank statement PDFs to CSV.
 
 ![](https://raw.githubusercontent.com/benjamin-awd/monopoly/main/docs/monopoly.gif)
 
@@ -21,6 +18,17 @@ Supported banks:
 | HSBC                | :white_check_mark:  | :x:                 |
 | OCBC                | :white_check_mark:  | :white_check_mark:  |
 | Standard Chartered  | :white_check_mark:  | :x:                 |
+
+<h3 align="center">
+    🎉 Monopoly is now live! 🎉
+    <br><br>
+    Try it out: <br>
+    <a href="https://monopoly.streamlitapp.com/">https://monopoly.streamlitapp.com/</a>
+</h3>
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/benjamin-awd/monopoly/main/docs/streamlit_demo.gif" width=800>
+</p>
 
 ## Install
 Clone the repo
