@@ -40,7 +40,7 @@ def test_load(
     output_path = bank_class.load(df, credit_statement, Path("/output_directory"))
 
     mock_generate_name.assert_called_once_with(
-        file_path=Path("foo"),
+        document=mock_document(),
         format_type="file",
         statement_config=credit_statement.statement_config,
         statement_type=AccountType.CREDIT,
