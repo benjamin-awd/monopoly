@@ -25,6 +25,7 @@ class BankNames(AutoEnum):
     HSBC = auto()
     OCBC = auto()
     STANDARD_CHARTERED = auto()
+    BANK_OF_AMERICA = auto()
 
 
 class StatementFields(AutoEnum):
@@ -75,6 +76,10 @@ class StatementBalancePatterns(StrEnum):
         r"(?P<description>BALANCE FROM PREVIOUS STATEMENT?)\s+"
         + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
     )
+    BANK_OF_AMERICA = (
+        r"(?P<description>Previous Balance?)\s+"
+        + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+    )
 
 
 class CreditTransactionPatterns(StrEnum):
@@ -104,6 +109,13 @@ class CreditTransactionPatterns(StrEnum):
         + SharedPatterns.TRANSACTION_DATE_ABBREVIATED_PROPER_CASE
         + SharedPatterns.DESCRIPTION
         + r"(?:(?P<transaction_ref>Transaction\sRef\s\d+)?)\s+"
+        + SharedPatterns.AMOUNT_EXTENDED
+    )
+    BANK_OF_AMERICA = (
+        r"(?P<transaction_date>\d{2}/\d{2})\s+"
+        + r"(?P<posting_date>\d{2}/\d{2})\s+"
+        + SharedPatterns.DESCRIPTION
+        + r"(?:(?P<reference_number>\d+)?)\s+"
         + SharedPatterns.AMOUNT_EXTENDED
     )
 
