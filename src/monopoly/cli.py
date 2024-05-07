@@ -7,7 +7,7 @@ import click
 from pydantic.dataclasses import dataclass
 from tqdm import tqdm
 
-from monopoly.processors import detect_processor
+from monopoly.processors import detect_processor, UnsupportedBankError, logger
 
 
 @dataclass
@@ -98,7 +98,9 @@ def process_statement(
 
     try:
         processor = detect_processor(file)
+        logger.info(f"Processor has been detected: {processor}")
         statement = processor.extract()
+        logger.info(f"Statement extracted: {statement}")
         transformed_df = processor.transform(statement)
 
         if print_df:
@@ -113,6 +115,14 @@ def process_statement(
 
         output_file = processor.load(transformed_df, statement, output_directory)
         return Result(file.name, output_file.name)
+
+    except UnsupportedBankError as err:
+        error_info = {
+            "message": f"{type(err).__name__}: {str(err)}",
+            "traceback": traceback.format_exc(),
+        }
+        logger.error(f"Error processing {file.name}: {error_info}")
+        return Result(file.name, error_info=error_info)
 
     except Exception as err:  # pylint: disable=broad-exception-caught
         error_info = {
