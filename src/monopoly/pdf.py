@@ -94,6 +94,23 @@ class PdfParser:
                 return document
         raise WrongPasswordError(f"Could not open document: {document.name}")
 
+    def get_metadata(self) -> dict:
+        """
+        Extracts metadata from the PDF document.
+        """
+        document = self.open()
+        metadata = document.metadata
+        return {
+            "title": metadata.get("title", ""),
+            "author": metadata.get("author", ""),
+            "subject": metadata.get("subject", ""),
+            "keywords": metadata.get("keywords", ""),
+            "creator": metadata.get("creator", ""),
+            "producer": metadata.get("producer", ""),
+            "creation_date": str(metadata.get("creationDate", "")),
+            "modification_date": str(metadata.get("modDate", "")),
+        }
+
     def get_pages(self) -> list[PdfPage]:
         logger.debug("Extracting text from PDF")
         document: fitz.Document = self.open()
