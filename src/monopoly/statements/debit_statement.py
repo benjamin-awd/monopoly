@@ -129,3 +129,10 @@ class DebitStatement(BaseStatement):
             raise SafetyCheckError(self.failed_safety_message)
 
         return result
+
+    def print_raw_statement(self):
+        """
+        Prints out the raw text of the entire statement without any parsing.
+        """
+        raw_text = "".join(page.raw_text for page in self.pages)
+        print(raw_text)
