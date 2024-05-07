@@ -4,6 +4,7 @@ from pathlib import Path
 
 from pandas import DataFrame
 
+from monopoly import logger
 from monopoly.config import CreditStatementConfig, DebitStatementConfig
 from monopoly.constants import StatementFields
 from monopoly.pdf import PdfParser
@@ -39,14 +40,24 @@ class StatementProcessor:
     def extract(self) -> CreditStatement | DebitStatement:
         """Extracts transactions from the statement, and performs
         a safety check to make sure that total transactions add up"""
-        statement = self.statement
 
+        logger.info(f"Processing {self.file_name}")
+        statement = self.statement
+        logger.info(f"Assigned statement: {statement}")
+
+        logger.info(f"Checking if transactions exist: {statement.transactions}")
         if not statement.transactions:
             raise ValueError("No transactions found - statement extraction failed")
+        logger.info(f"Processing {len(statement.transactions)} transactions")
 
+        statement.print_raw_statement()
+
+        logger.info(f"Checking if statement date exists: {statement.statement_date}")
         if not statement.statement_date:
             raise ValueError("No statement date found")
+        logger.info(f"Statement date: {statement.statement_date}")
 
+        logger.info(f"Performing safety check")
         statement.perform_safety_check()
 
         return statement
