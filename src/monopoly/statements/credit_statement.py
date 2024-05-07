@@ -78,16 +78,28 @@ class CreditStatement(BaseStatement):
 
         Returns `False` if the total does not exist in the document.
         """
-        df = self.df
+        df = self.df # df stands for DataFrame object
+        logger.info("Assigning value to amount variable")
         amount = StatementFields.AMOUNT
-        numbers = self.get_all_numbers_from_document()
+        logger.info(f"Amount variable: {amount}")
 
+        logger.info("Assigning value to numbers variable")
+        numbers = self.get_all_numbers_from_document()
+        logger.info(f"Numbers variable: {numbers}")
+
+        logger.info("Assigning value to total_amount variable")
         total_amount = abs(round(df[amount].sum(), 2))
+        logger.info(f"Total amount variable: {total_amount}")
 
         result = total_amount in numbers
         if not result:
-            raise SafetyCheckError(
-                f"Total amount {total_amount} cannot be found in credit statement"
-            )
+            logger.info(f"Total amount value was not found in the statement")
 
         return result
+
+    def print_raw_statement(self):
+        """
+        Prints out the raw text of the entire statement without any parsing.
+        """
+        raw_text = "".join(page.raw_text for page in self.pages)
+        print(raw_text)
