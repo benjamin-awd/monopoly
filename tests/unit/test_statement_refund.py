@@ -12,7 +12,9 @@ def test_statement_process_refund(statement: BaseStatement):
         ""
     )
     page = PdfPage(raw_text=page_content)
-    statement.pattern = re.compile(CreditTransactionPatterns.CITIBANK)
+    statement.config.transaction_pattern = re.compile(
+        CreditTransactionPatterns.CITIBANK
+    )
     statement.pages = [page]
     expected_transactions = [
         Transaction(

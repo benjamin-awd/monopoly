@@ -34,7 +34,6 @@ class BaseStatement(ABC):
     ):
         self.pages = parser.get_pages()
         self.config = config
-        self.pattern = re.compile(self.config.transaction_pattern)
         # this replaces `transaction_date` with `date`
         self.columns: list[str] = [
             Columns.DATE,
@@ -42,6 +41,13 @@ class BaseStatement(ABC):
             Columns.AMOUNT,
         ]
         self.document = parser.document
+
+    @property
+    def pattern(self):
+        pattern = self.config.transaction_pattern
+        if not isinstance(self.config.transaction_pattern, re.Pattern):
+            pattern = re.compile(self.config.transaction_pattern)
+        return pattern
 
     def get_transactions(self) -> list[Transaction]:
         transactions: list[Transaction] = []
@@ -112,13 +118,20 @@ class BaseStatement(ABC):
             if abs(description_pos - next_line_start_pos) > 3:
                 break
 
-            # if the next line contains "total" or "balance carried forward"
-            # assume it's the end of the bank statement and exclude it
-            # from the description
-            if next_line_match := re.search(r"^[a-zA-Z0-9_ ][^\d]*", next_line):
-                next_line_description = next_line_match.group(0).lower().strip()
-                # specifically for DBS debit statements
-                if next_line_description in ("total", "balance carried forward"):
+            # if there's an amount in the next line, and it's further than
+            # 20 spaces away, we assume that this isn't part of the description
+            # and is a footer line like "Total" or "Balance Carried Forward"
+            next_line_words = re.search(r"\s[A-Za-z]+", next_line)
+            next_line_numbers = re.search(SharedPatterns.AMOUNT, next_line)
+
+            if next_line_words and next_line_numbers:
+                _, words_end_pos = next_line_words.span()
+                numbers_start_pos, _ = next_line_numbers.span()
+
+                if (
+                    numbers_start_pos > words_end_pos
+                    and numbers_start_pos - words_end_pos > 20
+                ):
                     break
 
             description += " " + next_line

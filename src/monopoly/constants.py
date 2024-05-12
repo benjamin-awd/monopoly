@@ -20,11 +20,15 @@ class EntryType(AutoEnum):
 
 class BankNames(AutoEnum):
     CITIBANK = auto()
-    EXAMPLE = auto()
     DBS = auto()
     HSBC = auto()
     OCBC = auto()
     STANDARD_CHARTERED = auto()
+
+
+class InternalBankNames(AutoEnum):
+    EXAMPLE = auto()
+    GENERIC = auto()
 
 
 class Columns(AutoEnum):
@@ -46,7 +50,7 @@ class SharedPatterns(StrEnum):
     on a single line, and we only want the amount.
     """
 
-    DEBIT_CREDIT_SUFFIX = r"(?P<suffix>CR|DR)?"
+    DEBIT_CREDIT_SUFFIX = r"(?P<suffix>CR\b|DR\b)?"
     AMOUNT = r"(?P<amount>\d{1,3}(,\d{3})*\.\d*|\([\d.,\s]+\))\s*"
     AMOUNT_EXTENDED_WITHOUT_EOL = AMOUNT + DEBIT_CREDIT_SUFFIX
     AMOUNT_EXTENDED = AMOUNT_EXTENDED_WITHOUT_EOL + r"$"

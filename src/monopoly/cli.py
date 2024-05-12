@@ -107,14 +107,12 @@ def process_statement(
         information about the processed statement. If an error occurs during processing,
         returns a Result object with error information.
     """
-    from monopoly.handler import (  # pylint: disable=import-outside-toplevel
-        StatementHandler,
-    )
+    from monopoly.pipeline import Pipeline  # pylint: disable=import-outside-toplevel
 
     try:
-        handler = StatementHandler(file)
-        statement = handler.extract()
-        transactions = handler.transform(
+        pipeline = Pipeline(file)
+        statement = pipeline.extract()
+        transactions = pipeline.transform(
             transactions=statement.transactions,
             statement_date=statement.statement_date,
             transaction_date_order=statement.config.transaction_date_order,
@@ -129,7 +127,7 @@ def process_statement(
         if not output_directory:
             output_directory = file.parent
 
-        output_file = handler.load(transactions, statement, output_directory)
+        output_file = pipeline.load(transactions, statement, output_directory)
         return Result(file.name, output_file.name)
 
     except Exception as err:  # pylint: disable=broad-exception-caught

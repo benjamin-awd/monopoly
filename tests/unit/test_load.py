@@ -4,13 +4,13 @@ from unittest.mock import MagicMock, call, patch
 
 import pytest
 
-from monopoly.handler import StatementHandler
+from monopoly.pipeline import Pipeline
 from monopoly.statements import BaseStatement, Transaction
 
 
 @pytest.fixture
 def mock_generate_name():
-    with patch("monopoly.handler.generate_name", return_value="test_file.csv") as mock:
+    with patch("monopoly.pipeline.generate_name", return_value="test_file.csv") as mock:
         yield mock
 
 
@@ -28,9 +28,10 @@ def test_load(
     mock_generate_name,
     mock_file_system,
 ):
+    class MockDocument:
+        metadata = "foo"
+
     mock_open, mock_csv_writer = mock_file_system
-    mock_statement_handler = MagicMock()
-    mock_statement_handler.parser.document = "foo"
 
     transactions = [
         Transaction(transaction_date="2023-01-01", description="foo", amount=100.0),
@@ -39,8 +40,7 @@ def test_load(
 
     credit_statement.statement_date = datetime(2023, 1, 1)
 
-    output_path = StatementHandler.load(
-        mock_statement_handler,
+    output_path = Pipeline.load(
         transactions=transactions,
         statement=credit_statement,
         output_directory=Path("/output_directory"),

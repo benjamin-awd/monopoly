@@ -76,9 +76,9 @@ def mock_document():
 
 
 @pytest.fixture(scope="function")
-def handler():
+def handler(parser):
     with patch.object(StatementHandler, "get_statement") as _:
-        handler = StatementHandler(file_path="foo.pdf")
+        handler = StatementHandler(parser)
         yield handler
 
 
@@ -93,13 +93,8 @@ def mock_bank():
 
 @pytest.fixture
 def parser(mock_bank):
-    with patch(
-        "monopoly.pdf.PdfParser.bank",
-        new_callable=PropertyMock,
-    ) as mock_bank_prop:
-        mock_bank_prop.return_value = mock_bank
-        parser = PdfParser(file_path=None)
-        yield parser
+    parser = PdfParser(file_path=None, bank=mock_bank)
+    yield parser
 
 
 def setup_statement_fixture(

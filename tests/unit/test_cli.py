@@ -135,13 +135,12 @@ def test_pprint_transactions(capsys, statement):
 
     expected_output = (
         "test_file.md\n"
-        "+--------------------+---------------+----------+\n"
-        "| transaction_date   | description   |   amount |\n"
-        "|--------------------+---------------+----------|\n"
-        "| 2023-01-01         | Transaction 1 |     -100 |\n"
-        "| 2023-01-01         | Transaction 2 |  -123.12 |\n"
-        "+--------------------+---------------+----------+\n"
+        "+------------+---------------+----------+\n"
+        "| date       | description   |   amount |\n"
+        "|------------+---------------+----------|\n"
+        "| 2023-01-01 | Transaction 1 |     -100 |\n"
+        "| 2023-01-01 | Transaction 2 |  -123.12 |\n"
+        "+------------+---------------+----------+\n"
         "\n"
     )
-
     assert captured.out == expected_output
