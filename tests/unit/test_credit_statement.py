@@ -12,7 +12,7 @@ def test_prev_month_balance_found(credit_statement: CreditStatement):
         r"(?P<description>LAST MONTH'S BALANCE?)\s+(?P<amount>[\d.,]+)"
     )
     credit_statement.config.prev_balance_pattern = pattern
-    credit_statement.pages[0].raw_text = "LAST MONTH'S BALANCE   84.89"
+    credit_statement.pages[0].lines = ["LAST MONTH'S BALANCE   84.89"]
 
     result = credit_statement.get_prev_month_balances()
     assert result[0].group() == expected
@@ -28,9 +28,11 @@ def test_multiple_prev_month_balance(credit_statement: CreditStatement):
         r"(?P<description>LAST MONTH'S BALANCE?)\s+(?P<amount>[\d.,]+)"
     )
     credit_statement.config.prev_balance_pattern = pattern
-    credit_statement.pages[0].raw_text = (
-        "LAST MONTH'S BALANCE   84.89\nfoo\nLAST MONTH'S BALANCE  123.12"
-    )
+    credit_statement.pages[0].lines = [
+        "LAST MONTH'S BALANCE   84.89",
+        "foo",
+        "LAST MONTH'S BALANCE  123.12",
+    ]
 
     results = [match.group() for match in credit_statement.get_prev_month_balances()]
     assert results == expected

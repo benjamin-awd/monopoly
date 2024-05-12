@@ -1,10 +1,9 @@
 from unittest.mock import PropertyMock, patch
 
 import pytest
-from pytest import raises
 from test_utils.skip import skip_if_encrypted
 
-from monopoly.banks import UnsupportedBankError, detect_bank
+from monopoly.banks import detect_bank
 from monopoly.banks.base import BankBase
 from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
 
@@ -93,5 +92,5 @@ def test_detect_bank_not_identified(
     mock_banks_list = [MockBankThree]
     monkeypatch.setattr("monopoly.banks.banks", mock_banks_list)
 
-    with raises(UnsupportedBankError, match="This bank is currently not supported"):
-        detect_bank([MetadataIdentifier(creator="asdf", producer="qwerty")])
+    # None should be returned here
+    assert not detect_bank([MetadataIdentifier(creator="asdf", producer="qwerty")])

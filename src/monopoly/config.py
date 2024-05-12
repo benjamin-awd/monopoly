@@ -5,7 +5,7 @@ from pydantic import ConfigDict, SecretStr
 from pydantic.dataclasses import dataclass
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from monopoly.constants import BankNames
+from monopoly.constants import BankNames, InternalBankNames
 
 
 class PdfPasswords(BaseSettings):
@@ -64,8 +64,8 @@ class StatementConfig:
     a statement from a bank is a debit or credit card statement.
     """
 
-    bank_name: BankNames
-    transaction_pattern: str
+    bank_name: BankNames | InternalBankNames
+    transaction_pattern: str | re.Pattern
     statement_date_pattern: str
     transaction_date_order: DateOrder = DateOrder("DMY")
     statement_date_order: DateOrder = DateOrder("DMY")

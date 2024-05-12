@@ -16,5 +16,7 @@ def read_transactions_from_csv(directory: Path, file_name: str) -> list[dict[str
 def get_transactions_as_dict(transactions: list[Transaction]) -> list[dict[str, str]]:
     transactions_as_dict = []
     for transaction in transactions:
-        transactions_as_dict.append(transaction.as_raw_dict())
+        transactions_as_dict.append(
+            transaction.as_raw_dict(rename_transaction_date=False)
+        )
     return transactions_as_dict

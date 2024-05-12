@@ -23,17 +23,18 @@ class BankBase(ABC):
     # pdf_config defaults to an empty object if not overriden
     pdf_config: PdfConfig = PdfConfig()
 
-    def __init__(self):
-        self.validate_config()
+    def __init__(self, generic=False):
+        self.validate_config(generic)
         self.populate_pdf_config()
 
-    def validate_config(self):
+    def validate_config(self, generic: bool):
         # Basic validation to ensure required attributes are set
-        if not any([self.credit_config, self.debit_config]):
-            raise NotImplementedError(
-                f"{self.__class__.__name__} "
-                "must implement either `credit_config` or `debit_config`"
-            )
+        if not generic:
+            if self.credit_config is None and self.debit_config is None:
+                raise NotImplementedError(
+                    f"{self.__class__.__name__} "
+                    "must implement either `credit_config` or `debit_config`"
+                )
 
     def populate_pdf_config(self):
         # Ensure that PDF config always exists

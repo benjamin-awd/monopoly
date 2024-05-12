@@ -1,5 +1,6 @@
 from datetime import datetime
 from pathlib import Path
+from typing import Type
 
 import pytest
 from test_utils.skip import skip_if_encrypted
@@ -11,8 +12,13 @@ from monopoly.statements import DebitStatement
 
 test_cases = [
     (Dbs, 2222.68, 1302.88, datetime(2023, 10, 31)),
-    (Ocbc, 6630.79, 5049.55, datetime(2023, 10, 1)),
+    (Ocbc, 6630.79, 5049.55, datetime(2023, 10, 31)),
 ]
+
+
+@pytest.fixture
+def no_banks(monkeypatch):
+    monkeypatch.setattr("monopoly.banks.banks", [])
 
 
 @skip_if_encrypted
@@ -25,6 +31,7 @@ def test_bank_debit_statements(
     expected_debit_sum: float,
     expected_credit_sum: float,
     statement_date: datetime,
+    no_banks,
 ):
     bank_name = bank.debit_config.bank_name
     test_directory = Path(__file__).parent / bank_name / "debit"

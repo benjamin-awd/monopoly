@@ -19,7 +19,7 @@ class Dbs(BankBase):
     credit_config = CreditStatementConfig(
         bank_name=BankNames.DBS,
         statement_date_pattern=r"(\d{2}\s[A-Za-z]{3}\s\d{4})",
-        multiline_transactions=True,
+        multiline_transactions=False,
         transaction_pattern=CreditTransactionPatterns.DBS,
         prev_balance_pattern=StatementBalancePatterns.DBS,
     )

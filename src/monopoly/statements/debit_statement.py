@@ -17,7 +17,7 @@ class DebitStatement(BaseStatement):
 
     statement_type = EntryType.DEBIT
 
-    @property
+    @cached_property
     def debit_header(self):
         """Checks if the statement is a debit statement"""
         identifier = self.config.debit_statement_identifier

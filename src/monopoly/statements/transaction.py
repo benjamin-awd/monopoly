@@ -65,6 +65,9 @@ class TransactionMatch:
     groupdict: TransactionGroupDict
     match: re.Match
 
+    def span(self):
+        return self.match.span()
+
 
 @dataclass
 class Transaction:
@@ -79,12 +82,17 @@ class Transaction:
     amount: float
     suffix: Optional[str] = None
 
-    def as_raw_dict(self, show_suffix=False):
+    def as_raw_dict(self, rename_transaction_date=True, show_suffix=False):
         """Returns stringified dictionary version of the transaction"""
+        date_col = Columns.TRANSACTION_DATE.value
+
+        if rename_transaction_date:
+            date_col = Columns.DATE.value
+
         items = {
-            Columns.TRANSACTION_DATE: self.transaction_date,
-            Columns.DESCRIPTION: self.description,
-            Columns.AMOUNT: str(self.amount),
+            date_col: self.transaction_date,
+            Columns.DESCRIPTION.value: self.description,
+            Columns.AMOUNT.value: str(self.amount),
         }
         if show_suffix:
             items[Columns.SUFFIX] = self.suffix

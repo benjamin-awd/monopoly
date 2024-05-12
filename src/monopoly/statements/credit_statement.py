@@ -39,11 +39,11 @@ class CreditStatement(BaseStatement):
 
         if isinstance(self.config, CreditStatementConfig):
             if pattern := self.config.prev_balance_pattern:
-                raw_text = "".join(page.raw_text for page in self.pages)
-                matches = pattern.finditer(raw_text)
-
-                for match in matches:
-                    prev_balances.append(match)
+                for page in self.pages:
+                    for line in page.lines:
+                        match = pattern.search(line)
+                        if match:
+                            prev_balances.append(match)
 
         return prev_balances
 

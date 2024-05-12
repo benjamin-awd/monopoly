@@ -1,37 +1,17 @@
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from functools import cached_property, lru_cache
 from io import BytesIO
 from pathlib import Path
-from typing import Any, Optional
+from typing import Optional, Type
 
 import fitz
 import pdftotext
 from pydantic import SecretStr
 
-from monopoly.banks import detect_bank
-from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
+from monopoly.banks import BankBase
 
 logger = logging.getLogger(__name__)
-
-
-@dataclass
-class EncryptDict:
-    """Stores encryption dictionary of a PDF"""
-
-    raw_encrypt_dict: dict
-    pdf_version: str
-    algorithm: int = field(init=False)
-    length: int = field(init=False)
-    permissions: int = field(init=False)
-    revision: int = field(init=False)
-
-    def __post_init__(self):
-        self.pdf_version = float(self.pdf_version[-3:])
-        self.algorithm = int(self.raw_encrypt_dict.get("V"))
-        self.length = int(self.raw_encrypt_dict.get("Length"))
-        self.permissions = int(self.raw_encrypt_dict.get("P"))
-        self.revision = int(self.raw_encrypt_dict.get("R"))
 
 
 @dataclass
@@ -64,6 +44,7 @@ class BadPasswordFormatError(Exception):
 class PdfParser:
     def __init__(
         self,
+        bank: Type[BankBase],
         passwords: Optional[list[SecretStr]] = None,
         file_path: Optional[Path] = None,
         file_bytes: Optional[bytes] = None,
@@ -77,10 +58,7 @@ class PdfParser:
         self._passwords = passwords
         self.file_path = file_path
         self.file_bytes = file_bytes
-
-    @property
-    def bank(self):
-        return detect_bank(self.metadata_items)
+        self.bank = bank
 
     @property
     def passwords(self):
@@ -99,32 +77,6 @@ class PdfParser:
     @cached_property
     def page_bbox(self):
         return self.pdf_config.page_bbox
-
-    @property
-    def metadata_items(self) -> list[Any]:
-        """
-        Retrieves encryption and metadata identifiers from a bank statement PDF
-        """
-        identifiers = []
-        # pylint: disable=protected-access
-        if encrypt_dict := self.encrypt_dict:
-            encryption_identifier = EncryptionIdentifier(
-                float(encrypt_dict.pdf_version),
-                encrypt_dict.algorithm,
-                encrypt_dict.revision,
-                encrypt_dict.length,
-                encrypt_dict.permissions,
-            )
-            identifiers.append(encryption_identifier)
-
-        if metadata := self.document.metadata:
-            metadata_identifier = MetadataIdentifier(**metadata)
-            identifiers.append(metadata_identifier)  # type: ignore
-
-        if not identifiers:
-            raise ValueError("Could not get identifier")
-
-        return identifiers
 
     def open(self):
         """
@@ -202,17 +154,6 @@ class PdfParser:
         args = {"filename": self.file_path, "stream": self.file_bytes}
         return fitz.Document(**args)
 
-    @cached_property
-    def encrypt_dict(self) -> EncryptDict | None:
-        stream = self._get_doc_byte_stream()
-        pdf_version_string = stream.read(8).decode("utf-8", "backslashreplace")
-
-        if self.document.is_encrypted:
-            raw_encrypt_dict = self._get_raw_encrypt_dict(self.document)
-            encrypt_dict = EncryptDict(raw_encrypt_dict, pdf_version_string)
-            return encrypt_dict
-        return None
-
     @staticmethod
     def _remove_vertical_text(page: fitz.Page):
         """Helper function to remove vertical text, based on writing direction (wdir).
@@ -239,26 +180,3 @@ class PdfParser:
                     page.add_redact_annot(line["bbox"])
         page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE)
         return page
-
-    @staticmethod
-    def _get_raw_encrypt_dict(doc: fitz.Document) -> dict:
-        """
-        Helper function to extract the PDF encryption dictionary, since
-        `fitz` doesn't provide it
-        """
-        encrypt_metadata = {}
-        pdf_object, value = doc.xref_get_key(-1, "Encrypt")
-        if pdf_object != "xref":
-            pass  # PDF has no metadata
-        else:
-            xref = int(value.replace("0 R", ""))  # extract the metadata xref
-            for key in doc.xref_get_keys(xref):
-                encrypt_metadata[key] = doc.xref_get_key(xref, key)[1]
-        return encrypt_metadata
-
-    def _get_doc_byte_stream(self) -> BytesIO:
-        if self.file_path:
-            with open(self.file_path, "rb") as file:
-                stream = BytesIO(file.read())
-            return stream
-        raise RuntimeError("Unable to create stream since `file_path` not passed")
