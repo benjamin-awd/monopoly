@@ -1,6 +1,6 @@
-from typing import Annotated, Optional
+from typing import Optional
 
-from pydantic import SecretStr, StringConstraints
+from pydantic import ConfigDict, SecretStr
 from pydantic.dataclasses import dataclass
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -40,8 +40,8 @@ class StatementConfig:
         "(?P<amount>[\\d.,]+)$"
     is used to capture a transaction like:
         06/07 URBAN TRANSIT CO. SINGAPORE SG  1.38
-    - `transaction_date_format` represents the datetime format that a specific bank uses
-    for transactions. For example, "%d/%m" will match 06/07
+    - `transaction_date_order` represents the datetime format that a specific bank uses
+    for transactions. For example, "DMY" will parse 01/02/2024 as 1 Feb 2024.
     - `multiline_transactions` controls whether Monopoly tries to concatenate
     transactions that are split across two lines
     - `debit_statement_identifier` is a regex pattern that is used to determine whether
@@ -50,21 +50,28 @@ class StatementConfig:
 
     bank_name: BankNames
     transaction_pattern: str
-    transaction_date_format: Annotated[str, StringConstraints(pattern="%")]
     statement_date_pattern: str
-    statement_date_format: Annotated[str, StringConstraints(pattern="%.+%.+%")]
+    transaction_date_order: Optional[str] = None
+    statement_date_order: Optional[str] = None
     multiline_transactions: bool = False
     debit_statement_identifier: Optional[str] = None
 
+    def __post_init__(self):
+        if self.statement_date_order:
+            self.statement_date_order = {"DATE_ORDER": self.statement_date_order}
 
-@dataclass
+        if self.transaction_date_order:
+            self.transaction_date_order = {"DATE_ORDER": self.transaction_date_order}
+
+
+@dataclass(config=ConfigDict(extra="forbid"))
 class DebitStatementConfig(StatementConfig):
     """
     Dataclass storing configuration values unique to debit statements
     """
 
 
-@dataclass
+@dataclass(config=ConfigDict(extra="forbid"))
 class CreditStatementConfig(StatementConfig):
     """
     Dataclass storing configuration values unique to credit statements

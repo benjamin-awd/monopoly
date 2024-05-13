@@ -5,7 +5,6 @@ import fitz
 import pytest
 
 from monopoly.config import CreditStatementConfig
-from monopoly.constants import AccountType, BankNames
 from monopoly.pdf import PdfPage, PdfParser
 from monopoly.processor import StatementProcessor
 from monopoly.processors import Citibank, Dbs, Hsbc, Ocbc, StandardChartered
@@ -130,12 +129,10 @@ def statement(monkeypatch, statement_config):
 @pytest.fixture(scope="session")
 def statement_config():
     statement_config = CreditStatementConfig(
-        account_type=AccountType.CREDIT,
-        bank_name=BankNames.OCBC,
-        statement_date_format=r"%d-%m-%Y",
+        bank_name="example",
         transaction_pattern="foo",
-        transaction_date_format=r"%d/%m",
         statement_date_pattern="",
+        transaction_date_order="DMY",
         prev_balance_pattern="foo",
         debit_statement_identifier="debitidentifier123",
     )
