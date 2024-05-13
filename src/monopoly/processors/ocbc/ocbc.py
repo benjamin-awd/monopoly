@@ -24,19 +24,17 @@ class Ocbc(ProcessorBase):
     credit_config = CreditStatementConfig(
         bank_name=BankNames.OCBC,
         statement_date_pattern=r"(\d{2}\-\d{2}\-\d{4})",
-        statement_date_format=r"%d-%m-%Y",
+        statement_date_order="DMY",
         prev_balance_pattern=StatementBalancePatterns.OCBC,
         transaction_pattern=CreditTransactionPatterns.OCBC,
-        transaction_date_format="%d/%m",
+        transaction_date_order="DMY",
     )
 
     debit_config = DebitStatementConfig(
         bank_name=BankNames.OCBC,
         statement_date_pattern=r"(\d+\s[A-Za-z]{3}\s\d{4})",
-        statement_date_format=r"%d %b %Y",
         debit_statement_identifier=r"(Withdrawal.*Deposit.*Balance)",
         transaction_pattern=DebitTransactionPatterns.OCBC,
-        transaction_date_format="%d %b",
         multiline_transactions=True,
     )
 

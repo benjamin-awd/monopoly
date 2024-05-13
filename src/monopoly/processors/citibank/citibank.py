@@ -17,10 +17,9 @@ class Citibank(ProcessorBase):
     credit_config = CreditStatementConfig(
         bank_name=BankNames.CITIBANK,
         statement_date_pattern=r"Statement\sDate\s+(.*)",
-        statement_date_format=r"%B %d, %Y",
         prev_balance_pattern=StatementBalancePatterns.CITIBANK,
         transaction_pattern=CreditTransactionPatterns.CITIBANK,
-        transaction_date_format="%d %b",
+        transaction_date_order="DMY",
     )
 
     pdf_config = PdfConfig(

@@ -27,6 +27,7 @@ pdf2john = "^0.2.0"
 tabulate = "^0.9.0"
 mypy = "^1.7.1"
 pydantic = "^2.5.2"
+dateparser = "^1.2.0"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -40,6 +41,7 @@ pysnooper = "^1.2.0"
 pylint-pydantic = "^0.3.0"
 mypy = "^1.6.1"
 types-tqdm = "^4.66.0.5"
+types-dateparser = "^1.2.0.20240420"
 
 
 [tool.taskipy.tasks]

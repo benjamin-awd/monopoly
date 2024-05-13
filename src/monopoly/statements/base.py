@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 import fitz
+from dateparser import parse
 from pandas import DataFrame
 from pydantic import field_validator, model_validator
 from pydantic.dataclasses import dataclass
@@ -171,7 +172,11 @@ class BaseStatement:
         config = self.statement_config
         first_page = self.pages[0].raw_text
         if match := re.search(config.statement_date_pattern, first_page):
-            return datetime.strptime(match.group(1), config.statement_date_format)
+            statement_date = parse(
+                match.group(1), settings=config.statement_date_order  # type: ignore
+            )
+            if statement_date:
+                return statement_date
         raise ValueError("Statement date not found")
 
     @staticmethod

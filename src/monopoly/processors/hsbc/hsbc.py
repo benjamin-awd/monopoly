@@ -19,9 +19,7 @@ class Hsbc(ProcessorBase):
         bank_name=BankNames.HSBC,
         statement_date_pattern=r"Statement From .* to (\d{2}\s[A-Z]{3}\s\d{4})",
         prev_balance_pattern=StatementBalancePatterns.HSBC,
-        statement_date_format=r"%d %b %Y",
         transaction_pattern=CreditTransactionPatterns.HSBC,
-        transaction_date_format="%d %b",
         multiline_transactions=True,
     )
 

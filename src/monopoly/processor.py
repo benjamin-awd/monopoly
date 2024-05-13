@@ -1,7 +1,7 @@
 import logging
-from datetime import datetime
 from pathlib import Path
 
+from dateparser import parse
 from pandas import DataFrame
 
 from monopoly.config import CreditStatementConfig, DebitStatementConfig
@@ -56,9 +56,9 @@ class StatementProcessor:
 
         df = statement.df
         statement_date = statement.statement_date
-        date_format = statement.statement_config.transaction_date_format
+        transaction_date_order = statement.statement_config.transaction_date_order
 
-        def convert_date(row, date_format):
+        def convert_date(row, transaction_date_order=None):
             """
             Converts each date to a ISO 8601 (YYYY-MM-DD) format.
 
@@ -68,12 +68,10 @@ class StatementProcessor:
             e.g. if the statement month is Jan/Feb 2024, transactions from
             Oct/Nov/Dec should be attributed to the previous year.
             """
-            if "%Y" not in date_format and "%y" not in date_format:
-                date_format += " %Y"
-                row[StatementFields.TRANSACTION_DATE] += f" {statement_date.year}"
+            row[StatementFields.TRANSACTION_DATE] += f" {statement_date.year}"
 
-            parsed_date = datetime.strptime(
-                row[StatementFields.TRANSACTION_DATE], date_format
+            parsed_date = parse(
+                row[StatementFields.TRANSACTION_DATE], settings=transaction_date_order
             )
             if statement_date.month in (1, 2) and parsed_date.month > 2:
                 parsed_date = parsed_date.replace(year=parsed_date.year - 1)
@@ -82,7 +80,7 @@ class StatementProcessor:
 
         logger.debug("Transforming dates to ISO 8601")
         df[StatementFields.TRANSACTION_DATE] = df.apply(
-            convert_date, args=(date_format,), axis=1
+            convert_date, args=(transaction_date_order,), axis=1
         )
         return df
 
