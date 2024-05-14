@@ -1,13 +1,26 @@
 import traceback
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
-from typing import Collection, Iterable, Optional
+from typing import Collection, Iterable, Optional, TypedDict
 
 import click
 from pydantic.dataclasses import dataclass
 from tqdm import tqdm
 
 from monopoly.handler import StatementHandler
+
+
+class TqdmSettings(TypedDict):
+    """
+    Stores settings for `tqdm`
+    """
+
+    total: int
+    desc: str
+    leave: bool
+    delay: float
+    ncols: int
+    bar_format: str
 
 
 @dataclass
@@ -130,6 +143,7 @@ def run(
     input_files: Collection[Path],
     output_directory: Optional[Path] = None,
     print_df: bool = False,
+    single_process: bool = False,
 ):
     """
     Process a collection of input files concurrently
@@ -138,23 +152,35 @@ def run(
     is created and its display_report() method is called to provide a summary
     of the processing outcomes.
     """
-    with ProcessPoolExecutor() as executor:
-        results = list(
-            tqdm(
-                executor.map(
-                    process_statement,
-                    input_files,
-                    [output_directory] * len(input_files),
-                    [print_df] * len(input_files),
-                ),
-                total=len(input_files),
-                desc="Processing statements",
-                leave=False,
-                delay=0.5,
-                ncols=80,
-                bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt}",
+
+    tqdm_settings: TqdmSettings = {
+        "total": len(input_files),
+        "desc": "Processing statements",
+        "leave": False,
+        "delay": 0.5,
+        "ncols": 80,
+        "bar_format": "{l_bar}{bar}| {n_fmt}/{total_fmt}",
+    }
+
+    if not single_process:
+        with ProcessPoolExecutor() as executor:
+            results = list(
+                tqdm(
+                    executor.map(
+                        process_statement,
+                        input_files,
+                        [output_directory] * len(input_files),
+                        [print_df] * len(input_files),
+                    ),
+                    **tqdm_settings,
+                )
             )
-        )
+
+    else:
+        results = []
+        for file in tqdm(input_files, **tqdm_settings):
+            result = process_statement(file, output_directory, print_df)
+            results.append(result)
 
     if any(results):
         # filter out null values, for cases where print_df is True
@@ -189,16 +215,31 @@ def get_statement_paths(files: Iterable[Path]) -> set[Path]:
     "-o",
     "--output",
     type=click.Path(exists=True, allow_dash=True, resolve_path=True, path_type=Path),
-    help="Specify output folder",
+    help="Specify output folder.",
 )
 @click.option(
     "-p",
     "--pprint",
     is_flag=True,
-    help="Print the processed statement(s)",
+    help="Print the processed statement(s).",
+)
+@click.option(
+    "-s",
+    "--single-process",
+    is_flag=True,
+    help=(
+        "Runs `monopoly` in single-threaded mode, even when processing "
+        "multiple files. Useful for debugging."
+    ),
 )
 @click.pass_context
-def monopoly(ctx: click.Context, files: list[Path], output: Path, pprint: bool):
+def monopoly(
+    ctx: click.Context,
+    files: list[Path],
+    output: Path,
+    pprint: bool,
+    single_process: bool,
+):
     """
     Monopoly helps convert your bank statements from PDF to CSV.
 
@@ -208,7 +249,7 @@ def monopoly(ctx: click.Context, files: list[Path], output: Path, pprint: bool):
         matched_files = get_statement_paths(files)
 
         if matched_files:
-            run(matched_files, output, pprint)
+            run(matched_files, output, pprint, single_process)
             ctx.exit(0)
 
         else:
