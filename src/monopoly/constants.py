@@ -46,7 +46,6 @@ class SharedPatterns(StrEnum):
     AMOUNT_EXTENDED_WITHOUT_EOL = (
         r"(?P<amount>[\d.,]+|\([\d.,\s]+\))\s*(?P<suffix>CR|DR)?"
     )
-    AMOUNT_WITH_CASHBACK = r"(?P<amount>[\d.,]+|\([\d.,\s]+\))$"
     BALANCE = r"(?:(?P<balance>[\d.,]+)\s*)?$"
     DESCRIPTION = r"(?P<description>.*?)\s+"
     TRANSACTION_DATE_ABBREVIATED_ALL_CAPS = r"(?P<transaction_date>\d{2}\s[A-Z]{3})\s+"
@@ -88,7 +87,7 @@ class CreditTransactionPatterns(StrEnum):
     CITIBANK = (
         SharedPatterns.TRANSACTION_DATE_ABBREVIATED_ALL_CAPS
         + SharedPatterns.DESCRIPTION
-        + SharedPatterns.AMOUNT_WITH_CASHBACK
+        + SharedPatterns.AMOUNT_EXTENDED
     )
     HSBC = (
         SharedPatterns.POSTING_DATE_ABBREVIATED_PROPER
@@ -99,7 +98,7 @@ class CreditTransactionPatterns(StrEnum):
     OCBC = (
         r"(?P<transaction_date>\d+/\d+)\s+"
         + SharedPatterns.DESCRIPTION
-        + SharedPatterns.AMOUNT_WITH_CASHBACK
+        + SharedPatterns.AMOUNT_EXTENDED
     )
     STANDARD_CHARTERED = (
         SharedPatterns.POSTING_DATE_ABBREVIATED_PROPER
