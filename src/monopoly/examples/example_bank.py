@@ -10,7 +10,8 @@ class ExampleBankProcessor(BankBase):
         bank_name=BankNames.EXAMPLE,
         statement_date_pattern=r"(\d{2}\-\d{2}\-\d{4})",
         prev_balance_pattern=(
-            r"(?P<description>LAST MONTH'S BALANCE?)\s+" + SharedPatterns.AMOUNT
+            r"(?P<description>LAST MONTH'S BALANCE?)\s+"
+            + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
         ),
         transaction_pattern=(
             r"(?P<transaction_date>\d+/\d+)\s*"

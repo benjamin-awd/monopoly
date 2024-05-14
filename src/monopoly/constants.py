@@ -39,13 +39,17 @@ class SharedPatterns(StrEnum):
     """
     AMOUNT matches the following patterns:
     1,123.12 | 123.12 | (123.12) | ( 123.12) | 123.12 CR
+
+    AMOUNT_EXTENDED is generally used for credit statements and to
+    find statement balances, while AMOUNT_EXTENDED_WITHOUT_EOL is used
+    for debit statements, since debit statements have the amount + balances
+    on a single line, and we only want the amount.
     """
 
-    AMOUNT = r"(?P<amount>[\d.,]+)\s*"
-    AMOUNT_EXTENDED = r"(?P<amount>[\d.,]+|\([\d.,\s]+\)$)\s*(?P<suffix>CR|DR)?$"
-    AMOUNT_EXTENDED_WITHOUT_EOL = (
-        r"(?P<amount>[\d.,]+|\([\d.,\s]+\))\s*(?P<suffix>CR|DR)?"
-    )
+    DEBIT_CREDIT_SUFFIX = r"(?P<suffix>CR|DR)?"
+    AMOUNT = r"(?P<amount>[\d.,]+|\([\d.,\s]+\))\s*"
+    AMOUNT_EXTENDED_WITHOUT_EOL = AMOUNT + DEBIT_CREDIT_SUFFIX
+    AMOUNT_EXTENDED = AMOUNT_EXTENDED_WITHOUT_EOL + r"$"
     BALANCE = r"(?:(?P<balance>[\d.,]+)\s*)?$"
     DESCRIPTION = r"(?P<description>.*?)\s+"
     TRANSACTION_DATE_ABBREVIATED_ALL_CAPS = r"(?P<transaction_date>\d{2}\s[A-Z]{3})\s+"
