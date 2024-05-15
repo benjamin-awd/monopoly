@@ -47,7 +47,7 @@ class SharedPatterns(StrEnum):
     """
 
     DEBIT_CREDIT_SUFFIX = r"(?P<suffix>CR|DR)?"
-    AMOUNT = r"(?P<amount>[\d.,]+|\([\d.,\s]+\))\s*"
+    AMOUNT = r"(?P<amount>\d{1,3}(,\d{3})*\.\d*|\([\d.,\s]+\))\s*"
     AMOUNT_EXTENDED_WITHOUT_EOL = AMOUNT + DEBIT_CREDIT_SUFFIX
     AMOUNT_EXTENDED = AMOUNT_EXTENDED_WITHOUT_EOL + r"$"
     BALANCE = r"(?:(?P<balance>[\d.,]+)\s*)?$"
