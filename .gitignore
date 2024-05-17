@@ -1,19 +1,18 @@
+# env vars and keys
+*.key
+
+# financial documents
 *.pdf
-*.ipynb
 *.csv
+
+# dev
+*.ipynb
+*.txt
+.coverage
 .python-version
 Brewfile.lock.json
 __pycache__
-.terraform
-.terraform.lock.hcl
-*.tfstate
-*.tfstate.backup
-credentials.json
-token.json
 _ignore*
-*.tfvars
-*.txt
-.coverage
 dist
 
 # allowed pdf files/fixtures
