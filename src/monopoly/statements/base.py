@@ -8,7 +8,7 @@ from pathlib import Path
 from dateparser import parse
 
 from monopoly.config import CreditStatementConfig, DebitStatementConfig
-from monopoly.constants import Columns
+from monopoly.constants import Columns, SharedPatterns
 from monopoly.pdf import PdfParser
 from monopoly.statements.transaction import (
     Transaction,
