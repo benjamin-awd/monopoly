@@ -1,4 +1,3 @@
-from datetime import datetime
 from unittest.mock import MagicMock, Mock, PropertyMock, patch
 
 import fitz
@@ -77,15 +76,10 @@ def mock_document():
 
 
 @pytest.fixture(scope="function")
-def processor(statement_config):
-    with patch.object(
-        BaseStatement, "statement_date", new_callable=PropertyMock
-    ) as mock_statement_date:
-        mock_statement_date.return_value = datetime(2023, 8, 1)
+def processor(statement, parser):
+    with patch.object(BaseStatement, "statement_date", new_callable=PropertyMock) as _:
         processor = StatementProcessor(
-            statement_config=statement_config,
-            pdf_config=None,
-            file_path="foo",
+            file_name="foo.pdf", parser=parser, statement=statement
         )
         yield processor
 

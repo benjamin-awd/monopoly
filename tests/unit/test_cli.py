@@ -93,7 +93,7 @@ def test_process_statement(monkeypatch):
 
 
 def test_monopoly_output(cli_runner: CliRunner):
-    with open("tests/integration/banks/citibank/credit/input.pdf", "rb") as source_file:
+    with open("src/monopoly/examples/example_statement.pdf", "rb") as source_file:
         file_content = source_file.read()
 
     with cli_runner.isolated_filesystem() as tmp_dir:
@@ -108,7 +108,7 @@ def test_monopoly_output(cli_runner: CliRunner):
 
         assert result.exit_code == 0
         assert "1 statement(s) processed" in result.output
-        assert "input.pdf -> citibank-credit-2022-11-536993.csv" in result.output
+        assert "input.pdf -> example-credit-2023-01-9a7ca0.csv" in result.output
 
 
 def test_monopoly_no_pdf(cli_runner: CliRunner):
