@@ -105,9 +105,12 @@ class BaseStatement(ABC):
         tries to combine them into a single string"""
         description_pos = current_line.find(description)
         for next_line in lines[idx + 1 :]:  # noqa: E203
-            # if transaction found on next line or if next
-            # line is blank, don't add the description
-            if self.pattern.search(next_line) or next_line == "":
+            # if next line is blank, don't add the description
+            if not next_line:
+                break
+
+            # if transaction found on next line then break
+            if self.pattern.search(next_line):
                 break
 
             # don't process line if the description across both lines
