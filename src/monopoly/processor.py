@@ -53,7 +53,6 @@ class StatementProcessor:
 
     def transform(self, statement: CreditStatement | DebitStatement) -> DataFrame:
         logger.debug("Running transformation functions on DataFrame")
-
         df = statement.df
         statement_date = statement.statement_date
         transaction_date_order = statement.statement_config.transaction_date_order
@@ -69,7 +68,6 @@ class StatementProcessor:
             Oct/Nov/Dec should be attributed to the previous year.
             """
             row[StatementFields.TRANSACTION_DATE] += f" {statement_date.year}"
-
             parsed_date = parse(
                 row[StatementFields.TRANSACTION_DATE], settings=transaction_date_order
             )

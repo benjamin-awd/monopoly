@@ -1,13 +1,14 @@
 from datetime import datetime
+from unittest.mock import PropertyMock
 
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
-from monopoly.processors import Ocbc
+from monopoly.processor import StatementProcessor
 from monopoly.statements import BaseStatement, Transaction
 
 
-def test_transform_cross_year(ocbc: Ocbc, statement: BaseStatement):
+def test_transform_cross_year(processor: StatementProcessor, statement: BaseStatement):
     raw_df = pd.DataFrame(
         [
             Transaction("12/01", "FAIRPRICE FINEST", "18.49"),
@@ -15,9 +16,9 @@ def test_transform_cross_year(ocbc: Ocbc, statement: BaseStatement):
             Transaction("28/11", "KOPITIAM", "5.00"),
         ]
     )
-    statement.statement_date = datetime(2024, 1, 1)
+    type(statement).statement_date = PropertyMock(return_value=(datetime(2024, 1, 1)))
     statement.df = raw_df
-    transformed_df = ocbc.transform(statement)
+    transformed_df = processor.transform(statement)
 
     expected_data = pd.DataFrame(
         [
@@ -30,17 +31,17 @@ def test_transform_cross_year(ocbc: Ocbc, statement: BaseStatement):
     assert_frame_equal(transformed_df, expected_data)
 
 
-def test_transform_within_year(ocbc: Ocbc, statement: BaseStatement):
+def test_transform_within_year(processor: StatementProcessor, statement: BaseStatement):
     raw_df = pd.DataFrame(
         [
             Transaction("12/06", "FAIRPRICE FINEST", "18.49"),
             Transaction("12/06", "DA PAOLO GASTRONOMIA", "19.69"),
         ]
     )
-    statement.statement_date = datetime(2023, 7, 1)
+    type(statement).statement_date = PropertyMock(return_value=(datetime(2023, 7, 1)))
     statement.df = raw_df
 
-    transformed_df = ocbc.transform(statement)
+    transformed_df = processor.transform(statement)
 
     expected_data = pd.DataFrame(
         [
