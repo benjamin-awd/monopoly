@@ -4,8 +4,8 @@ import fitz
 import pytest
 
 from monopoly.config import CreditStatementConfig
+from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfPage, PdfParser
-from monopoly.processor import StatementProcessor
 from monopoly.processors import Citibank, Dbs, Hsbc, Ocbc, StandardChartered
 from monopoly.statements import BaseStatement, CreditStatement, DebitStatement
 
@@ -78,7 +78,7 @@ def mock_document():
 @pytest.fixture(scope="function")
 def processor(statement, parser):
     with patch.object(BaseStatement, "statement_date", new_callable=PropertyMock) as _:
-        processor = StatementProcessor(
+        processor = StatementHandler(
             file_name="foo.pdf", parser=parser, statement=statement
         )
         yield processor
