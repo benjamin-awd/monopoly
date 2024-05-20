@@ -4,11 +4,11 @@ from unittest.mock import PropertyMock
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
-from monopoly.processor import StatementProcessor
+from monopoly.handler import StatementHandler
 from monopoly.statements import BaseStatement, Transaction
 
 
-def test_transform_cross_year(processor: StatementProcessor, statement: BaseStatement):
+def test_transform_cross_year(processor: StatementHandler, statement: BaseStatement):
     raw_df = pd.DataFrame(
         [
             Transaction("12/01", "FAIRPRICE FINEST", "18.49"),
@@ -31,7 +31,7 @@ def test_transform_cross_year(processor: StatementProcessor, statement: BaseStat
     assert_frame_equal(transformed_df, expected_data)
 
 
-def test_transform_within_year(processor: StatementProcessor, statement: BaseStatement):
+def test_transform_within_year(processor: StatementHandler, statement: BaseStatement):
     raw_df = pd.DataFrame(
         [
             Transaction("12/06", "FAIRPRICE FINEST", "18.49"),

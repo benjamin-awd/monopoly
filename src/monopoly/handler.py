@@ -12,7 +12,7 @@ from monopoly.write import generate_name
 logger = logging.getLogger(__name__)
 
 
-class StatementProcessor:
+class StatementHandler:
     """
     Handles extract, transform and load (ETL) logic for bank statements
 

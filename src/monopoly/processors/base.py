@@ -7,12 +7,12 @@ from pydantic import SecretStr
 
 from monopoly.config import CreditStatementConfig, DebitStatementConfig, PdfConfig
 from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
+from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfParser
-from monopoly.processor import StatementProcessor
 from monopoly.statements import CreditStatement, DebitStatement
 
 
-class ProcessorBase(StatementProcessor):
+class ProcessorBase(StatementHandler):
     """Helper class to handle initialization of common variables
     that are shared between bank processor classes
 

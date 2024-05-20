@@ -12,9 +12,7 @@ from monopoly.statements import BaseStatement
 
 @pytest.fixture
 def mock_generate_name():
-    with patch(
-        "monopoly.processor.generate_name", return_value="test_file.csv"
-    ) as mock:
+    with patch("monopoly.handler.generate_name", return_value="test_file.csv") as mock:
         yield mock
 
 
