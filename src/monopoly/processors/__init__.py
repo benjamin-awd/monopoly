@@ -10,10 +10,10 @@ from monopoly.config import PdfConfig
 from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
 from monopoly.pdf import PdfParser
 
+from ..examples.example_bank import ExampleBankProcessor
 from .base import ProcessorBase
 from .citibank import Citibank
 from .dbs import Dbs
-from .example_bank import ExampleBankProcessor
 from .hsbc import Hsbc
 from .ocbc import Ocbc
 from .standard_chartered import StandardChartered

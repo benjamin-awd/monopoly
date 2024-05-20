@@ -1,4 +1,4 @@
-from monopoly.processors import ExampleBankProcessor
+from monopoly.examples import ExampleBankProcessor
 
 
 def example():
