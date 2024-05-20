@@ -24,6 +24,9 @@ class ProcessorBase(StatementProcessor):
     # overwritten if pdf_config exists in bank class
     pdf_config: PdfConfig = PdfConfig()
     identifiers: list[EncryptionIdentifier | MetadataIdentifier]
+    credit_config: CreditStatementConfig
+    debit_config: DebitStatementConfig
+    statement: CreditStatement | DebitStatement
 
     def __init__(
         self,

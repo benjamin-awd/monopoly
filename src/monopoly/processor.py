@@ -4,7 +4,6 @@ from pathlib import Path
 from dateparser import parse
 from pandas import DataFrame
 
-from monopoly.config import CreditStatementConfig, DebitStatementConfig
 from monopoly.constants import StatementFields
 from monopoly.pdf import PdfParser
 from monopoly.statements import CreditStatement, DebitStatement
@@ -21,10 +20,6 @@ class StatementProcessor:
     transformations like converting various date formats into ISO 8601.
     Transformed statements are then written to a CSV file.
     """
-
-    credit_config: CreditStatementConfig
-    debit_config: DebitStatementConfig
-    statement: CreditStatement | DebitStatement
 
     def __init__(
         self,
