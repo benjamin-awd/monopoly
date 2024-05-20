@@ -42,6 +42,7 @@ class StatementConfig:
         06/07 URBAN TRANSIT CO. SINGAPORE SG  1.38
     - `transaction_date_order` represents the datetime format that a specific bank uses
     for transactions. For example, "DMY" will parse 01/02/2024 as 1 Feb 2024.
+    Defaults to DMY.
     - `multiline_transactions` controls whether Monopoly tries to concatenate
     transactions that are split across two lines
     - `debit_statement_identifier` is a regex pattern that is used to determine whether
@@ -51,8 +52,8 @@ class StatementConfig:
     bank_name: BankNames
     transaction_pattern: str
     statement_date_pattern: str
-    transaction_date_order: Optional[str] = None
-    statement_date_order: Optional[str] = None
+    transaction_date_order: Optional[str] = "DMY"
+    statement_date_order: Optional[str] = "DMY"
     multiline_transactions: bool = False
     debit_statement_identifier: Optional[str] = None
 

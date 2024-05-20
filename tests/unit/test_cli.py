@@ -108,7 +108,7 @@ def test_monopoly_output(cli_runner: CliRunner):
 
         assert result.exit_code == 0
         assert "1 statement(s) processed" in result.output
-        assert "input.pdf -> example-credit-2023-01-9a7ca0.csv" in result.output
+        assert "input.pdf -> example-credit-2023-07-9a7ca0.csv" in result.output
 
 
 def test_monopoly_no_pdf(cli_runner: CliRunner):
