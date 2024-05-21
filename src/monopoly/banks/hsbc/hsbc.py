@@ -9,12 +9,12 @@ from monopoly.constants import (
     StatementBalancePatterns,
 )
 
-from ..base import ProcessorBase
+from ..base import BankBase
 
 logger = logging.getLogger(__name__)
 
 
-class Hsbc(ProcessorBase):
+class Hsbc(BankBase):
     credit_config = CreditStatementConfig(
         bank_name=BankNames.HSBC,
         statement_date_pattern=r"Statement From .* to (\d{2}\s[A-Z]{3}\s\d{4})",

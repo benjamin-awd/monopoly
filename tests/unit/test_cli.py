@@ -8,6 +8,7 @@ from unittest.mock import Mock
 import pytest
 from click.testing import CliRunner
 
+from monopoly.banks import BankBase
 from monopoly.cli import (
     Report,
     Result,
@@ -15,7 +16,6 @@ from monopoly.cli import (
     monopoly,
     process_statement,
 )
-from monopoly.processors import ProcessorBase
 
 
 @pytest.fixture
@@ -74,14 +74,14 @@ def test_help_command() -> None:
 
 
 def test_process_statement(monkeypatch):
-    processor: ProcessorBase | Type[Mock] = Mock(spec=ProcessorBase)
+    processor: BankBase | Type[Mock] = Mock(spec=BankBase)
 
-    def mock_detect_processor(file_path: Path) -> Mock:
+    def mock_detect_bank(file_path: Path) -> Mock:
         assert "statement.pdf" in str(file_path)
         processor.load.return_value = Path("foo")
         return processor
 
-    monkeypatch.setattr("monopoly.cli.detect_processor", mock_detect_processor)
+    monkeypatch.setattr("monopoly.cli.detect_bank", mock_detect_bank)
 
     file = Path("path/to/statement.pdf")
 

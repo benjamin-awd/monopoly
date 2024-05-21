@@ -7,7 +7,7 @@ import click
 from pydantic.dataclasses import dataclass
 from tqdm import tqdm
 
-from monopoly.processors import detect_processor
+from monopoly.banks import detect_bank
 
 
 @dataclass
@@ -97,7 +97,7 @@ def process_statement(
     """
 
     try:
-        processor = detect_processor(file)
+        processor = detect_bank(file)
         statement = processor.extract()
         transformed_df = processor.transform(statement)
 

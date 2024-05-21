@@ -1,6 +1,6 @@
 import re
 
-from monopoly.processors import Hsbc, Ocbc
+from monopoly.banks import Hsbc, Ocbc
 from monopoly.statements import BaseStatement, Transaction
 
 

@@ -12,7 +12,7 @@ from monopoly.pdf import PdfParser
 from monopoly.statements import CreditStatement, DebitStatement
 
 
-class ProcessorBase(StatementHandler):
+class BankBase(StatementHandler):
     """Helper class to handle initialization of common variables
     that are shared between bank processor classes
 

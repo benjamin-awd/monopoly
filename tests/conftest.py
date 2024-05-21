@@ -3,10 +3,10 @@ from unittest.mock import MagicMock, Mock, PropertyMock, patch
 import fitz
 import pytest
 
+from monopoly.banks import Citibank, Dbs, Hsbc, Ocbc, StandardChartered
 from monopoly.config import CreditStatementConfig
 from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfPage, PdfParser
-from monopoly.processors import Citibank, Dbs, Hsbc, Ocbc, StandardChartered
 from monopoly.statements import BaseStatement, CreditStatement, DebitStatement
 
 
@@ -52,7 +52,7 @@ def mock_get_pages():
 @pytest.fixture
 def mock_get_statement_config():
     with patch(
-        "monopoly.processors.base.ProcessorBase.statement_config",
+        "monopoly.banks.base.BankBase.statement_config",
         new_callable=PropertyMock,
     ) as mock_get_statement_config:
         mock_get_statement_config.return_value = None

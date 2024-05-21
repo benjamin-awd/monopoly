@@ -11,14 +11,14 @@ from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
 from monopoly.pdf import PdfParser
 
 from ..examples.example_bank import ExampleBankProcessor
-from .base import ProcessorBase
+from .base import BankBase
 from .citibank import Citibank
 from .dbs import Dbs
 from .hsbc import Hsbc
 from .ocbc import Ocbc
 from .standard_chartered import StandardChartered
 
-processors: list[Type[ProcessorBase]] = [
+banks: list[Type[BankBase]] = [
     Citibank,
     Dbs,
     ExampleBankProcessor,
@@ -35,11 +35,11 @@ class UnsupportedBankError(Exception):
     """Raised when a processor cannot be found for a specific bank"""
 
 
-def detect_processor(
+def detect_bank(
     file_path: Optional[Path] = None,
     file_bytes: Optional[bytes] = None,
     passwords: Optional[list[SecretStr]] = None,
-) -> ProcessorBase:
+) -> BankBase:
     """
     Reads the encryption metadata or actual metadata (if the PDF is not encrypted),
     and checks for a bank based on unique identifiers.
@@ -49,7 +49,7 @@ def detect_processor(
         file_bytes=file_bytes,
         pdf_config=PdfConfig(passwords=passwords),
     )
-    for processor in processors:
+    for processor in banks:
         metadata_items = processor.get_identifiers(parser)
         if is_bank_identified(metadata_items, processor):
             return processor(
@@ -61,7 +61,7 @@ def detect_processor(
 
 def is_bank_identified(
     metadata_items: list[EncryptionIdentifier | MetadataIdentifier],
-    processor: Type[ProcessorBase],
+    processor: Type[BankBase],
 ) -> bool:
     """
     Checks if a bank is identified based on a list of metadata items.
