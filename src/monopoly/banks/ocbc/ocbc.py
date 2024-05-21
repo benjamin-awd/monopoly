@@ -15,12 +15,12 @@ from monopoly.constants import (
     StatementBalancePatterns,
 )
 
-from ..base import ProcessorBase
+from ..base import BankBase
 
 logger = logging.getLogger(__name__)
 
 
-class Ocbc(ProcessorBase):
+class Ocbc(BankBase):
     credit_config = CreditStatementConfig(
         bank_name=BankNames.OCBC,
         statement_date_pattern=r"(\d{2}\-\d{2}\-\d{4})",

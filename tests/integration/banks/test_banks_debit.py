@@ -6,8 +6,8 @@ import pytest
 from pandas.testing import assert_frame_equal
 from test_utils.skip import skip_if_encrypted
 
+from monopoly.banks import BankBase, Dbs, Ocbc
 from monopoly.constants import StatementFields
-from monopoly.processors import Dbs, Ocbc, ProcessorBase
 from monopoly.statements import DebitStatement
 
 
@@ -20,7 +20,7 @@ from monopoly.statements import DebitStatement
     ],
 )
 def test_bank_debit_statements(
-    bank_processor: ProcessorBase,
+    bank_processor: BankBase,
     expected_debit_sum: float,
     expected_credit_sum: float,
     statement_date: datetime,
@@ -28,7 +28,7 @@ def test_bank_debit_statements(
     processor_name = bank_processor.debit_config.bank_name
     test_directory = Path(__file__).parent / processor_name / "debit"
 
-    processor: ProcessorBase = bank_processor(test_directory / "input.pdf")
+    processor: BankBase = bank_processor(test_directory / "input.pdf")
     expected_raw_data = pd.read_csv(test_directory / "raw.csv")
     expected_transformed_data = pd.read_csv(test_directory / "transformed.csv")
 

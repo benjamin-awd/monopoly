@@ -10,12 +10,12 @@ from monopoly.constants import (
     StatementBalancePatterns,
 )
 
-from ..base import ProcessorBase
+from ..base import BankBase
 
 logger = logging.getLogger(__name__)
 
 
-class Dbs(ProcessorBase):
+class Dbs(BankBase):
     credit_config = CreditStatementConfig(
         bank_name=BankNames.DBS,
         statement_date_pattern=r"(\d{2}\s[A-Za-z]{3}\s\d{4})",

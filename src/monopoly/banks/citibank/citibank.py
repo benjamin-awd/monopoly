@@ -8,12 +8,12 @@ from monopoly.constants import (
     StatementBalancePatterns,
 )
 
-from ..base import ProcessorBase
+from ..base import BankBase
 
 logger = logging.getLogger(__name__)
 
 
-class Citibank(ProcessorBase):
+class Citibank(BankBase):
     credit_config = CreditStatementConfig(
         bank_name=BankNames.CITIBANK,
         statement_date_pattern=r"Statement\sDate\s+(.*)",

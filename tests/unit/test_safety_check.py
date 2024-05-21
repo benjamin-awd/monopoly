@@ -2,12 +2,12 @@ import fitz
 import pandas as pd
 import pytest
 
-from monopoly.processors import ProcessorBase
+from monopoly.banks import BankBase
 from monopoly.statements import CreditStatement, DebitStatement
 from monopoly.statements.base import SafetyCheckError
 
 
-class MockProcessor(ProcessorBase):
+class MockProcessor(BankBase):
     credit_config = None
     debit_config = None
 

@@ -81,7 +81,7 @@ class BaseStatement:
     """
     A dataclass representation of a bank statement, containing
     the PDF pages (their raw text representation in a `list`),
-    and specific config per processor.
+    and specific bank config.
     """
 
     def __init__(

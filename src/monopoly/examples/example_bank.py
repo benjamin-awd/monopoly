@@ -1,9 +1,9 @@
+from monopoly.banks.base import BankBase
 from monopoly.config import CreditStatementConfig
 from monopoly.constants import BankNames, MetadataIdentifier, SharedPatterns
-from monopoly.processors.base import ProcessorBase
 
 
-class ExampleBankProcessor(ProcessorBase):
+class ExampleBankProcessor(BankBase):
     """Dummy class to help with reading the example PDF statement"""
 
     credit_config = CreditStatementConfig(

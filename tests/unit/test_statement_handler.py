@@ -5,8 +5,8 @@ from unittest.mock import MagicMock, patch
 import pytest
 from pandas import DataFrame
 
+from monopoly.banks import ExampleBankProcessor
 from monopoly.constants import AccountType
-from monopoly.processors import ExampleBankProcessor
 from monopoly.statements import BaseStatement
 
 

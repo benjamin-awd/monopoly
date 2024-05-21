@@ -4,9 +4,9 @@ import pytest
 from pytest import raises
 from test_utils.skip import skip_if_encrypted
 
+from monopoly.banks import UnsupportedBankError, detect_bank
+from monopoly.banks.base import BankBase
 from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
-from monopoly.processors import UnsupportedBankError, detect_processor
-from monopoly.processors.base import ProcessorBase
 
 
 @pytest.fixture
@@ -40,7 +40,7 @@ def mock_encrypted_document():
         yield mock_document
 
 
-class MockProcessorOne(ProcessorBase):
+class MockProcessorOne(BankBase):
     debit_config = None
     credit_config = None
     identifiers = [
@@ -51,7 +51,7 @@ class MockProcessorOne(ProcessorBase):
     ]
 
 
-class MockProcessorTwo(ProcessorBase):
+class MockProcessorTwo(BankBase):
     debit_config = None
     credit_config = None
     identifiers = [
@@ -61,7 +61,7 @@ class MockProcessorTwo(ProcessorBase):
     ]
 
 
-class MockProcessorThree(ProcessorBase):
+class MockProcessorThree(BankBase):
     debit_config = None
     credit_config = None
     identifiers = [MetadataIdentifier(creator="asdasd", producer="qwerty")]
@@ -80,10 +80,10 @@ def test_auto_detect_unencrypted_bank_identified(
     mock_no_encrypt_metadata_extractor,
     file_path: str = unencrypted_file_path,
 ):
-    mock_processors_list = [MockProcessorOne, MockProcessorTwo]
-    monkeypatch.setattr("monopoly.processors.processors", mock_processors_list)
+    mock_banks_list = [MockProcessorOne, MockProcessorTwo]
+    monkeypatch.setattr("monopoly.banks.banks", mock_banks_list)
 
-    bank_instance = detect_processor(file_path=file_path)
+    bank_instance = detect_bank(file_path=file_path)
 
     assert isinstance(bank_instance, MockProcessorTwo)
 
@@ -96,16 +96,16 @@ def test_auto_detect_encrypted_bank_identified(
     mock_get_statement_config,
     file_path: str = encrypted_file_path,
 ):
-    mock_processors_list = [MockProcessorOne, MockProcessorTwo]
-    monkeypatch.setattr("monopoly.processors.processors", mock_processors_list)
-    bank_instance = detect_processor(
+    mock_banks_list = [MockProcessorOne, MockProcessorTwo]
+    monkeypatch.setattr("monopoly.banks.banks", mock_banks_list)
+    bank_instance = detect_bank(
         file_path=file_path,
     )
     assert isinstance(bank_instance, MockProcessorOne)
 
 
 @skip_if_encrypted
-def test_detect_processor_not_identified(
+def test_detect_bank_not_identified(
     monkeypatch,
     mock_document,
     mock_get_pages,
@@ -113,8 +113,8 @@ def test_detect_processor_not_identified(
     mock_encrypt_metadata_extractor,
     file_path: str = unencrypted_file_path,
 ):
-    mock_processors_list = [MockProcessorThree]
-    monkeypatch.setattr("monopoly.processors.processors", mock_processors_list)
+    mock_banks_list = [MockProcessorThree]
+    monkeypatch.setattr("monopoly.banks.banks", mock_banks_list)
 
     with raises(UnsupportedBankError, match="This bank is currently unsupported"):
-        detect_processor(file_path=file_path)
+        detect_bank(file_path=file_path)

@@ -6,9 +6,9 @@ import pytest
 from pandas.testing import assert_frame_equal
 from test_utils.skip import skip_if_encrypted
 
+from monopoly.banks import Citibank, Dbs, Hsbc, Ocbc, StandardChartered
+from monopoly.banks.base import BankBase
 from monopoly.constants import StatementFields
-from monopoly.processors import Citibank, Dbs, Hsbc, Ocbc, StandardChartered
-from monopoly.processors.base import ProcessorBase
 from monopoly.statements import CreditStatement
 
 
@@ -24,14 +24,14 @@ from monopoly.statements import CreditStatement
     ],
 )
 def test_bank_credit_statements(
-    bank_processor: ProcessorBase,
+    bank_processor: BankBase,
     total_amount: float,
     statement_date: datetime,
 ):
     processor_name = bank_processor.credit_config.bank_name
     test_directory = Path(__file__).parent / processor_name / "credit"
 
-    processor: ProcessorBase = bank_processor(test_directory / "input.pdf")
+    processor: BankBase = bank_processor(test_directory / "input.pdf")
     expected_raw_data = pd.read_csv(test_directory / "raw.csv")
     expected_transformed_data = pd.read_csv(test_directory / "transformed.csv")
 
