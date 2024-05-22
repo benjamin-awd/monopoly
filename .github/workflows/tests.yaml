@@ -23,9 +23,10 @@ jobs:
           poetry-version: "1.6.1"
 
       - name: Install git crypt & run tests
+        uses: Flydiverny/setup-git-crypt@v3
+
+      - name: Run tests
         run: |
-          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          brew install git-crypt
           echo '${{ secrets.GIT_CRYPT_KEY }}' | base64 --decode > /tmp/git-crypt-key
           git-crypt unlock /tmp/git-crypt-key
           rm /tmp/git-crypt-key
