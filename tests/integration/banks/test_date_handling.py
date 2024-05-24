@@ -1,14 +1,13 @@
 from datetime import datetime
-from unittest.mock import PropertyMock
 
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
 from monopoly.handler import StatementHandler
-from monopoly.statements import BaseStatement, Transaction
+from monopoly.statements import Transaction
 
 
-def test_transform_cross_year(processor: StatementHandler, statement: BaseStatement):
+def test_transform_cross_year(handler: StatementHandler):
     raw_df = pd.DataFrame(
         [
             Transaction("12/01", "FAIRPRICE FINEST", "18.49"),
@@ -16,9 +15,11 @@ def test_transform_cross_year(processor: StatementHandler, statement: BaseStatem
             Transaction("28/11", "KOPITIAM", "5.00"),
         ]
     )
-    type(statement).statement_date = PropertyMock(return_value=(datetime(2024, 1, 1)))
-    statement.df = raw_df
-    transformed_df = processor.transform(statement)
+    transformed_df = handler.transform(
+        df=raw_df,
+        statement_date=datetime(2024, 1, 1),
+        transaction_date_order={"DATE_ORDER": "DMY"},
+    )
 
     expected_data = pd.DataFrame(
         [
@@ -31,17 +32,19 @@ def test_transform_cross_year(processor: StatementHandler, statement: BaseStatem
     assert_frame_equal(transformed_df, expected_data)
 
 
-def test_transform_within_year(processor: StatementHandler, statement: BaseStatement):
+def test_transform_within_year(handler: StatementHandler):
     raw_df = pd.DataFrame(
         [
             Transaction("12/06", "FAIRPRICE FINEST", "18.49"),
             Transaction("12/06", "DA PAOLO GASTRONOMIA", "19.69"),
         ]
     )
-    type(statement).statement_date = PropertyMock(return_value=(datetime(2023, 7, 1)))
-    statement.df = raw_df
 
-    transformed_df = processor.transform(statement)
+    transformed_df = handler.transform(
+        df=raw_df,
+        statement_date=datetime(2023, 7, 1),
+        transaction_date_order={"DATE_ORDER": "DMY"},
+    )
 
     expected_data = pd.DataFrame(
         [

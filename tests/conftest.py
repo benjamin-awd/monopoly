@@ -4,7 +4,7 @@ import fitz
 import pytest
 
 from monopoly.banks import Citibank, Dbs, Hsbc, Ocbc, StandardChartered
-from monopoly.config import CreditStatementConfig
+from monopoly.config import CreditStatementConfig, PdfConfig
 from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfPage, PdfParser
 from monopoly.statements import BaseStatement, CreditStatement, DebitStatement
@@ -52,10 +52,10 @@ def mock_get_pages():
 @pytest.fixture
 def mock_get_statement_config():
     with patch(
-        "monopoly.banks.base.BankBase.statement_config",
+        "monopoly.banks.base.BankBase.config",
         new_callable=PropertyMock,
-    ) as mock_get_statement_config:
-        mock_get_statement_config.return_value = None
+    ) as mock_get_statement_config_prop:
+        mock_get_statement_config_prop.return_value = None
         yield mock_get_statement_config
 
 
@@ -63,8 +63,8 @@ def mock_get_statement_config():
 def mock_document():
     with patch(
         "monopoly.pdf.PdfParser.document", new_callable=PropertyMock
-    ) as mock_document:
-        mock_document_instance = mock_document.return_value
+    ) as mock_document_prop:
+        mock_document_instance = mock_document_prop.return_value
         type(mock_document_instance).metadata = PropertyMock(
             return_value={
                 "creator": "Adobe Acrobat 23.3",
@@ -76,18 +76,30 @@ def mock_document():
 
 
 @pytest.fixture(scope="function")
-def processor(statement, parser):
-    with patch.object(BaseStatement, "statement_date", new_callable=PropertyMock) as _:
-        processor = StatementHandler(
-            file_name="foo.pdf", parser=parser, statement=statement
-        )
-        yield processor
+def handler():
+    with patch.object(StatementHandler, "get_statement") as _:
+        handler = StatementHandler(file_path="foo.pdf")
+        yield handler
 
 
 @pytest.fixture(scope="function")
-def parser():
-    parser = PdfParser(file_path=None)
-    yield parser
+def mock_bank():
+    class MockBank:
+        pdf_config = PdfConfig()
+        passwords = None
+
+    return MockBank()
+
+
+@pytest.fixture
+def parser(mock_bank):
+    with patch(
+        "monopoly.pdf.PdfParser.bank",
+        new_callable=PropertyMock,
+    ) as mock_bank_prop:
+        mock_bank_prop.return_value = mock_bank
+        parser = PdfParser(file_path=None)
+        yield parser
 
 
 def setup_statement_fixture(
@@ -95,13 +107,16 @@ def setup_statement_fixture(
     monkeypatch,
     statement_config,
 ):
+    mock_parser = MagicMock(spec=PdfParser)
     monkeypatch.setattr("monopoly.statements.base.BaseStatement.df", None)
     mock_page = Mock(spec=PdfPage)
     mock_page.lines = ["foo", "bar"]
     mock_page.raw_text = ["foo\nbar"]
+    mock_parser.get_pages.return_value = [mock_page]
+
     document = MagicMock(spec=fitz.Document)
     document.name = "mock_document.pdf"
-    statement = statement_cls(document, [mock_page], statement_config)
+    statement = statement_cls(parser=mock_parser, config=statement_config)
     yield statement
 
 
@@ -116,7 +131,7 @@ def debit_statement(monkeypatch, statement_config):
 
 
 @pytest.fixture(scope="function")
-def statement(monkeypatch, statement_config):
+def statement(monkeypatch, parser, statement_config):
     yield from setup_statement_fixture(BaseStatement, monkeypatch, statement_config)
 
 
@@ -128,6 +143,5 @@ def statement_config():
         statement_date_pattern="",
         transaction_date_order="DMY",
         prev_balance_pattern="foo",
-        debit_statement_identifier="debitidentifier123",
     )
     yield statement_config

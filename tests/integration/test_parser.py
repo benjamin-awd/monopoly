@@ -22,14 +22,14 @@ def test_can_open_file_stream(parser: PdfParser):
 
 def test_can_open_protected(parser: PdfParser):
     parser.file_path = fixture_directory / "protected.pdf"
-    parser.passwords = [SecretStr("foobar123")]
+    parser._passwords = [SecretStr("foobar123")]
 
     parser.open()
 
 
 def test_wrong_password_raises_error(parser: PdfParser):
     parser.file_path = fixture_directory / "protected.pdf"
-    parser.passwords = [SecretStr("wrong_pw")]
+    parser._passwords = [SecretStr("wrong_pw")]
 
     with raises(WrongPasswordError, match="Could not open"):
         parser.open()
@@ -53,7 +53,7 @@ def test_get_pages_invalid_returns_error(parser: PdfParser):
 
 def test_override_password(parser: PdfParser):
     parser.file_path = fixture_directory / "protected.pdf"
-    parser.passwords = [SecretStr("foobar123")]
+    parser._passwords = [SecretStr("foobar123")]
     document = parser.open()
     assert not document.is_encrypted
 
@@ -61,7 +61,7 @@ def test_override_password(parser: PdfParser):
 def test_error_raised_if_override_is_wrong(parser: PdfParser):
     with raises(WrongPasswordError, match="Could not open"):
         parser.file_path = fixture_directory / "protected.pdf"
-        parser.passwords = [SecretStr("wrongpw")]
+        parser._passwords = [SecretStr("wrongpw")]
         parser.open()
 
 
@@ -74,7 +74,7 @@ def test_missing_password_raises_error(parser: PdfParser):
 
 def test_null_password_raises_error(parser: PdfParser):
     parser.file_path = fixture_directory / "protected.pdf"
-    parser.passwords = [SecretStr("")]
+    parser._passwords = [SecretStr("")]
 
     with raises(MissingPasswordError, match="is empty"):
         parser.open()
@@ -82,7 +82,7 @@ def test_null_password_raises_error(parser: PdfParser):
 
 def test_invalid_password_type_raises_error(parser: PdfParser):
     parser.file_path = fixture_directory / "protected.pdf"
-    parser.passwords = "not a list"
+    parser._passwords = "not a list"
 
     with raises(BadPasswordFormatError, match="should be stored in a list"):
         parser.open()
@@ -90,7 +90,7 @@ def test_invalid_password_type_raises_error(parser: PdfParser):
 
 def test_plain_text_passwords_raises_error(parser: PdfParser):
     parser.file_path = fixture_directory / "protected.pdf"
-    parser.passwords = ["password"]
+    parser._passwords = ["password"]
 
     with raises(BadPasswordFormatError, match="should be stored as SecretStr"):
         parser.open()

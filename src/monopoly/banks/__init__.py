@@ -1,14 +1,9 @@
 import logging
 from dataclasses import Field, fields
 from itertools import product
-from pathlib import Path
-from typing import Optional, Type
+from typing import Type
 
-from pydantic import SecretStr
-
-from monopoly.config import PdfConfig
 from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
-from monopoly.pdf import PdfParser
 
 from ..examples.example_bank import ExampleBankProcessor
 from .base import BankBase
@@ -27,7 +22,6 @@ banks: list[Type[BankBase]] = [
     StandardChartered,
 ]
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -36,48 +30,43 @@ class UnsupportedBankError(Exception):
 
 
 def detect_bank(
-    file_path: Optional[Path] = None,
-    file_bytes: Optional[bytes] = None,
-    passwords: Optional[list[SecretStr]] = None,
-) -> BankBase:
+    metadata_items: list[EncryptionIdentifier | MetadataIdentifier],
+) -> Type[BankBase]:
     """
     Reads the encryption metadata or actual metadata (if the PDF is not encrypted),
     and checks for a bank based on unique identifiers.
     """
-    parser = PdfParser(
-        file_path=file_path,
-        file_bytes=file_bytes,
-        pdf_config=PdfConfig(passwords=passwords),
-    )
-    for processor in banks:
-        metadata_items = processor.get_identifiers(parser)
-        if is_bank_identified(metadata_items, processor):
-            return processor(
-                file_path=file_path, file_bytes=file_bytes, passwords=passwords
-            )
+    for bank in banks:
+        if is_bank_identified(metadata_items, bank):
+            return bank
 
-    raise UnsupportedBankError("This bank is currently unsupported")
+    raise UnsupportedBankError("This bank is currently not supported")
 
 
 def is_bank_identified(
     metadata_items: list[EncryptionIdentifier | MetadataIdentifier],
-    processor: Type[BankBase],
+    bank: Type[BankBase],
 ) -> bool:
     """
     Checks if a bank is identified based on a list of metadata items.
     """
-    for identifier, metadata in product(processor.identifiers, metadata_items):
+    for identifier, metadata in product(
+        bank.identifiers, metadata_items
+    ):  # type: ignore
         logger.debug(
             "Comparing bank %s identifier %s against PDF metadata %s",
-            processor.__name__,
+            bank.__name__,
             identifier,
             metadata,
         )
+
         if all(
             check_matching_field(field, metadata, identifier)
             for field in fields(metadata)
         ):
+            logger.debug("Match found for bank %s", bank.__name__)
             return True
+
     return False
 
 
@@ -90,14 +79,22 @@ def check_matching_field(
     Checks if a field in the metadata matches the corresponding identifier field.
     """
     # Only compare matching identifier types
-    if type(metadata) is type(identifier):
-        field_value = getattr(metadata, field.name)
-        identifier_value = getattr(identifier, field.name)
+    if type(metadata) is not type(identifier):
+        return False
 
-        # allow for partial string matching
-        if isinstance(field.type(), str):
-            return identifier_value in field_value
+    field_value = getattr(metadata, field.name)
+    identifier_value = getattr(identifier, field.name)
 
-        # otherwise check that values match exactly
-        return identifier_value == field_value
+    # allow for partial string matching
+    partial_string_match = (
+        isinstance(field.type(), str) and identifier_value in field_value
+    )
+
+    # other types should match exactly
+    full_match = identifier_value == field_value
+
+    if any([partial_string_match, full_match]):
+        logger.debug("Match: %s - %s", identifier_value, field_value)
+        return True
+
     return False

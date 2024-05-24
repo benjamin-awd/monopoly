@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from pathlib import Path
 
 from dateparser import parse
@@ -23,36 +24,45 @@ class StatementHandler:
 
     def __init__(
         self,
-        file_name: str,
-        parser: PdfParser,
-        statement: CreditStatement | DebitStatement,
+        file_path: Path,
     ):
-        self.file_name = file_name
-        self.parser = parser
-        self.statement = statement
+        self.parser = PdfParser(file_path=file_path)
+        self.statement = self.get_statement(self.parser)
+        self.transactions = self.statement.transactions
+
+    @staticmethod
+    def get_statement(parser: PdfParser) -> CreditStatement | DebitStatement:
+        bank = parser.bank
+        debit_config, credit_config = bank.debit_config, bank.credit_config
+
+        if debit_config:
+            debit_statement = DebitStatement(parser, debit_config)
+            if debit_statement.debit_header:
+                return debit_statement
+
+        # if it's not a debit statement, assume that it's a credit statement
+        return CreditStatement(parser, credit_config)
 
     def extract(self) -> CreditStatement | DebitStatement:
         """Extracts transactions from the statement, and performs
         a safety check to make sure that total transactions add up"""
-        statement = self.statement
-
-        if not statement.transactions:
+        if not self.statement.transactions:
             raise ValueError("No transactions found - statement extraction failed")
 
-        if not statement.statement_date:
+        if not self.statement.statement_date:
             raise ValueError("No statement date found")
 
-        statement.perform_safety_check()
+        self.statement.perform_safety_check()
 
-        return statement
+        return self.statement
 
-    def transform(self, statement: CreditStatement | DebitStatement) -> DataFrame:
+    @staticmethod
+    def transform(
+        df: DataFrame, statement_date: datetime, transaction_date_order: dict[str, str]
+    ) -> DataFrame:
         logger.debug("Running transformation functions on DataFrame")
-        df = statement.df
-        statement_date = statement.statement_date
-        transaction_date_order = statement.statement_config.transaction_date_order
 
-        def convert_date(row, transaction_date_order=None):
+        def convert_date(row, transaction_date_order):
             """
             Converts each date to a ISO 8601 (YYYY-MM-DD) format.
 
@@ -89,7 +99,7 @@ class StatementHandler:
         filename = generate_name(
             document=self.parser.document,
             format_type="file",
-            statement_config=statement.statement_config,
+            statement_config=statement.config,
             statement_type=statement.statement_type,
             statement_date=statement.statement_date,
         )

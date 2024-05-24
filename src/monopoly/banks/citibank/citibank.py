@@ -1,6 +1,6 @@
 import logging
 
-from monopoly.config import CreditStatementConfig, PdfConfig, settings
+from monopoly.config import CreditStatementConfig, PdfConfig, passwords
 from monopoly.constants import (
     BankNames,
     CreditTransactionPatterns,
@@ -22,7 +22,6 @@ class Citibank(BankBase):
     )
 
     pdf_config = PdfConfig(
-        passwords=settings.citibank_pdf_passwords,
         page_bbox=(20, 0, 595, 840),
         page_range=(0, -3),
     )
@@ -33,3 +32,5 @@ class Citibank(BankBase):
             producer="Ricoh Americas Corporation, AFP2PDF",
         )
     ]
+
+    passwords = passwords.citibank_pdf_passwords

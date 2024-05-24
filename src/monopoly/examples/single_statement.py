@@ -1,24 +1,28 @@
-from monopoly.examples import ExampleBankProcessor
+from monopoly.handler import StatementHandler
 
 
+# pylint: disable=duplicate-code
 def example():
     """Example showing how monopoly can be used to extract data from
     a single bank statement
     """
-    processor = ExampleBankProcessor(
-        file_path="src/monopoly/examples/example_statement.pdf",
-    )
+    handler = StatementHandler(file_path="src/monopoly/examples/example_statement.pdf")
 
     # This runs pdftotext on the PDF and
     # extracts transactions as raw text
-    statement = processor.extract()
+    statement = handler.extract()
 
     # Dates are converted into an ISO 8601 date format
-    transformed_df = processor.transform(statement)
-    print(transformed_df)
+    transformed_df = handler.transform(
+        df=statement.df,
+        statement_date=statement.statement_date,
+        transaction_date_order=statement.config.transaction_date_order,
+    )
 
     # Parsed transactions writen to a CSV file in the "example" directory
-    processor.load(transformed_df, statement, output_directory="src/monopoly/examples")
+    handler.load(
+        df=transformed_df, statement=statement, output_directory="src/monopoly/examples"
+    )
 
 
 if __name__ == "__main__":

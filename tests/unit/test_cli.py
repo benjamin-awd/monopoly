@@ -2,20 +2,11 @@ import os
 import re
 import subprocess
 from pathlib import Path
-from typing import Type
-from unittest.mock import Mock
 
 import pytest
 from click.testing import CliRunner
 
-from monopoly.banks import BankBase
-from monopoly.cli import (
-    Report,
-    Result,
-    get_statement_paths,
-    monopoly,
-    process_statement,
-)
+from monopoly.cli import Report, Result, get_statement_paths, monopoly
 
 
 @pytest.fixture
@@ -71,25 +62,6 @@ def test_help_command() -> None:
     help_results = cli_runner.invoke(monopoly, args="--help")
     assert help_results.exit_code == 0
     assert help_results.stdout.startswith("Usage: monopoly")
-
-
-def test_process_statement(monkeypatch):
-    processor: BankBase | Type[Mock] = Mock(spec=BankBase)
-
-    def mock_detect_bank(file_path: Path) -> Mock:
-        assert "statement.pdf" in str(file_path)
-        processor.load.return_value = Path("foo")
-        return processor
-
-    monkeypatch.setattr("monopoly.cli.detect_bank", mock_detect_bank)
-
-    file = Path("path/to/statement.pdf")
-
-    process_statement(file, "foo", False)
-
-    processor.extract.assert_called_once()
-    processor.transform.assert_called_once()
-    processor.load.assert_called_once()
 
 
 def test_monopoly_output(cli_runner: CliRunner):
