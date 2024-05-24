@@ -3,6 +3,7 @@ from datetime import datetime
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
+from monopoly.config import DateOrder
 from monopoly.handler import StatementHandler
 from monopoly.statements import Transaction
 
@@ -18,7 +19,7 @@ def test_transform_cross_year(handler: StatementHandler):
     transformed_df = handler.transform(
         df=raw_df,
         statement_date=datetime(2024, 1, 1),
-        transaction_date_order={"DATE_ORDER": "DMY"},
+        transaction_date_order=DateOrder("DMY"),
     )
 
     expected_data = pd.DataFrame(
@@ -43,7 +44,7 @@ def test_transform_within_year(handler: StatementHandler):
     transformed_df = handler.transform(
         df=raw_df,
         statement_date=datetime(2023, 7, 1),
-        transaction_date_order={"DATE_ORDER": "DMY"},
+        transaction_date_order=DateOrder("DMY"),
     )
 
     expected_data = pd.DataFrame(

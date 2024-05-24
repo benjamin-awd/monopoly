@@ -4,7 +4,7 @@ import fitz
 import pytest
 
 from monopoly.banks import Citibank, Dbs, Hsbc, Ocbc, StandardChartered
-from monopoly.config import CreditStatementConfig, PdfConfig
+from monopoly.config import CreditStatementConfig, DateOrder, PdfConfig
 from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfPage, PdfParser
 from monopoly.statements import BaseStatement, CreditStatement, DebitStatement
@@ -141,7 +141,7 @@ def statement_config():
         bank_name="example",
         transaction_pattern="foo",
         statement_date_pattern="",
-        transaction_date_order="DMY",
+        transaction_date_order=DateOrder("DMY"),
         prev_balance_pattern="foo",
     )
     yield statement_config

@@ -5,6 +5,7 @@ from pathlib import Path
 from dateparser import parse
 from pandas import DataFrame
 
+from monopoly.config import DateOrder
 from monopoly.constants import StatementFields
 from monopoly.pdf import PdfParser
 from monopoly.statements import CreditStatement, DebitStatement
@@ -58,11 +59,11 @@ class StatementHandler:
 
     @staticmethod
     def transform(
-        df: DataFrame, statement_date: datetime, transaction_date_order: dict[str, str]
+        df: DataFrame, statement_date: datetime, transaction_date_order: DateOrder
     ) -> DataFrame:
         logger.debug("Running transformation functions on DataFrame")
 
-        def convert_date(row, transaction_date_order):
+        def convert_date(row, transaction_date_order: DateOrder):
             """
             Converts each date to a ISO 8601 (YYYY-MM-DD) format.
 
@@ -74,12 +75,15 @@ class StatementHandler:
             """
             row[StatementFields.TRANSACTION_DATE] += f" {statement_date.year}"
             parsed_date = parse(
-                row[StatementFields.TRANSACTION_DATE], settings=transaction_date_order
+                row[StatementFields.TRANSACTION_DATE],
+                settings=transaction_date_order.settings,
             )
-            if statement_date.month in (1, 2) and parsed_date.month > 2:
-                parsed_date = parsed_date.replace(year=parsed_date.year - 1)
+            if parsed_date:
+                if statement_date.month in (1, 2) and parsed_date.month > 2:
+                    parsed_date = parsed_date.replace(year=parsed_date.year - 1)
 
-            return parsed_date.isoformat()[:10]
+                return parsed_date.isoformat()[:10]
+            raise RuntimeError("Could not convert date")
 
         logger.debug("Transforming dates to ISO 8601")
         df[StatementFields.TRANSACTION_DATE] = df.apply(

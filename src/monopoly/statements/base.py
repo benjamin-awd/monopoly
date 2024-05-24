@@ -139,7 +139,7 @@ class BaseStatement(ABC):
                 if match := re.search(self.config.statement_date_pattern, line):
                     statement_date = parse(
                         date_string=match.group(1),
-                        settings=self.config.statement_date_order,  # type: ignore
+                        settings=self.config.statement_date_order.settings,
                     )
                     if statement_date:
                         return statement_date
