@@ -1,11 +1,6 @@
 import logging
 
-from monopoly.config import (
-    CreditStatementConfig,
-    DebitStatementConfig,
-    PdfConfig,
-    settings,
-)
+from monopoly.config import CreditStatementConfig, DebitStatementConfig, passwords
 from monopoly.constants import (
     BankNames,
     CreditTransactionPatterns,
@@ -36,10 +31,6 @@ class Ocbc(BankBase):
         multiline_transactions=True,
     )
 
-    pdf_config = PdfConfig(
-        passwords=settings.ocbc_pdf_passwords,
-    )
-
     identifiers = [
         EncryptionIdentifier(
             pdf_version=1.4, algorithm=4, revision=4, length=128, permissions=-1036
@@ -48,3 +39,5 @@ class Ocbc(BankBase):
             creator="pdfgen", producer="Streamline PDFGen for OCBC Group"
         ),
     ]
+
+    passwords = passwords.ocbc_pdf_passwords

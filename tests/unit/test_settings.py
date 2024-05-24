@@ -4,7 +4,7 @@ from unittest import mock
 
 import pytest
 
-from monopoly.config import PdfPasswords, Settings
+from monopoly.config import Passwords, PdfPasswords
 
 
 @pytest.fixture
@@ -30,9 +30,9 @@ def test_load_from_environment_variable():
     os.environ["PASSWORDS"] = '{"OCBC_PDF_PASSWORDS": ["password1", "password2"]}'
     expected_passwords = ["password1", "password2"]
 
-    settings = Settings().passwords
+    passwords = Passwords().passwords
     assert [
-        pw.get_secret_value() for pw in settings.ocbc_pdf_passwords
+        pw.get_secret_value() for pw in passwords.ocbc_pdf_passwords
     ] == expected_passwords
 
 

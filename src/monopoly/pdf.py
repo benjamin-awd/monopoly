@@ -1,16 +1,17 @@
 import logging
 from dataclasses import dataclass
-from functools import cached_property
+from functools import cached_property, lru_cache
 from io import BytesIO
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 import fitz
 import pdftotext
 from pdf2john import PdfHashExtractor as EncryptionMetadataExtractor
 from pydantic import SecretStr
 
-from monopoly.config import PdfConfig
+from monopoly.banks import detect_bank
+from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
 
 logger = logging.getLogger(__name__)
 
@@ -45,9 +46,9 @@ class BadPasswordFormatError(Exception):
 class PdfParser:
     def __init__(
         self,
+        passwords: Optional[list[str]] = None,
         file_path: Optional[Path] = None,
         file_bytes: Optional[bytes] = None,
-        pdf_config: Optional[PdfConfig] = None,
     ):
         """
         Class responsible for parsing PDFs and returning raw text
@@ -55,15 +56,60 @@ class PdfParser:
         The page_range variable determines which pages are extracted.
         All pages are extracted by default.
         """
+        self._passwords = passwords
         self.file_path = file_path
         self.file_bytes = file_bytes
 
-        if pdf_config is None:
-            pdf_config = PdfConfig()
+    @property
+    def bank(self):
+        return detect_bank(self.metadata_items)
 
-        self.passwords = pdf_config.passwords
-        self.page_range = slice(*pdf_config.page_range)
-        self.page_bbox = pdf_config.page_bbox
+    @property
+    def passwords(self):
+        if not self._passwords:
+            return self.bank.passwords
+        return self._passwords
+
+    @property
+    def pdf_config(self):
+        return self.bank.pdf_config
+
+    @cached_property
+    def page_range(self):
+        return slice(*self.pdf_config.page_range)
+
+    @cached_property
+    def page_bbox(self):
+        return self.pdf_config.page_bbox
+
+    @property
+    def metadata_items(self) -> list[Any]:
+        """
+        Retrieves encryption and metadata identifiers from a bank statement PDF
+        """
+        identifiers = []
+        # pylint: disable=protected-access
+        if self.extractor.encrypt_dict:
+            extractor = self.extractor
+            major, minor = extractor.pdf._header_version
+            pdf_version = f"{major}.{minor}"
+            encryption_identifier = EncryptionIdentifier(
+                float(pdf_version),
+                extractor.algorithm,
+                extractor.revision,
+                extractor.length,
+                extractor.permissions,
+            )
+            identifiers.append(encryption_identifier)
+
+        if metadata := self.document.metadata:
+            metadata_identifier = MetadataIdentifier(**metadata)
+            identifiers.append(metadata_identifier)  # type: ignore
+
+        if not identifiers:
+            raise ValueError("Could not get identifier")
+
+        return identifiers
 
     def open(self):
         """
@@ -94,6 +140,7 @@ class PdfParser:
                 return document
         raise WrongPasswordError(f"Could not open document: {document.name}")
 
+    @lru_cache
     def get_pages(self) -> list[PdfPage]:
         logger.debug("Extracting text from PDF")
         document: fitz.Document = self.open()

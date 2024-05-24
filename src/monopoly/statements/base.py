@@ -1,83 +1,27 @@
 import logging
 import re
+from abc import ABC
 from datetime import datetime
 from functools import cached_property
 from pathlib import Path
-from typing import Any, Optional
 
-import fitz
 from dateparser import parse
 from pandas import DataFrame
-from pydantic import field_validator, model_validator
-from pydantic.dataclasses import dataclass
-from pydantic_core import ArgsKwargs
 
 from monopoly.config import CreditStatementConfig, DebitStatementConfig
 from monopoly.constants import StatementFields
-from monopoly.pdf import PdfPage
+from monopoly.pdf import PdfParser
+from monopoly.statements.transaction import (
+    Transaction,
+    TransactionGroupDict,
+    TransactionMatch,
+)
 
+# pylint: disable=bad-classmethod-argument
 logger = logging.getLogger(__name__)
 
 
-# pylint: disable=bad-classmethod-argument
-@dataclass
-class Transaction:
-    """
-    Holds transaction data, validates the data, and
-    performs various coercions like removing whitespace
-
-    The class attributes are consistent with the enum
-    values from StatementFields
-    """
-
-    transaction_date: str
-    description: str
-    amount: float
-    suffix: Optional[str] = None
-
-    @field_validator("description", mode="after")
-    def remove_extra_whitespace(cls, value: str) -> str:
-        return " ".join(value.split())
-
-    @field_validator("amount", mode="before")
-    def prepare_amount_for_float_coercion(cls, amount: str) -> str:
-        """
-        Replaces commas, whitespaces and parentheses in string representation of floats
-        e.g.
-            1,234.00 -> 1234.00
-            (-10.00) -> -10.00
-            (-1.56 ) -> -1.56
-        """
-        if isinstance(amount, str):
-            return re.sub(r"[,)(\s]", "", amount)
-        return amount
-
-    @model_validator(mode="before")  # type: ignore
-    def treat_parenthesis_enclosure_as_credit(self: ArgsKwargs | Any) -> "ArgsKwargs":
-        """
-        Treat amounts enclosed by parentheses (e.g. cashback) as a credit entry
-        """
-        if self.kwargs:
-            amount: str = self.kwargs["amount"]
-            if isinstance(amount, str):
-                if amount.startswith("(") and amount.endswith(")"):
-                    self.kwargs["suffix"] = "CR"
-        return self
-
-    @model_validator(mode="after")
-    def convert_credit_amount_to_negative(self: "Transaction") -> "Transaction":
-        """
-        Converts transactions with a suffix of "CR" to positive
-        """
-        if self.suffix == "CR":
-            self.amount = abs(self.amount)
-
-        else:
-            self.amount = -abs(self.amount)
-        return self
-
-
-class BaseStatement:
+class BaseStatement(ABC):
     """
     A dataclass representation of a bank statement, containing
     the PDF pages (their raw text representation in a `list`),
@@ -86,64 +30,74 @@ class BaseStatement:
 
     def __init__(
         self,
-        document: fitz.Document,
-        pages: list[PdfPage],
-        statement_config: CreditStatementConfig | DebitStatementConfig,
+        parser: PdfParser,
+        config: CreditStatementConfig | DebitStatementConfig,
     ):
-        self.statement_config = statement_config
+        self.pages = parser.get_pages()
+        self.config = config
+        self.pattern = re.compile(self.config.transaction_pattern)
         self.columns: list[str] = [enum.value for enum in StatementFields]
-        self.pages = pages
-        self.document = document
-        self.failed_safety_message = (
-            f"Safety check for {Path(document.name).stem} failed - "
-            "transactions may be inaccurate"
-        )
+        self.document = parser.document
 
-    @cached_property
-    def transactions(self) -> list[Transaction]:
-        pattern = re.compile(self.statement_config.transaction_pattern)
+    def get_transactions(self) -> list[Transaction]:
         transactions: list[Transaction] = []
 
         for page in self.pages:
-            for i, line in enumerate(page.lines):
-                transaction = self._process_line(
-                    line, page.lines, idx=i, pattern=pattern
-                )
-                if transaction:
+            for idx, line in enumerate(page.lines):
+                if match := self.pattern.search(line):
+                    groupdict = TransactionGroupDict(**match.groupdict())
+                    transaction_match = TransactionMatch(groupdict, match)
+                    pre_processed_match = self.pre_process_match(transaction_match)
+                    processed_match = self.process_match(
+                        match=pre_processed_match,
+                        line=line,
+                        lines=page.lines,
+                        idx=idx,
+                    )
+                    transaction = Transaction(**processed_match.groupdict)
                     transactions.append(transaction)
 
+        post_processed_transactions = self.post_process_transactions(transactions)
+        return post_processed_transactions
+
+    def pre_process_match(
+        self, transaction_match: TransactionMatch
+    ) -> TransactionMatch:
+        return transaction_match
+
+    def post_process_transactions(
+        self, transactions: list[Transaction]
+    ) -> list[Transaction]:
         return transactions
 
-    def _process_line(
+    def process_match(
         self,
+        match: TransactionMatch,
         line: str,
         lines: list[str],
         idx: int,
-        pattern: re.Pattern,
-    ) -> Transaction | None:
-        if match := pattern.search(line):
-            groupdict: dict = match.groupdict()
-
-            if self.statement_config.multiline_transactions and idx < len(lines) - 1:
-                description = self.get_multiline_description(line, lines, idx, pattern)
-                groupdict[StatementFields.DESCRIPTION] = description
-
-            transaction = Transaction(**groupdict)
-            return transaction
-        return None
+    ) -> TransactionMatch:
+        if self.config.multiline_transactions and idx < len(lines) - 1:
+            multiline_description = self.get_multiline_description(
+                match.groupdict.description, line, lines, idx
+            )
+            match.groupdict.description = multiline_description
+        return match
 
     def get_multiline_description(
-        self, current_line: str, lines: list[str], idx: int, pattern: re.Pattern
+        self,
+        description: str,
+        current_line: str,
+        lines: list[str],
+        idx: int,
     ) -> str:
-        if match := pattern.search(current_line):
-            groupdict = match.groupdict()
-
-        description_pos = current_line.find(groupdict[StatementFields.DESCRIPTION])
-
+        """Checks if a transaction description spans multiple lines, and
+        tries to combine them into a single string"""
+        description_pos = current_line.find(description)
         for next_line in lines[idx + 1 :]:  # noqa: E203
             # if transaction found on next line or if next
             # line is blank, don't add the description
-            if re.search(pattern, next_line) or next_line == "":
+            if self.pattern.search(next_line) or next_line == "":
                 break
 
             # don't process line if the description across both lines
@@ -157,26 +111,38 @@ class BaseStatement:
             # if the next line contains "total" or "balance carried forward"
             # assume it's the end of the bank statement and exclude it
             # from the description
-            if match := re.search(r"^[a-zA-Z0-9_ ][^\d]*", next_line):
-                description = match.group(0).lower().strip()
+            if next_line_match := re.search(r"^[a-zA-Z0-9_ ][^\d]*", next_line):
+                next_line_description = next_line_match.group(0).lower().strip()
                 # specifically for DBS debit statements
-                if description in ("total", "balance carried forward"):
+                if next_line_description in ("total", "balance carried forward"):
                     break
 
-            groupdict[StatementFields.DESCRIPTION] += " " + next_line
+            description += " " + next_line
 
-        return groupdict[StatementFields.DESCRIPTION]
+        return description
+
+    @property
+    def failed_safety_message(self) -> str:
+        return (
+            f"Safety check for {Path(self.document.name).stem} failed - "
+            "transactions may be inaccurate"
+        )
+
+    @cached_property
+    def transactions(self):
+        return self.get_transactions()
 
     @cached_property
     def statement_date(self) -> datetime:
-        config = self.statement_config
-        first_page = self.pages[0].raw_text
-        if match := re.search(config.statement_date_pattern, first_page):
-            statement_date = parse(
-                match.group(1), settings=config.statement_date_order  # type: ignore
-            )
-            if statement_date:
-                return statement_date
+        for page in self.pages:
+            for line in page.lines:
+                if match := re.search(self.config.statement_date_pattern, line):
+                    statement_date = parse(
+                        date_string=match.group(1),
+                        settings=self.config.statement_date_order,  # type: ignore
+                    )
+                    if statement_date:
+                        return statement_date
         raise ValueError("Statement date not found")
 
     @staticmethod

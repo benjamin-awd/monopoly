@@ -5,8 +5,8 @@ from unittest.mock import MagicMock, patch
 import pytest
 from pandas import DataFrame
 
-from monopoly.banks import ExampleBankProcessor
 from monopoly.constants import AccountType
+from monopoly.handler import StatementHandler
 from monopoly.statements import BaseStatement
 
 
@@ -24,23 +24,25 @@ def mock_to_csv():
 
 def test_load(
     credit_statement: BaseStatement,
-    mock_get_pages,
-    mock_document,
     mock_generate_name,
     mock_to_csv,
 ):
-    mock_parser = MagicMock()
+    mock_statement_handler = MagicMock()
+    mock_statement_handler.parser.document = "foo"
     df = DataFrame({"Column1": [1, 2, 3], "Column2": ["A", "B", "C"]})
     credit_statement.statement_date = datetime(2023, 1, 1)
-    mock_parser.get_pages.return_value = []
-    bank_class = ExampleBankProcessor(file_path="foo")
 
-    output_path = bank_class.load(df, credit_statement, Path("/output_directory"))
+    output_path = StatementHandler.load(
+        mock_statement_handler,
+        df=df,
+        statement=credit_statement,
+        output_directory=Path("/output_directory"),
+    )
 
     mock_generate_name.assert_called_once_with(
-        document=mock_document(),
+        document="foo",
         format_type="file",
-        statement_config=credit_statement.statement_config,
+        statement_config=credit_statement.config,
         statement_type=AccountType.CREDIT,
         statement_date=datetime(2023, 1, 1),
     )

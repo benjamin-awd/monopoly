@@ -1,4 +1,5 @@
-from typing import Optional
+import re
+from typing import Any, Optional
 
 from pydantic import ConfigDict, SecretStr
 from pydantic.dataclasses import dataclass
@@ -16,7 +17,7 @@ class PdfPasswords(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="allow")
 
 
-class Settings(BaseSettings):
+class Passwords(BaseSettings):
     """
     Pydantic model that automatically populates variables from a .env file,
     or an environment variable called `passwords`.
@@ -27,7 +28,7 @@ class Settings(BaseSettings):
 
 
 # pylint: disable=too-many-instance-attributes
-@dataclass
+@dataclass(kw_only=True)
 class StatementConfig:
     """
     Base configuration class storing configuration values for debit and
@@ -52,12 +53,11 @@ class StatementConfig:
     bank_name: BankNames
     transaction_pattern: str
     statement_date_pattern: str
-    transaction_date_order: Optional[str] = "DMY"
-    statement_date_order: Optional[str] = "DMY"
+    transaction_date_order: dict[str, str] = "DMY"
+    statement_date_order: dict[str, str] = "DMY"
     multiline_transactions: bool = False
-    debit_statement_identifier: Optional[str] = None
 
-    def __post_init__(self):
+    def wrap_date_order_in_dict(self):
         if self.statement_date_order:
             self.statement_date_order = {"DATE_ORDER": self.statement_date_order}
 
@@ -65,11 +65,16 @@ class StatementConfig:
             self.transaction_date_order = {"DATE_ORDER": self.transaction_date_order}
 
 
-@dataclass(config=ConfigDict(extra="forbid"))
+@dataclass(config=ConfigDict(extra="forbid"), kw_only=True)
 class DebitStatementConfig(StatementConfig):
     """
     Dataclass storing configuration values unique to debit statements
     """
+
+    debit_statement_identifier: str
+
+    def __post_init__(self):
+        self.wrap_date_order_in_dict()
 
 
 @dataclass(config=ConfigDict(extra="forbid"))
@@ -81,7 +86,13 @@ class CreditStatementConfig(StatementConfig):
     line in a credit statements, which is then treated as a transaction.
     """
 
-    prev_balance_pattern: Optional[str] = None
+    prev_balance_pattern: Optional[Any | re.Pattern] = None
+
+    def __post_init__(self):
+        if self.prev_balance_pattern:
+            self.prev_balance_pattern = re.compile(self.prev_balance_pattern)
+
+        self.wrap_date_order_in_dict()
 
 
 @dataclass
@@ -97,9 +108,8 @@ class PdfConfig:
     PDF artifacts that may affect parsing.
     """
 
-    passwords: Optional[list[SecretStr]] = None
     page_range: tuple[Optional[int], Optional[int]] = (None, None)
     page_bbox: Optional[tuple[float, float, float, float]] = None
 
 
-settings = Settings().passwords
+passwords = Passwords().passwords

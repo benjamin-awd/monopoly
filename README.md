@@ -62,6 +62,6 @@ HSBC_PDF_PASSWORDS=["password1","password2"]
 
 ## Features
 - Unlocks PDFs using user-provided credentials
-- Statements can be parsed with the CLI, or manually with the bank processor class.
+- Statements can be parsed with the CLI, or with a script using the StatementHandler class.
 - Support for cashback transactions and refunds
 - Monopoly can be run on Google Cloud as a scheduled Cloud Run job, which opens up more sophisticated use-cases like historical analysis and personal finance visualization

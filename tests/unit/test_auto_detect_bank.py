@@ -40,7 +40,7 @@ def mock_encrypted_document():
         yield mock_document
 
 
-class MockProcessorOne(BankBase):
+class MockBankOne(BankBase):
     debit_config = None
     credit_config = None
     identifiers = [
@@ -51,7 +51,7 @@ class MockProcessorOne(BankBase):
     ]
 
 
-class MockProcessorTwo(BankBase):
+class MockBankTwo(BankBase):
     debit_config = None
     credit_config = None
     identifiers = [
@@ -61,7 +61,7 @@ class MockProcessorTwo(BankBase):
     ]
 
 
-class MockProcessorThree(BankBase):
+class MockBankThree(BankBase):
     debit_config = None
     credit_config = None
     identifiers = [MetadataIdentifier(creator="asdasd", producer="qwerty")]
@@ -72,49 +72,26 @@ encrypted_file_path = "path/to/encrypted.pdf"
 
 
 @skip_if_encrypted
-def test_auto_detect_unencrypted_bank_identified(
+def test_auto_detectbank_identified(
     monkeypatch,
-    mock_document,
-    mock_get_pages,
-    mock_get_statement_config,
-    mock_no_encrypt_metadata_extractor,
     file_path: str = unencrypted_file_path,
 ):
-    mock_banks_list = [MockProcessorOne, MockProcessorTwo]
+    identifiers = MockBankTwo.identifiers
+    mock_banks_list = [MockBankOne, MockBankTwo]
     monkeypatch.setattr("monopoly.banks.banks", mock_banks_list)
 
-    bank_instance = detect_bank(file_path=file_path)
+    bank = detect_bank(identifiers)
 
-    assert isinstance(bank_instance, MockProcessorTwo)
-
-
-def test_auto_detect_encrypted_bank_identified(
-    monkeypatch,
-    mock_document,
-    mock_encrypt_metadata_extractor,
-    mock_get_pages,
-    mock_get_statement_config,
-    file_path: str = encrypted_file_path,
-):
-    mock_banks_list = [MockProcessorOne, MockProcessorTwo]
-    monkeypatch.setattr("monopoly.banks.banks", mock_banks_list)
-    bank_instance = detect_bank(
-        file_path=file_path,
-    )
-    assert isinstance(bank_instance, MockProcessorOne)
+    assert bank.__name__ == MockBankTwo.__name__
 
 
 @skip_if_encrypted
 def test_detect_bank_not_identified(
     monkeypatch,
-    mock_document,
-    mock_get_pages,
-    mock_get_statement_config,
-    mock_encrypt_metadata_extractor,
     file_path: str = unencrypted_file_path,
 ):
-    mock_banks_list = [MockProcessorThree]
+    mock_banks_list = [MockBankThree]
     monkeypatch.setattr("monopoly.banks.banks", mock_banks_list)
 
-    with raises(UnsupportedBankError, match="This bank is currently unsupported"):
-        detect_bank(file_path=file_path)
+    with raises(UnsupportedBankError, match="This bank is currently not supported"):
+        detect_bank([MetadataIdentifier(creator="asdf", producer="qwerty")])

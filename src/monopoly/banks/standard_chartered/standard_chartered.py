@@ -1,6 +1,6 @@
 import logging
 
-from monopoly.config import CreditStatementConfig, PdfConfig, settings
+from monopoly.config import CreditStatementConfig, PdfConfig, passwords
 from monopoly.constants import (
     BankNames,
     CreditTransactionPatterns,
@@ -22,7 +22,6 @@ class StandardChartered(BankBase):
     )
 
     pdf_config = PdfConfig(
-        passwords=settings.standard_chartered_pdf_passwords,
         page_range=(0, -1),
         page_bbox=(0, 0, 580, 820),
     )
@@ -33,3 +32,5 @@ class StandardChartered(BankBase):
             producer="iText",
         )
     ]
+
+    passwords = passwords.standard_chartered_pdf_passwords

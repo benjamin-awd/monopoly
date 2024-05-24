@@ -7,7 +7,7 @@ import click
 from pydantic.dataclasses import dataclass
 from tqdm import tqdm
 
-from monopoly.banks import detect_bank
+from monopoly.handler import StatementHandler
 
 
 @dataclass
@@ -97,9 +97,13 @@ def process_statement(
     """
 
     try:
-        processor = detect_bank(file)
-        statement = processor.extract()
-        transformed_df = processor.transform(statement)
+        handler = StatementHandler(file)
+        statement = handler.extract()
+        transformed_df = handler.transform(
+            df=statement.df,
+            statement_date=statement.statement_date,
+            transaction_date_order=statement.config.transaction_date_order,
+        )
 
         if print_df:
             click.echo(f"{file.name}")
@@ -111,7 +115,7 @@ def process_statement(
         if not output_directory:
             output_directory = file.parent
 
-        output_file = processor.load(transformed_df, statement, output_directory)
+        output_file = handler.load(transformed_df, statement, output_directory)
         return Result(file.name, output_file.name)
 
     except Exception as err:  # pylint: disable=broad-exception-caught

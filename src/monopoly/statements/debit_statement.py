@@ -2,13 +2,10 @@ import logging
 import re
 from functools import cached_property
 
-import fitz
-
-from monopoly.config import DebitStatementConfig
 from monopoly.constants import AccountType, StatementFields
-from monopoly.pdf import PdfPage
+from monopoly.statements.transaction import TransactionMatch
 
-from .base import BaseStatement, SafetyCheckError, Transaction
+from .base import BaseStatement, SafetyCheckError
 
 logger = logging.getLogger(__name__)
 
@@ -18,62 +15,43 @@ class DebitStatement(BaseStatement):
     A dataclass representation of a debit statement
     """
 
-    def __init__(
-        self,
-        document: fitz.Document,
-        pages: list[PdfPage],
-        debit_config: DebitStatementConfig,
-    ):
-        self.config = debit_config
-        self.statement_type = AccountType.DEBIT
-        super().__init__(document, pages, debit_config)
+    statement_type = AccountType.DEBIT
 
-    def _process_line(
-        self,
-        line: str,
-        lines: list[str],
-        idx: int,
-        pattern: re.Pattern,
-    ) -> Transaction | None:
-        if match := pattern.search(line):
-            groupdict = match.groupdict()
-            suffix = self.get_debit_suffix(line, pattern)
-
-            # if the entry is a credit then add parenthesis around
-            # the amount, which causes the Transaction class to
-            # treat the amount as a credit / 'positive' transaction
-            if suffix == "CR":
-                line = line.replace(groupdict["amount"], f"({groupdict['amount']})")
-                lines[idx] = line
-
-            # continue with normal line processing
-            return super()._process_line(line, lines, idx, pattern)
+    @property
+    def debit_header(self):
+        """Checks if the statement is a debit statement"""
+        identifier = self.config.debit_statement_identifier
+        for page in self.pages:
+            for line in page.lines:
+                if re.search(identifier, line):
+                    return line.lower()
         return None
 
-    def get_debit_suffix(self, line: str, pattern: re.Pattern):
+    def pre_process_match(
+        self, transaction_match: TransactionMatch
+    ) -> TransactionMatch:
+        """
+        Pre-processes transactions by adding a debit or credit suffix to the group dict
+        """
+        transaction_match.groupdict.suffix = self.get_debit_suffix(transaction_match)
+        return transaction_match
+
+    def get_debit_suffix(self, transaction_match: TransactionMatch) -> str:
         """
         Gets the accounting suffix for debit card statements
 
         This is necessary, since the amount in the row does not have any
         identifier apart from column position.
         """
-        if match := pattern.search(line):
-            amount = match[StatementFields.AMOUNT]
-            pos = line.find(amount)
-            withdrawal_diff = abs(pos - self.withdrawal_pos)
-            deposit_diff = abs(pos - self.deposit_pos)
-            if withdrawal_diff > deposit_diff:
-                return "CR"
-            return "DR"
-        return None
+        amount = transaction_match.groupdict.amount
+        line: str = transaction_match.match.string
 
-    @cached_property
-    def debit_header(self) -> str | None:
-        if self.config and self.config.debit_statement_identifier:
-            for line in self.pages[0].lines:
-                if re.search(self.config.debit_statement_identifier, line):
-                    return line.lower()
-        return None
+        pos = line.find(amount)
+        withdrawal_diff = abs(pos - self.withdrawal_pos)
+        deposit_diff = abs(pos - self.deposit_pos)
+        if withdrawal_diff > deposit_diff:
+            return "CR"
+        return "DR"
 
     @cached_property
     def withdrawal_pos(self) -> int:

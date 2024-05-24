@@ -1,3 +1,5 @@
+import re
+
 from monopoly.constants import CreditTransactionPatterns
 from monopoly.pdf import PdfPage
 from monopoly.statements import BaseStatement, Transaction
@@ -10,7 +12,7 @@ def test_statement_process_refund(statement: BaseStatement):
         ""
     )
     page = PdfPage(raw_text=page_content)
-    statement.statement_config.transaction_pattern = CreditTransactionPatterns.CITIBANK
+    statement.pattern = re.compile(CreditTransactionPatterns.CITIBANK)
     statement.pages = [page]
     expected_transactions = [
         Transaction(
