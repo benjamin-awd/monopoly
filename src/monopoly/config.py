@@ -27,6 +27,20 @@ class Passwords(BaseSettings):
     passwords: PdfPasswords = PdfPasswords()
 
 
+@dataclass(frozen=True)
+class DateOrder:
+    """
+    Supported `dateparser` DATE_ORDER arguments can be found here:
+    https://dateparser.readthedocs.io/en/latest/settings.html#date-order
+    """
+
+    date_order: str
+
+    @property
+    def settings(self):
+        return {"DATE_ORDER": self.date_order}
+
+
 # pylint: disable=too-many-instance-attributes
 @dataclass(kw_only=True)
 class StatementConfig:
@@ -53,16 +67,9 @@ class StatementConfig:
     bank_name: BankNames
     transaction_pattern: str
     statement_date_pattern: str
-    transaction_date_order: dict[str, str] = "DMY"
-    statement_date_order: dict[str, str] = "DMY"
+    transaction_date_order: DateOrder = DateOrder("DMY")
+    statement_date_order: DateOrder = DateOrder("DMY")
     multiline_transactions: bool = False
-
-    def wrap_date_order_in_dict(self):
-        if self.statement_date_order:
-            self.statement_date_order = {"DATE_ORDER": self.statement_date_order}
-
-        if self.transaction_date_order:
-            self.transaction_date_order = {"DATE_ORDER": self.transaction_date_order}
 
 
 @dataclass(config=ConfigDict(extra="forbid"), kw_only=True)
@@ -72,9 +79,6 @@ class DebitStatementConfig(StatementConfig):
     """
 
     debit_statement_identifier: str
-
-    def __post_init__(self):
-        self.wrap_date_order_in_dict()
 
 
 @dataclass(config=ConfigDict(extra="forbid"))
@@ -91,8 +95,6 @@ class CreditStatementConfig(StatementConfig):
     def __post_init__(self):
         if self.prev_balance_pattern:
             self.prev_balance_pattern = re.compile(self.prev_balance_pattern)
-
-        self.wrap_date_order_in_dict()
 
 
 @dataclass
