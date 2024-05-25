@@ -7,8 +7,6 @@ import click
 from pydantic.dataclasses import dataclass
 from tqdm import tqdm
 
-from monopoly.handler import StatementHandler
-
 
 class TqdmSettings(TypedDict):
     """
@@ -108,6 +106,9 @@ def process_statement(
         information about the processed statement. If an error occurs during processing,
         returns a Result object with error information.
     """
+    from monopoly.handler import (  # pylint: disable=import-outside-toplevel
+        StatementHandler,
+    )
 
     try:
         handler = StatementHandler(file)
