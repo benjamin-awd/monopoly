@@ -37,22 +37,20 @@ def generate_name(
     month = statement_date.month
     file_uuid = generate_hash(document)
 
-    file_suffix = "csv"
+    filename = f"{bank_name}-{statement_type}-{year}-{month:02d}-{file_uuid}.csv"
 
-    filename = (
-        f"{bank_name}-{statement_type}-{year}-{month:02d}-{file_uuid}.{file_suffix}"
-    )
-
-    if format_type == "blob":
-        return (
+    formats = {
+        "blob": (
             f"bank_name={bank_name}/"
             f"account_type={statement_type}/"
             f"year={year}/"
             f"month={month}/"
             f"{filename}"
-        )
+        ),
+        "file": filename,
+    }
 
-    if format_type == "file":
-        return filename
+    if format_type in formats:
+        return formats[format_type]
 
     raise ValueError("Invalid format_type")
