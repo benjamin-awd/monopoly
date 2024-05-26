@@ -6,6 +6,8 @@ from pydantic import ConfigDict, field_validator, model_validator
 from pydantic.dataclasses import dataclass
 from pydantic_core import ArgsKwargs
 
+from monopoly.constants import Columns
+
 
 class TransactionGroupDict(Mapping):
     """
@@ -52,9 +54,9 @@ class TransactionGroupDict(Mapping):
     def __repr__(self):
         return (
             "<TransactionGroupDict object; "
-            f"transaction_date={self.transaction_date}, "
-            f"amount={self.amount}, "
-            f"description={self.description}>"
+            f"{Columns.TRANSACTION_DATE}={self.transaction_date}, "
+            f"{Columns.AMOUNT}={self.amount}, "
+            f"{Columns.DESCRIPTION}={self.description}>"
         )
 
 
@@ -68,10 +70,8 @@ class TransactionMatch:
 class Transaction:
     """
     Holds transaction data, validates the data, and
-    performs various coercions like removing whitespace
-
-    The class attributes are consistent with the enum
-    values from StatementFields
+    performs various coercions like removing whitespaces
+    and commas.
     """
 
     transaction_date: str
@@ -82,19 +82,19 @@ class Transaction:
     def as_raw_dict(self, show_suffix=False):
         """Returns stringified dictionary version of the transaction"""
         items = {
-            "transaction_date": self.transaction_date,
-            "description": self.description,
-            "amount": str(self.amount),
+            Columns.TRANSACTION_DATE: self.transaction_date,
+            Columns.DESCRIPTION: self.description,
+            Columns.AMOUNT: str(self.amount),
         }
         if show_suffix:
-            items["suffix"] = self.suffix
+            items[Columns.SUFFIX] = self.suffix
         return items
 
     @field_validator("description", mode="after")
     def remove_extra_whitespace(cls, value: str) -> str:
         return " ".join(value.split())
 
-    @field_validator("amount", mode="before")
+    @field_validator(Columns.AMOUNT, mode="before")
     def prepare_amount_for_float_coercion(cls, amount: str) -> str:
         """
         Replaces commas, whitespaces and parentheses in string representation of floats
@@ -114,10 +114,10 @@ class Transaction:
         Treat amounts enclosed by parentheses (e.g. cashback) as a credit entry
         """
         if self.kwargs:
-            amount: str = self.kwargs["amount"]
+            amount: str = self.kwargs[Columns.AMOUNT]
             if isinstance(amount, str):
                 if amount.startswith("(") and amount.endswith(")"):
-                    self.kwargs["suffix"] = "CR"
+                    self.kwargs[Columns.SUFFIX] = "CR"
         return self
 
     @model_validator(mode="after")

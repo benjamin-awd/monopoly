@@ -8,7 +8,7 @@ from pathlib import Path
 from dateparser import parse
 
 from monopoly.config import CreditStatementConfig, DebitStatementConfig
-from monopoly.constants import StatementFields
+from monopoly.constants import Columns
 from monopoly.pdf import PdfParser
 from monopoly.statements.transaction import (
     Transaction,
@@ -35,7 +35,11 @@ class BaseStatement(ABC):
         self.pages = parser.get_pages()
         self.config = config
         self.pattern = re.compile(self.config.transaction_pattern)
-        self.columns: list[str] = [enum.value for enum in StatementFields]
+        self.columns: list[str] = [
+            Columns.TRANSACTION_DATE,
+            Columns.DESCRIPTION,
+            Columns.AMOUNT,
+        ]
         self.document = parser.document
 
     def get_transactions(self) -> list[Transaction]:
