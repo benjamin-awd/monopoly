@@ -1,14 +1,14 @@
+import csv
 import logging
 from datetime import datetime
 from pathlib import Path
 
 from dateparser import parse
-from pandas import DataFrame
 
 from monopoly.config import DateOrder
-from monopoly.constants import StatementFields
 from monopoly.pdf import PdfParser
 from monopoly.statements import CreditStatement, DebitStatement
+from monopoly.statements.transaction import Transaction
 from monopoly.write import generate_name
 
 logger = logging.getLogger(__name__)
@@ -59,11 +59,13 @@ class StatementHandler:
 
     @staticmethod
     def transform(
-        df: DataFrame, statement_date: datetime, transaction_date_order: DateOrder
-    ) -> DataFrame:
+        transactions: list[Transaction],
+        statement_date: datetime,
+        transaction_date_order: DateOrder,
+    ) -> list[Transaction]:
         logger.debug("Running transformation functions on DataFrame")
 
-        def convert_date(row, transaction_date_order: DateOrder):
+        def convert_date(transaction: Transaction, transaction_date_order: DateOrder):
             """
             Converts each date to a ISO 8601 (YYYY-MM-DD) format.
 
@@ -73,9 +75,9 @@ class StatementHandler:
             e.g. if the statement month is Jan/Feb 2024, transactions from
             Oct/Nov/Dec should be attributed to the previous year.
             """
-            row[StatementFields.TRANSACTION_DATE] += f" {statement_date.year}"
+            transaction.transaction_date += f" {statement_date.year}"
             parsed_date = parse(
-                row[StatementFields.TRANSACTION_DATE],
+                transaction.transaction_date,
                 settings=transaction_date_order.settings,
             )
             if parsed_date:
@@ -86,14 +88,16 @@ class StatementHandler:
             raise RuntimeError("Could not convert date")
 
         logger.debug("Transforming dates to ISO 8601")
-        df[StatementFields.TRANSACTION_DATE] = df.apply(
-            convert_date, args=(transaction_date_order,), axis=1
-        )
-        return df
+
+        for transaction in transactions:
+            transaction.transaction_date = convert_date(
+                transaction, transaction_date_order
+            )
+        return transactions
 
     def load(
         self,
-        df: DataFrame,
+        transactions: list[Transaction],
         statement: CreditStatement | DebitStatement,
         output_directory: Path,
     ):
@@ -110,6 +114,22 @@ class StatementHandler:
 
         output_path = output_directory / filename
         logger.debug("Writing CSV to file path: %s", output_path)
-        df.to_csv(output_path, index=False)
+
+        with open(output_path, mode="w", encoding="utf8") as file:
+            writer = csv.writer(file)
+
+            # header
+            writer.writerow(statement.columns)
+
+            for transaction in transactions:
+                writer.writerow(
+                    (
+                        [
+                            transaction.transaction_date,
+                            transaction.description,
+                            transaction.amount,
+                        ]
+                    )
+                )
 
         return output_path

@@ -1,10 +1,10 @@
 import fitz
-import pandas as pd
 import pytest
 
 from monopoly.banks import BankBase
 from monopoly.statements import CreditStatement, DebitStatement
 from monopoly.statements.base import SafetyCheckError
+from monopoly.statements.transaction import Transaction
 
 
 class MockProcessor(BankBase):
@@ -22,7 +22,10 @@ def test_credit_safety_check(credit_statement: CreditStatement):
 
     credit_statement.document = document
 
-    credit_statement.df = pd.DataFrame(data={"amount": [11.5, 20.0]})
+    credit_statement.transactions = [
+        Transaction("23/01", "foo", 11.5),
+        Transaction("24/01", "bar", 20.0),
+    ]
 
     # the safety check should return True, since the total amount of 31.50
     # is present in the text
@@ -32,17 +35,23 @@ def test_credit_safety_check(credit_statement: CreditStatement):
 def test_debit_safety_check(debit_statement: DebitStatement):
     document = fitz.Document()
     page = document.new_page()
-    text = "Page 1\n3\nfoo\n02 May\n-2.5\n27 Apr\n2.67\nrandom transaction 31.50"
+    text = (
+        "Page 1\n3\nfoo\n02 May\n-2.5\n27 Apr\n2.67\ntotal credit 30.0 total debit 2.5"
+    )
     page.lines = text.split("\n")
     page.insert_text(point=(0, 0), text=text)
     debit_statement.pages[0] = page
 
     debit_statement.document = document
 
-    debit_statement.df = pd.DataFrame(data={"amount": [11.5, 20.0, -2.5]})
+    debit_statement.transactions = [
+        Transaction("23/01", "foo", 10.0, "CR"),
+        Transaction("24/01", "bar", 20.0, "CR"),
+        Transaction("25/01", "baz", -2.5, "DR"),
+    ]
 
-    # the safety check should return True, since the total amount of 31.50
-    # is present as a credit sum
+    # the safety check should return True, since the credit sum matches
+    # 10 + 20 = 30, and 2.5 is present in the statement
     assert debit_statement.perform_safety_check()
 
 
@@ -55,8 +64,11 @@ def test_debit_safety_check_failure(debit_statement: DebitStatement):
     debit_statement.pages[0] = page
 
     debit_statement.document = document
-
-    debit_statement.df = pd.DataFrame(data={"amount": [11.5, 20.0, -2.5]})
+    debit_statement.transactions = [
+        Transaction("23/01", "foo", 10.0, "CR"),
+        Transaction("24/01", "bar", 20.0, "CR"),
+        Transaction("25/01", "baz", -2.5, "DR"),
+    ]
 
     # the safety check should fail, since the debit sum and credit sum
     # are not present as a number
