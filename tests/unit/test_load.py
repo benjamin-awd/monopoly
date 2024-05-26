@@ -49,7 +49,7 @@ def test_load(
     expected = Path("/output_directory/test_file.csv")
     mock_open.assert_called_once_with(expected, mode="w", encoding="utf8")
     expected_calls = [
-        call.writerow(["transaction_date", "description", "amount"]),
+        call.writerow(["date", "description", "amount"]),
         call.writerow(["2023-01-01", "foo", -100.0]),
         call.writerow(["2023-01-01", "bar", -123.12]),
     ]

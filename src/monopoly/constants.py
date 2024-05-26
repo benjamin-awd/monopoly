@@ -28,10 +28,11 @@ class BankNames(AutoEnum):
 
 
 class Columns(AutoEnum):
-    TRANSACTION_DATE = auto()
-    DESCRIPTION = auto()
     AMOUNT = auto()
+    DATE = auto()
+    DESCRIPTION = auto()
     SUFFIX = auto()
+    TRANSACTION_DATE = auto()
 
 
 class SharedPatterns(StrEnum):
