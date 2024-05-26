@@ -6,7 +6,14 @@ from pathlib import Path
 import pytest
 from click.testing import CliRunner
 
-from monopoly.cli import Report, Result, get_statement_paths, monopoly
+from monopoly.cli import (
+    Report,
+    Result,
+    get_statement_paths,
+    monopoly,
+    pprint_transactions,
+)
+from monopoly.statements.transaction import Transaction
 
 
 @pytest.fixture
@@ -112,3 +119,29 @@ def test_version_command(cli_runner: CliRunner):
     semver_pattern = r"\d+\.\d+.\d+"
     match = re.search(semver_pattern, results.stdout)
     assert match, "Semantic version number not in output"
+
+
+def test_pprint_transactions(capsys, statement):
+    file = Path("test_file.md")
+
+    transactions = [
+        Transaction("2023-01-01", "Transaction 1", 100.00),
+        Transaction("2023-01-01", "Transaction 2", 123.12),
+    ]
+
+    pprint_transactions(transactions, statement, file)
+
+    captured = capsys.readouterr()
+
+    expected_output = (
+        "test_file.md\n"
+        "+--------------------+---------------+----------+\n"
+        "| transaction_date   | description   |   amount |\n"
+        "|--------------------+---------------+----------|\n"
+        "| 2023-01-01         | Transaction 1 |     -100 |\n"
+        "| 2023-01-01         | Transaction 2 |  -123.12 |\n"
+        "+--------------------+---------------+----------+\n"
+        "\n"
+    )
+
+    assert captured.out == expected_output
