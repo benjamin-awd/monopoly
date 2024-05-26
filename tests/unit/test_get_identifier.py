@@ -1,45 +1,57 @@
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
+
+import pytest
 
 from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
 from monopoly.pdf import PdfParser
 
 
-def test_encryption_identifier(parser: PdfParser):
-    parser.extractor = Mock()
-    parser.extractor.pdf._header_version = (1, 6)
-    parser.extractor.algorithm = 4
-    parser.extractor.length = 128
-    parser.extractor.permissions = -1804
-    parser.extractor.revision = 4
+@pytest.fixture
+def mock_get_doc_byte_stream():
+    with patch("monopoly.pdf.PdfParser._get_doc_byte_stream") as mock:
 
-    parser.document = Mock()
-    parser.document.metadata = None
+        class MockBytes:
+            def read(self, _):
+                return b"%PDF-1.6"
 
-    expected_identifier = EncryptionIdentifier(
-        pdf_version=1.6, algorithm=4, revision=4, length=128, permissions=-1804
-    )
-
-    assert isinstance(parser.metadata_items[0], EncryptionIdentifier)
-    assert parser.metadata_items[0] == expected_identifier
+        mock.return_value = MockBytes()
+        yield mock
 
 
-def test_metadata_identifier(parser: PdfParser):
-    document_mock = Mock()
-    document_mock.metadata = {
-        "title": "foo",
-        "author": "",
-        "subject": "",
-        "creator": "baz",
-        "producer": "",
-    }
-    parser.extractor = Mock()
-    parser.extractor.encrypt_dict = None
-    parser.document = document_mock
+def test_encryption_identifier(mock_get_doc_byte_stream, parser: PdfParser):
+    with patch("monopoly.pdf.PdfParser._get_raw_encrypt_dict") as mock:
+        mock.return_value = {"V": "4", "R": "4", "Length": "128", "P": "-1804"}
 
-    expected_identifier = MetadataIdentifier(
-        title="foo",
-        creator="baz",
-    )
+        parser.document = Mock()
+        parser.document.metadata = None
 
-    assert isinstance(parser.metadata_items[0], MetadataIdentifier)
-    assert parser.metadata_items[0] == expected_identifier
+        expected_identifier = EncryptionIdentifier(
+            pdf_version=1.6, algorithm=4, revision=4, length=128, permissions=-1804
+        )
+
+        assert isinstance(parser.metadata_items[0], EncryptionIdentifier)
+        assert parser.metadata_items[0] == expected_identifier
+
+
+def test_metadata_identifier(mock_get_doc_byte_stream, parser: PdfParser):
+    with patch("monopoly.pdf.PdfParser._get_raw_encrypt_dict") as mock:
+        mock.return_value = {}
+
+        document_mock = Mock()
+        document_mock.metadata = {
+            "title": "foo",
+            "author": "",
+            "subject": "",
+            "creator": "baz",
+            "producer": "",
+        }
+        parser.document = document_mock
+        parser.document.is_encrypted = False
+
+        expected_identifier = MetadataIdentifier(
+            title="foo",
+            creator="baz",
+        )
+
+        assert isinstance(parser.metadata_items[0], MetadataIdentifier)
+        assert parser.metadata_items[0] == expected_identifier
