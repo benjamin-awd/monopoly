@@ -2,7 +2,7 @@ import logging
 import re
 
 from monopoly.config import CreditStatementConfig
-from monopoly.constants import AccountType
+from monopoly.constants import EntryType
 from monopoly.statements.transaction import Transaction, TransactionGroupDict
 
 from .base import BaseStatement, SafetyCheckError
@@ -15,7 +15,7 @@ class CreditStatement(BaseStatement):
     A dataclass representation of a credit statement
     """
 
-    statement_type = AccountType.CREDIT
+    statement_type = EntryType.CREDIT
 
     def post_process_transactions(self, transactions) -> list[Transaction]:
         previous_month_balances = self.get_prev_month_balances()

@@ -13,7 +13,7 @@ class AutoEnum(StrEnum):
         return name.lower()
 
 
-class AccountType(AutoEnum):
+class EntryType(AutoEnum):
     CREDIT = auto()
     DEBIT = auto()
 
