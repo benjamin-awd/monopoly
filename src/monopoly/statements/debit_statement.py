@@ -2,7 +2,7 @@ import logging
 import re
 from functools import cached_property
 
-from monopoly.constants import AccountType
+from monopoly.constants import EntryType
 from monopoly.statements.transaction import TransactionMatch
 
 from .base import BaseStatement, SafetyCheckError
@@ -15,7 +15,7 @@ class DebitStatement(BaseStatement):
     A dataclass representation of a debit statement
     """
 
-    statement_type = AccountType.DEBIT
+    statement_type = EntryType.DEBIT
 
     @property
     def debit_header(self):
