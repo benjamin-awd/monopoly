@@ -6,7 +6,6 @@ from functools import cached_property
 from pathlib import Path
 
 from dateparser import parse
-from pandas import DataFrame
 
 from monopoly.config import CreditStatementConfig, DebitStatementConfig
 from monopoly.constants import StatementFields
@@ -160,10 +159,6 @@ class BaseStatement(ABC):
                 float(number) for number in numbers if decimal_pattern.match(number)
             }
         return decimal_numbers
-
-    @cached_property
-    def df(self) -> DataFrame:
-        return DataFrame(self.transactions, columns=self.columns)
 
     def perform_safety_check(self) -> bool:
         """Placeholder for perform_safety_check method, which should

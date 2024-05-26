@@ -1,13 +1,11 @@
 from datetime import datetime
 from pathlib import Path
 
-import pandas as pd
 import pytest
-from pandas.testing import assert_frame_equal
 from test_utils.skip import skip_if_encrypted
+from test_utils.transactions import get_transactions_as_dict, read_transactions_from_csv
 
 from monopoly.banks import BankBase, Dbs, Ocbc
-from monopoly.constants import StatementFields
 from monopoly.handler import StatementHandler
 from monopoly.statements import DebitStatement
 
@@ -32,24 +30,39 @@ def test_bank_debit_statements(
     statement: DebitStatement = statement_handler.extract()
 
     # check raw data
-    expected_raw_data = pd.read_csv(test_directory / "raw.csv")
-    df = statement.df
-    amount = StatementFields.AMOUNT
+    expected_raw_transactions = read_transactions_from_csv(test_directory, "raw.csv")
+    raw_transactions_as_dict = get_transactions_as_dict(statement.transactions)
 
-    debit_sum = round(abs(df[df[amount] > 0][amount].sum()), 2)
-    credit_sum = round(abs(df[df[amount] < 0][amount].sum()), 2)
+    debit_amounts = [
+        transaction.amount
+        for transaction in statement.transactions
+        if transaction.amount > 0
+    ]
+    credit_amounts = [
+        transaction.amount
+        for transaction in statement.transactions
+        if transaction.amount < 0
+    ]
 
-    assert_frame_equal(statement.df, expected_raw_data)
+    debit_sum = round(abs(sum(debit_amounts)), 2)
+    credit_sum = round(abs(sum(credit_amounts)), 2)
+
+    assert expected_raw_transactions == raw_transactions_as_dict
     assert debit_sum == expected_debit_sum
     assert credit_sum == expected_credit_sum
     assert statement.statement_date == statement_date
     assert statement.perform_safety_check()
 
     # check transformed data
-    expected_transformed_data = pd.read_csv(test_directory / "transformed.csv")
-    transformed_df = statement_handler.transform(
-        df=df,
+    expected_transformed_transactions = read_transactions_from_csv(
+        test_directory, "transformed.csv"
+    )
+    transformed_transactions = statement_handler.transform(
+        transactions=statement.transactions,
         statement_date=statement.statement_date,
         transaction_date_order=statement.config.transaction_date_order,
     )
-    assert_frame_equal(transformed_df, expected_transformed_data)
+    transformed_transactions_as_dict = get_transactions_as_dict(
+        transformed_transactions
+    )
+    assert expected_transformed_transactions == transformed_transactions_as_dict

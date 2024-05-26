@@ -2,7 +2,7 @@ import logging
 import re
 from functools import cached_property
 
-from monopoly.constants import AccountType, StatementFields
+from monopoly.constants import AccountType
 from monopoly.statements.transaction import TransactionMatch
 
 from .base import BaseStatement, SafetyCheckError
@@ -89,8 +89,7 @@ class DebitStatement(BaseStatement):
         Checks that debit and credit transaction sums
         exist as a number within the statement
         """
-        df = self.df
-        amount = StatementFields.AMOUNT
+        transactions = self.transactions
 
         numbers = self.get_all_numbers_from_document()
 
@@ -98,11 +97,17 @@ class DebitStatement(BaseStatement):
         # either is completely debit or credit transactions
         numbers.update([0])
 
-        debit_sum = round(abs(df[df[amount] > 0][amount].sum()), 2)
-        credit_sum = round(abs(df[df[amount] < 0][amount].sum()), 2)
+        debit_amounts = [
+            transaction.amount for transaction in transactions if transaction.amount > 0
+        ]
+        credit_amounts = [
+            transaction.amount for transaction in transactions if transaction.amount < 0
+        ]
+
+        debit_sum = round(abs(sum(debit_amounts)), 2)
+        credit_sum = round(abs(sum(credit_amounts)), 2)
 
         result = all([debit_sum in numbers, credit_sum in numbers])
-
         if not result:
             raise SafetyCheckError(self.failed_safety_message)
 

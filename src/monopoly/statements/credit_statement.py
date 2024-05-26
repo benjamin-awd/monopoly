@@ -1,11 +1,11 @@
 import logging
 import re
 
-from monopoly.constants import AccountType, StatementFields
+from monopoly.config import CreditStatementConfig
+from monopoly.constants import AccountType
 from monopoly.statements.transaction import Transaction, TransactionGroupDict
 
 from .base import BaseStatement, SafetyCheckError
-from monopoly.config import CreditStatementConfig
 
 logger = logging.getLogger(__name__)
 
@@ -56,11 +56,11 @@ class CreditStatement(BaseStatement):
 
         Returns `False` if the total does not exist in the document.
         """
-        df = self.df
-        amount = StatementFields.AMOUNT
         numbers = self.get_all_numbers_from_document()
+        transactions = self.transactions
 
-        total_amount = abs(round(df[amount].sum(), 2))
+        amounts = [transaction.amount for transaction in transactions]
+        total_amount = abs(round(sum(amounts), 2))
 
         result = total_amount in numbers
         if not result:

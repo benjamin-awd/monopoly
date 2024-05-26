@@ -108,7 +108,6 @@ def setup_statement_fixture(
     statement_config,
 ):
     mock_parser = MagicMock(spec=PdfParser)
-    monkeypatch.setattr("monopoly.statements.base.BaseStatement.df", None)
     mock_page = Mock(spec=PdfPage)
     mock_page.lines = ["foo", "bar"]
     mock_page.raw_text = ["foo\nbar"]

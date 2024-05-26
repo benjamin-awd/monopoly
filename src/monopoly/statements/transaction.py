@@ -79,6 +79,17 @@ class Transaction:
     amount: float
     suffix: Optional[str] = None
 
+    def as_raw_dict(self, show_suffix=False):
+        """Returns stringified dictionary version of the transaction"""
+        items = {
+            "transaction_date": self.transaction_date,
+            "description": self.description,
+            "amount": str(self.amount),
+        }
+        if show_suffix:
+            items["suffix"] = self.suffix
+        return items
+
     @field_validator("description", mode="after")
     def remove_extra_whitespace(cls, value: str) -> str:
         return " ".join(value.split())

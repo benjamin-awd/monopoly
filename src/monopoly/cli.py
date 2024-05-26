@@ -5,6 +5,7 @@ from typing import Collection, Iterable, Optional, TypedDict
 
 import click
 from pydantic.dataclasses import dataclass
+from tabulate import tabulate
 from tqdm import tqdm
 
 
@@ -113,23 +114,22 @@ def process_statement(
     try:
         handler = StatementHandler(file)
         statement = handler.extract()
-        transformed_df = handler.transform(
-            df=statement.df,
+        transactions = handler.transform(
+            transactions=statement.transactions,
             statement_date=statement.statement_date,
             transaction_date_order=statement.config.transaction_date_order,
         )
 
         if print_df:
-            click.echo(f"{file.name}")
-            click.echo(transformed_df.to_markdown(tablefmt="psql", numalign="right"))
-            click.echo()
+            pprint_transactions(transactions, statement, file)
+            # don't load to CSV if pprint
             return None
 
         # saves processed statements to the same directory by default
         if not output_directory:
             output_directory = file.parent
 
-        output_file = handler.load(transformed_df, statement, output_directory)
+        output_file = handler.load(transactions, statement, output_directory)
         return Result(file.name, output_file.name)
 
     except Exception as err:  # pylint: disable=broad-exception-caught
@@ -138,6 +138,22 @@ def process_statement(
             "traceback": traceback.format_exc(),
         }
         return Result(file.name, error_info=error_info)
+
+
+def pprint_transactions(transactions: list, statement, file: Path) -> None:
+    """Prints transactions in a markdown style tabular format"""
+    click.echo(f"{file.name}")
+    transactions_as_dict = [transaction.as_raw_dict() for transaction in transactions]
+    headers = {col: col for col in statement.columns}
+    click.echo(
+        tabulate(
+            transactions_as_dict,
+            headers=headers,
+            tablefmt="psql",
+            numalign="right",
+        )
+    )
+    click.echo()
 
 
 def run(
