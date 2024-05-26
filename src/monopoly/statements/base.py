@@ -35,8 +35,9 @@ class BaseStatement(ABC):
         self.pages = parser.get_pages()
         self.config = config
         self.pattern = re.compile(self.config.transaction_pattern)
+        # this replaces `transaction_date` with `date`
         self.columns: list[str] = [
-            Columns.TRANSACTION_DATE,
+            Columns.DATE,
             Columns.DESCRIPTION,
             Columns.AMOUNT,
         ]
