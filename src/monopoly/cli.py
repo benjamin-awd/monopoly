@@ -174,7 +174,7 @@ def run(
         "total": len(input_files),
         "desc": "Processing statements",
         "leave": False,
-        "delay": 0.5,
+        "delay": 0.2,
         "ncols": 80,
         "bar_format": "{l_bar}{bar}| {n_fmt}/{total_fmt}",
     }
