@@ -27,10 +27,11 @@ class BankNames(AutoEnum):
     STANDARD_CHARTERED = auto()
 
 
-class StatementFields(AutoEnum):
+class Columns(AutoEnum):
     TRANSACTION_DATE = auto()
     DESCRIPTION = auto()
     AMOUNT = auto()
+    SUFFIX = auto()
 
 
 class SharedPatterns(StrEnum):
