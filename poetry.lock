@@ -128,6 +128,20 @@ files = [
 graph = ["objgraph (>=1.7.2)"]
 
 [[package]]
+name = "execnet"
+version = "2.1.1"
+description = "execnet: rapid multi-Python deployment"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "execnet-2.1.1-py3-none-any.whl", hash = "sha256:26dee51f1b80cebd6d0ca8e74dd8745419761d3bef34163928cbebbdc4749fdc"},
+    {file = "execnet-2.1.1.tar.gz", hash = "sha256:5189b52c6121c24feae288166ab41b32549c7e2348652736540b9e6e7d4e72e3"},
+]
+
+[package.extras]
+testing = ["hatch", "pre-commit", "pytest", "tox"]
+
+[[package]]
 name = "flake8"
 version = "7.0.0"
 description = "the modular source code checker: pep8 pyflakes and co"
@@ -624,21 +638,24 @@ pluggy = ">=1.5,<2.0"
 dev = ["argcomplete", "attrs (>=19.2)", "hypothesis (>=3.56)", "mock", "pygments (>=2.7.2)", "requests", "setuptools", "xmlschema"]
 
 [[package]]
-name = "pytest-mock"
-version = "3.14.0"
-description = "Thin-wrapper around the mock package for easier use with pytest"
+name = "pytest-xdist"
+version = "3.6.1"
+description = "pytest xdist plugin for distributed testing, most importantly across multiple CPUs"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pytest-mock-3.14.0.tar.gz", hash = "sha256:2719255a1efeceadbc056d6bf3df3d1c5015530fb40cf347c0f9afac88410bd0"},
-    {file = "pytest_mock-3.14.0-py3-none-any.whl", hash = "sha256:0b72c38033392a5f4621342fe11e9219ac11ec9d375f8e2a0c164539e0d70f6f"},
+    {file = "pytest_xdist-3.6.1-py3-none-any.whl", hash = "sha256:9ed4adfb68a016610848639bb7e02c9352d5d9f03d04809919e2dafc3be4cca7"},
+    {file = "pytest_xdist-3.6.1.tar.gz", hash = "sha256:ead156a4db231eec769737f57668ef58a2084a34b2e55c4a8fa20d861107300d"},
 ]
 
 [package.dependencies]
-pytest = ">=6.2.5"
+execnet = ">=2.1"
+pytest = ">=7.0.0"
 
 [package.extras]
-dev = ["pre-commit", "pytest-asyncio", "tox"]
+psutil = ["psutil (>=3.0)"]
+setproctitle = ["setproctitle"]
+testing = ["filelock"]
 
 [[package]]
 name = "python-dateutil"
