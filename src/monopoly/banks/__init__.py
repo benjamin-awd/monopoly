@@ -5,7 +5,7 @@ from typing import Type
 
 from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
 
-from ..examples.example_bank import ExampleBankProcessor
+from ..examples.example_bank import ExampleBank
 from .base import BankBase
 from .citibank import Citibank
 from .dbs import Dbs
@@ -16,7 +16,7 @@ from .standard_chartered import StandardChartered
 banks: list[Type[BankBase]] = [
     Citibank,
     Dbs,
-    ExampleBankProcessor,
+    ExampleBank,
     Hsbc,
     Ocbc,
     StandardChartered,

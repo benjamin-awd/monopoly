@@ -1,3 +1,3 @@
-from .example_bank import ExampleBankProcessor
+from .example_bank import ExampleBank
 
-__all__ = ["ExampleBankProcessor"]
+__all__ = ["ExampleBank"]
