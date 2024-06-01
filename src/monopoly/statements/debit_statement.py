@@ -78,11 +78,9 @@ class DebitStatement(BaseStatement):
         """
         if self.debit_header:
             result = self.debit_header.find(column_name) + len(column_name)
-        if not result:
-            raise ValueError(
-                f"Debit header {column_name} missing in {self.debit_header}"
-            )
-        return result
+            return result
+
+        raise ValueError(f"Debit header {column_name} missing in {self.debit_header}")
 
     def perform_safety_check(self) -> bool:
         """
