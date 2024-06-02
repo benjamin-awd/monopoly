@@ -23,8 +23,8 @@ def test_credit_safety_check(credit_statement: CreditStatement):
     credit_statement.document = document
 
     credit_statement.transactions = [
-        Transaction("23/01", "foo", 11.5),
-        Transaction("24/01", "bar", 20.0),
+        Transaction(transaction_date="23/01", description="foo", amount=11.5),
+        Transaction(transaction_date="24/01", description="bar", amount=20.0),
     ]
 
     # the safety check should return True, since the total amount of 31.50
@@ -45,9 +45,15 @@ def test_debit_safety_check(debit_statement: DebitStatement):
     debit_statement.document = document
 
     debit_statement.transactions = [
-        Transaction("23/01", "foo", 10.0, "CR"),
-        Transaction("24/01", "bar", 20.0, "CR"),
-        Transaction("25/01", "baz", -2.5, "DR"),
+        Transaction(
+            transaction_date="23/01", description="foo", amount=10.0, suffix="CR"
+        ),
+        Transaction(
+            transaction_date="24/01", description="bar", amount=20.0, suffix="CR"
+        ),
+        Transaction(
+            transaction_date="25/01", description="baz", amount=-2.5, suffix="DR"
+        ),
     ]
 
     # the safety check should return True, since the credit sum matches
@@ -65,9 +71,15 @@ def test_debit_safety_check_failure(debit_statement: DebitStatement):
 
     debit_statement.document = document
     debit_statement.transactions = [
-        Transaction("23/01", "foo", 10.0, "CR"),
-        Transaction("24/01", "bar", 20.0, "CR"),
-        Transaction("25/01", "baz", -2.5, "DR"),
+        Transaction(
+            transaction_date="23/01", description="foo", amount=10.0, suffix="CR"
+        ),
+        Transaction(
+            transaction_date="24/01", description="bar", amount=20.0, suffix="CR"
+        ),
+        Transaction(
+            transaction_date="25/01", description="baz", amount=-2.5, suffix="DR"
+        ),
     ]
 
     # the safety check should fail, since the debit sum and credit sum

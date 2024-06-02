@@ -20,7 +20,7 @@ class CreditStatement(BaseStatement):
     def post_process_transactions(self, transactions) -> list[Transaction]:
         previous_month_balances = self.get_prev_month_balances()
         if previous_month_balances:
-            first_transaction_date = next(iter(transactions)).transaction_date
+            first_transaction_date = next(iter(transactions)).date
             for prev_month_balance in previous_month_balances:
                 groupdict = TransactionGroupDict(**prev_month_balance.groupdict())
                 groupdict.transaction_date = first_transaction_date

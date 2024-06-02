@@ -125,8 +125,12 @@ def test_pprint_transactions(capsys, statement):
     file = Path("test_file.md")
 
     transactions = [
-        Transaction("2023-01-01", "Transaction 1", 100.00),
-        Transaction("2023-01-01", "Transaction 2", 123.12),
+        Transaction(
+            transaction_date="2023-01-01", description="Transaction 1", amount=100.00
+        ),
+        Transaction(
+            transaction_date="2023-01-01", description="Transaction 2", amount=123.12
+        ),
     ]
 
     pprint_transactions(transactions, statement, file)

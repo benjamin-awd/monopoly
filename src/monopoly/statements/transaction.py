@@ -2,7 +2,7 @@ import re
 from collections.abc import Mapping
 from typing import Any, Optional
 
-from pydantic import ConfigDict, field_validator, model_validator
+from pydantic import ConfigDict, Field, field_validator, model_validator
 from pydantic.dataclasses import dataclass
 from pydantic_core import ArgsKwargs
 
@@ -75,22 +75,19 @@ class Transaction:
     Holds transaction data, validates the data, and
     performs various coercions like removing whitespaces
     and commas.
+
+    Reassigns 'transaction_date' to 'date'
     """
 
-    transaction_date: str
     description: str
     amount: float
+    date: str = Field(alias="transaction_date")
     suffix: Optional[str] = None
 
-    def as_raw_dict(self, rename_transaction_date=True, show_suffix=False):
+    def as_raw_dict(self, show_suffix=False):
         """Returns stringified dictionary version of the transaction"""
-        date_col = Columns.TRANSACTION_DATE.value
-
-        if rename_transaction_date:
-            date_col = Columns.DATE.value
-
         items = {
-            date_col: self.transaction_date,
+            Columns.DATE.value: self.date,
             Columns.DESCRIPTION.value: self.description,
             Columns.AMOUNT.value: str(self.amount),
         }

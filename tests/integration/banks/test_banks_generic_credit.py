@@ -7,6 +7,7 @@ from test_utils.transactions import get_transactions_as_dict, read_transactions_
 
 from monopoly.banks import Citibank, Dbs, Ocbc, StandardChartered
 from monopoly.banks.base import BankBase
+from monopoly.constants import Columns
 from monopoly.pipeline import Pipeline
 from monopoly.statements import CreditStatement
 
@@ -47,12 +48,14 @@ def test_bank_credit_statements(
 
     # allow descriptions to loosely match
     for i, transaction in enumerate(raw_transactions_as_dict):
+        assert transaction[Columns.DATE] == expected_raw_transactions[i][Columns.DATE]
         assert (
-            transaction["transaction_date"]
-            == expected_raw_transactions[i]["transaction_date"]
+            transaction[Columns.AMOUNT] == expected_raw_transactions[i][Columns.AMOUNT]
         )
-        assert transaction["amount"] == expected_raw_transactions[i]["amount"]
-        assert expected_raw_transactions[i]["description"] in transaction["description"]
+        assert (
+            expected_raw_transactions[i][Columns.DESCRIPTION]
+            in transaction[Columns.DESCRIPTION]
+        )
 
     assert round(sum(expected_transaction_total_amount), 2) == total_amount
     assert statement.statement_date == statement_date
@@ -73,11 +76,14 @@ def test_bank_credit_statements(
     # allow descriptions to loosely match
     for i, transaction in enumerate(transformed_transactions_as_dict):
         assert (
-            transaction["transaction_date"]
-            == expected_transformed_transactions[i]["transaction_date"]
+            transaction[Columns.DATE]
+            == expected_transformed_transactions[i][Columns.DATE]
         )
-        assert transaction["amount"] == expected_transformed_transactions[i]["amount"]
         assert (
-            expected_transformed_transactions[i]["description"]
-            in transaction["description"]
+            transaction[Columns.AMOUNT]
+            == expected_transformed_transactions[i][Columns.AMOUNT]
+        )
+        assert (
+            expected_transformed_transactions[i][Columns.DESCRIPTION]
+            in transaction[Columns.DESCRIPTION]
         )

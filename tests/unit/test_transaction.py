@@ -2,10 +2,16 @@ from monopoly.statements import Transaction
 
 
 def test_transaction_handles_comma():
-    transaction = Transaction("2099-09-10", "foo", "123,123.12")
+    transaction = Transaction(
+        transaction_date="2099-09-10", description="foo", amount="123,123.12"
+    )
     assert transaction.amount == -123123.12
 
 
 def test_transaction_handles_whitespace():
-    transaction = Transaction("2099-09-10", "   foo,     bar    ", "123,123.12")
+    transaction = Transaction(
+        transaction_date="2099-09-10",
+        description="   foo,     bar    ",
+        amount="123,123.12",
+    )
     assert transaction.description == "foo, bar"

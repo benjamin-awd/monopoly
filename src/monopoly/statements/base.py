@@ -34,7 +34,6 @@ class BaseStatement(ABC):
     ):
         self.pages = parser.get_pages()
         self.config = config
-        # this replaces `transaction_date` with `date`
         self.columns: list[str] = [
             Columns.DATE,
             Columns.DESCRIPTION,

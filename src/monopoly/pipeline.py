@@ -78,9 +78,9 @@ class Pipeline:
             e.g. if the statement month is Jan/Feb 2024, transactions from
             Oct/Nov/Dec should be attributed to the previous year.
             """
-            transaction.transaction_date += f" {statement_date.year}"
+            transaction.date += f" {statement_date.year}"
             parsed_date = parse(
-                transaction.transaction_date,
+                transaction.date,
                 settings=transaction_date_order.settings,
             )
             if parsed_date:
@@ -93,9 +93,7 @@ class Pipeline:
         logger.debug("Transforming dates to ISO 8601")
 
         for transaction in transactions:
-            transaction.transaction_date = convert_date(
-                transaction, transaction_date_order
-            )
+            transaction.date = convert_date(transaction, transaction_date_order)
         return transactions
 
     @staticmethod
@@ -128,7 +126,7 @@ class Pipeline:
                 writer.writerow(
                     (
                         [
-                            transaction.transaction_date,
+                            transaction.date,
                             transaction.description,
                             transaction.amount,
                         ]
