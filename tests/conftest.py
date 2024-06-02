@@ -3,43 +3,10 @@ from unittest.mock import MagicMock, Mock, PropertyMock, patch
 import fitz
 import pytest
 
-from monopoly.banks import Citibank, Dbs, Hsbc, Ocbc, StandardChartered
 from monopoly.config import CreditStatementConfig, DateOrder, PdfConfig
 from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfPage, PdfParser
 from monopoly.statements import BaseStatement, CreditStatement, DebitStatement
-
-
-@pytest.fixture(scope="session")
-def citibank():
-    citibank = Citibank(file_path="tests/integration/banks/citibank/credit/input.pdf")
-    yield citibank
-
-
-@pytest.fixture(scope="session")
-def dbs():
-    dbs = Dbs(file_path="tests/integration/banks/dbs/credit/input.pdf")
-    yield dbs
-
-
-@pytest.fixture(scope="session")
-def ocbc():
-    ocbc = Ocbc(file_path="tests/integration/banks/ocbc/credit/input.pdf")
-    yield ocbc
-
-
-@pytest.fixture(scope="session")
-def hsbc():
-    hsbc = Hsbc(file_path="tests/integration/banks/hsbc/credit/input.pdf")
-    yield hsbc
-
-
-@pytest.fixture(scope="session")
-def standard_chartered():
-    standard_chartered = StandardChartered(
-        file_path="tests/integration/banks/standard_chartered/credit/input.pdf"
-    )
-    yield standard_chartered
 
 
 @pytest.fixture
@@ -47,16 +14,6 @@ def mock_get_pages():
     with patch.object(PdfParser, "get_pages") as mock_get_pages:
         mock_get_pages.return_value = MagicMock()
         yield mock_get_pages
-
-
-@pytest.fixture
-def mock_get_statement_config():
-    with patch(
-        "monopoly.banks.base.BankBase.config",
-        new_callable=PropertyMock,
-    ) as mock_get_statement_config_prop:
-        mock_get_statement_config_prop.return_value = None
-        yield mock_get_statement_config
 
 
 @pytest.fixture
@@ -99,7 +56,6 @@ def parser(mock_bank):
 
 def setup_statement_fixture(
     statement_cls: BaseStatement | DebitStatement | CreditStatement,
-    monkeypatch,
     statement_config,
 ):
     mock_parser = MagicMock(spec=PdfParser)
@@ -115,18 +71,18 @@ def setup_statement_fixture(
 
 
 @pytest.fixture(scope="function")
-def credit_statement(monkeypatch, statement_config):
-    yield from setup_statement_fixture(CreditStatement, monkeypatch, statement_config)
+def credit_statement(statement_config):
+    yield from setup_statement_fixture(CreditStatement, statement_config)
 
 
 @pytest.fixture(scope="function")
-def debit_statement(monkeypatch, statement_config):
-    yield from setup_statement_fixture(DebitStatement, monkeypatch, statement_config)
+def debit_statement(statement_config):
+    yield from setup_statement_fixture(DebitStatement, statement_config)
 
 
 @pytest.fixture(scope="function")
-def statement(monkeypatch, parser, statement_config):
-    yield from setup_statement_fixture(BaseStatement, monkeypatch, statement_config)
+def statement(statement_config):
+    yield from setup_statement_fixture(BaseStatement, statement_config)
 
 
 @pytest.fixture(scope="session")
