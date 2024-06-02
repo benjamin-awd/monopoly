@@ -13,9 +13,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install pdftotext
-        run: |
-          sudo apt-get update
-          sudo apt-get -y install build-essential libpoppler-cpp-dev pkg-config
+        uses: daaku/gh-action-apt-install@v4
+        with:
+          packages: build-essential libpoppler-cpp-dev pkg-config
 
       - name: Setup Python & Poetry
         uses: ./.github/actions/setup-python-poetry
