@@ -35,6 +35,7 @@ repos:
       language: system
       types: [python]
       require_serial: true
+      args: [--jobs, '6']
 
   - repo: local
     hooks:
