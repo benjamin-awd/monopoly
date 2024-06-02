@@ -35,9 +35,9 @@ class Pipeline:
 
     def _create_handler(self) -> GenericStatementHandler | StatementHandler:
         if issubclass(self.bank, GenericBank):
-            logger.info("Using generic statement handler")
+            logger.debug("Using generic statement handler")
             return GenericStatementHandler(self.parser)
-        logger.info("Using statement handler with bank: %s", self.bank.__name__)
+        logger.debug("Using statement handler with bank: %s", self.bank.__name__)
         return StatementHandler(self.parser)
 
     def _detect_bank(self) -> Type[BankBase]:
@@ -50,10 +50,15 @@ class Pipeline:
     def extract(self, safety_check=True) -> CreditStatement | DebitStatement:
         """Extracts transactions from the statement, and performs
         a safety check to make sure that total transactions add up"""
-        if not self.statement.transactions:
+        transactions = self.statement.transactions
+        statement_date = self.statement.statement_date
+
+        if not transactions:
             raise ValueError("No transactions found - statement extraction failed")
 
-        if not self.statement.statement_date:
+        logger.debug("%s transactions found", len(transactions))
+
+        if not statement_date:
             raise ValueError("No statement date found")
 
         if safety_check:
