@@ -1,6 +1,5 @@
 from datetime import datetime
 from pathlib import Path
-from typing import Type
 
 import pytest
 from test_utils.skip import skip_if_encrypted

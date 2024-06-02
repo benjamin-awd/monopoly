@@ -26,16 +26,11 @@ repos:
       types_or: [cython, pyi, python]
       args: ['--filter-files']
 
-  - repo: https://github.com/PyCQA/pylint
-    rev: v2.17.5
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.7
     hooks:
-    - id: pylint
-      name: pylint
-      entry: pylint
-      language: system
-      types: [python]
-      require_serial: true
-      args: [--jobs, '6']
+      - id: ruff
+        args: [ --fix ]
 
   - repo: local
     hooks:
