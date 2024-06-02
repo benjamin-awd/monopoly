@@ -73,7 +73,7 @@ def mock_get_prev_month_balances(transactions):
 def test_inject_prev_month_balance(credit_statement):
     transactions = [MagicMock(spec=Transaction) for _ in range(3)]
     for i in range(3):
-        transactions[i].transaction_date = "2024-01-01"
+        transactions[i].date = "2024-01-01"
 
     result = credit_statement.post_process_transactions(transactions)
     expected = [

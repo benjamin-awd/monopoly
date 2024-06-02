@@ -1,4 +1,4 @@
-transaction_date,description,amount
+date,description,amount
 2023-10-03,FAST PAYMENT via PayNow-Mobile to CoffeeHouse OTHR - OTHR,-1.9
 2023-10-03,BILL PAYMENT INB 12341234123412341234 INTERNET BANKING SINGAPORE,-190.92
 2023-10-04,FAST PAYMENT via PayNow-Mobile to Adrian Lee OTHR - PayNow Transfer,-39.0

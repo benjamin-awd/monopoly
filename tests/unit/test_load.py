@@ -28,9 +28,6 @@ def test_load(
     mock_generate_name,
     mock_file_system,
 ):
-    class MockDocument:
-        metadata = "foo"
-
     mock_open, mock_csv_writer = mock_file_system
 
     transactions = [
