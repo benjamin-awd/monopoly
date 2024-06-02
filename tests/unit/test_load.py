@@ -23,9 +23,9 @@ def mock_file_system():
             yield mock_open, mock_instance
 
 
+@pytest.mark.usefixtures("mock_generate_name")
 def test_load(
     credit_statement: BaseStatement,
-    mock_generate_name,
     mock_file_system,
 ):
     mock_open, mock_csv_writer = mock_file_system

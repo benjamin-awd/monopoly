@@ -23,9 +23,8 @@ def metadata_analyzer():
     return MetadataAnalyzer(None)
 
 
-def test_encryption_identifier(
-    mock_get_doc_byte_stream, metadata_analyzer: MetadataAnalyzer
-):
+@pytest.mark.usefixtures("mock_get_doc_byte_stream")
+def test_encryption_identifier(metadata_analyzer: MetadataAnalyzer):
     with patch("monopoly.metadata.MetadataAnalyzer.get_raw_encrypt_dict") as mock:
         mock.return_value = {"V": "4", "R": "4", "Length": "128", "P": "-1804"}
 
