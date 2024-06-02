@@ -25,6 +25,7 @@ def no_banks(monkeypatch):
     "bank, expected_debit_sum, expected_credit_sum, statement_date",
     test_cases,
 )
+@pytest.mark.usefixtures("no_banks")
 def test_bank_debit_statements(
     bank: BankBase,
     expected_debit_sum: float,

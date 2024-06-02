@@ -95,3 +95,8 @@ def statement_config():
         prev_balance_pattern="foo",
     )
     yield statement_config
+
+
+@pytest.fixture
+def no_banks(monkeypatch):
+    monkeypatch.setattr("monopoly.banks.banks", [])

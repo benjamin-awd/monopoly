@@ -20,18 +20,14 @@ test_cases = [
 ]
 
 
-@pytest.fixture
-def no_banks(monkeypatch):
-    monkeypatch.setattr("monopoly.banks.banks", [])
-
-
 @skip_if_encrypted
 @pytest.mark.parametrize(
     "bank, total_amount, statement_date",
     test_cases,
 )
+@pytest.mark.usefixtures("no_banks")
 def test_bank_credit_statements(
-    bank: BankBase, total_amount: float, statement_date: datetime, no_banks
+    bank: BankBase, total_amount: float, statement_date: datetime
 ):
     bank_name = bank.credit_config.bank_name
     test_directory = Path(__file__).parent / bank_name / "credit"
