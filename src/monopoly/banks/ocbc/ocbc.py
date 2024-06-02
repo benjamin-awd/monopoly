@@ -25,7 +25,7 @@ class Ocbc(BankBase):
 
     debit_config = DebitStatementConfig(
         bank_name=BankNames.OCBC,
-        statement_date_pattern=r"(\d+\s[A-Za-z]{3}\s\d{4})",
+        statement_date_pattern=r"TO\s(\d+\s[A-Za-z]{3}\s\d{4})",
         debit_statement_identifier=r"(Withdrawal.*Deposit.*Balance)",
         transaction_pattern=DebitTransactionPatterns.OCBC,
         multiline_transactions=True,
