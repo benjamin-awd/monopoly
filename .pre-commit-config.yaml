@@ -34,9 +34,10 @@ repos:
 
   - repo: local
     hooks:
-      - id: test
-        name: test
-        entry: poetry run task test
+      - id: pytest
+        name: pytest
+        entry: pytest
         language: system
         pass_filenames: false
         types: [python]
+        args: [-n, auto]
