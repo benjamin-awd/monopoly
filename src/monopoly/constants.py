@@ -109,8 +109,8 @@ class CreditTransactionPatterns(StrEnum):
         + SharedPatterns.AMOUNT_EXTENDED
     )
     STANDARD_CHARTERED = (
-        SharedPatterns.POSTING_DATE_ABBREVIATED_PROPER
-        + SharedPatterns.TRANSACTION_DATE_ABBREVIATED_PROPER_CASE
+        SharedPatterns.TRANSACTION_DATE_ABBREVIATED_PROPER_CASE
+        + SharedPatterns.POSTING_DATE_ABBREVIATED_PROPER
         + SharedPatterns.DESCRIPTION
         + r"(?:(?P<transaction_ref>Transaction\sRef\s\d+)?)\s+"
         + SharedPatterns.AMOUNT_EXTENDED
