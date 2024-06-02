@@ -1,3 +1,4 @@
+import json
 import re
 from collections.abc import Mapping
 from typing import Any, Optional
@@ -136,3 +137,6 @@ class Transaction:
         else:
             self.amount = -abs(self.amount)
         return self
+
+    def __str__(self):
+        return json.dumps(self.as_raw_dict(show_suffix=True))
