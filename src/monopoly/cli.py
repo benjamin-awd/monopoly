@@ -159,8 +159,8 @@ def pprint_transactions(transactions: list, statement, file: Path) -> None:
 
 def run(
     input_files: Collection[Path],
-    output_directory: Optional[Path] = None,
-    print_df: bool = False,
+    output_dir: Optional[Path] = None,
+    pprint: bool = False,
     single_process: bool = False,
     safety_check: bool = True,
 ):
@@ -188,8 +188,8 @@ def run(
                     executor.map(
                         process_statement,
                         input_files,
-                        [output_directory] * len(input_files),
-                        [print_df] * len(input_files),
+                        [output_dir] * len(input_files),
+                        [pprint] * len(input_files),
                     ),
                     **tqdm_settings,
                 )
@@ -198,7 +198,7 @@ def run(
     else:
         results = []
         for file in tqdm(input_files, **tqdm_settings):
-            result = process_statement(file, output_directory, print_df, safety_check)
+            result = process_statement(file, output_dir, pprint, safety_check)
             results.append(result)
 
     if any(results):
@@ -233,6 +233,7 @@ def get_statement_paths(files: Iterable[Path]) -> set[Path]:
 @click.option(
     "-o",
     "--output",
+    "output_dir",
     type=click.Path(exists=True, allow_dash=True, resolve_path=True, path_type=Path),
     help="Specify output folder.",
 )
@@ -261,15 +262,7 @@ def get_statement_paths(files: Iterable[Path]) -> set[Path]:
     ),
 )
 @click.pass_context
-# pylint: disable=too-many-arguments
-def monopoly(
-    ctx: click.Context,
-    files: list[Path],
-    output: Path,
-    pprint: bool,
-    single_process: bool,
-    safety_check: bool,
-):
+def monopoly(ctx: click.Context, files: list[Path], **kwargs):
     """
     Monopoly helps convert your bank statements from PDF to CSV.
 
@@ -279,7 +272,7 @@ def monopoly(
         matched_files = get_statement_paths(files)
 
         if matched_files:
-            run(matched_files, output, pprint, single_process, safety_check)
+            run(matched_files, **kwargs)
             ctx.exit(0)
 
         else:
