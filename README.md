@@ -6,7 +6,7 @@
 [![CI](https://github.com/benjamin-awd/monopoly/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/benjamin-awd/monopoly/actions/workflows/ci.yaml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Monopoly is a Python library & CLI that converts Singapore bank statement PDFs to CSV.
+Monopoly is a Python library & CLI that converts bank statement PDFs to CSV.
 
 ![](https://raw.githubusercontent.com/benjamin-awd/monopoly/main/docs/monopoly.gif)
 
