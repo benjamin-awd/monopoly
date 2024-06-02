@@ -11,7 +11,7 @@ from monopoly.statements import DebitStatement
 
 test_cases = [
     (Dbs, 2222.68, 1302.88, datetime(2023, 10, 31)),
-    (Ocbc, 6630.79, 5049.55, datetime(2023, 10, 1)),
+    (Ocbc, 6630.79, 5049.55, datetime(2023, 10, 31)),
 ]
 
 
