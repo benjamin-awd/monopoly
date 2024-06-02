@@ -90,7 +90,10 @@ class Report:
 
 
 def process_statement(
-    file: Path, output_directory: Optional[Path], print_df: bool
+    file: Path,
+    output_directory: Optional[Path],
+    print_df: bool,
+    safety_check: bool = True,
 ) -> Optional[Result]:
     """
     Extracts, transforms, and loads transactions from bank statements.
@@ -111,7 +114,7 @@ def process_statement(
 
     try:
         pipeline = Pipeline(file)
-        statement = pipeline.extract()
+        statement = pipeline.extract(safety_check=safety_check)
         transactions = pipeline.transform(
             transactions=statement.transactions,
             statement_date=statement.statement_date,
@@ -159,6 +162,7 @@ def run(
     output_directory: Optional[Path] = None,
     print_df: bool = False,
     single_process: bool = False,
+    safety_check: bool = True,
 ):
     """
     Process a collection of input files concurrently
@@ -194,7 +198,7 @@ def run(
     else:
         results = []
         for file in tqdm(input_files, **tqdm_settings):
-            result = process_statement(file, output_directory, print_df)
+            result = process_statement(file, output_directory, print_df, safety_check)
             results.append(result)
 
     if any(results):
@@ -247,13 +251,24 @@ def get_statement_paths(files: Iterable[Path]) -> set[Path]:
         "multiple files. Useful for debugging."
     ),
 )
+@click.option(
+    "--safe/--nosafe",
+    "safety_check",
+    default=True,
+    help=(
+        "Determines whether to run the safety check or not. "
+        "Runs the safety check by default."
+    ),
+)
 @click.pass_context
+# pylint: disable=too-many-arguments
 def monopoly(
     ctx: click.Context,
     files: list[Path],
     output: Path,
     pprint: bool,
     single_process: bool,
+    safety_check: bool,
 ):
     """
     Monopoly helps convert your bank statements from PDF to CSV.
@@ -264,7 +279,7 @@ def monopoly(
         matched_files = get_statement_paths(files)
 
         if matched_files:
-            run(matched_files, output, pprint, single_process)
+            run(matched_files, output, pprint, single_process, safety_check)
             ctx.exit(0)
 
         else:

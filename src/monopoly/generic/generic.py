@@ -291,7 +291,7 @@ class DatePatternAnalyzer:
         where the first number is either a deposit/withdrawal,
         and the next number is a balance.
         """
-        # match up to amounts like `123.12     2,000.00` while disregarding words between
+        # match up to amounts like `123.12     2,000.00` while ignoring words between
         amount_pattern = re.compile(
             r"(?P<amount>\d{1,3}(,\d{3})*(\.\d+)\d{1,3}(,\d{3})*(\.\d+)?)"
         )

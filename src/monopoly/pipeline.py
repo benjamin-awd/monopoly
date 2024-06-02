@@ -47,7 +47,7 @@ class Pipeline:
         logger.warning("Unable to detect bank, transactions may be inaccurate")
         return GenericBank
 
-    def extract(self) -> CreditStatement | DebitStatement:
+    def extract(self, safety_check=True) -> CreditStatement | DebitStatement:
         """Extracts transactions from the statement, and performs
         a safety check to make sure that total transactions add up"""
         if not self.statement.transactions:
@@ -56,7 +56,8 @@ class Pipeline:
         if not self.statement.statement_date:
             raise ValueError("No statement date found")
 
-        self.statement.perform_safety_check()
+        if safety_check:
+            self.statement.perform_safety_check()
 
         return self.statement
 
