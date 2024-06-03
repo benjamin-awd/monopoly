@@ -318,7 +318,7 @@ def test_create_transaction_pattern(
     date_pattern_analyzer.pattern_spans_mapping = {"DD_MMM": {(10, 16): 2, (27, 33): 2}}
 
     result = date_pattern_analyzer.create_transaction_pattern()
-    assert result.pattern == expected
+    assert result == expected
     date_pattern_analyzer.filtered_lines_with_dates = (
         lines_with_posting_transaction_dates["DD_MMM"]
     )
@@ -334,7 +334,7 @@ def test_create_transaction_pattern(
         + SharedPatterns.AMOUNT_EXTENDED
     )
     result = date_pattern_analyzer.create_transaction_pattern()
-    assert result.pattern == expected
+    assert result == expected
 
 
 def test_get_items_with_same_page_line(date_pattern_analyzer: DatePatternAnalyzer):
