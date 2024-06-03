@@ -48,7 +48,7 @@ class BaseStatement(ABC):
             pattern = re.compile(self.config.transaction_pattern, re.IGNORECASE)
         return pattern
 
-    def get_transactions(self) -> list[Transaction]:
+    def get_transactions(self) -> list[Transaction] | None:
         transactions: list[Transaction] = []
 
         for page in self.pages:
@@ -65,6 +65,9 @@ class BaseStatement(ABC):
                     )
                     transaction = Transaction(**processed_match.groupdict)
                     transactions.append(transaction)
+
+        if not transactions:
+            return None
 
         post_processed_transactions = self.post_process_transactions(transactions)
         return post_processed_transactions
