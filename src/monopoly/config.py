@@ -65,7 +65,7 @@ class StatementConfig:
     """
 
     bank_name: BankNames | InternalBankNames
-    transaction_pattern: str | re.Pattern
+    transaction_pattern: str
     statement_date_pattern: str
     transaction_date_order: DateOrder = DateOrder("DMY")
     statement_date_order: DateOrder = DateOrder("DMY")

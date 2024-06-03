@@ -215,7 +215,7 @@ class DatePatternAnalyzer:
 
     def create_transaction_pattern(
         self,
-    ) -> re.Pattern:
+    ) -> str:
         """
         Create a regex pattern that will be used for date parsing
         by the generic statement handler.
@@ -250,7 +250,7 @@ class DatePatternAnalyzer:
         if self.get_statement_type() == EntryType.CREDIT:
             pattern += SharedPatterns.AMOUNT_EXTENDED
 
-        return re.compile(pattern, re.IGNORECASE)
+        return pattern
 
     def create_statement_date_pattern(self) -> str:
         """
@@ -379,7 +379,7 @@ class DatePatternAnalyzer:
 
     def get_first_transaction_location(self):
         # uses the transaction pattern to find the first transaction
-        pattern = self.create_transaction_pattern()
+        pattern = re.compile(self.create_transaction_pattern(), re.IGNORECASE)
 
         for page_num, page in enumerate(self.pages):
             for line_num, line in enumerate(page.lines):

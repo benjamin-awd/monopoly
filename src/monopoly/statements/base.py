@@ -45,7 +45,7 @@ class BaseStatement(ABC):
     def pattern(self):
         pattern = self.config.transaction_pattern
         if not isinstance(self.config.transaction_pattern, re.Pattern):
-            pattern = re.compile(self.config.transaction_pattern)
+            pattern = re.compile(self.config.transaction_pattern, re.IGNORECASE)
         return pattern
 
     def get_transactions(self) -> list[Transaction]:
