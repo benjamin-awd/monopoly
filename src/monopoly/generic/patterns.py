@@ -1,7 +1,6 @@
 import re
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from enum import StrEnum
-from string import Template
 
 
 # flake8: noqa
@@ -19,29 +18,19 @@ class DateFormats(StrEnum):
 class DateRegexPatterns:
     """Holds date regex patterns used by the generic statement handler"""
 
-    DD_MM = r"\b(${DD}[\/\-]${MM})"
-    DD_MMM = r"\b(${DD}[-\s]${MMM})"
-    DD_MMM_YYYY = r"\b(${DD}[-\s]${MMM}[,\s]{1,2}20\d{2})"
-    DD_MM_YYYY = r"\b(${DD}[\/\-]${MM}[\/\-]20\d{2})"
-    MMMM_DD_YYYY = r"\b(${MMMM}\s${DD}[,\s]{1,2}20\d{2})"
-    MMM_DD = r"\b(${MMM}[-\s]${DD})"
-    MMM_DD_YYYY = r"\b(${MMM}[-\s]${DD}[,\s]{1,2}20\d{2})"
+    DD_MM: str = rf"\b({DateFormats.DD}[\/\-]{DateFormats.MM})"
+    DD_MMM: str = rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM})"
+    DD_MMM_YYYY: str = (
+        rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM}[,\s]{{1,2}}20\d{{2}})"
+    )
+    DD_MM_YYYY: str = rf"\b({DateFormats.DD}[\/\-]{DateFormats.MM}[\/\-]20\d{{2}})"
+    MMMM_DD_YYYY: str = (
+        rf"\b({DateFormats.MMMM}\s{DateFormats.DD}[,\s]{{1,2}}20\d{{2}})"
+    )
+    MMM_DD: str = rf"\b({DateFormats.MMM}[-\s]{DateFormats.DD})"
+    MMM_DD_YYYY: str = (
+        rf"\b({DateFormats.MMM}[-\s]{DateFormats.DD}[,\s]{{1,2}}20\d{{2}})"
+    )
 
-    def __post_init__(self):
-        """Accesses class variables and performs substitution on variables enclosed by ${ }"""
-        fields = [attribute for attribute in dir(self) if not attribute.startswith("_")]
-        for field in fields:
-            pattern = getattr(self, field)
-            replaced_pattern = self._replace_bracketed_variables(pattern)
-            object.__setattr__(self, field, replaced_pattern)
-            # compile patterns
-            setattr(self, field, re.compile(replaced_pattern, re.IGNORECASE))
-
-    def _replace_bracketed_variables(self, pattern: str) -> str:
-        template = Template(pattern)
-        replacements = {format.name: format.value for format in DateFormats}
-        return template.substitute(replacements)
-
-    def __iter__(self):
-        for attr, value in self.__dict__.items():
-            yield attr, value
+    def as_pattern_dict(self):
+        return {k: re.compile(v, re.IGNORECASE) for k, v in asdict(self).items()}
