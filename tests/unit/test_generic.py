@@ -5,13 +5,8 @@ from datetime import datetime
 
 import pytest
 
-from monopoly.constants import EntryType, SharedPatterns
-from monopoly.generic import (
-    DateFormats,
-    DateMatch,
-    DatePatternAnalyzer,
-    DateRegexPatterns,
-)
+from monopoly.constants import DateFormats, DateRegexPatterns, EntryType, SharedPatterns
+from monopoly.generic import DateMatch, DatePatternAnalyzer
 from monopoly.pdf import PdfPage
 
 

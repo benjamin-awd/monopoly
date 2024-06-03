@@ -7,10 +7,8 @@ from functools import cached_property
 
 from dateparser import parse
 
-from monopoly.constants import EntryType, SharedPatterns
+from monopoly.constants import DateRegexPatterns, EntryType, SharedPatterns
 from monopoly.pdf import PdfPage
-
-from .patterns import DateRegexPatterns
 
 logger = logging.getLogger(__name__)
 
