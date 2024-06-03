@@ -50,11 +50,12 @@ class SharedPatterns(StrEnum):
     on a single line, and we only want the amount.
     """
 
+    COMMA_FORMAT = r"\d{1,3}(,\d{3})*\.\d*"
     DEBIT_CREDIT_SUFFIX = r"(?P<suffix>CR\b|DR\b)?"
-    AMOUNT = r"(?P<amount>\d{1,3}(,\d{3})*\.\d*|\([\d.,\s]+\))\s*"
+    AMOUNT = rf"(?P<amount>{COMMA_FORMAT}|\({COMMA_FORMAT}\s{{0,1}}\))\s*"
     AMOUNT_EXTENDED_WITHOUT_EOL = AMOUNT + DEBIT_CREDIT_SUFFIX
     AMOUNT_EXTENDED = AMOUNT_EXTENDED_WITHOUT_EOL + r"$"
-    BALANCE = r"(?:(?P<balance>[\d.,]+)\s*)?$"
+    BALANCE = rf"(?P<balance>{COMMA_FORMAT})?$"
     DESCRIPTION = r"(?P<description>.*?)\s+"
     TRANSACTION_DATE_ABBREVIATED_ALL_CAPS = r"(?P<transaction_date>\d{2}\s[A-Z]{3})\s+"
     TRANSACTION_DATE_ABBREVIATED_PROPER_CASE = (
