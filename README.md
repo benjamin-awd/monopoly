@@ -43,11 +43,16 @@ make setup
 ```
 
 ## Usage
-Monopoly can be run as a Python package, allowing you to extract, transform and write bank statements to a CSV file.
+Monopoly runs in your terminal, allowing you to extract, transform and write bank statements to a CSV file.
 
-To see how Monopoly works, you can run this example
-```bash
-python3 src/monopoly/examples/single_statement.py
+You can run it on a single statement
+```sh
+monopoly src/monopoly/examples/example_statement.pdf
+```
+
+or multiple statements
+```sh
+monopoly ./statements
 ```
 
 If you need to run monopoly on a password protected file, ensure that passwords are set in the .env file:
@@ -55,13 +60,19 @@ If you need to run monopoly on a password protected file, ensure that passwords 
 cp .env.template env
 ```
 
-If you have multiple statements from the same bank with different passwords (e.g. HSBC statements), make sure to set both passwords in an array format like so:
+If you have multiple statements from the same bank with different passwords, make sure to set both passwords in an array format:
 ```sh
 HSBC_PDF_PASSWORDS=["password1","password2"]
 ```
 
+Monopoly can also be run as a Python [library](src/monopoly/examples/single_statement.py):
+```bash
+python3 src/monopoly/examples/single_statement.py
+```
+
 ## Features
-- Unlocks PDFs using user-provided credentials
-- Statements can be parsed with the CLI, or with a script using the StatementHandler class.
-- Support for cashback transactions and refunds
-- Monopoly can be run on Google Cloud as a scheduled Cloud Run job, which opens up more sophisticated use-cases like historical analysis and personal finance visualization
+- Parses PDFs using predefined configuration classes per bank.
+- Handles locked PDFs with credentials passed via environment variables.
+- Supports a variety of date/number formats and determines if a transaction is debit or credit.
+- Provides a generic parser that can be used without any predefined configuration (caveat emptor).
+- Includes a safety check (enabled by default) that validates totals for debit or credit statements.
