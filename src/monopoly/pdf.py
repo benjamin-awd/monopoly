@@ -115,12 +115,13 @@ class PdfParser:
         num_pages = list(range(document.page_count))
         document.select(num_pages[self.page_range])
 
+        if cropbox := self.page_bbox:
+            logger.debug(
+                "Will crop pages with crop box %s and remove vertical text", cropbox
+            )
         for page in document:
             if self.page_bbox:
-                logger.debug("Cropping page")
-                page.set_cropbox(self.page_bbox)
-
-            logger.debug("Removing vertical text")
+                page.set_cropbox(cropbox)
             page = self._remove_vertical_text(page)
 
         # certain statements require garbage collection, so that duplicate objects
