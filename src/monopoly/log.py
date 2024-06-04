@@ -1,3 +1,4 @@
+import functools
 import logging
 import sys
 
@@ -15,4 +16,18 @@ def get_logger() -> logging.Logger:
 
     logging.getLogger("pdf2john").setLevel(logging.ERROR)
     logging.getLogger("pyhanko").setLevel(logging.ERROR)
+    logging.getLogger("tzlocal").setLevel(logging.ERROR)
     return logger
+
+
+def setup_logs(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if kwargs["verbose"]:
+            logger = logging.getLogger("root")
+            logger.setLevel(logging.DEBUG)
+            del kwargs["verbose"]
+        result = func(*args, **kwargs)
+        return result
+
+    return wrapper

@@ -8,6 +8,8 @@ from pydantic.dataclasses import dataclass
 from tabulate import tabulate
 from tqdm import tqdm
 
+from monopoly.log import setup_logs
+
 
 class TqdmSettings(TypedDict):
     """
@@ -163,6 +165,7 @@ def run(
     pprint: bool = False,
     single_process: bool = False,
     safety_check: bool = True,
+    verbose=True,
 ):
     """
     Process a collection of input files concurrently
@@ -261,7 +264,14 @@ def get_statement_paths(files: Iterable[Path]) -> set[Path]:
         "Runs the safety check by default."
     ),
 )
+@click.option(
+    "-v",
+    "--verbose",
+    is_flag=True,
+    help=("Increases logging verbosity."),
+)
 @click.pass_context
+@setup_logs
 def monopoly(ctx: click.Context, files: list[Path], **kwargs):
     """
     Monopoly helps convert your bank statements from PDF to CSV.
@@ -273,7 +283,6 @@ def monopoly(ctx: click.Context, files: list[Path], **kwargs):
 
         if matched_files:
             run(matched_files, **kwargs)
-            ctx.exit(0)
 
         else:
             click.echo(
