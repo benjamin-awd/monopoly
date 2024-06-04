@@ -1,3 +1,4 @@
+import logging
 from functools import cached_property
 
 from monopoly.banks import BankBase
@@ -7,6 +8,8 @@ from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfParser
 
 from .generic import DatePatternAnalyzer
+
+logger = logging.getLogger(__name__)
 
 
 class GenericBank(BankBase):
@@ -34,13 +37,29 @@ class GenericStatementHandler(StatementHandler):
     @cached_property
     def debit_config(self):
         if self.statement_type == EntryType.DEBIT:
-            return self._create_debit_config()
+            logger.debug("Creating debit statement config")
+
+            return DebitStatementConfig(
+                bank_name=InternalBankNames.GENERIC,
+                transaction_pattern=self.transaction_pattern,
+                statement_date_pattern=self.statement_date_pattern,
+                multiline_transactions=self.multiline_transactions,
+                debit_statement_identifier=self.debit_statement_identifier,
+            )
         return None
 
     @cached_property
     def credit_config(self):
         if self.statement_type == EntryType.CREDIT:
-            return self._create_credit_config()
+            logger.debug("Creating credit statement config")
+
+            return CreditStatementConfig(
+                bank_name=InternalBankNames.GENERIC,
+                prev_balance_pattern=self.prev_balance_pattern,
+                transaction_pattern=self.transaction_pattern,
+                statement_date_pattern=self.statement_date_pattern,
+                multiline_transactions=self.multiline_transactions,
+            )
         return None
 
     @cached_property
@@ -66,21 +85,3 @@ class GenericStatementHandler(StatementHandler):
     @cached_property
     def prev_balance_pattern(self):
         return self.analyzer.create_previous_balance_regex()
-
-    def _create_debit_config(self):
-        return DebitStatementConfig(
-            bank_name=InternalBankNames.GENERIC,
-            transaction_pattern=self.transaction_pattern,
-            statement_date_pattern=self.statement_date_pattern,
-            multiline_transactions=self.multiline_transactions,
-            debit_statement_identifier=self.debit_statement_identifier,
-        )
-
-    def _create_credit_config(self):
-        return CreditStatementConfig(
-            bank_name=InternalBankNames.GENERIC,
-            prev_balance_pattern=self.prev_balance_pattern,
-            transaction_pattern=self.transaction_pattern,
-            statement_date_pattern=self.statement_date_pattern,
-            multiline_transactions=self.multiline_transactions,
-        )
