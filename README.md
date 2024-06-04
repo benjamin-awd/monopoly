@@ -4,7 +4,7 @@
 [![Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://monopoly.streamlit.app)
 [![Tests](https://github.com/benjamin-awd/monopoly/actions/workflows/tests.yaml/badge.svg?branch=main&event=push)](https://github.com/benjamin-awd/monopoly/actions/workflows/tests.yaml)
 [![CI](https://github.com/benjamin-awd/monopoly/actions/workflows/ci.yaml/badge.svg?branch=main&event=push)](https://github.com/benjamin-awd/monopoly/actions/workflows/ci.yaml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: AGPL 3.0](https://img.shields.io/badge/License-AGPL%203.0-blue)](https://opensource.org/license/agpl-v3)
 
 Monopoly is a Python library & CLI that converts bank statement PDFs to CSV.
 
