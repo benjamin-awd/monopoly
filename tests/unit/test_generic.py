@@ -13,12 +13,12 @@ from monopoly.pdf import PdfPage
 @pytest.fixture(scope="function")
 def date_pattern_analyzer(mock_pages) -> DatePatternAnalyzer:
     dpa = DatePatternAnalyzer(pages=mock_pages)
-    return dpa
+    yield dpa
 
 
 @pytest.fixture(scope="session")
 def date_regex_set():
-    return frozenset(DateRegexPatterns())
+    yield frozenset(DateRegexPatterns())
 
 
 @pytest.fixture(scope="session")
@@ -28,12 +28,12 @@ def mock_pages():
         PdfPage("01 Oct   ValueVille   123.12 \n02 Oct   RandomShop 124.50"),
         PdfPage("04 Oct   Fernvale Food   12.12\nPayment Due Date   21 Aug 2024"),
     ]
-    return pages
+    yield pages
 
 
 @pytest.fixture(scope="session")
 def lines_before_first_transaction():
-    return list(
+    yield list(
         reversed(
             [
                 "DBS Bank Ltd",
@@ -159,7 +159,7 @@ def patterns_with_date_matches():
 
 @pytest.fixture(scope="session")
 def lines_with_transaction_posting_dates():
-    return {
+    yield {
         "DD_MMM": [
             MockDateMatch(
                 span=(10, 16),
@@ -199,7 +199,7 @@ def lines_with_transaction_posting_dates():
 
 @pytest.fixture(scope="session")
 def lines_with_posting_transaction_dates():
-    return {
+    yield {
         "DD_MMM": [
             MockDateMatch(
                 span=(10, 16),
@@ -291,10 +291,9 @@ def test_identify_posting_date(
     assert not result
 
 
-def test_create_transaction_pattern(
+def test_create_transaction_pattern_with_transaction_first(
     date_pattern_analyzer: DatePatternAnalyzer,
     lines_with_transaction_posting_dates,
-    lines_with_posting_transaction_dates,
 ):
     expected = (
         f"(?P<transaction_date>\\b({DateFormats.DD}"
@@ -314,12 +313,20 @@ def test_create_transaction_pattern(
 
     result = date_pattern_analyzer.create_transaction_pattern()
     assert result == expected
+
+
+def test_create_transaction_pattern_with_posting_first(
+    date_pattern_analyzer: DatePatternAnalyzer,
+    lines_with_posting_transaction_dates,
+):
     date_pattern_analyzer.filtered_lines_with_dates = (
         lines_with_posting_transaction_dates["DD_MMM"]
     )
     date_pattern_analyzer.patterns_with_date_matches = (
         lines_with_posting_transaction_dates
     )
+    date_pattern_analyzer.pattern_spans_mapping = {"DD_MMM": {(10, 16): 2, (27, 33): 2}}
+
     expected = (
         f"(?P<posting_date>\\b({DateFormats.DD}"
         f"[-\\s]{DateFormats.MMM}))\\s+"
@@ -406,7 +413,7 @@ def test_get_filtered_lines_with_dates(date_pattern_analyzer: DatePatternAnalyze
     assert result == expected_output
 
 
-def test_get_statement_type(date_pattern_analyzer: DatePatternAnalyzer):
+def test_get_statement_type_debit(date_pattern_analyzer: DatePatternAnalyzer):
     debit_lines = [
         MockDateMatch(line="01 OCT   ValueVille    123.12     2,000.00"),
         MockDateMatch(line="02 OCT   ShopMart      50.00      1,950.00"),
@@ -415,6 +422,8 @@ def test_get_statement_type(date_pattern_analyzer: DatePatternAnalyzer):
     date_pattern_analyzer.filtered_lines_with_dates = debit_lines
     assert date_pattern_analyzer.get_statement_type() == EntryType.DEBIT
 
+
+def test_get_statement_type_credit(date_pattern_analyzer: DatePatternAnalyzer):
     credit_lines = [
         MockDateMatch(line="01 OCT   Payment received    1,000.00"),
         MockDateMatch(line="02 OCT   Payment received    1,200.00"),
@@ -423,6 +432,8 @@ def test_get_statement_type(date_pattern_analyzer: DatePatternAnalyzer):
     date_pattern_analyzer.filtered_lines_with_dates = credit_lines
     assert date_pattern_analyzer.get_statement_type() == EntryType.CREDIT
 
+
+def test_get_statement_type_mixed_debit(date_pattern_analyzer: DatePatternAnalyzer):
     mixed_debit_lines = [
         MockDateMatch(line="01 OCT   ValueVille          123.12     2,000.00"),
         MockDateMatch(line="02 OCT   Payment received               1,000.00"),
@@ -467,6 +478,8 @@ def test_check_if_multiline(date_pattern_analyzer: DatePatternAnalyzer):
     date_pattern_analyzer.filtered_lines_with_dates = mulitline_statement_lines
     assert date_pattern_analyzer.check_if_multiline()
 
+
+def test_check_if_not_multiline(date_pattern_analyzer: DatePatternAnalyzer):
     single_lines = [
         MockDateMatch(page_number=0, line_number=57),
         MockDateMatch(page_number=0, line_number=58),
@@ -475,7 +488,6 @@ def test_check_if_multiline(date_pattern_analyzer: DatePatternAnalyzer):
         MockDateMatch(page_number=1, line_number=23),
     ]
     date_pattern_analyzer.filtered_lines_with_dates = single_lines
-
     assert not date_pattern_analyzer.check_if_multiline()
 
 
