@@ -3,7 +3,7 @@ import re
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
-from functools import cached_property
+from functools import cached_property, lru_cache
 
 from dateparser import parse
 
@@ -186,6 +186,7 @@ class DatePatternAnalyzer:
             raise ValueError(f"Span(s) {list(spans)} not found in lines")
         return filtered_lines_with_dates
 
+    @lru_cache
     def is_transaction_date_first(self) -> bool:
         """
         Check that in cases where date_1 > date_2, the first date is
@@ -211,6 +212,7 @@ class DatePatternAnalyzer:
         )
         return True
 
+    @lru_cache
     def create_transaction_pattern(
         self,
     ) -> str:
@@ -250,6 +252,7 @@ class DatePatternAnalyzer:
 
         return pattern
 
+    @lru_cache
     def create_statement_date_pattern(self) -> str:
         """
         Creates a regex pattern for the statement date based on the first statement
@@ -280,6 +283,7 @@ class DatePatternAnalyzer:
         # assume the statement date is the first parsable YYYY date
         return statement_date_pattern
 
+    @lru_cache
     def get_statement_type(self) -> str:
         """
         Since debit and credit statements need to be handled differently,
@@ -314,6 +318,7 @@ class DatePatternAnalyzer:
 
         return EntryType.CREDIT
 
+    @lru_cache
     def get_debit_statement_header_line(self) -> str:
         header_pattern = re.compile(r"\b(date.*$)", re.IGNORECASE)
         for line in self.lines_before_first_transaction:
@@ -326,6 +331,7 @@ class DatePatternAnalyzer:
 
         raise RuntimeError("Could not find debit statement header line")
 
+    @lru_cache
     def check_if_multiline(self) -> bool:
         """Checks if the statement should be treated as a multiline statement,
         where the description is split across multiple lines
@@ -343,6 +349,7 @@ class DatePatternAnalyzer:
         average_line_distance = sum(line_distance) / len(line_distance)
         return average_line_distance > 2
 
+    @lru_cache
     def create_previous_balance_regex(self) -> str | None:
         """Helper function to check for a previous balance line items.
         Makes the assumption that the previous balance line item, if it
@@ -375,6 +382,7 @@ class DatePatternAnalyzer:
                     )
         return None
 
+    @lru_cache
     def get_first_transaction_location(self):
         # uses the transaction pattern to find the first transaction
         pattern = re.compile(self.create_transaction_pattern(), re.IGNORECASE)

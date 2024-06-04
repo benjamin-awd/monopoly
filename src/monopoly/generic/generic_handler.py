@@ -1,3 +1,5 @@
+from functools import cached_property
+
 from monopoly.banks import BankBase
 from monopoly.config import CreditStatementConfig, DebitStatementConfig
 from monopoly.constants import EntryType, InternalBankNames
@@ -29,39 +31,39 @@ class GenericStatementHandler(StatementHandler):
         parser.bank.credit_config = self.credit_config
         super().__init__(parser)
 
-    @property
+    @cached_property
     def debit_config(self):
         if self.statement_type == EntryType.DEBIT:
             return self._create_debit_config()
         return None
 
-    @property
+    @cached_property
     def credit_config(self):
         if self.statement_type == EntryType.CREDIT:
             return self._create_credit_config()
         return None
 
-    @property
+    @cached_property
     def transaction_pattern(self):
         return self.analyzer.create_transaction_pattern()
 
-    @property
+    @cached_property
     def statement_type(self):
         return self.analyzer.get_statement_type()
 
-    @property
+    @cached_property
     def statement_date_pattern(self):
         return self.analyzer.create_statement_date_pattern()
 
-    @property
+    @cached_property
     def multiline_transactions(self):
         return self.analyzer.check_if_multiline()
 
-    @property
+    @cached_property
     def debit_statement_identifier(self):
         return self.analyzer.get_debit_statement_header_line()
 
-    @property
+    @cached_property
     def prev_balance_pattern(self):
         return self.analyzer.create_previous_balance_regex()
 
