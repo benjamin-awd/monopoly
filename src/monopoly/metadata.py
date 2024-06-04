@@ -8,7 +8,7 @@ from typing import Any
 import fitz
 
 from monopoly.banks import detect_bank
-from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
+from monopoly.constants import EncryptionIdentifier, Identifier, MetadataIdentifier
 
 logger = logging.getLogger(__name__)
 
@@ -46,8 +46,7 @@ class MetadataAnalyzer:
         """
         Retrieves encryption and metadata identifiers from a bank statement PDF
         """
-        identifiers = []
-        # pylint: disable=protected-access
+        identifiers: list[Identifier] = []
         if encrypt_dict := self.encrypt_dict:
             encryption_identifier = EncryptionIdentifier(
                 float(encrypt_dict.pdf_version),
@@ -62,7 +61,7 @@ class MetadataAnalyzer:
         if metadata := self.document.metadata:
             metadata_identifier = MetadataIdentifier(**metadata)
             logger.debug("Found metadata identifier: %s", metadata_identifier)
-            identifiers.append(metadata_identifier)  # type: ignore
+            identifiers.append(metadata_identifier)
 
         if not identifiers:
             raise ValueError("Could not get identifier")

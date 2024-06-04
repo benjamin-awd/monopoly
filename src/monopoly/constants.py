@@ -1,6 +1,7 @@
 import re
 from dataclasses import asdict
 from enum import StrEnum, auto
+from typing import Generic, TypeVar
 
 from pydantic.dataclasses import dataclass
 
@@ -170,7 +171,12 @@ class DebitTransactionPatterns(StrEnum):
 
 
 @dataclass
-class EncryptionIdentifier:
+class Identifier:
+    pass
+
+
+@dataclass
+class EncryptionIdentifier(Identifier):
     pdf_version: float
     algorithm: int
     revision: int
@@ -179,7 +185,7 @@ class EncryptionIdentifier:
 
 
 @dataclass
-class MetadataIdentifier:
+class MetadataIdentifier(Identifier):
     title: str = ""
     author: str = ""
     subject: str = ""
