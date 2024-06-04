@@ -63,7 +63,7 @@ def is_bank_identified(
             check_matching_field(field, metadata, identifier)
             for field in fields(metadata)
         ):
-            logger.debug("Match found for bank %s", bank.__name__)
+            logger.debug("Identified statement bank: %s", bank.__name__)
             return True
 
     return False
@@ -93,7 +93,12 @@ def check_matching_field(
     full_match = identifier_value == field_value
 
     if any([partial_string_match, full_match]):
-        logger.debug("Match: %s - %s", identifier_value, field_value)
+        logger.debug(
+            "Match found for field `%s` : '%s' - '%s'",
+            field.name,
+            identifier_value,
+            field_value,
+        )
         return True
 
     return False
