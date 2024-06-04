@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass, field
 from functools import cached_property
 from io import BytesIO
@@ -8,6 +9,8 @@ import fitz
 
 from monopoly.banks import detect_bank
 from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -53,10 +56,12 @@ class MetadataAnalyzer:
                 encrypt_dict.length,
                 encrypt_dict.permissions,
             )
+            logger.debug("Found encryption identifier: %s", encryption_identifier)
             identifiers.append(encryption_identifier)
 
         if metadata := self.document.metadata:
             metadata_identifier = MetadataIdentifier(**metadata)
+            logger.debug("Found metadata identifier: %s", metadata_identifier)
             identifiers.append(metadata_identifier)  # type: ignore
 
         if not identifiers:

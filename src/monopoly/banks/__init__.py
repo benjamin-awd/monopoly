@@ -52,11 +52,15 @@ def is_bank_identified(
     for identifier, metadata in product(
         bank.identifiers, metadata_items
     ):  # type: ignore
+        # Only compare matching identifier types
+        if type(metadata) is not type(identifier):
+            continue
+
         logger.debug(
-            "Comparing bank %s identifier %s against PDF metadata %s",
+            "Checking if PDF %s matches %s %s",
+            metadata.__class__.__name__,
             bank.__name__,
             identifier,
-            metadata,
         )
 
         if all(
@@ -77,10 +81,6 @@ def check_matching_field(
     """
     Checks if a field in the metadata matches the corresponding identifier field.
     """
-    # Only compare matching identifier types
-    if type(metadata) is not type(identifier):
-        return False
-
     field_value = getattr(metadata, field.name)
     identifier_value = getattr(identifier, field.name)
 
