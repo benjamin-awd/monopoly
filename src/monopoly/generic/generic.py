@@ -57,7 +57,7 @@ class DatePatternAnalyzer:
         that a transaction line will always start with a date"""
         results: dict[str, list] = {}
         results = {
-            pattern_name: self._find_matches(pattern, self.pages)
+            pattern_name: self._find_matches(pattern, pattern_name, self.pages)
             for pattern_name, pattern in self.date_regex_patterns.items()
         }
 
@@ -65,9 +65,10 @@ class DatePatternAnalyzer:
         return {k: v for k, v in results.items() if v}
 
     def _find_matches(
-        self, pattern: re.Pattern, pages: list[PdfPage]
+        self, pattern: re.Pattern, pattern_name: str, pages: list[PdfPage]
     ) -> list[DateMatch]:
         matches = []
+        logger.debug("Searching for date matches for pattern %s", pattern_name)
         for page_num, page in enumerate(pages):
             for line_num, line in enumerate(page.lines):
                 matches.extend(
@@ -94,7 +95,11 @@ class DatePatternAnalyzer:
                     )
                 )
                 logger.debug(
-                    "Pattern %s - match found: %s %s", pattern, raw_date, parsed_date
+                    "Date match found at page %s line %s: raw_date='%s' parsed_date='%s'",
+                    page_num,
+                    line_num,
+                    raw_date,
+                    parsed_date,
                 )
         return matches
 
@@ -221,7 +226,7 @@ class DatePatternAnalyzer:
         by the generic statement handler.
         """
         pattern = next(iter(self.pattern_spans_mapping))
-        logger.info("Creating date pattern for %s", pattern)
+        logger.debug("Creating date pattern for %s", pattern)
         transaction_date_regex = self.date_regex_patterns[pattern].pattern
         date_regex = rf"(?P<transaction_date>{transaction_date_regex})\s+"
         spans = self.pattern_spans_mapping[pattern]
@@ -234,6 +239,7 @@ class DatePatternAnalyzer:
         # if there are two spans, we attempt to determine which is the
         # posting date, and which is the transaction date
         if len(spans) == 2:
+            logger.debug("Creating group for posting date")
             posting_date = f"(?P<posting_date>{transaction_date_regex})"
             if self.is_transaction_date_first():
                 pattern = date_regex + rf"{posting_date}\s+"
@@ -280,6 +286,8 @@ class DatePatternAnalyzer:
 
         _, date_match = sorted_lines[0]
         statement_date_pattern = f"({date_match.raw_date})"
+        logger.debug("Found statement date pattern: %s", statement_date_pattern)
+
         # assume the statement date is the first parsable YYYY date
         return statement_date_pattern
 
@@ -314,6 +322,10 @@ class DatePatternAnalyzer:
         # this technically should be 1.0, but 1.1 provides some
         # slight tolerance for error
         if average_matches_per_line > 1.1:
+            logger.debug(
+                "Found %s amounts per line - assuming debit statement",
+                average_matches_per_line,
+            )
             return EntryType.DEBIT
 
         return EntryType.CREDIT
@@ -327,7 +339,9 @@ class DatePatternAnalyzer:
                 result = header_pattern.search(line)
 
                 if result:
-                    return f"({re.escape(result.string)})"
+                    escaped_result = f"({re.escape(result.string)})"
+                    logger.debug("Found header statement: %s", escaped_result)
+                    return escaped_result
 
         raise RuntimeError("Could not find debit statement header line")
 
@@ -347,6 +361,10 @@ class DatePatternAnalyzer:
         # if there's more than two lines between each transaction on average
         # we assume that this is a multiline statement
         average_line_distance = sum(line_distance) / len(line_distance)
+        logger.debug(
+            "Assuming multiline statement: average distance between transaction lines: %s",
+            average_line_distance,
+        )
         return average_line_distance > 2
 
     @lru_cache
@@ -374,12 +392,15 @@ class DatePatternAnalyzer:
         for line in lines_before_first_transaction:
             balance_match = balance_pattern.search(line)
             if balance_match:
+                logger.debug("Balance match found")
                 if word_match := re.search(r"(\b[a-zA-Z'\s]+)", balance_match.string):
                     words = word_match[0].strip()
-                    return (
+                    pattern = (
                         SharedPatterns.DESCRIPTION.replace(".*?", words)
                         + SharedPatterns.AMOUNT
                     )
+                    logger.debug("Found words, generated pattern %s", pattern)
+                    return pattern
         return None
 
     @lru_cache
@@ -391,5 +412,8 @@ class DatePatternAnalyzer:
             for line_num, line in enumerate(page.lines):
                 match = pattern.search(line)
                 if match:
+                    logger.debug(
+                        "Found first transaction at page %s line %s", page_num, line_num
+                    )
                     return page_num, line_num
         raise RuntimeError("Could not find first transaction")
