@@ -60,11 +60,7 @@ def test_bank_credit_statements(
     expected_transformed_transactions = read_transactions_from_csv(
         test_directory, "transformed.csv"
     )
-    transformed_transactions = pipeline.transform(
-        transactions=statement.transactions,
-        statement_date=statement.statement_date,
-        transaction_date_order=statement.config.transaction_date_order,
-    )
+    transformed_transactions = pipeline.transform(statement)
     transformed_transactions_as_dict = get_transactions_as_dict(
         transformed_transactions
     )

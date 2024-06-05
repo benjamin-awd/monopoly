@@ -13,11 +13,7 @@ def example():
     statement = pipeline.extract()
 
     # Dates are converted into an ISO 8601 date format
-    transactions = pipeline.transform(
-        transactions=statement.transactions,
-        statement_date=statement.statement_date,
-        transaction_date_order=statement.config.transaction_date_order,
-    )
+    transactions = pipeline.transform(statement)
 
     # Parsed transactions writen to a CSV file in the "example" directory
     pipeline.load(
