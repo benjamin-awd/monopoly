@@ -42,8 +42,23 @@ brew install make
 make setup
 ```
 
+Monopoly is also a pip-installable Python package on [PyPI](https://pypi.org/project/monopoly-core) under the name `monopoly-core`.
+```sh
+pipx install monopoly-core
+```
+
+Note: with `pipx` you'll still need to run `make setup`, or minimally
+```sh
+apt-get install build-essential libpoppler-cpp-dev pkg-config
+```
+
 ## Usage
 Monopoly runs in your terminal, allowing you to extract, transform and write bank statements to a CSV file.
+
+To list commands and options:
+```sh
+monopoly --help
+```
 
 You can run it on a single statement
 ```sh

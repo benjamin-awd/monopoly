@@ -16,7 +16,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.11, <3.12"
+python = "^3.11"
 pydantic-settings = "^2.0.3"
 pymupdf = "^1.23.7"
 pdftotext = "^2.2.2"
