@@ -1,0 +1,12 @@
+# main dependencies
+brew "gcc@11"
+brew "pkg-config"
+brew "poetry"
+brew "poppler"
+brew "python@3.11"
+
+# dev dependencies
+brew "git-crypt"
+brew "pre-commit"
+brew "pyenv"
+brew "pyenv-virtualenv"
