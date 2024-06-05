@@ -1,6 +1,5 @@
 import csv
 import logging
-from datetime import datetime
 from pathlib import Path
 from typing import Type
 
@@ -67,12 +66,11 @@ class Pipeline:
         return self.statement
 
     @staticmethod
-    def transform(
-        transactions: list[Transaction],
-        statement_date: datetime,
-        transaction_date_order: DateOrder,
-    ) -> list[Transaction]:
+    def transform(statement: CreditStatement | DebitStatement) -> list[Transaction]:
         logger.debug("Running transformation functions on DataFrame")
+        transactions = statement.transactions
+        statement_date = statement.statement_date
+        transaction_date_order = statement.config.transaction_date_order
 
         def convert_date(transaction: Transaction, transaction_date_order: DateOrder):
             """

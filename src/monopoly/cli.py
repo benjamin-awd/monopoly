@@ -117,11 +117,7 @@ def process_statement(
     try:
         pipeline = Pipeline(file)
         statement = pipeline.extract(safety_check=safety_check)
-        transactions = pipeline.transform(
-            transactions=statement.transactions,
-            statement_date=statement.statement_date,
-            transaction_date_order=statement.config.transaction_date_order,
-        )
+        transactions = pipeline.transform(statement)
 
         if print_df:
             pprint_transactions(transactions, statement, file)
