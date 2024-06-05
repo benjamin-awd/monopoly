@@ -44,7 +44,7 @@ def test_generate_name():
     )
     assert (
         filename
-        == f"bank_name=hsbc/account_type=credit/year=2023/month=6/{expected_filename}"
+        == f"bank_name=hsbc/account_type=credit/statement_date=2023-06-15/{expected_filename}"
     )
 
     # Test for invalid format_type
