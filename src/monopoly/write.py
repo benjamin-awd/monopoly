@@ -43,8 +43,7 @@ def generate_name(
         "blob": (
             f"bank_name={bank_name}/"
             f"account_type={statement_type}/"
-            f"year={year}/"
-            f"month={month}/"
+            f"statement_date={statement_date.isoformat()[:10]}/"
             f"{filename}"
         ),
         "file": filename,
