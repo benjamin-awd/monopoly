@@ -1,9 +1,10 @@
 import csv
 import logging
 from pathlib import Path
-from typing import Type
+from typing import Optional, Type
 
 from dateparser import parse
+from pydantic import SecretStr
 
 from monopoly.banks import BankBase
 from monopoly.config import DateOrder
@@ -22,15 +23,36 @@ logger = logging.getLogger(__name__)
 class Pipeline:
     """Handles extract, transform and load (ETL) logic for bank statements"""
 
-    def __init__(self, file_path: Path):
+    def __init__(
+        self,
+        file_path: Optional[Path] = None,
+        file_bytes: Optional[bytes] = None,
+        passwords: Optional[list[SecretStr]] = None,
+    ):
         self.file_path = file_path
+        self.file_bytes = file_bytes
+        self.passwords = passwords
+
+        if not any([self.file_path, self.file_bytes]):
+            raise RuntimeError("Either `file_path` or `file_bytes` must be passed")
+
+        if self.file_path and self.file_bytes:
+            raise RuntimeError(
+                "Only one of `file_path` or `file_bytes` should be passed"
+            )
+
         self.bank = self._detect_bank()
         self.parser = self._create_parser()
         self.handler = self._create_handler()
         self.statement = self.handler.get_statement(self.parser)
 
     def _create_parser(self) -> PdfParser:
-        return PdfParser(self.bank, file_path=self.file_path)
+        return PdfParser(
+            self.bank,
+            file_path=self.file_path,
+            file_bytes=self.file_bytes,
+            passwords=self.passwords,
+        )
 
     def _create_handler(self) -> GenericStatementHandler | StatementHandler:
         if issubclass(self.bank, GenericBank):
@@ -40,7 +62,9 @@ class Pipeline:
         return StatementHandler(self.parser)
 
     def _detect_bank(self) -> Type[BankBase]:
-        analyzer = MetadataAnalyzer(self.file_path)
+        analyzer = MetadataAnalyzer(
+            file_path=self.file_path, file_bytes=self.file_bytes
+        )
         if bank := analyzer.bank:
             return bank
         logger.warning("Unable to detect bank, transactions may be inaccurate")

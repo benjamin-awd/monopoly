@@ -39,7 +39,12 @@ class BaseStatement(ABC):
             Columns.DESCRIPTION,
             Columns.AMOUNT,
         ]
+        self.parser = parser
         self.document = parser.document
+
+    @property
+    def bank(self):
+        return self.parser.bank
 
     @property
     def pattern(self):

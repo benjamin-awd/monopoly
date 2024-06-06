@@ -1,4 +1,4 @@
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, PropertyMock, patch
 
 import pytest
 
@@ -20,7 +20,17 @@ def mock_get_doc_byte_stream():
 
 @pytest.fixture
 def metadata_analyzer():
-    return MetadataAnalyzer(None)
+    with patch(
+        "monopoly.metadata.MetadataAnalyzer.document", new_callable=PropertyMock
+    ) as mock_analyzer_document:
+
+        class MockDocument:
+            is_encrypted = False
+            metadata = None
+
+        mock_analyzer_document.return_value = MockDocument()
+        analyzer = MetadataAnalyzer()
+        yield analyzer
 
 
 @pytest.mark.usefixtures("mock_get_doc_byte_stream")
@@ -30,6 +40,7 @@ def test_encryption_identifier(metadata_analyzer: MetadataAnalyzer):
 
         metadata_analyzer.document = Mock()
         metadata_analyzer.document.metadata = None
+        metadata_analyzer.document.is_encrypted = True
 
         expected_identifier = EncryptionIdentifier(
             pdf_version=1.6, algorithm=4, revision=4, length=128, permissions=-1804
@@ -44,16 +55,13 @@ def test_metadata_identifier(
 ):
     with patch("monopoly.metadata.MetadataAnalyzer.get_raw_encrypt_dict") as mock:
         mock.return_value = {}
-
-        document_mock = Mock()
-        document_mock.metadata = {
+        metadata_analyzer.document.metadata = {
             "title": "foo",
             "author": "",
             "subject": "",
             "creator": "baz",
             "producer": "",
         }
-        metadata_analyzer.document = document_mock
         metadata_analyzer.document.is_encrypted = False
 
         expected_identifier = MetadataIdentifier(
