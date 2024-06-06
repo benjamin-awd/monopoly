@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from functools import cached_property
 from io import BytesIO
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 import fitz
 
@@ -33,13 +33,27 @@ class EncryptDict:
 
 
 class MetadataAnalyzer:
-    def __init__(self, file_path: Path):
+    def __init__(
+        self, file_path: Optional[Path] = None, file_bytes: Optional[bytes] = None
+    ):
+        if file_path and file_bytes:
+            raise ValueError(
+                "Only one of `file_path` or `file_bytes` should be provided"
+            )
+
         self.file_path = file_path
-        self.document = fitz.Document(file_path)
+        self.file_bytes = file_bytes
 
     @property
     def bank(self):
         return detect_bank(self.metadata_items)
+
+    @property
+    def document(self):
+        if self.file_path:
+            return fitz.Document(filename=self.file_path)
+        if self.file_bytes:
+            return fitz.Document(stream=self.file_bytes)
 
     @property
     def metadata_items(self) -> list[Any]:
@@ -100,4 +114,8 @@ class MetadataAnalyzer:
             with open(self.file_path, "rb") as file:
                 stream = BytesIO(file.read())
             return stream
-        raise RuntimeError("Unable to create stream since `file_path` not passed")
+
+        if self.file_bytes:
+            return BytesIO(self.file_bytes)
+
+        raise RuntimeError("Unable to create document")
