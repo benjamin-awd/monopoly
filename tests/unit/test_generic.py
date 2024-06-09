@@ -70,7 +70,7 @@ class MockDateMatch(DateMatch):
 @pytest.fixture(scope="session")
 def patterns_with_date_matches():
     return {
-        "DD_MMM": [
+        "dd_mmm": [
             DateMatch(
                 span=(33, 39),
                 parsed_date=datetime(2024, 10, 31, 0, 0),
@@ -112,7 +112,7 @@ def patterns_with_date_matches():
                 line="Payment Due Date   21 Aug 2024",
             ),
         ],
-        "DD_MMM_YYYY": [
+        "dd_mmm_yyyy": [
             DateMatch(
                 span=(33, 44),
                 parsed_date=datetime(2024, 10, 31, 0, 0),
@@ -130,7 +130,7 @@ def patterns_with_date_matches():
                 line="Payment Due Date   21 Aug 2024",
             ),
         ],
-        "MMM_DD": [
+        "mmm_dd": [
             DateMatch(
                 span=(
                     36,
@@ -160,7 +160,7 @@ def patterns_with_date_matches():
 @pytest.fixture(scope="session")
 def lines_with_transaction_posting_dates():
     yield {
-        "DD_MMM": [
+        "dd_mmm": [
             MockDateMatch(
                 span=(10, 16),
                 raw_date="03 OCT",
@@ -200,7 +200,7 @@ def lines_with_transaction_posting_dates():
 @pytest.fixture(scope="session")
 def lines_with_posting_transaction_dates():
     yield {
-        "DD_MMM": [
+        "dd_mmm": [
             MockDateMatch(
                 span=(10, 16),
                 raw_date="05 OCT",
@@ -238,28 +238,28 @@ def test_count_unique_date_matches(
     lines_with_transaction_posting_dates,
 ):
     assert date_pattern_analyzer.count_unique_date_matches() == {
-        "DD_MMM": {(0, 6): 3, (19, 25): 1, (33, 39): 1},
-        "DD_MMM_YYYY": {(19, 30): 1, (33, 44): 1},
-        "MMM_DD": {(22, 28): 1, (36, 42): 1},
+        "dd_mmm": {(0, 6): 3, (19, 25): 1, (33, 39): 1},
+        "dd_mmm_yyyy": {(19, 30): 1, (33, 44): 1},
+        "mmm_dd": {(22, 28): 1, (36, 42): 1},
     }
     date_pattern_analyzer.patterns_with_date_matches = (
         lines_with_transaction_posting_dates
     )
     assert date_pattern_analyzer.count_unique_date_matches() == {
-        "DD_MMM": {(10, 16): 2, (27, 33): 2}
+        "dd_mmm": {(10, 16): 2, (27, 33): 2}
     }
 
 
 def test_find_tuples_with_highest_occurrence(
     date_pattern_analyzer: DatePatternAnalyzer,
 ):
-    single_match = {"DD_MMM": {(0, 6): 3, (33, 39): 1}}
-    double_match = {"DD_MMM": {(1, 7): 12, (11, 17): 12, (33, 39): 1}}
+    single_match = {"dd_mmm": {(0, 6): 3, (33, 39): 1}}
+    double_match = {"dd_mmm": {(1, 7): 12, (11, 17): 12, (33, 39): 1}}
     assert date_pattern_analyzer.find_tuples_with_highest_occurrence(single_match) == {
-        "DD_MMM": [(0, 6)]
+        "dd_mmm": [(0, 6)]
     }
     assert date_pattern_analyzer.find_tuples_with_highest_occurrence(double_match) == {
-        "DD_MMM": [(1, 7), (11, 17)]
+        "dd_mmm": [(1, 7), (11, 17)]
     }
 
 
@@ -270,7 +270,7 @@ def test_identify_transaction_date(
         lines_with_transaction_posting_dates
     )
     date_pattern_analyzer.filtered_lines_with_dates = (
-        lines_with_transaction_posting_dates["DD_MMM"]
+        lines_with_transaction_posting_dates["dd_mmm"]
     )
     result = date_pattern_analyzer.is_transaction_date_first()
     assert result
@@ -285,7 +285,7 @@ def test_identify_posting_date(
         lines_with_posting_transaction_dates
     )
     date_pattern_analyzer.filtered_lines_with_dates = (
-        lines_with_posting_transaction_dates["DD_MMM"]
+        lines_with_posting_transaction_dates["dd_mmm"]
     )
     result = date_pattern_analyzer.is_transaction_date_first()
     assert not result
@@ -307,9 +307,9 @@ def test_create_transaction_pattern_with_transaction_first(
         lines_with_transaction_posting_dates
     )
     date_pattern_analyzer.filtered_lines_with_dates = (
-        lines_with_transaction_posting_dates["DD_MMM"]
+        lines_with_transaction_posting_dates["dd_mmm"]
     )
-    date_pattern_analyzer.pattern_spans_mapping = {"DD_MMM": {(10, 16): 2, (27, 33): 2}}
+    date_pattern_analyzer.pattern_spans_mapping = {"dd_mmm": {(10, 16): 2, (27, 33): 2}}
 
     result = date_pattern_analyzer.create_transaction_pattern()
     assert result == expected
@@ -320,12 +320,12 @@ def test_create_transaction_pattern_with_posting_first(
     lines_with_posting_transaction_dates,
 ):
     date_pattern_analyzer.filtered_lines_with_dates = (
-        lines_with_posting_transaction_dates["DD_MMM"]
+        lines_with_posting_transaction_dates["dd_mmm"]
     )
     date_pattern_analyzer.patterns_with_date_matches = (
         lines_with_posting_transaction_dates
     )
-    date_pattern_analyzer.pattern_spans_mapping = {"DD_MMM": {(10, 16): 2, (27, 33): 2}}
+    date_pattern_analyzer.pattern_spans_mapping = {"dd_mmm": {(10, 16): 2, (27, 33): 2}}
 
     expected = (
         f"(?P<posting_date>\\b({DateFormats.DD}"
@@ -505,13 +505,13 @@ def test_create_previous_balance_regex(
 @pytest.mark.parametrize(
     "date_format, valid_dates",
     [
-        ("DD_MM", ["01/01", "15-05", "31/12"]),
-        ("DD_MMM", ["01 JAN", "15 FEB", "31 MAR"]),
-        ("DD_MMM_YYYY", ["01 JAN 2023", "15 Feb 2024", "31 mar, 2025"]),
-        ("DD_MM_YYYY", ["01/01/2023", "15-05-2024", "31/12/2025"]),
-        ("MMMM_DD_YYYY", ["January 01, 2023", "FEBRUARY 15, 2024", "MARCH 31 2025"]),
-        ("MMM_DD", ["JAN 01", "Feb 15", "MAR 31"]),
-        ("MMM_DD_YYYY", ["JAN 01, 2023", "Feb 15, 2024", "MAR 31 2025"]),
+        ("dd_mm", ["01/01", "15-05", "31/12"]),
+        ("dd_mmm", ["01 JAN", "15 FEB", "31 MAR"]),
+        ("dd_mmm_yyyy", ["01 JAN 2023", "15 Feb 2024", "31 mar, 2025"]),
+        ("dd_mm_yyyy", ["01/01/2023", "15-05-2024", "31/12/2025"]),
+        ("mmmm_dd_yyyy", ["January 01, 2023", "FEBRUARY 15, 2024", "MARCH 31 2025"]),
+        ("mmm_dd", ["JAN 01", "Feb 15", "MAR 31"]),
+        ("mmm_dd_yyyy", ["JAN 01, 2023", "Feb 15, 2024", "MAR 31 2025"]),
     ],
 )
 def test_date_formats(
