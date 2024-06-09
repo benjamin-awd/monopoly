@@ -189,6 +189,7 @@ def run(
                         input_files,
                         [output_dir] * len(input_files),
                         [pprint] * len(input_files),
+                        [safety_check] * len(input_files),
                     ),
                     **tqdm_settings,
                 )
