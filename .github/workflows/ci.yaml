@@ -24,4 +24,7 @@ jobs:
           poetry-version: "1.8.3"
 
       - name: Run CI
-        run: poetry run task format && poetry run task lint && poetry run task mypy
+        run: |
+          poetry run task format
+          poetry run task lint
+          poetry run task mypy
