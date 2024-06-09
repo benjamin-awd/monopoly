@@ -30,6 +30,7 @@ repos:
     rev: v0.4.7
     hooks:
       - id: ruff
+        entry: ruff check
         args: [ --fix ]
 
   - repo: local

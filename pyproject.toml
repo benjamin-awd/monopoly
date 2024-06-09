@@ -47,7 +47,7 @@ ruff = "^0.4.7"
 
 [tool.taskipy.tasks]
 format = "isort . && black ."
-lint = "flake8 src & pylint src & ruff src"
+lint = "flake8 src & pylint src & ruff check src"
 test = "pytest ."
 mypy = "mypy src"
 ci = "poetry run task format && poetry run task lint && poetry run task test"
