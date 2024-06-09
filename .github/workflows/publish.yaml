@@ -1,0 +1,42 @@
+name: Build and Publish Package
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python & Poetry
+        uses: ./.github/actions/setup-python-poetry
+        with:
+          python-version: "3.11"
+          poetry-version: "1.8.3"
+
+      - name: Release to PyPI
+        env:
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.MONOPOLY_PYPI_TOKEN }}
+        run: poetry publish --build
+
+      - name: Get monopoly version
+        id: monopoly_version
+        run: echo "monopoly_version=$(poetry version --short)" >> $GITHUB_OUTPUT
+
+      - name: Create a Github Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.monopoly_version.outputs.monopoly_version }}
+          target_commitish: main
+          body_path: CHANGELOG.md
+          files: |
+            LICENSE
+            dist/*monopoly*.whl
+            dist/*monopoly*.tar.gz
