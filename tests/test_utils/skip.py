@@ -14,8 +14,8 @@ def skip_if_encrypted(func=None):
         try:
             with open("tests/integration/banks/.gc_check") as f:
                 contents = f.read()
-                if contents != "unlocked":
-                    raise ValueError("Invalid contents")
+                if "unlocked" not in contents:
+                    raise ValueError("missing git-crypt unlock")
         except UnicodeDecodeError as err:
             logger.warning(err)
             pytest.skip(
