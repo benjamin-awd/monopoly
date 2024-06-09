@@ -19,17 +19,6 @@ Supported banks:
 | OCBC                | :white_check_mark:  | :white_check_mark:  |
 | Standard Chartered  | :white_check_mark:  | :x:                 |
 
-<h3 align="center">
-    🎉 Monopoly is now live! 🎉
-    <br><br>
-    Try it out: <br>
-    <a href="https://monopoly.streamlitapp.com/">https://monopoly.streamlitapp.com/</a>
-</h3>
-
-<p align="center">
-    <img src="https://raw.githubusercontent.com/benjamin-awd/monopoly/main/docs/streamlit_demo.gif" width=800>
-</p>
-
 ## Install
 Clone the repo
 ```bash
