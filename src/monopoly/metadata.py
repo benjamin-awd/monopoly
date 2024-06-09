@@ -50,10 +50,8 @@ class MetadataAnalyzer:
 
     @property
     def document(self):
-        if self.file_path:
-            return fitz.Document(filename=self.file_path)
-        if self.file_bytes:
-            return fitz.Document(stream=self.file_bytes)
+        args = {"filename": self.file_path, "stream": self.file_bytes}
+        return fitz.Document(**args)
 
     @property
     def metadata_items(self) -> list[Any]:
