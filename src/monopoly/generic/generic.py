@@ -267,12 +267,12 @@ class DatePatternAnalyzer:
         lines_with_yyyy_dates = {
             pattern: lines
             for pattern, lines in self.patterns_with_date_matches.items()
-            if pattern.endswith("YYYY")
+            if pattern.endswith("yyyy")
         }
 
         if not lines_with_yyyy_dates:
             raise RuntimeError(
-                "No lines with YYYY dates - unable to create statement date pattern"
+                "No lines with `yyyy` dates - unable to create statement date pattern"
             )
 
         unsorted_lines = []

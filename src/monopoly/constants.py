@@ -20,17 +20,17 @@ class DateFormats(StrEnum):
 class DateRegexPatterns:
     """Holds date regex patterns used by the generic statement handler"""
 
-    DD_MM: str = rf"\b({DateFormats.DD}[\/\-]{DateFormats.MM})"
-    DD_MMM: str = rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM})"
-    DD_MMM_YYYY: str = (
+    dd_mm: str = rf"\b({DateFormats.DD}[\/\-]{DateFormats.MM})"
+    dd_mmm: str = rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM})"
+    dd_mmm_yyyy: str = (
         rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM}[,\s]{{1,2}}20\d{{2}})"
     )
-    DD_MM_YYYY: str = rf"\b({DateFormats.DD}[\/\-]{DateFormats.MM}[\/\-]20\d{{2}})"
-    MMMM_DD_YYYY: str = (
+    dd_mm_yyyy: str = rf"\b({DateFormats.DD}[\/\-]{DateFormats.MM}[\/\-]20\d{{2}})"
+    mmmm_dd_yyyy: str = (
         rf"\b({DateFormats.MMMM}\s{DateFormats.DD}[,\s]{{1,2}}20\d{{2}})"
     )
-    MMM_DD: str = rf"\b({DateFormats.MMM}[-\s]{DateFormats.DD})"
-    MMM_DD_YYYY: str = (
+    mmm_dd: str = rf"\b({DateFormats.MMM}[-\s]{DateFormats.DD})"
+    mmm_dd_yyyy: str = (
         rf"\b({DateFormats.MMM}[-\s]{DateFormats.DD}[,\s]{{1,2}}20\d{{2}})"
     )
 
@@ -124,18 +124,18 @@ class StatementBalancePatterns(StrEnum):
 
 class CreditTransactionPatterns(StrEnum):
     DBS = (
-        rf"(?P<transaction_date>{DateRegexPatterns.DD_MMM})\s+"
+        rf"(?P<transaction_date>{DateRegexPatterns.dd_mmm})\s+"
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT_EXTENDED
     )
     CITIBANK = (
-        rf"(?P<transaction_date>{DateRegexPatterns.DD_MMM})\s+"
+        rf"(?P<transaction_date>{DateRegexPatterns.dd_mmm})\s+"
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT_EXTENDED
     )
     HSBC = (
-        rf"(?P<posting_date>{DateRegexPatterns.DD_MMM})\s+"
-        rf"(?P<transaction_date>{DateRegexPatterns.DD_MMM})\s+"
+        rf"(?P<posting_date>{DateRegexPatterns.dd_mmm})\s+"
+        rf"(?P<transaction_date>{DateRegexPatterns.dd_mmm})\s+"
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT_EXTENDED
     )
@@ -145,8 +145,8 @@ class CreditTransactionPatterns(StrEnum):
         + SharedPatterns.AMOUNT_EXTENDED
     )
     STANDARD_CHARTERED = (
-        rf"(?P<transaction_date>{DateRegexPatterns.DD_MMM})\s+"
-        rf"(?P<posting_date>{DateRegexPatterns.DD_MMM})\s+"
+        rf"(?P<transaction_date>{DateRegexPatterns.dd_mmm})\s+"
+        rf"(?P<posting_date>{DateRegexPatterns.dd_mmm})\s+"
         + SharedPatterns.DESCRIPTION
         + r"(?:(?P<transaction_ref>Transaction\sRef\s\d+)?)\s+"
         + SharedPatterns.AMOUNT_EXTENDED
@@ -155,14 +155,14 @@ class CreditTransactionPatterns(StrEnum):
 
 class DebitTransactionPatterns(StrEnum):
     DBS = (
-        rf"(?P<transaction_date>{DateRegexPatterns.DD_MMM})\s+"
+        rf"(?P<transaction_date>{DateRegexPatterns.dd_mmm})\s+"
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
         + SharedPatterns.BALANCE
     )
     OCBC = (
-        rf"(?P<transaction_date>{DateRegexPatterns.DD_MMM})\s+"
-        rf"(?P<posting_date>{DateRegexPatterns.DD_MMM})\s+"
+        rf"(?P<transaction_date>{DateRegexPatterns.dd_mmm})\s+"
+        rf"(?P<posting_date>{DateRegexPatterns.dd_mmm})\s+"
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
         + SharedPatterns.BALANCE
