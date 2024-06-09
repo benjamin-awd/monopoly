@@ -26,7 +26,6 @@ def setup_logs(func):
         if kwargs["verbose"]:
             logger = logging.getLogger("root")
             logger.setLevel(logging.DEBUG)
-            del kwargs["verbose"]
         result = func(*args, **kwargs)
         return result
 
