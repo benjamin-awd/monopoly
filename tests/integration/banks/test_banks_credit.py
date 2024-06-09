@@ -5,7 +5,7 @@ import pytest
 from test_utils.skip import skip_if_encrypted
 from test_utils.transactions import get_transactions_as_dict, read_transactions_from_csv
 
-from monopoly.banks import Citibank, Dbs, Hsbc, Ocbc, StandardChartered
+from monopoly.banks import Citibank, Dbs, Hsbc, Maybank, Ocbc, StandardChartered
 from monopoly.banks.base import BankBase
 from monopoly.pipeline import Pipeline
 from monopoly.statements import CreditStatement
@@ -14,6 +14,7 @@ test_cases = [
     (Citibank, -1414.07, datetime(2022, 11, 15)),
     (Dbs, -16969.17, datetime(2023, 10, 15)),
     (Hsbc, -1218.2, datetime(2023, 8, 20)),
+    (Maybank, -1259.28, datetime(2024, 11, 8)),
     (Ocbc, -702.1, datetime(2023, 8, 1)),
     (StandardChartered, -82.45, datetime(2023, 5, 16)),
 ]

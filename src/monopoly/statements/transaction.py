@@ -129,9 +129,9 @@ class Transaction:
     @model_validator(mode="after")
     def convert_credit_amount_to_negative(self: "Transaction") -> "Transaction":
         """
-        Converts transactions with a suffix of "CR" to positive
+        Converts transactions with a suffix of "CR" or "+" to positive
         """
-        if self.suffix == "CR":
+        if self.suffix in ("CR", "+"):
             self.amount = abs(self.amount)
 
         else:

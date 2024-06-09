@@ -33,21 +33,24 @@ class DebitStatement(BaseStatement):
         """
         Pre-processes transactions by adding a debit or credit suffix to the group dict
         """
-        transaction_match.groupdict.suffix = self.get_debit_suffix(transaction_match)
+        if self.config.has_withdraw_deposit_column:
+            transaction_match.groupdict.suffix = self.get_debit_suffix(
+                transaction_match
+            )
         return transaction_match
 
     def get_debit_suffix(self, transaction_match: TransactionMatch) -> str:
         """
         Gets the accounting suffix for debit card statements
 
-        This is necessary, since the amount in the row does not have any
-        identifier apart from column position.
-
-        This operates under the assumption that the numbers are right-aligned.
+        Attempts to identify whether a transaction is a debit
+        or credit entry based on the distance from the withdrawal
+        or deposit columns.
         """
         amount = transaction_match.groupdict.amount
         line: str = transaction_match.match.string
         start_pos = line.find(amount)
+        # assume that numbers are right aligned
         end_pos = start_pos + len(amount) - 1
         withdrawal_diff = abs(end_pos - self.withdrawal_pos)
         deposit_diff = abs(end_pos - self.deposit_pos)
@@ -68,7 +71,7 @@ class DebitStatement(BaseStatement):
         match: re.Match | None = pattern.search(self.debit_header)
         if match:
             return self.get_header_pos(match.group())
-        raise ValueError(f"{column_type.capitalize()} column not found in header")
+        logger.warning(f"`{column_type}` column not found in header")
 
     def get_header_pos(self, column_name: str) -> int:
         """

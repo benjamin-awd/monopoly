@@ -16,6 +16,7 @@ Supported banks:
 | Citibank            | :white_check_mark:  | :x:                 |
 | DBS/POSB            | :white_check_mark:  | :white_check_mark:  |
 | HSBC                | :white_check_mark:  | :x:                 |
+| Maybank             | :white_check_mark:  | :white_check_mark:  |
 | OCBC                | :white_check_mark:  | :white_check_mark:  |
 | Standard Chartered  | :white_check_mark:  | :x:                 |
 

@@ -2,7 +2,7 @@ import logging
 import re
 from abc import ABC
 from datetime import datetime
-from functools import cached_property
+from functools import cached_property, lru_cache
 from pathlib import Path
 
 from dateparser import parse
@@ -53,6 +53,7 @@ class BaseStatement(ABC):
             pattern = re.compile(self.config.transaction_pattern, re.IGNORECASE)
         return pattern
 
+    @lru_cache
     def get_transactions(self) -> list[Transaction] | None:
         transactions: list[Transaction] = []
 

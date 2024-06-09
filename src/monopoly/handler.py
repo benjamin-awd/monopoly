@@ -1,5 +1,9 @@
+import logging
+
 from monopoly.pdf import PdfParser
 from monopoly.statements import CreditStatement, DebitStatement
+
+logger = logging.getLogger(__name__)
 
 
 class StatementHandler:
@@ -28,14 +32,28 @@ class StatementHandler:
     @classmethod
     def get_statement(cls, parser: PdfParser) -> CreditStatement | DebitStatement:
         bank = parser.bank
+        debit_config, credit_config = bank.debit_config, bank.credit_config
 
-        if bank.debit_config:
-            debit_statement = DebitStatement(parser, bank.debit_config)
-            if debit_statement.debit_header:
-                return debit_statement
+        if debit_config:
+            debit_statement = DebitStatement(parser, debit_config)
+            # if we can find transactions using the debit config
+            # assume that it is a debit statement
+            try:
+                if debit_statement.get_transactions():
+                    return debit_statement
+            except (ValueError, TypeError) as err:
+                logger.debug(
+                    "Could not parse with debit config due to error: %s",
+                    err.__repr__(),
+                )
+            except Exception as err:
+                logger.error(
+                    "Unexpected error while parsing with debit config: %s",
+                    err.__repr__(),
+                )
 
-        if not bank.credit_config:
+        if not credit_config:
             raise RuntimeError("Missing credit config")
 
         # if it's not a debit statement, assume that it's a credit statement
-        return CreditStatement(parser, bank.credit_config)
+        return CreditStatement(parser, credit_config)

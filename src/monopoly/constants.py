@@ -62,6 +62,7 @@ class BankNames(AutoEnum):
     CITIBANK = auto()
     DBS = auto()
     HSBC = auto()
+    MAYBANK = auto()
     OCBC = auto()
     STANDARD_CHARTERED = auto()
 
@@ -117,6 +118,10 @@ class StatementBalancePatterns(StrEnum):
         r"(?P<description>Previous Statement Balance?)\s+"
         + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
     )
+    MAYBANK = (
+        r"(?P<description>PREVIOUS STATEMENT BALANCE?)\s+"
+        + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+    )
     OCBC = (
         r"(?P<description>LAST MONTH'S BALANCE?)\s+"
         + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
@@ -144,6 +149,12 @@ class CreditTransactionPatterns(StrEnum):
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT_EXTENDED
     )
+    MAYBANK = (
+        rf"(?P<posting_date>{DateRegexPatterns.dd_mm})\s+"
+        rf"(?P<transaction_date>{DateRegexPatterns.dd_mm})\s+"
+        + SharedPatterns.DESCRIPTION
+        + SharedPatterns.AMOUNT_EXTENDED
+    )
     OCBC = (
         r"(?P<transaction_date>\d+/\d+)\s+"
         + SharedPatterns.DESCRIPTION
@@ -163,6 +174,14 @@ class DebitTransactionPatterns(StrEnum):
         rf"(?P<transaction_date>{DateRegexPatterns.dd_mmm})\s+"
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+        + SharedPatterns.BALANCE
+    )
+    MAYBANK = (
+        rf"(?P<transaction_date>{DateRegexPatterns.dd_mm_yy})\s+"
+        + SharedPatterns.DESCRIPTION
+        # remove *\s
+        + SharedPatterns.AMOUNT[:-3]
+        + r"(?P<suffix>\-|\+)\s+"
         + SharedPatterns.BALANCE
     )
     OCBC = (
