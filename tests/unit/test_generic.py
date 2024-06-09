@@ -506,6 +506,7 @@ def test_create_previous_balance_regex(
     "date_format, valid_dates",
     [
         ("dd_mm", ["01/01", "15-05", "31/12"]),
+        ("dd_mm_yy", ["01-01-20", "31/12/24", "15/05/30"]),
         ("dd_mmm", ["01 JAN", "15 FEB", "31 MAR"]),
         ("dd_mmm_yyyy", ["01 JAN 2023", "15 Feb 2024", "31 mar, 2025"]),
         ("dd_mm_yyyy", ["01/01/2023", "15-05-2024", "31/12/2025"]),
