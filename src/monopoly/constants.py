@@ -15,6 +15,7 @@ class DateFormats(StrEnum):
     MMM = "(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
     MMMM = "(?:January|February|March|April|May|June|July|August|September|October|November|December)"
     YY = r"([2-5][0-9])"
+    YYYY = r"(20\d{2})"
 
 
 @dataclass
@@ -25,15 +26,17 @@ class DateRegexPatterns:
     dd_mm_yy: str = rf"\b({DateFormats.DD}[\/\-]{DateFormats.MM}[\/\-]{DateFormats.YY})"
     dd_mmm: str = rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM})"
     dd_mmm_yyyy: str = (
-        rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM}[,\s]{{1,2}}20\d{{2}})"
+        rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM}[,\s]{{1,2}}{DateFormats.YYYY})"
     )
-    dd_mm_yyyy: str = rf"\b({DateFormats.DD}[\/\-]{DateFormats.MM}[\/\-]20\d{{2}})"
+    dd_mm_yyyy: str = (
+        rf"\b({DateFormats.DD}[\/\-]{DateFormats.MM}[\/\-]{DateFormats.YYYY})"
+    )
     mmmm_dd_yyyy: str = (
-        rf"\b({DateFormats.MMMM}\s{DateFormats.DD}[,\s]{{1,2}}20\d{{2}})"
+        rf"\b({DateFormats.MMMM}\s{DateFormats.DD}[,\s]{{1,2}}{DateFormats.YYYY})"
     )
     mmm_dd: str = rf"\b({DateFormats.MMM}[-\s]{DateFormats.DD})"
     mmm_dd_yyyy: str = (
-        rf"\b({DateFormats.MMM}[-\s]{DateFormats.DD}[,\s]{{1,2}}20\d{{2}})"
+        rf"\b({DateFormats.MMM}[-\s]{DateFormats.DD}[,\s]{{1,2}}{DateFormats.YYYY})"
     )
 
     def as_pattern_dict(self):
