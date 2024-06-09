@@ -28,7 +28,5 @@ jobs:
 
       - name: Run tests
         run: |
-          echo '${{ secrets.GIT_CRYPT_KEY }}' | base64 --decode > /tmp/git-crypt-key
-          git-crypt unlock /tmp/git-crypt-key
-          rm /tmp/git-crypt-key
+          echo "${{ secrets.GIT_CRYPT_KEY }}" | base64 --decode | git-crypt unlock -
           poetry run task test
