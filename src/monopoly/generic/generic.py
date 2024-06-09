@@ -124,6 +124,7 @@ class DatePatternAnalyzer:
                 if match_tuple in match_dict[pattern_name]:
                     match_dict[pattern_name][match_tuple] += 1
 
+        logger.debug("Unique matches: %s", match_dict)
         return match_dict
 
     @staticmethod
@@ -139,16 +140,25 @@ class DatePatternAnalyzer:
         occurrences and (11, 17) has 17 occurrences, we return both
         tuples since there is a strong likelihood that one is a transaction date,
         and the other is a posting date.
+
+        Patterns ending with "yy" are analyzed first, to avoid cases where we have
+        a tiebreaker with dd_mm and dd_mm_yy variants.
         """
         span_occurrences = 0
         most_common_pattern = None
         most_common_tuples = None
 
-        for pattern, value in unique_date_matches.items():
-            max_span_occurrences = max(value.values())
+        # Sort patterns so that those ending with "yy" come first
+        sorted_patterns = sorted(
+            unique_date_matches.keys(), key=lambda p: not p.endswith("yy")
+        )
+
+        for pattern in sorted_patterns:
+            spans_dict = unique_date_matches[pattern]
+            max_span_occurrences = max(unique_date_matches[pattern].values())
 
             if max_span_occurrences > span_occurrences:
-                tuples = [k for k, v in value.items() if v == max_span_occurrences]
+                tuples = [k for k, v in spans_dict.items() if v == max_span_occurrences]
                 span_occurrences = max_span_occurrences
                 most_common_pattern = pattern
                 most_common_tuples = tuples
@@ -267,16 +277,24 @@ class DatePatternAnalyzer:
         lines_with_yyyy_dates = {
             pattern: lines
             for pattern, lines in self.patterns_with_date_matches.items()
-            if pattern.endswith("yyyy")
+            if pattern.endswith("yy")
         }
 
         if not lines_with_yyyy_dates:
             raise RuntimeError(
-                "No lines with `yyyy` dates - unable to create statement date pattern"
+                "No lines with `yy` or `yyyy` dates "
+                "- unable to create statement date pattern"
             )
 
+        # try yyyy patterns first before yy
+        sorted_patterns = sorted(
+            lines_with_yyyy_dates.keys(), key=lambda p: not p.endswith("yyyy")
+        )
+
         unsorted_lines = []
-        for pattern, lines in lines_with_yyyy_dates.items():
+
+        for pattern in sorted_patterns:
+            lines = lines_with_yyyy_dates[pattern]
             for line in lines:
                 unsorted_lines.append((pattern, line))
 

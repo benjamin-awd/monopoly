@@ -14,8 +14,8 @@ class DateFormats(StrEnum):
     MM = "(?:01|02|03|04|05|06|07|08|09|10|11|12)"
     MMM = "(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
     MMMM = "(?:January|February|March|April|May|June|July|August|September|October|November|December)"
-    YY = r"([2-5][0-9])"
-    YYYY = r"(20\d{2})"
+    YY = r"(?:[2-5][0-9])"
+    YYYY = r"(?:20\d{2})"
 
 
 @dataclass
