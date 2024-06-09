@@ -1,7 +1,6 @@
 import re
 from dataclasses import asdict
 from enum import StrEnum, auto
-from typing import Generic, TypeVar
 
 from pydantic.dataclasses import dataclass
 
