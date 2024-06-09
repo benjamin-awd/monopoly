@@ -5,12 +5,13 @@ import pytest
 from test_utils.skip import skip_if_encrypted
 from test_utils.transactions import get_transactions_as_dict, read_transactions_from_csv
 
-from monopoly.banks import BankBase, Dbs, Ocbc
+from monopoly.banks import BankBase, Dbs, Maybank, Ocbc
 from monopoly.pipeline import Pipeline
 from monopoly.statements import DebitStatement
 
 test_cases = [
     (Dbs, 2222.68, 1302.88, datetime(2023, 10, 31)),
+    (Maybank, 5275.61, 4093.7, datetime(2023, 8, 31)),
     (Ocbc, 6630.79, 5049.55, datetime(2023, 10, 31)),
 ]
 

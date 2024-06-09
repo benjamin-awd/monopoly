@@ -78,7 +78,8 @@ class DebitStatementConfig(StatementConfig):
     Dataclass storing configuration values unique to debit statements
     """
 
-    debit_statement_identifier: str
+    has_withdraw_deposit_column: bool = True
+    debit_statement_identifier: Optional[str] = None
 
 
 @dataclass(config=ConfigDict(extra="forbid"))
