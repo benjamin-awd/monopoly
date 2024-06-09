@@ -28,6 +28,6 @@ export GIT_CLIFF_TEMPLATE="\
 	{% endfor %}"
 
 # create a signed tag
-git tag -v "v$1"
+git tag "v$1"
 echo "Done!"
 echo "Now push the commit (git push) and the tag (git push --tags)."

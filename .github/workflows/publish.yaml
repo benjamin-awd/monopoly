@@ -1,4 +1,4 @@
-name: Build and Publish Package
+name: publish
 
 on:
   push:
@@ -37,6 +37,6 @@ jobs:
           target_commitish: main
           body_path: CHANGELOG.md
           files: |
-            LICENSE
+            LICENSE.md
             dist/*monopoly*.whl
             dist/*monopoly*.tar.gz

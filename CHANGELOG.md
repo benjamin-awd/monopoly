@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.3] - 2024-06-09
+
+### 🚀 Features
+
+- *(ci)* Add publish workflow
+
+### 🐛 Bug Fixes
+
+- *(ci)* Update step name to setup-python
+- *(ci)* Run poetry tasks one at a time
+- *(cli)* Allow safety_check to be passed to concurrent executor
+
+### 🚜 Refactor
+
+- *(ci)* Run git-crypt unlock without temp file
+- *(statement/debit)* Add better handling for suffixes
+- *(metadata)* Use consistent return statement
+- *(generic)* Conform to snake_case naming pattern
+
+### 📚 Documentation
+
+- Add POSB to supported banks
+- Add CHANGELOG using git cliff
+
+### 🧪 Testing
+
+- Add newline to .gc_check file
+
+### ⚙️ Miscellaneous Tasks
+
+- Add CODEOWNERS file
+- *(ci)* Bump poetry to 1.8.3
+- Update ruff syntax
+- *(ci)* Re-add flake8
+- *(cli)* Add kwargs to run function
+
 ## [0.9.1] - 2024-06-09
 
 ### 🚀 Features
