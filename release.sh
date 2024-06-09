@@ -12,10 +12,12 @@ echo "Preparing $1..."
 msg="# managed by release.sh"
 grep -m 1 version pyproject.toml | awk -F' = ' '{print $2}' | tr -d '"'
 
+# update the pyproject version
+poetry version $1
+
 # update the changelog
 git cliff --unreleased --tag $(poetry version --short) --prepend CHANGELOG.md
-git add -A && git commit -m "chore(release): prepare for $1"
-git show
+git add -A -ip && git commit -m "chore(release): prepare for $1"
 
 export GIT_CLIFF_TEMPLATE="\
 	{% for group, commits in commits | group_by(attribute=\"group\") %}
@@ -26,6 +28,6 @@ export GIT_CLIFF_TEMPLATE="\
 	{% endfor %}"
 
 # create a signed tag
-git tag -v "$1"
+git tag -v "v$1"
 echo "Done!"
 echo "Now push the commit (git push) and the tag (git push --tags)."
