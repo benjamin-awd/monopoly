@@ -42,24 +42,33 @@ class DebitStatement(BaseStatement):
 
         This is necessary, since the amount in the row does not have any
         identifier apart from column position.
+
+        This operates under the assumption that the numbers are right-aligned.
         """
         amount = transaction_match.groupdict.amount
         line: str = transaction_match.match.string
-
-        pos = line.find(amount)
-        withdrawal_diff = abs(pos - self.withdrawal_pos)
-        deposit_diff = abs(pos - self.deposit_pos)
+        start_pos = line.find(amount)
+        end_pos = start_pos + len(amount) - 1
+        withdrawal_diff = abs(end_pos - self.withdrawal_pos)
+        deposit_diff = abs(end_pos - self.deposit_pos)
         if withdrawal_diff > deposit_diff:
             return "CR"
         return "DR"
 
     @cached_property
     def withdrawal_pos(self) -> int:
-        return self.get_header_pos("withdrawal")
+        return self.get_column_pos("withdraw")
 
     @cached_property
     def deposit_pos(self) -> int:
-        return self.get_header_pos("deposit")
+        return self.get_column_pos("deposit")
+
+    def get_column_pos(self, column_type: str) -> int:
+        pattern = re.compile(rf"{column_type}[\w()$]*", re.IGNORECASE)
+        match: re.Match | None = pattern.search(self.debit_header)
+        if match:
+            return self.get_header_pos(match.group())
+        raise ValueError(f"{column_type.capitalize()} column not found in header")
 
     def get_header_pos(self, column_name: str) -> int:
         """
