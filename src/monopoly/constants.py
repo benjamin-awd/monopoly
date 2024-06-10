@@ -14,8 +14,8 @@ class DateFormats(StrEnum):
     MM = r"(?:01|02|03|04|05|06|07|08|09|10|11|12)"
     MMM = r"(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
     MMMM = r"(?:January|February|March|April|May|June|July|August|September|October|November|December)"
-    YY = r"(?:[2-5][0-9])"
-    YYYY = r"(?:20\d{2})"
+    YY = r"(?:[2-5][0-9]\b)"
+    YYYY = r"(?:20\d{2}\b)"
 
 
 @dataclass
@@ -27,6 +27,7 @@ class DateRegexPatterns:
         rf"\b({DateFormats.DD}[\/\-\s]{DateFormats.MM}[\/\-\s]{DateFormats.YY})"
     )
     dd_mmm: str = rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM})"
+    dd_mmm_yy: str = rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM}[-\s]{DateFormats.YY})"
     dd_mmm_yyyy: str = (
         rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM}[,\s]{{1,2}}{DateFormats.YYYY})"
     )
