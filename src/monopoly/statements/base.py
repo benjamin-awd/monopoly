@@ -207,7 +207,25 @@ class BaseStatement(ABC):
         for page in self.pages:
             lines = page.lines
             numbers.update(self.get_decimal_numbers(lines))
+        numbers.add(self.get_subtotal_sum())
         return numbers
+
+    def get_subtotal_sum(self):
+        """
+        Retrieves the subtotals from a document, and calculates the total.
+        Useful for statements that don't give a total figure over
+        several cards/months in a single statement.
+        """
+        subtotal_pattern = re.compile(
+            rf"(?:sub\stotal.*?)\s+{SharedPatterns.AMOUNT}", re.IGNORECASE
+        )
+        subtotals: list[str] = []
+        for page in self.pages:
+            for line in page.lines:
+                if match := subtotal_pattern.search(line):
+                    subtotals.append(match.groupdict()[Columns.AMOUNT])
+        cleaned_subtotals = [float(amount.replace(",", "")) for amount in subtotals]
+        return sum(cleaned_subtotals)
 
 
 class SafetyCheckError(Exception):
