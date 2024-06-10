@@ -22,14 +22,16 @@ class DateFormats(StrEnum):
 class DateRegexPatterns:
     """Holds date regex patterns used by the generic statement handler"""
 
-    dd_mm: str = rf"\b({DateFormats.DD}[\/\-]{DateFormats.MM})"
-    dd_mm_yy: str = rf"\b({DateFormats.DD}[\/\-]{DateFormats.MM}[\/\-]{DateFormats.YY})"
+    dd_mm: str = rf"\b({DateFormats.DD}[\/\-\s]{DateFormats.MM})"
+    dd_mm_yy: str = (
+        rf"\b({DateFormats.DD}[\/\-\s]{DateFormats.MM}[\/\-\s]{DateFormats.YY})"
+    )
     dd_mmm: str = rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM})"
     dd_mmm_yyyy: str = (
         rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM}[,\s]{{1,2}}{DateFormats.YYYY})"
     )
     dd_mm_yyyy: str = (
-        rf"\b({DateFormats.DD}[\/\-]{DateFormats.MM}[\/\-]{DateFormats.YYYY})"
+        rf"\b({DateFormats.DD}[\/\-\s]{DateFormats.MM}[\/\-\s]{DateFormats.YYYY})"
     )
     mmmm_dd_yyyy: str = (
         rf"\b({DateFormats.MMMM}\s{DateFormats.DD}[,\s]{{1,2}}{DateFormats.YYYY})"
