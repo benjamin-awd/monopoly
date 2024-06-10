@@ -204,8 +204,8 @@ class BaseStatement(ABC):
         """
         numbers = set()
 
-        for page in self.document:
-            lines = page.get_textpage().extractText().split("\n")
+        for page in self.pages:
+            lines = page.lines
             numbers.update(self.get_decimal_numbers(lines))
         return numbers
 
