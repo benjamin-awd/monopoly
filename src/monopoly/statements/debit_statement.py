@@ -39,7 +39,7 @@ class DebitStatement(BaseStatement):
             )
         return transaction_match
 
-    def get_debit_suffix(self, transaction_match: TransactionMatch) -> str:
+    def get_debit_suffix(self, transaction_match: TransactionMatch) -> str | None:
         """
         Gets the accounting suffix for debit card statements
 
@@ -47,16 +47,18 @@ class DebitStatement(BaseStatement):
         or credit entry based on the distance from the withdrawal
         or deposit columns.
         """
-        amount = transaction_match.groupdict.amount
-        line: str = transaction_match.match.string
-        start_pos = line.find(amount)
-        # assume that numbers are right aligned
-        end_pos = start_pos + len(amount) - 1
-        withdrawal_diff = abs(end_pos - self.withdrawal_pos)
-        deposit_diff = abs(end_pos - self.deposit_pos)
-        if withdrawal_diff > deposit_diff:
-            return "CR"
-        return "DR"
+        if self.withdrawal_pos and self.deposit_pos:
+            amount = transaction_match.groupdict.amount
+            line: str = transaction_match.match.string
+            start_pos = line.find(amount)
+            # assume that numbers are right aligned
+            end_pos = start_pos + len(amount) - 1
+            withdrawal_diff = abs(end_pos - self.withdrawal_pos)
+            deposit_diff = abs(end_pos - self.deposit_pos)
+            if withdrawal_diff > deposit_diff:
+                return "CR"
+            return "DR"
+        return transaction_match.groupdict.suffix
 
     @cached_property
     def withdrawal_pos(self) -> int:
