@@ -95,10 +95,13 @@ class SharedPatterns(StrEnum):
     """
 
     COMMA_FORMAT = r"\d{1,3}(,\d{3})*\.\d*"
-    DEBIT_CREDIT_SUFFIX = r"(?P<suffix>CR\b|DR\b)?"
-    AMOUNT = rf"(?P<amount>{COMMA_FORMAT}|\({COMMA_FORMAT}\s{{0,1}}\))\s*"
+    ENCLOSED_COMMA_FORMAT = rf"\({COMMA_FORMAT}\s{{0,1}}\))"
+    DEBIT_CREDIT_SUFFIX = r"(?P<suffix>CR\b|DR\b|\+|\-)?\s*"
+
+    AMOUNT = rf"(?P<amount>{COMMA_FORMAT}|{ENCLOSED_COMMA_FORMAT}\s*"
     AMOUNT_EXTENDED_WITHOUT_EOL = AMOUNT + DEBIT_CREDIT_SUFFIX
     AMOUNT_EXTENDED = AMOUNT_EXTENDED_WITHOUT_EOL + r"$"
+
     BALANCE = rf"(?P<balance>{COMMA_FORMAT})?$"
     DESCRIPTION = r"(?P<description>.*?)\s+"
     TRANSACTION_DATE_ABBREVIATED_ALL_CAPS = r"(?P<transaction_date>\d{2}\s[A-Z]{3})\s+"
