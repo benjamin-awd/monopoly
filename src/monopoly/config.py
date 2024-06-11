@@ -70,6 +70,7 @@ class StatementConfig:
     transaction_date_order: DateOrder = DateOrder("DMY")
     statement_date_order: DateOrder = DateOrder("DMY")
     multiline_transactions: bool = False
+    has_withdraw_deposit_column: bool = False
 
 
 @dataclass(config=ConfigDict(extra="forbid"), kw_only=True)
