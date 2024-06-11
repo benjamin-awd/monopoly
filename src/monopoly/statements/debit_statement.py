@@ -61,19 +61,20 @@ class DebitStatement(BaseStatement):
         return transaction_match.groupdict.suffix
 
     @cached_property
-    def withdrawal_pos(self) -> int:
+    def withdrawal_pos(self) -> int | None:
         return self.get_column_pos("withdraw")
 
     @cached_property
-    def deposit_pos(self) -> int:
+    def deposit_pos(self) -> int | None:
         return self.get_column_pos("deposit")
 
-    def get_column_pos(self, column_type: str) -> int:
+    def get_column_pos(self, column_type: str) -> int | None:
         pattern = re.compile(rf"{column_type}[\w()$]*", re.IGNORECASE)
         match: re.Match | None = pattern.search(self.debit_header)
         if match:
             return self.get_header_pos(match.group())
         logger.warning(f"`{column_type}` column not found in header")
+        return None
 
     def get_header_pos(self, column_name: str) -> int:
         """
