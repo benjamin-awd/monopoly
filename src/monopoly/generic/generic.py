@@ -145,8 +145,8 @@ class DatePatternAnalyzer:
         a tiebreaker with dd_mm and dd_mm_yy variants.
         """
         span_occurrences = 0
-        most_common_pattern = None
-        most_common_tuples = None
+        most_common_pattern = ""
+        most_common_tuples = []
 
         # Sort patterns so that those ending with "yy" come first
         sorted_patterns = sorted(
