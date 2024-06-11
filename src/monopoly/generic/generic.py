@@ -169,6 +169,26 @@ class DatePatternAnalyzer:
             span_occurrences,
             most_common_tuples,
         )
+
+        # If the another span tuple pair occurs
+        # at a rate of at least 0.5x the most common pair,
+        # add it to the most_common_tuples list
+        # this adds tolerance for tuples that may be misaligned across pages
+        # e.g. {(3, 8): 7, (4, 9): 16, (23, 28): 23}
+        if len(most_common_tuples) == 1:
+            del unique_date_matches[most_common_pattern][most_common_tuples[0]]
+            for key in unique_date_matches[most_common_pattern].keys():
+                if (
+                    unique_date_matches[most_common_pattern][key]
+                    > span_occurrences * 0.5
+                ):
+                    most_common_tuples.append(key)
+                    logger.debug("Adding additional span: %s", key)
+                    break
+        logger.debug(
+            "Most common pattern / tuples: %s",
+            {most_common_pattern: most_common_tuples},
+        )
         return {most_common_pattern: most_common_tuples}
 
     @staticmethod
