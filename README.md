@@ -13,12 +13,12 @@ Monopoly is a Python library & CLI that converts bank statement PDFs to CSV.
 Supported banks:
 | Bank                | Credit Statement    | Debit Statement     |
 | --------------------| --------------------| --------------------|
-| Citibank            | :white_check_mark:  | :x:                 |
-| DBS/POSB            | :white_check_mark:  | :white_check_mark:  |
-| HSBC                | :white_check_mark:  | :x:                 |
-| Maybank             | :white_check_mark:  | :white_check_mark:  |
-| OCBC                | :white_check_mark:  | :white_check_mark:  |
-| Standard Chartered  | :white_check_mark:  | :x:                 |
+| Citibank            | ✅                 | ❌                  |
+| DBS/POSB            | ✅                 | ✅                  |
+| HSBC                | ✅                 | ❌                  |
+| Maybank             | ✅                 | ✅                  |
+| OCBC                | ✅                 | ✅                  |
+| Standard Chartered  | ✅                 | ❌                  |
 
 ## Install
 Clone the repo
