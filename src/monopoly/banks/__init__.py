@@ -86,7 +86,15 @@ def check_matching_field(
     field_value = getattr(metadata, field.name)
     identifier_value = getattr(identifier, field.name)
 
+    # if identifier is not set, we assume a match
+    # this means only the identifiers in the bank
+    # class need to be matched.
+    if not identifier_value:
+        return True
+
     # allow for partial string matching
+    # since '' in a string always is true
+    # add another condition to filter out blank strings
     partial_string_match = (
         isinstance(field.type(), str) and identifier_value in field_value
     )
