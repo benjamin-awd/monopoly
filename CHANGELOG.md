@@ -40,11 +40,11 @@ All notable changes to this project will be documented in this file.
 
 ## [0.9.3] - 2024-06-09
 
-### 🚀 Features
+### ⛰️ Features
 
 - *(ci)* Add publish workflow
 
-### 🐛 Bug Fixes
+### 🛠️ Bug Fixes
 
 - *(ci)* Update step name to setup-python
 - *(ci)* Run poetry tasks one at a time
@@ -76,7 +76,7 @@ All notable changes to this project will be documented in this file.
 
 ## [0.9.1] - 2024-06-09
 
-### 🚀 Features
+### ⛰️ Features
 
 - *(pipeline)* Support file_bytes and passwords args
 
@@ -86,7 +86,7 @@ All notable changes to this project will be documented in this file.
 
 ## [0.9.0] - 2024-06-09
 
-### 🚀 Features
+### ⛰️ Features
 
 - *(ci)* Add caching for `pdftotext`
 - *(ci)* Add parallelism for pylint
@@ -132,12 +132,12 @@ All notable changes to this project will be documented in this file.
 
 ## [0.8.2] - 2024-06-09
 
-### 🚀 Features
+### ⛰️ Features
 
 - [**breaking**] Add Pipeline and GenericStatementHandler classes
 - *(cli)* Allow safety check to be disabled
 
-### 🐛 Bug Fixes
+### 🛠️ Bug Fixes
 
 - Standard chartered transaction pattern
 - Ocbc debit statement date pattern
@@ -174,7 +174,7 @@ All notable changes to this project will be documented in this file.
 
 ## [0.8.0] - 2024-06-09
 
-### 🚀 Features
+### ⛰️ Features
 
 - *(cli)* Enable single threaded mode with -s flag
 
@@ -228,13 +228,13 @@ All notable changes to this project will be documented in this file.
 
 ## [0.7.7] - 2024-06-09
 
-### 🐛 Bug Fixes
+### 🛠️ Bug Fixes
 
 - Use correct date format for standard chartered
 
 ## [0.7.6] - 2024-06-09
 
-### 🚀 Features
+### ⛰️ Features
 
 - *(pdf)* Allow files to be passed as a byte stream
 
@@ -255,7 +255,7 @@ All notable changes to this project will be documented in this file.
 
 ## [0.7.4] - 2024-06-09
 
-### 🚀 Features
+### ⛰️ Features
 
 - *(parser)* Raise proper exceptions during password handling
 - *(parser)* Add specific exception for unsupported banks
@@ -266,13 +266,13 @@ All notable changes to this project will be documented in this file.
 
 ## [0.7.3] - 2024-06-09
 
-### 🚀 Features
+### ⛰️ Features
 
 - Add passwords as kwarg to detect_processor
 
 ## [0.7.2] - 2024-06-09
 
-### 🐛 Bug Fixes
+### 🛠️ Bug Fixes
 
 - Date config for example bank
 
@@ -282,7 +282,7 @@ All notable changes to this project will be documented in this file.
 
 ## [0.7.1] - 2024-06-09
 
-### 🐛 Bug Fixes
+### 🛠️ Bug Fixes
 
 - *(processor)* Handle leap year dates
 
@@ -297,7 +297,7 @@ All notable changes to this project will be documented in this file.
 
 ## [0.7.0] - 2024-06-09
 
-### 🐛 Bug Fixes
+### 🛠️ Bug Fixes
 
 - *(processor)* Improve handling for multi-year statements
 
@@ -314,11 +314,11 @@ All notable changes to this project will be documented in this file.
 
 ## [0.6.6] - 2024-06-09
 
-### 🚀 Features
+### ⛰️ Features
 
 - *(statements/credit)* Support multiple prev balances
 
-### 🐛 Bug Fixes
+### 🛠️ Bug Fixes
 
 - *(statements/debit)* Ralign header pos instead of lalign
 
@@ -332,7 +332,7 @@ All notable changes to this project will be documented in this file.
 
 ## [0.6.5] - 2024-06-09
 
-### 🚀 Features
+### ⛰️ Features
 
 - *(cli)* Add --version flag
 - Add support for cloud run secrets via env var
@@ -354,7 +354,7 @@ All notable changes to this project will be documented in this file.
 
 ## [0.6.3] - 2024-06-09
 
-### 🐛 Bug Fixes
+### 🛠️ Bug Fixes
 
 - Handling for cross-year transactions
 
@@ -364,18 +364,18 @@ All notable changes to this project will be documented in this file.
 
 ## [0.6.2] - 2024-06-09
 
-### 🐛 Bug Fixes
+### 🛠️ Bug Fixes
 
 - *(dbs)* Statements may sometimes have transactions on the last page
 - *(pdf)* Attempt to proceed without garbage collection on first pass
 
 ## [0.6.1] - 2024-06-09
 
-### 🚀 Features
+### ⛰️ Features
 
 - *(statements/base)* Include statement name in safety warning message
 
-### 🐛 Bug Fixes
+### 🛠️ Bug Fixes
 
 - *(statements/debit)* Mitigate error caused by False == False -> True logic
 - *(ocbc)* Only use one method to get text from pdf
@@ -391,13 +391,13 @@ All notable changes to this project will be documented in this file.
 
 ## [0.6.0] - 2024-06-09
 
-### 🐛 Bug Fixes
+### 🛠️ Bug Fixes
 
 - *(write)* Use variable instead of string
 
 ## [0.5.0] - 2024-06-09
 
-### 🐛 Bug Fixes
+### 🛠️ Bug Fixes
 
 - Regex pattern for example statement
 
@@ -426,7 +426,7 @@ All notable changes to this project will be documented in this file.
 
 ## [0.4.7] - 2024-06-09
 
-### 🚀 Features
+### ⛰️ Features
 
 - Add support for debit statements
 
@@ -482,7 +482,7 @@ All notable changes to this project will be documented in this file.
 
 ## [0.4.2] - 2024-06-09
 
-### 🚀 Features
+### ⛰️ Features
 
 - *(cli)* Add error handling
 - *(cli)* Add option to print df repr of statement
@@ -501,19 +501,19 @@ All notable changes to this project will be documented in this file.
 
 ## [0.4.1] - 2024-06-09
 
-### 🚀 Features
+### ⛰️ Features
 
 - *(processor)* Add unique ids for output files
 
 ## [0.4.0] - 2024-06-09
 
-### 🚀 Features
+### ⛰️ Features
 
 - *(cli)* Add concurrency
 
 ## [0.3.0] - 2024-06-09
 
-### 🚀 Features
+### ⛰️ Features
 
 - *(ci)* Add dependabot
 - *(cli)* Allow custom output directory
@@ -522,7 +522,7 @@ All notable changes to this project will be documented in this file.
 - *(cli)* Add welcome message
 - *(cli)* Add progress bar
 
-### 🐛 Bug Fixes
+### 🛠️ Bug Fixes
 
 - *(README)* Badges
 - Re-add example statement via gitignore
@@ -555,12 +555,12 @@ All notable changes to this project will be documented in this file.
 
 ## [0.2.0] - 2024-06-09
 
-### 🚀 Features
+### ⛰️ Features
 
 - Add barebones cli
 - *(statement)* Add previous statement balance as transaction
 
-### 🐛 Bug Fixes
+### 🛠️ Bug Fixes
 
 - Move output to src directory
 - *(README)* Point badges at main workflow
@@ -588,7 +588,7 @@ All notable changes to this project will be documented in this file.
 
 ## [0.1.2] - 2024-06-09
 
-### 🚀 Features
+### ⛰️ Features
 
 - *(tests)* Add test for statement line lstrip
 - *(banks/hsbc)* Allow use of hsbc_pdf_password instead of only hsbc_pdf_password_prefix
@@ -598,7 +598,7 @@ All notable changes to this project will be documented in this file.
 - *(banks)* Add cashback support for ocbc and citibank
 - *(tests)* Add test for example bank
 
-### 🐛 Bug Fixes
+### 🛠️ Bug Fixes
 
 - *(ci)* Update local hook to use task for test
 
@@ -635,7 +635,7 @@ All notable changes to this project will be documented in this file.
 
 ## [0.1.0] - 2024-06-09
 
-### 🚀 Features
+### ⛰️ Features
 
 - Update poetry dependencies
 - Add boilerplate code
@@ -697,7 +697,7 @@ All notable changes to this project will be documented in this file.
 - *(pdf)* Raise error if document is null after opening
 - *(ci)* Add mypy to workflow
 
-### 🐛 Bug Fixes
+### 🛠️ Bug Fixes
 
 - *(ocbc)* Password logic
 - *(ocbc)* Remove whitespaces from description
