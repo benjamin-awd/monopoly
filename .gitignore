@@ -10,7 +10,7 @@
 *.txt
 .coverage
 .python-version
-Brewfile.lock.json
+Brewfile.*
 __pycache__
 _ignore*
 dist
