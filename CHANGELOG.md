@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.4] - 2024-06-13
+
+### ⛰️ Features
+
+- *(generic/constants)* Add dd_mm_yy pattern
+- *(generic/constants)* Add support for dd_mm_yy pattern
+- *(banks)* Add Maybank debit and credit support
+- *(statements)* Attempt to calculate total sum using subtotals
+
+### 🛠️ Bug Fixes
+
+- *(generic)* Use better default types for most_common_pattern/tuples
+- *(config/typing)* Add has_withdraw_deposit_column to base statement
+
+### 🚜 Refactor
+
+- *(generic/constants)* Add DRY pattern for YYYY
+- *(generic/constants)* Add spaces in delimiter for all dd_mm_ patterns
+- *(statements)* Remove outdated re-parsing of document with pymupdf
+- *(generic/constants)* Add \b suffix for yy/yyyy patterns
+- *(generic)* Add tolerance for misaligned dates across pages
+- *(statement/debit)* Only try to get debit suffix if withdraw/deposit cols exist
+- *(constants)* Add support for + or - in suffix
+- *(banks)* Allow loose metadata field matching
+
+### 📚 Documentation
+
+- Move web demo gif to monopoly-streamlit
+- Use emoji instead of : syntax
+
+### ⚙️ Miscellaneous Tasks
+
+- *(generic/constants)* Change all patterns to raw string
+- *(release)* Change features emoji to ⛰️
+- Use 🛠️ as bug fix emoji
+
 ## [0.9.3] - 2024-06-09
 
 ### 🚀 Features
