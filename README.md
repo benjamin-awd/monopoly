@@ -21,25 +21,17 @@ Supported banks:
 | Standard Chartered  | ✅                 | ❌                  |
 
 ## Install
-Clone the repo
-```bash
-git clone https://github.com/benjamin-awd/monopoly.git
-```
+Monopoly is a pip-installable Python package on [PyPI](https://pypi.org/project/monopoly-core) under the name `monopoly-core`.
 
-Install dependencies using [Homebrew](https://brew.sh/)
-```bash
-brew install make
-make setup
-```
+Since Monopoly uses `pdftotext`, you'll need to install additional dependencies:
 
-Monopoly is also a pip-installable Python package on [PyPI](https://pypi.org/project/monopoly-core) under the name `monopoly-core`.
-```sh
-pipx install monopoly-core
-```
-
-Note: with `pipx` you'll still need to run `make setup`, or minimally
 ```sh
 apt-get install build-essential libpoppler-cpp-dev pkg-config
+```
+
+Then intall with pipx:
+```sh
+pipx install monopoly-core
 ```
 
 ## Usage
@@ -81,3 +73,17 @@ python3 src/monopoly/examples/single_statement.py
 - Supports a variety of date/number formats and determines if a transaction is debit or credit.
 - Provides a generic parser that can be used without any predefined configuration (caveat emptor).
 - Includes a safety check (enabled by default) that validates totals for debit or credit statements.
+
+## Development
+
+Clone the repo
+```bash
+git clone https://github.com/benjamin-awd/monopoly.git
+```
+
+Install dependencies using [Homebrew](https://brew.sh/)
+```bash
+brew install make
+make setup
+brew bundle --file Brewfile.dev
+```
