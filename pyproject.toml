@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "monopoly-core"
-version = "0.9.4"
+version = "0.9.5-rc.1"
 description = "Monopoly is a Python library & CLI that converts bank statement PDFs to CSV"
 repository = "https://github.com/benjamin-awd/monopoly"
 authors = ["benjamin-awd <benjamindornel@gmail.com>"]
@@ -16,7 +16,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.10"
 pydantic-settings = "^2.0.3"
 pymupdf = "^1.23.7"
 pdftotext = "^2.2.2"
@@ -28,6 +28,7 @@ pydantic = "^2.5.2"
 dateparser = "^1.2.0"
 
 
+strenum = "^0.4.15"
 [tool.poetry.group.dev.dependencies]
 black = ">=23.7,<25.0"
 pylint = ">=2.17.5,<4.0.0"

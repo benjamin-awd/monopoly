@@ -1,8 +1,9 @@
 import re
 from dataclasses import asdict
-from enum import StrEnum, auto
+from enum import auto
 
 from pydantic.dataclasses import dataclass
+from strenum import StrEnum
 
 
 # flake8: noqa
