@@ -1044,4 +1044,4 @@ devenv = ["check-manifest", "pytest (>=4.3)", "pytest-cov", "pytest-mock (>=3.3)
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "7cebdbc320458ffd673f3eb4a1309c38833e05ef5305131319f48aab0c2ae9da"
+content-hash = "6093dce76c20fe0236640f7ae692e86825a276d8d666c5cbbb42cde80a295a1e"
