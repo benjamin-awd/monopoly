@@ -8,6 +8,10 @@ inputs:
   poetry-version:
     description: 'Poetry version'
     required: true
+  install:
+    description: 'Whether to install poetry dependencies'
+    default: true
+    required: false
 
 runs:
   using: 'composite'
@@ -42,10 +46,11 @@ runs:
         key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
 
     - name: Install dependencies
-      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true' && inputs.install
       run: poetry install --no-interaction --no-root
       shell: bash
 
     - name: Install project
+      if: inputs.install
       run: poetry install --no-interaction
       shell: bash
