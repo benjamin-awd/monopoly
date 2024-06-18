@@ -10,7 +10,10 @@ inputs:
     required: true
   install:
     description: 'Whether to install poetry dependencies'
-    default: true
+    default: 'true'
+    required: false
+  virtualenvs-in-project:
+    default: 'true'
     required: false
 
 runs:
@@ -35,7 +38,7 @@ runs:
       with:
         version: ${{ inputs.poetry-version }}
         virtualenvs-create: true
-        virtualenvs-in-project: true
+        virtualenvs-in-project: ${{ inputs.virtualenvs-in-project }}
         installer-parallel: true
 
     - name: Load cached venv
@@ -46,11 +49,11 @@ runs:
         key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
 
     - name: Install dependencies
-      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true' && inputs.install
+      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true' && inputs.install == 'true'
       run: poetry install --no-interaction --no-root
       shell: bash
 
     - name: Install project
-      if: inputs.install
+      if: inputs.install == 'true'
       run: poetry install --no-interaction
       shell: bash
