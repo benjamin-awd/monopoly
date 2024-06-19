@@ -30,7 +30,7 @@ runs:
       uses: actions/cache@v3
       with:
         path: ~/.local
-        key: poetry-${{ inputs.poetry-version }}
+        key: poetry-${{ inputs.poetry-version }}-${{ runner.os }}
 
     - name: Install Poetry ${{ inputs.poetry-version }}
       if: steps.cached-poetry.outputs.cache-hit != 'true'
