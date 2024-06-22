@@ -29,7 +29,13 @@ Since Monopoly uses `pdftotext`, you'll need to install additional dependencies:
 apt-get install build-essential libpoppler-cpp-dev pkg-config
 ```
 
-Then intall with pipx:
+or
+
+```sh
+brew install gcc@11 pkg-config poppler
+```
+
+Then install with pipx:
 ```sh
 pipx install monopoly-core
 ```
