@@ -1,4 +1,4 @@
-![](https://raw.githubusercontent.com/benjamin-awd/monopoly/main/docs/logo.svg)
+<img src="https://raw.githubusercontent.com/benjamin-awd/monopoly/main/docs/logo.svg" width="396" height="91">
 
 -----------------
 [![Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://monopoly.streamlit.app)

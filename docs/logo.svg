@@ -1,6 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev/svgjs" width="395.52" height="90.95148654172374" viewBox="0 0 400 93">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev/svgjs" width="2000" height="459" viewBox="0 0 2000 459">
+  <style>
+    path {
+      fill: black;
+    }
+    @media (prefers-color-scheme: dark) {
+      path {
+        fill: white;
+      }
+    }
+  </style>
   <g transform="matrix(1,0,0,1,1.1609830920237982,2.2581999521143814)">
-    <svg viewBox="0 0 396 91" data-background-color="#ffffff" preserveAspectRatio="xMidYMid meet" height="90.95148654172374" width="395.52" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <svg viewBox="0 0 396 91" data-background-color="#ffffff" preserveAspectRatio="xMidYMid meet" height="459" width="2000" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
       <g id="tight-bounds" transform="matrix(1,0,0,1,0.23999999999995225,0.024256729138130595)">
         <svg viewBox="0 0 395.52 90.95148654172374" height="90.95148654172374" width="395.52">
           <g>
