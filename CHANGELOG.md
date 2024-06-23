@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.5] - 2024-06-23
+
+### ⛰️ Features
+
+- Provide support for python 3.10
+
+### 🛠️ Bug Fixes
+
+- *(build)* Remove mypy from main dependencies
+
+### 🚜 Refactor
+
+- *(build)* Allow poetry action to skip install
+- *(build)* Allow poetry action to install in system env
+
+### 📚 Documentation
+
+- Update old emojis in changelog
+- Simplify install instructions & add dev setup
+- *(README)* Add brew install alternative
+- *(logo)* Support dark mode
+
+### ⚙️ Miscellaneous Tasks
+
+- Add brewfile dev lock file to gitignore
+- Remove brewfile.dev
+- Remove makefile version pin on python 3.11
+- *(build)* Add runner os to poetry cache key
+
+### Build
+
+- *(dev-deps)* Add git cliff
+
 ## [0.9.4] - 2024-06-13
 
 ### ⛰️ Features

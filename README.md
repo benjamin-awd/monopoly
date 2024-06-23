@@ -91,5 +91,5 @@ Install dependencies using [Homebrew](https://brew.sh/)
 ```bash
 brew install make
 make setup
-brew bundle --file Brewfile.dev
+brew bundle
 ```
