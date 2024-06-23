@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.9.6] - 2024-06-23
+
+### 📚 Documentation
+
+- *(CHANGELOG)* Only include latest changes in release
+
 All notable changes to this project will be documented in this file.
 
 ## [0.9.5] - 2024-06-23
