@@ -30,12 +30,15 @@ jobs:
         id: monopoly_version
         run: echo "monopoly_version=$(poetry version --short)" >> $GITHUB_OUTPUT
 
+      - name: Create release changelog
+        run: git cliff --latest > RELEASE_CHANGELOG.md
+
       - name: Create a Github Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.monopoly_version.outputs.monopoly_version }}
           target_commitish: main
-          body_path: CHANGELOG.md
+          body_path: RELEASE_CHANGELOG.md
           files: |
             LICENSE.md
             dist/*monopoly*.whl
