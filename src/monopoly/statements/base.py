@@ -229,4 +229,5 @@ class BaseStatement(ABC):
 
 
 class SafetyCheckError(Exception):
-    """Raise when safety check fails"""
+    """Raised during the safety check if a number representing
+    the total sum of transactions cannot be found in the document"""
