@@ -73,7 +73,6 @@ encrypted_file_path = "path/to/encrypted.pdf"
 @skip_if_encrypted
 def test_auto_detectbank_identified(
     monkeypatch,
-    file_path: str = unencrypted_file_path,
 ):
     identifiers = MockBankTwo.identifiers
     mock_banks_list = [MockBankOne, MockBankTwo]
@@ -87,7 +86,6 @@ def test_auto_detectbank_identified(
 @skip_if_encrypted
 def test_detect_bank_not_identified(
     monkeypatch,
-    file_path: str = unencrypted_file_path,
 ):
     mock_banks_list = [MockBankThree]
     monkeypatch.setattr("monopoly.banks.banks", mock_banks_list)
