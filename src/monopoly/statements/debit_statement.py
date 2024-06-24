@@ -1,6 +1,6 @@
 import logging
 import re
-from functools import cached_property
+from functools import cached_property, lru_cache
 
 from monopoly.constants import EntryType
 from monopoly.statements.transaction import TransactionMatch
@@ -97,6 +97,7 @@ class DebitStatement(BaseStatement):
 
         raise ValueError(f"Debit header {column_name} missing in {self.debit_header}")
 
+    @lru_cache
     def perform_safety_check(self) -> bool:
         """
         Checks that debit and credit transaction sums
