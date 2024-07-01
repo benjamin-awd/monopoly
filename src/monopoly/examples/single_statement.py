@@ -1,3 +1,4 @@
+from monopoly.examples import ExampleBank
 from monopoly.pipeline import Pipeline
 
 
@@ -7,6 +8,9 @@ def example():
     a single bank statement
     """
     pipeline = Pipeline(file_path="src/monopoly/examples/example_statement.pdf")
+
+    # If you know the bank
+    # pipeline = Pipeline(file_path="src/monopoly/examples/example_statement.pdf", bank=ExampleBank)
 
     # This runs pdftotext on the PDF and
     # extracts transactions as raw text
