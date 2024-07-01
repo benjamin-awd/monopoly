@@ -1,6 +1,7 @@
 from dataclasses import dataclass
+from unittest.mock import PropertyMock, patch
 
-from monopoly.banks import is_bank_identified
+from monopoly.metadata import MetadataAnalyzer
 
 
 @dataclass
@@ -29,36 +30,42 @@ class TestBank:
     ]
 
 
-def test_is_bank_identified():
+@patch.object(MetadataAnalyzer, "metadata_items", new_callable=PropertyMock)
+def test_is_bank_identified(mock_metadata_items, metadata_analyzer: MetadataAnalyzer):
     """Test to check that all identifiers match on a bank"""
     # Test case 1: All identifiers match
     metadata_items = [
         MockIdentifier1(pdf_version=1.6),
         MockIdentifier2(title="Title"),
     ]
-    assert is_bank_identified(metadata_items, TestBank)
+    mock_metadata_items.return_value = metadata_items
+    assert metadata_analyzer.is_bank_identified(TestBank)
 
     # Test case 2: Only MockIdentifier1 matches
     metadata_items = [
         MockIdentifier1(pdf_version=1.6),
         MockIdentifier2(title="qwerty123"),
     ]
-    assert not is_bank_identified(metadata_items, TestBank)
+    mock_metadata_items.return_value = metadata_items
+    assert not metadata_analyzer.is_bank_identified(TestBank)
 
     # Test case 3: Only MockIdentifier2 matches
     metadata_items = [
         MockIdentifier1(pdf_version=1.7),
         MockIdentifier2(title="Title"),
     ]
-    assert not is_bank_identified(metadata_items, TestBank)
+    mock_metadata_items.return_value = metadata_items
+    assert not metadata_analyzer.is_bank_identified(TestBank)
 
     # Test case 4: No identifiers match
     metadata_items = [
         MockIdentifier1(pdf_version=1.7),
         MockIdentifier2(title="Different Title"),
     ]
-    assert not is_bank_identified(metadata_items, TestBank)
+    mock_metadata_items.return_value = metadata_items
+    assert not metadata_analyzer.is_bank_identified(TestBank)
 
     # Test case 5: Partial match (missing identifier)
     metadata_items = [MockIdentifier1(pdf_version=1.6)]
-    assert not is_bank_identified(metadata_items, TestBank)
+    mock_metadata_items.return_value = metadata_items
+    assert not metadata_analyzer.is_bank_identified(TestBank)

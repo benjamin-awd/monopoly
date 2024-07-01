@@ -222,3 +222,8 @@ class MetadataIdentifier(Identifier):
     subject: str = ""
     creator: str = ""
     producer: str = ""
+
+
+@dataclass
+class TextIdentifier(Identifier):
+    text: str = ""
