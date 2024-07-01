@@ -28,6 +28,7 @@ class Pipeline:
         file_path: Optional[Path] = None,
         file_bytes: Optional[bytes] = None,
         passwords: Optional[list[SecretStr]] = None,
+        bank: Optional[Type[BankBase]] = None
     ):
         self.file_path = file_path
         self.file_bytes = file_bytes
@@ -41,7 +42,7 @@ class Pipeline:
                 "Only one of `file_path` or `file_bytes` should be passed"
             )
 
-        self.bank = self._detect_bank()
+        self.bank = bank or self._detect_bank()
         self.parser = self._create_parser()
         self.handler = self._create_handler()
         self.statement = self.handler.get_statement(self.parser)
