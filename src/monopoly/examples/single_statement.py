@@ -1,16 +1,18 @@
-from monopoly.examples import ExampleBank
+from monopoly.banks import ExampleBank
 from monopoly.pipeline import Pipeline
 
 
-# pylint: disable=duplicate-code
 def example():
     """Example showing how monopoly can be used to extract data from
     a single bank statement
-    """
-    pipeline = Pipeline(file_path="src/monopoly/examples/example_statement.pdf")
 
-    # If you know the bank
-    # pipeline = Pipeline(file_path="src/monopoly/examples/example_statement.pdf", bank=ExampleBank)
+    You can pass in the bank class if you want to specify a specific bank,
+    or ignore the bank argument and let the Pipeline try to automatically
+    detect the bank.
+    """
+    pipeline = Pipeline(
+        file_path="src/monopoly/examples/example_statement.pdf", bank=ExampleBank
+    )
 
     # This runs pdftotext on the PDF and
     # extracts transactions as raw text
