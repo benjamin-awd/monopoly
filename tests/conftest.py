@@ -6,6 +6,7 @@ import pytest
 
 from monopoly.config import CreditStatementConfig, DateOrder, PdfConfig
 from monopoly.handler import StatementHandler
+from monopoly.metadata import MetadataAnalyzer
 from monopoly.pdf import PdfDocument, PdfPage, PdfParser
 from monopoly.statements import BaseStatement, CreditStatement, DebitStatement
 
@@ -19,7 +20,12 @@ def mock_env():
 
 @pytest.fixture
 def pdf_document():
-    return PdfDocument()
+    yield PdfDocument()
+
+
+@pytest.fixture
+def metadata_analyzer(pdf_document):
+    yield MetadataAnalyzer(pdf_document)
 
 
 @pytest.fixture

@@ -61,7 +61,7 @@ class Pipeline:
     @staticmethod
     def detect_bank(document) -> Type[BankBase]:
         analyzer = MetadataAnalyzer(document)
-        if bank := analyzer.bank:
+        if bank := analyzer.detect_bank():
             return bank
         logger.warning("Unable to detect bank, transactions may be inaccurate")
         return GenericBank
