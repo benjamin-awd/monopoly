@@ -28,7 +28,7 @@ class Pipeline:
         file_path: Optional[Path] = None,
         file_bytes: Optional[bytes] = None,
         passwords: Optional[list[SecretStr]] = None,
-        bank: Optional[Type[BankBase]] = None
+        bank: Optional[Type[BankBase]] = None,
     ):
         self.file_path = file_path
         self.file_bytes = file_bytes
