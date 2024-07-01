@@ -1,5 +1,6 @@
 import logging
 from functools import cached_property
+from typing import Type
 
 from monopoly.banks import BankBase
 from monopoly.config import CreditStatementConfig, DebitStatementConfig
@@ -27,12 +28,12 @@ class GenericBank(BankBase):
 
 
 class GenericStatementHandler(StatementHandler):
-    def __init__(self, parser: PdfParser):
-        pages = parser.get_pages()
+    def __init__(self, bank: Type[BankBase], parser: PdfParser):
+        pages = parser.get_pages(bank)
         self.analyzer = DatePatternAnalyzer(pages)
-        parser.bank.debit_config = self.debit_config
-        parser.bank.credit_config = self.credit_config
-        super().__init__(parser)
+        bank.debit_config = self.debit_config
+        bank.credit_config = self.credit_config
+        super().__init__(bank, parser)
 
     @cached_property
     def debit_config(self):

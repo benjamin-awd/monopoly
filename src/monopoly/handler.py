@@ -1,5 +1,7 @@
 import logging
+from typing import Type
 
+from monopoly.banks import BankBase
 from monopoly.pdf import PdfParser
 from monopoly.statements import CreditStatement, DebitStatement
 
@@ -13,10 +15,10 @@ class StatementHandler:
     based on the debit and credit config.
     """
 
-    def __init__(self, parser: PdfParser):
+    def __init__(self, bank: Type[BankBase], parser: PdfParser):
+        self.bank = bank
         self.parser = parser
-        self.bank = parser.bank
-        self.statement = self.get_statement(self.parser)
+        self.statement = self.get_statement(self.bank, self.parser)
 
     @property
     def transactions(self):
@@ -30,12 +32,11 @@ class StatementHandler:
         self.statement.perform_safety_check()
 
     @classmethod
-    def get_statement(cls, parser: PdfParser) -> CreditStatement | DebitStatement:
-        bank = parser.bank
+    def get_statement(cls, bank: Type[BankBase], parser: PdfParser) -> CreditStatement | DebitStatement:
         debit_config, credit_config = bank.debit_config, bank.credit_config
 
         if debit_config:
-            debit_statement = DebitStatement(parser, debit_config)
+            debit_statement = DebitStatement(bank, parser, debit_config)
             # if we can find transactions using the debit config
             # assume that it is a debit statement
             try:
@@ -56,4 +57,4 @@ class StatementHandler:
             raise RuntimeError("Missing credit config")
 
         # if it's not a debit statement, assume that it's a credit statement
-        return CreditStatement(parser, credit_config)
+        return CreditStatement(bank, parser, credit_config)

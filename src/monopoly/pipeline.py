@@ -41,29 +41,31 @@ class Pipeline:
                 "Only one of `file_path` or `file_bytes` should be passed"
             )
 
-        self.bank = self._detect_bank()
         self.parser = self._create_parser()
+        raw_text = self.parser.get_raw_text(self.passwords)
+
+        self.bank = self._detect_bank(raw_text)
         self.handler = self._create_handler()
-        self.statement = self.handler.get_statement(self.parser)
+        self.statement = self.handler.get_statement(self.bank, self.parser)
 
     def _create_parser(self) -> PdfParser:
         return PdfParser(
-            self.bank,
             file_path=self.file_path,
-            file_bytes=self.file_bytes,
-            passwords=self.passwords,
+            file_bytes=self.file_bytes
         )
 
     def _create_handler(self) -> GenericStatementHandler | StatementHandler:
         if issubclass(self.bank, GenericBank):
             logger.debug("Using generic statement handler")
-            return GenericStatementHandler(self.parser)
+            return GenericStatementHandler(self.bank, self.parser)
         logger.debug("Using statement handler with bank: %s", self.bank.__name__)
-        return StatementHandler(self.parser)
+        return StatementHandler(self.bank, self.parser)
 
-    def _detect_bank(self) -> Type[BankBase]:
+    def _detect_bank(self, raw_text: str) -> Type[BankBase]:
         analyzer = MetadataAnalyzer(
-            file_path=self.file_path, file_bytes=self.file_bytes
+            raw_text=raw_text,
+            file_path=self.file_path,
+            file_bytes=self.file_bytes
         )
         if bank := analyzer.bank:
             return bank

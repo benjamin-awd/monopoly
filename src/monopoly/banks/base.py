@@ -5,7 +5,7 @@ from typing import Optional
 from pydantic import SecretStr
 
 from monopoly.config import CreditStatementConfig, DebitStatementConfig, PdfConfig
-from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
+from monopoly.constants import EncryptionIdentifier, MetadataIdentifier, SubTextIdentifier
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +44,7 @@ class BankBase(ABC):
 
     @property
     @abstractmethod
-    def identifiers(self) -> list[EncryptionIdentifier | MetadataIdentifier]:
+    def identifiers(self) -> list[EncryptionIdentifier | MetadataIdentifier | SubTextIdentifier]:
         raise NotImplementedError("Identifiers must be defined")
 
     @property

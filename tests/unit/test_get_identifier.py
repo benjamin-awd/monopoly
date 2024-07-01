@@ -29,7 +29,7 @@ def metadata_analyzer():
             metadata = None
 
         mock_analyzer_document.return_value = MockDocument()
-        analyzer = MetadataAnalyzer()
+        analyzer = MetadataAnalyzer("")
         yield analyzer
 
 

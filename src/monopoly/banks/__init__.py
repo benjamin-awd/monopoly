@@ -3,7 +3,7 @@ from dataclasses import Field, fields
 from itertools import product
 from typing import Type
 
-from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
+from monopoly.constants import EncryptionIdentifier, MetadataIdentifier, SubTextIdentifier
 
 from ..examples.example_bank import ExampleBank
 from .base import BankBase
@@ -33,16 +33,27 @@ class UnsupportedBankError(Exception):
 
 def detect_bank(
     metadata_items: list[EncryptionIdentifier | MetadataIdentifier],
+    raw_text: str,
 ) -> Type[BankBase] | None:
     """
     Reads the encryption metadata or actual metadata (if the PDF is not encrypted),
     and checks for a bank based on unique identifiers.
     """
     for bank in banks:
-        if is_bank_identified(metadata_items, bank):
+        subtext_identifiers = list(filter(lambda i: type(i) == SubTextIdentifier, bank.identifiers))
+        other_identifiers = list(filter(lambda i: type(i) != SubTextIdentifier, bank.identifiers))
+        subtext_match = does_subtext_match(subtext_identifiers, raw_text)
+
+        if subtext_match and ((not other_identifiers) or is_bank_identified(metadata_items, bank)):
             return bank
     return None
 
+
+def does_subtext_match(
+    subtext_identifiers: list[SubTextIdentifier],
+    raw_text: str,
+) -> bool:
+    return not subtext_identifiers or all(identifier.text in raw_text for identifier in subtext_identifiers)
 
 def is_bank_identified(
     metadata_items: list[EncryptionIdentifier | MetadataIdentifier],
@@ -51,9 +62,7 @@ def is_bank_identified(
     """
     Checks if a bank is identified based on a list of metadata items.
     """
-    for identifier, metadata in product(
-        bank.identifiers, metadata_items
-    ):  # type: ignore
+    for identifier, metadata in product(bank.identifiers, metadata_items):  # type: ignore
         # Only compare matching identifier types
         if type(metadata) is not type(identifier):
             continue

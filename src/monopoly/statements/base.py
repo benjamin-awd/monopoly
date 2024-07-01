@@ -4,9 +4,11 @@ from abc import ABC
 from datetime import datetime
 from functools import cached_property, lru_cache
 from pathlib import Path
+from typing import Type
 
 from dateparser import parse
 
+from monopoly.banks import BankBase
 from monopoly.config import CreditStatementConfig, DebitStatementConfig
 from monopoly.constants import Columns, SharedPatterns
 from monopoly.pdf import PdfParser
@@ -29,10 +31,12 @@ class BaseStatement(ABC):
 
     def __init__(
         self,
+        bank: Type[BankBase],
         parser: PdfParser,
         config: CreditStatementConfig | DebitStatementConfig,
     ):
-        self.pages = parser.get_pages()
+        self.bank = bank
+        self.pages = parser.get_pages(bank)
         self.config = config
         self.columns: list[str] = [
             Columns.DATE,
@@ -41,10 +45,6 @@ class BaseStatement(ABC):
         ]
         self.parser = parser
         self.document = parser.document
-
-    @property
-    def bank(self):
-        return self.parser.bank
 
     @property
     def pattern(self):

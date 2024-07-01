@@ -1,8 +1,10 @@
+from typing import Type
 from unittest.mock import MagicMock, Mock, PropertyMock, patch
 
 import fitz
 import pytest
 
+from monopoly.banks import BankBase
 from monopoly.config import CreditStatementConfig, DateOrder, PdfConfig
 from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfPage, PdfParser
@@ -33,9 +35,9 @@ def mock_document():
 
 
 @pytest.fixture(scope="function")
-def handler(parser):
+def handler(mock_bank: Type[BankBase], parser):
     with patch.object(StatementHandler, "get_statement") as _:
-        handler = StatementHandler(parser)
+        handler = StatementHandler(mock_bank, parser)
         yield handler
 
 
@@ -49,13 +51,14 @@ def mock_bank():
 
 
 @pytest.fixture
-def parser(mock_bank):
-    parser = PdfParser(file_path=None, bank=mock_bank)
+def parser():
+    parser = PdfParser(file_path=None)
     yield parser
 
 
 def setup_statement_fixture(
     statement_cls: BaseStatement | DebitStatement | CreditStatement,
+    mock_bank: Type[BankBase],
     statement_config,
 ):
     mock_parser = MagicMock(spec=PdfParser)
@@ -66,23 +69,23 @@ def setup_statement_fixture(
 
     document = MagicMock(spec=fitz.Document)
     document.name = "mock_document.pdf"
-    statement = statement_cls(parser=mock_parser, config=statement_config)
+    statement = statement_cls(bank=mock_bank, parser=mock_parser, config=statement_config)
     yield statement
 
 
 @pytest.fixture(scope="function")
-def credit_statement(statement_config):
-    yield from setup_statement_fixture(CreditStatement, statement_config)
+def credit_statement(mock_bank: Type[BankBase], statement_config):
+    yield from setup_statement_fixture(CreditStatement, mock_bank, statement_config)
 
 
 @pytest.fixture(scope="function")
-def debit_statement(statement_config):
-    yield from setup_statement_fixture(DebitStatement, statement_config)
+def debit_statement(mock_bank: Type[BankBase], statement_config):
+    yield from setup_statement_fixture(DebitStatement, mock_bank, statement_config)
 
 
 @pytest.fixture(scope="function")
-def statement(statement_config):
-    yield from setup_statement_fixture(BaseStatement, statement_config)
+def statement(mock_bank: Type[BankBase],statement_config):
+    yield from setup_statement_fixture(BaseStatement, mock_bank, statement_config)
 
 
 @pytest.fixture(scope="session")

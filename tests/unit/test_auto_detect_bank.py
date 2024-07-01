@@ -78,7 +78,7 @@ def test_auto_detectbank_identified(
     mock_banks_list = [MockBankOne, MockBankTwo]
     monkeypatch.setattr("monopoly.banks.banks", mock_banks_list)
 
-    bank = detect_bank(identifiers)
+    bank = detect_bank(identifiers, "")
 
     assert bank.__name__ == MockBankTwo.__name__
 
@@ -91,4 +91,4 @@ def test_detect_bank_not_identified(
     monkeypatch.setattr("monopoly.banks.banks", mock_banks_list)
 
     # None should be returned here
-    assert not detect_bank([MetadataIdentifier(creator="asdf", producer="qwerty")])
+    assert not detect_bank([MetadataIdentifier(creator="asdf", producer="qwerty")], "")

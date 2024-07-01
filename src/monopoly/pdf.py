@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass
-from functools import cached_property, lru_cache
+from functools import cached_property
 from io import BytesIO
 from pathlib import Path
 from typing import Optional, Type
@@ -43,11 +43,9 @@ class BadPasswordFormatError(Exception):
 
 class PdfParser:
     def __init__(
-        self,
-        bank: Type[BankBase],
-        passwords: Optional[list[SecretStr]] = None,
-        file_path: Optional[Path] = None,
-        file_bytes: Optional[bytes] = None,
+            self,
+            file_path: Optional[Path] = None,
+            file_bytes: Optional[bytes] = None,
     ):
         """
         Class responsible for parsing PDFs and returning raw text
@@ -55,30 +53,10 @@ class PdfParser:
         The page_range variable determines which pages are extracted.
         All pages are extracted by default.
         """
-        self._passwords = passwords
         self.file_path = file_path
         self.file_bytes = file_bytes
-        self.bank = bank
 
-    @property
-    def passwords(self):
-        if not self._passwords:
-            return self.bank.passwords
-        return self._passwords
-
-    @property
-    def pdf_config(self):
-        return self.bank.pdf_config
-
-    @cached_property
-    def page_range(self):
-        return slice(*self.pdf_config.page_range)
-
-    @cached_property
-    def page_bbox(self):
-        return self.pdf_config.page_bbox
-
-    def open(self):
+    def open(self, passwords: Optional[list[SecretStr]] = None):
         """
         Opens and decrypts a PDF document
         """
@@ -87,19 +65,19 @@ class PdfParser:
         if not document.is_encrypted:
             return document
 
-        if not self.passwords:
+        if not passwords:
             raise MissingPasswordError("No password found in PDF configuration")
 
-        if not any(str(password) for password in self.passwords):
+        if not any(str(password) for password in passwords):
             raise MissingPasswordError("Password in PDF configuration is empty")
 
-        if not isinstance(self.passwords, list):
+        if not isinstance(passwords, list):
             raise BadPasswordFormatError("Passwords should be stored in a list")
 
-        if not all(isinstance(item, SecretStr) for item in self.passwords):
+        if not all(isinstance(item, SecretStr) for item in passwords):
             raise BadPasswordFormatError("Passwords should be stored as SecretStr")
 
-        for password in self.passwords:
+        for password in passwords:
             document.authenticate(password.get_secret_value())
 
             if not document.is_encrypted:
@@ -107,22 +85,23 @@ class PdfParser:
                 return document
         raise WrongPasswordError(f"Could not open document: {document.name}")
 
-    @lru_cache
-    def get_pages(self) -> list[PdfPage]:
+    def get_pages(self, bank: Type[BankBase]) -> list[PdfPage]:
         logger.debug("Extracting text from PDF")
-        document: fitz.Document = self.open()
+        document: fitz.Document = self.open(bank.passwords)
+        pdf_config = bank.pdf_config
+        page_range = slice(*pdf_config.page_range)
 
         num_pages = list(range(document.page_count))
-        document.select(num_pages[self.page_range])
+        document.select(num_pages[page_range])
 
-        if cropbox := self.page_bbox:
+        if cropbox := pdf_config.page_bbox:
             logger.debug(
                 "Will crop pages with crop box %s and remove vertical text", cropbox
             )
         for page in document:
-            if self.page_bbox:
+            if pdf_config.page_bbox:
                 page.set_cropbox(cropbox)
-            page = self._remove_vertical_text(page)
+            self._remove_vertical_text(page)
 
         # certain statements require garbage collection, so that duplicate objects
         # do not cause pdftotext to fail due to missing xrefs/null values
@@ -135,6 +114,25 @@ class PdfParser:
                 pdf_byte_stream = BytesIO(document.tobytes(garbage=garbage))
                 pdf = pdftotext.PDF(pdf_byte_stream, physical=True)
                 return [PdfPage(page) for page in pdf]
+            except pdftotext.Error:
+                continue
+        raise RuntimeError("Unable to retrieve pages")
+
+    def get_raw_text(self, passwords: Optional[list[SecretStr]] = None) -> str:
+        logger.debug("Extracting text from PDF")
+        document: fitz.Document = self.open(passwords)
+
+        # certain statements require garbage collection, so that duplicate objects
+        # do not cause pdftotext to fail due to missing xrefs/null values
+        # however, setting `garbage=2` may cause issues with other statements
+        # so an initial attempt should be made to run using `garbage=0`
+        garbage_values = [0, 2]
+
+        for garbage in garbage_values:
+            try:
+                pdf_byte_stream = BytesIO(document.tobytes(garbage=garbage))
+                pdf = pdftotext.PDF(pdf_byte_stream, physical=True)
+                return " ".join([page for page in pdf])
             except pdftotext.Error:
                 continue
         raise RuntimeError("Unable to retrieve pages")

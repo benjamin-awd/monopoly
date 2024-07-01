@@ -34,19 +34,23 @@ class EncryptDict:
 
 class MetadataAnalyzer:
     def __init__(
-        self, file_path: Optional[Path] = None, file_bytes: Optional[bytes] = None
+        self,
+        raw_text: str,
+        file_path: Optional[Path] = None,
+        file_bytes: Optional[bytes] = None
     ):
         if file_path and file_bytes:
             raise ValueError(
                 "Only one of `file_path` or `file_bytes` should be provided"
             )
 
+        self.raw_text = raw_text
         self.file_path = file_path
         self.file_bytes = file_bytes
 
     @property
     def bank(self):
-        return detect_bank(self.metadata_items)
+        return detect_bank(self.metadata_items, self.raw_text)
 
     @property
     def document(self):
