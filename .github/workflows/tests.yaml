@@ -26,7 +26,9 @@ jobs:
       - name: Install git crypt & run tests
         uses: Flydiverny/setup-git-crypt@v3
 
+      - name: Unlock files
+        continue-on-error: true
+        run: echo "${{ secrets.GIT_CRYPT_KEY }}" | base64 --decode | git-crypt unlock -
+
       - name: Run tests
-        run: |
-          echo "${{ secrets.GIT_CRYPT_KEY }}" | base64 --decode | git-crypt unlock -
-          poetry run task test
+        run: poetry run task test
