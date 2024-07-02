@@ -1,6 +1,6 @@
 import logging
 
-from monopoly.config import CreditStatementConfig, DebitStatementConfig, passwords
+from monopoly.config import CreditStatementConfig, DebitStatementConfig
 from monopoly.constants import (
     BankNames,
     CreditTransactionPatterns,
@@ -39,5 +39,3 @@ class Ocbc(BankBase):
             creator="pdfgen", producer="Streamline PDFGen for OCBC Group"
         ),
     ]
-
-    passwords = passwords.ocbc_pdf_passwords

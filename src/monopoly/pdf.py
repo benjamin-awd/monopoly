@@ -10,6 +10,7 @@ import pdftotext
 from pydantic import SecretStr
 
 from monopoly.banks import BankBase
+from monopoly.config import passwords as env_passwords
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +64,7 @@ class PdfParser:
     @property
     def passwords(self):
         if not self._passwords:
-            return self.bank.passwords
+            return env_passwords
         return self._passwords
 
     @property

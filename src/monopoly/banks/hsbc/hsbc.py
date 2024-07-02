@@ -1,6 +1,6 @@
 import logging
 
-from monopoly.config import CreditStatementConfig, PdfConfig, passwords
+from monopoly.config import CreditStatementConfig, PdfConfig
 from monopoly.constants import (
     BankNames,
     CreditTransactionPatterns,
@@ -36,5 +36,3 @@ class Hsbc(BankBase):
             creator="OpenText Exstream",
         ),
     ]
-
-    passwords = passwords.hsbc_pdf_passwords

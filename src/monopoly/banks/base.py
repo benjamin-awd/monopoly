@@ -2,8 +2,6 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from pydantic import SecretStr
-
 from monopoly.config import CreditStatementConfig, DebitStatementConfig, PdfConfig
 from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
 
@@ -46,9 +44,3 @@ class BankBase(ABC):
     @abstractmethod
     def identifiers(self) -> list[EncryptionIdentifier | MetadataIdentifier]:
         raise NotImplementedError("Identifiers must be defined")
-
-    @property
-    def passwords(self) -> Optional[list[SecretStr]]:
-        if self.passwords:
-            return self.passwords
-        return None

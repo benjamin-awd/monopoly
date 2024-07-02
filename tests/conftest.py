@@ -1,3 +1,4 @@
+import os
 from unittest.mock import MagicMock, Mock, PropertyMock, patch
 
 import fitz
@@ -7,6 +8,13 @@ from monopoly.config import CreditStatementConfig, DateOrder, PdfConfig
 from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfPage, PdfParser
 from monopoly.statements import BaseStatement, CreditStatement, DebitStatement
+
+
+@pytest.fixture
+def mock_env():
+    """Prevents existing environment variables from interfering with tests"""
+    with patch.dict(os.environ, clear=True):
+        yield
 
 
 @pytest.fixture
