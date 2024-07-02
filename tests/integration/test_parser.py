@@ -1,4 +1,5 @@
 from pathlib import Path
+from unittest.mock import PropertyMock, patch
 
 from pydantic import SecretStr
 from pytest import raises
@@ -67,9 +68,14 @@ def test_error_raised_if_override_is_wrong(parser: PdfParser):
 
 def test_missing_password_raises_error(parser: PdfParser):
     parser.file_path = fixture_directory / "protected.pdf"
-
-    with raises(MissingPasswordError, match="No password found in PDF configuration"):
-        parser.open()
+    with patch(
+        "monopoly.pdf.PdfParser.passwords", new_callable=PropertyMock
+    ) as mock_passwords:
+        mock_passwords.return_value = None
+        with raises(
+            MissingPasswordError, match="No password found in PDF configuration"
+        ):
+            parser.open()
 
 
 def test_null_password_raises_error(parser: PdfParser):

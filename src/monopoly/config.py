@@ -9,22 +9,14 @@ from monopoly.constants import BankNames, InternalBankNames
 
 
 class PdfPasswords(BaseSettings):
-    ocbc_pdf_passwords: list[SecretStr] = [SecretStr("")]
-    citibank_pdf_passwords: list[SecretStr] = [SecretStr("")]
-    standard_chartered_pdf_passwords: list[SecretStr] = [SecretStr("")]
-    hsbc_pdf_passwords: list[SecretStr] = [SecretStr("")]
-
-    model_config = SettingsConfigDict(env_file=".env", extra="allow")
-
-
-class Passwords(BaseSettings):
     """
     Pydantic model that automatically populates variables from a .env file,
     or an environment variable called `passwords`.
-    e.g. export PASSWORDS='{"OCBC_PDF_PASSWORDS": ...}'
+    e.g. export PDF_PASSWORDS='["password123", "secretpass"]'
     """
 
-    passwords: PdfPasswords = PdfPasswords()
+    pdf_passwords: list[SecretStr] = [SecretStr("")]
+    model_config = SettingsConfigDict(env_file=".env", extra="allow")
 
 
 @dataclass(frozen=True)
@@ -116,4 +108,4 @@ class PdfConfig:
     page_bbox: Optional[tuple[float, float, float, float]] = None
 
 
-passwords = Passwords().passwords
+passwords = PdfPasswords().pdf_passwords
