@@ -51,9 +51,8 @@ def is_bank_identified(
     """
     Checks if a bank is identified based on a list of metadata items.
     """
-    for identifier, metadata in product(
-        bank.identifiers, metadata_items
-    ):  # type: ignore
+    identifier_matches = []
+    for identifier, metadata in product(bank.identifiers, metadata_items):  # type: ignore
         # Only compare matching identifier types
         if type(metadata) is not type(identifier):
             continue
@@ -65,12 +64,16 @@ def is_bank_identified(
             identifier,
         )
 
-        if all(
-            check_matching_field(field, metadata, identifier)
-            for field in fields(metadata)
-        ):
-            logger.debug("Identified statement bank: %s", bank.__name__)
-            return True
+        identifier_matches.append(
+            all(
+                check_matching_field(field, metadata, identifier)
+                for field in fields(metadata)
+            )
+        )
+
+    if identifier_matches and all(identifier_matches):
+        logger.debug("Identified statement bank: %s", bank.__name__)
+        return True
 
     return False
 
