@@ -42,5 +42,5 @@ class BankBase(ABC):
 
     @property
     @abstractmethod
-    def identifiers(self) -> list[EncryptionIdentifier | MetadataIdentifier]:
+    def identifiers(self) -> list[list[EncryptionIdentifier | MetadataIdentifier]]:
         raise NotImplementedError("Identifiers must be defined")

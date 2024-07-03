@@ -51,29 +51,35 @@ def is_bank_identified(
     """
     Checks if a bank is identified based on a list of metadata items.
     """
-    identifier_matches = []
-    for identifier, metadata in product(bank.identifiers, metadata_items):  # type: ignore
-        # Only compare matching identifier types
-        if type(metadata) is not type(identifier):
-            continue
+    for grouped_identifiers in bank.identifiers:  # type: ignore
+        identifier_matches = []
+        for identifier, metadata in product(grouped_identifiers, metadata_items):
+            # Only compare matching identifier types
+            if type(metadata) is not type(identifier):
+                continue
 
-        logger.debug(
-            "Checking if PDF %s matches %s %s",
-            metadata.__class__.__name__,
-            bank.__name__,
-            identifier,
-        )
+            # if number of metadata items does not match bank identifiers
+            # continue to prevent partial matching
+            if len(metadata_items) != len(grouped_identifiers):
+                continue
 
-        identifier_matches.append(
-            all(
-                check_matching_field(field, metadata, identifier)
-                for field in fields(metadata)
+            logger.debug(
+                "Checking if PDF %s matches %s %s",
+                metadata.__class__.__name__,
+                bank.__name__,
+                identifier,
             )
-        )
 
-    if identifier_matches and all(identifier_matches):
-        logger.debug("Identified statement bank: %s", bank.__name__)
-        return True
+            identifier_matches.append(
+                all(
+                    check_matching_field(field, metadata, identifier)
+                    for field in fields(metadata)
+                )
+            )
+
+        if identifier_matches and all(identifier_matches):
+            logger.debug("Identified statement bank: %s", bank.__name__)
+            return True
 
     return False
 

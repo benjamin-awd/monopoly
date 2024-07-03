@@ -27,8 +27,10 @@ class Citibank(BankBase):
     )
 
     identifiers = [
-        MetadataIdentifier(
-            creator="Ricoh Americas Corporation, AFP2PDF",
-            producer="Ricoh Americas Corporation, AFP2PDF",
-        )
+        [
+            MetadataIdentifier(
+                creator="Ricoh Americas Corporation, AFP2PDF",
+                producer="Ricoh Americas Corporation, AFP2PDF",
+            )
+        ]
     ]

@@ -27,8 +27,10 @@ class StandardChartered(BankBase):
     )
 
     identifiers = [
-        MetadataIdentifier(
-            title="eStatement",
-            producer="iText",
-        )
+        [
+            MetadataIdentifier(
+                title="eStatement",
+                producer="iText",
+            )
+        ]
     ]
