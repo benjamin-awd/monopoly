@@ -32,7 +32,7 @@ def test_bank_credit_statements(
 ):
     bank_name = bank.credit_config.bank_name
     test_directory = Path(__file__).parent / bank_name / "credit"
-    pipeline = Pipeline(test_directory / "input.pdf")
+    pipeline = Pipeline(test_directory / "input.pdf", bank=bank)
     statement: CreditStatement = pipeline.extract()
 
     # check raw data

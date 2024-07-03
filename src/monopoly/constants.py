@@ -126,7 +126,7 @@ class StatementBalancePatterns(StrEnum):
         + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
     )
     MAYBANK = (
-        r"(?P<description>PREVIOUS STATEMENT BALANCE?)\s+"
+        r"(?P<description>YOUR PREVIOUS STATEMENT BALANCE?)\s+"
         + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
     )
     OCBC = (

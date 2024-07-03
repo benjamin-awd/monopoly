@@ -6,7 +6,7 @@ import pytest
 
 from monopoly.config import CreditStatementConfig, DateOrder, PdfConfig
 from monopoly.handler import StatementHandler
-from monopoly.pdf import PdfPage, PdfParser
+from monopoly.pdf import PdfDocument, PdfPage, PdfParser
 from monopoly.statements import BaseStatement, CreditStatement, DebitStatement
 
 
@@ -15,6 +15,11 @@ def mock_env():
     """Prevents existing environment variables from interfering with tests"""
     with patch.dict(os.environ, clear=True):
         yield
+
+
+@pytest.fixture
+def pdf_document():
+    return PdfDocument()
 
 
 @pytest.fixture
@@ -27,7 +32,7 @@ def mock_get_pages():
 @pytest.fixture
 def mock_document():
     with patch(
-        "monopoly.pdf.PdfParser.document", new_callable=PropertyMock
+        "monopoly.pdf.PdfDocument.document", new_callable=PropertyMock
     ) as mock_document_prop:
         mock_document_instance = mock_document_prop.return_value
         type(mock_document_instance).metadata = PropertyMock(
@@ -37,7 +42,7 @@ def mock_document():
             }
         )
         type(mock_document_instance).name = PropertyMock(return_value="foo")
-        yield mock_document
+        yield mock_document_prop
 
 
 @pytest.fixture(scope="function")
@@ -58,7 +63,7 @@ def mock_bank():
 
 @pytest.fixture
 def parser(mock_bank):
-    parser = PdfParser(file_path=None, bank=mock_bank)
+    parser = PdfParser(bank=mock_bank, document=None)
     yield parser
 
 
@@ -74,6 +79,7 @@ def setup_statement_fixture(
 
     document = MagicMock(spec=fitz.Document)
     document.name = "mock_document.pdf"
+    mock_parser.document = document
     statement = statement_cls(parser=mock_parser, config=statement_config)
     yield statement
 

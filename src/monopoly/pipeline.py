@@ -12,7 +12,7 @@ from monopoly.generic import GenericStatementHandler
 from monopoly.generic.generic_handler import GenericBank
 from monopoly.handler import StatementHandler
 from monopoly.metadata import MetadataAnalyzer
-from monopoly.pdf import PdfParser
+from monopoly.pdf import PdfDocument, PdfParser
 from monopoly.statements import CreditStatement, DebitStatement
 from monopoly.statements.transaction import Transaction
 from monopoly.write import generate_name
@@ -42,30 +42,25 @@ class Pipeline:
                 "Only one of `file_path` or `file_bytes` should be passed"
             )
 
-        self.bank = bank or self._detect_bank()
-        self.parser = self._create_parser()
-        self.handler = self._create_handler()
-        self.statement = self.handler.get_statement(self.parser)
+        document = PdfDocument(passwords, file_bytes=file_bytes, file_path=file_path)
+        bank = bank or self.detect_bank(document)
+        parser = PdfParser(bank, document)
+        self.handler = self.create_handler(bank, parser)
+        self.statement = self.handler.get_statement(parser)
 
-    def _create_parser(self) -> PdfParser:
-        return PdfParser(
-            self.bank,
-            file_path=self.file_path,
-            file_bytes=self.file_bytes,
-            passwords=self.passwords,
-        )
-
-    def _create_handler(self) -> GenericStatementHandler | StatementHandler:
-        if issubclass(self.bank, GenericBank):
+    @staticmethod
+    def create_handler(
+        bank: Type[BankBase], parser: PdfParser
+    ) -> GenericStatementHandler | StatementHandler:
+        if issubclass(bank, GenericBank):
             logger.debug("Using generic statement handler")
-            return GenericStatementHandler(self.parser)
-        logger.debug("Using statement handler with bank: %s", self.bank.__name__)
-        return StatementHandler(self.parser)
+            return GenericStatementHandler(parser)
+        logger.debug("Using statement handler with bank: %s", bank.__name__)
+        return StatementHandler(parser)
 
-    def _detect_bank(self) -> Type[BankBase]:
-        analyzer = MetadataAnalyzer(
-            file_path=self.file_path, file_bytes=self.file_bytes
-        )
+    @staticmethod
+    def detect_bank(document) -> Type[BankBase]:
+        analyzer = MetadataAnalyzer(document)
         if bank := analyzer.bank:
             return bank
         logger.warning("Unable to detect bank, transactions may be inaccurate")

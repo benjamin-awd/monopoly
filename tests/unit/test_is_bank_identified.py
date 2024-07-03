@@ -22,8 +22,10 @@ class MockIdentifier3:
 class TestBank:
     __test__ = False
     identifiers = [
-        MockIdentifier1(pdf_version=1.6),
-        MockIdentifier2(title="Title"),
+        [
+            MockIdentifier1(pdf_version=1.6),
+            MockIdentifier2(title="Title"),
+        ]
     ]
 
 

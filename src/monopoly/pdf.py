@@ -42,24 +42,18 @@ class BadPasswordFormatError(Exception):
     """Exception raised passwords are not provided in a proper format"""
 
 
-class PdfParser:
+class PdfDocument:
+    """Handles logic related to the opening, unlocking and storage of a PDF document"""
+
     def __init__(
         self,
-        bank: Type[BankBase],
         passwords: Optional[list[SecretStr]] = None,
         file_path: Optional[Path] = None,
         file_bytes: Optional[bytes] = None,
     ):
-        """
-        Class responsible for parsing PDFs and returning raw text
-
-        The page_range variable determines which pages are extracted.
-        All pages are extracted by default.
-        """
         self._passwords = passwords
         self.file_path = file_path
         self.file_bytes = file_bytes
-        self.bank = bank
 
     @property
     def passwords(self):
@@ -67,19 +61,44 @@ class PdfParser:
             return env_passwords
         return self._passwords
 
-    @property
-    def pdf_config(self):
-        return self.bank.pdf_config
+    @cached_property
+    def name(self):
+        return self.open().name
 
     @cached_property
-    def page_range(self):
-        return slice(*self.pdf_config.page_range)
+    def metadata(self):
+        return self.open().metadata
 
     @cached_property
-    def page_bbox(self):
-        return self.pdf_config.page_bbox
+    def document(self) -> fitz.Document:
+        """
+        Returns a Python representation of a PDF document.
+        """
+        if not self.file_path and not self.file_bytes:
+            raise RuntimeError("Either `file_path` or `file_bytes` must be passed")
 
-    def open(self):
+        if self.file_path and self.file_bytes:
+            raise RuntimeError(
+                "Only one of `file_path` or `file_bytes` should be defined"
+            )
+
+        args = {"filename": self.file_path, "stream": self.file_bytes}
+        return fitz.Document(**args)
+
+    @lru_cache
+    def get_byte_stream(self) -> BytesIO:
+        if self.file_path:
+            with open(self.file_path, "rb") as file:
+                stream = BytesIO(file.read())
+            return stream
+
+        if self.file_bytes:
+            return BytesIO(self.file_bytes)
+
+        raise RuntimeError("Unable to create document")
+
+    @lru_cache
+    def open(self) -> fitz.Document:
         """
         Opens and decrypts a PDF document
         """
@@ -108,10 +127,34 @@ class PdfParser:
                 return document
         raise WrongPasswordError(f"Could not open document: {document.name}")
 
+
+class PdfParser:
+    def __init__(self, bank: Type[BankBase], document: PdfDocument):
+        """
+        Class responsible for parsing PDFs and returning raw text
+
+        The page_range variable determines which pages are extracted.
+        All pages are extracted by default.
+        """
+        self.bank = bank
+        self.document = document
+
+    @property
+    def pdf_config(self):
+        return self.bank.pdf_config
+
+    @cached_property
+    def page_range(self):
+        return slice(*self.pdf_config.page_range)
+
+    @cached_property
+    def page_bbox(self):
+        return self.pdf_config.page_bbox
+
     @lru_cache
     def get_pages(self) -> list[PdfPage]:
         logger.debug("Extracting text from PDF")
-        document: fitz.Document = self.open()
+        document = self.document.open()
 
         num_pages = list(range(document.page_count))
         document.select(num_pages[self.page_range])
@@ -139,22 +182,6 @@ class PdfParser:
             except pdftotext.Error:
                 continue
         raise RuntimeError("Unable to retrieve pages")
-
-    @cached_property
-    def document(self) -> fitz.Document:
-        """
-        Returns a Python representation of a PDF document.
-        """
-        if not self.file_path and not self.file_bytes:
-            raise RuntimeError("Either `file_path` or `file_bytes` must be passed")
-
-        if self.file_path and self.file_bytes:
-            raise RuntimeError(
-                "Only one of `file_path` or `file_bytes` should be defined"
-            )
-
-        args = {"filename": self.file_path, "stream": self.file_bytes}
-        return fitz.Document(**args)
 
     @staticmethod
     def _remove_vertical_text(page: fitz.Page):

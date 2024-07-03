@@ -1,14 +1,13 @@
 import logging
 from dataclasses import dataclass, field
 from functools import cached_property
-from io import BytesIO
-from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import fitz
 
 from monopoly.banks import detect_bank
 from monopoly.constants import EncryptionIdentifier, Identifier, MetadataIdentifier
+from monopoly.pdf import PdfDocument
 
 logger = logging.getLogger(__name__)
 
@@ -33,25 +32,12 @@ class EncryptDict:
 
 
 class MetadataAnalyzer:
-    def __init__(
-        self, file_path: Optional[Path] = None, file_bytes: Optional[bytes] = None
-    ):
-        if file_path and file_bytes:
-            raise ValueError(
-                "Only one of `file_path` or `file_bytes` should be provided"
-            )
-
-        self.file_path = file_path
-        self.file_bytes = file_bytes
+    def __init__(self, document: PdfDocument):
+        self.document = document
 
     @property
     def bank(self):
         return detect_bank(self.metadata_items)
-
-    @property
-    def document(self):
-        args = {"filename": self.file_path, "stream": self.file_bytes}
-        return fitz.Document(**args)
 
     @property
     def metadata_items(self) -> list[Any]:
@@ -70,7 +56,7 @@ class MetadataAnalyzer:
             logger.debug("Found encryption identifier: %s", encryption_identifier)
             identifiers.append(encryption_identifier)
 
-        if metadata := self.document.metadata:
+        if metadata := self.document.open().metadata:
             metadata_identifier = MetadataIdentifier(**metadata)
             logger.debug("Found metadata identifier: %s", metadata_identifier)
             identifiers.append(metadata_identifier)
@@ -82,14 +68,15 @@ class MetadataAnalyzer:
 
     @cached_property
     def encrypt_dict(self) -> EncryptDict | None:
-        stream = self.get_doc_byte_stream()
+        document = self.document.open()
+        stream = self.document.get_byte_stream()
         pdf_version_string = stream.read(8).decode("utf-8", "backslashreplace")
-
-        if self.document.is_encrypted:
-            raw_encrypt_dict = self.get_raw_encrypt_dict(self.document)
+        try:
+            raw_encrypt_dict = self.get_raw_encrypt_dict(document)
             encrypt_dict = EncryptDict(raw_encrypt_dict, pdf_version_string)
             return encrypt_dict
-        return None
+        except TypeError:
+            return None
 
     @staticmethod
     def get_raw_encrypt_dict(doc: fitz.Document) -> dict:
@@ -106,14 +93,3 @@ class MetadataAnalyzer:
             for key in doc.xref_get_keys(xref):
                 encrypt_metadata[key] = doc.xref_get_key(xref, key)[1]
         return encrypt_metadata
-
-    def get_doc_byte_stream(self) -> BytesIO:
-        if self.file_path:
-            with open(self.file_path, "rb") as file:
-                stream = BytesIO(file.read())
-            return stream
-
-        if self.file_bytes:
-            return BytesIO(self.file_bytes)
-
-        raise RuntimeError("Unable to create document")
