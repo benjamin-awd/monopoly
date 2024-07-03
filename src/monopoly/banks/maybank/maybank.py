@@ -32,9 +32,11 @@ class Maybank(BankBase):
     )
 
     identifiers = [
-        MetadataIdentifier(
-            author="Maybank2U.com",
-            creator="Maybank2u.com",
-            producer="iText",
-        ),
+        [
+            MetadataIdentifier(
+                author="Maybank2U.com",
+                creator="Maybank2u.com",
+                producer="iText",
+            ),
+        ]
     ]

@@ -33,8 +33,10 @@ class Dbs(BankBase):
     )
 
     identifiers = [
-        EncryptionIdentifier(
-            pdf_version=1.4, algorithm=2, revision=3, length=128, permissions=-1852
-        ),
-        MetadataIdentifier(creator="Quadient CXM AG"),
+        [
+            EncryptionIdentifier(
+                pdf_version=1.4, algorithm=2, revision=3, length=128, permissions=-1852
+            ),
+            MetadataIdentifier(creator="Quadient CXM AG"),
+        ]
     ]
