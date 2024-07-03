@@ -43,10 +43,12 @@ class MockBankOne(BankBase):
     debit_config = None
     credit_config = None
     identifiers = [
-        EncryptionIdentifier(
-            pdf_version=1.7, algorithm=5, revision=6, length=256, permissions=-1028
-        ),
-        MetadataIdentifier(creator="foo", producer="bar"),
+        [
+            EncryptionIdentifier(
+                pdf_version=1.7, algorithm=5, revision=6, length=256, permissions=-1028
+            ),
+            MetadataIdentifier(creator="foo", producer="bar"),
+        ]
     ]
 
 
@@ -54,16 +56,18 @@ class MockBankTwo(BankBase):
     debit_config = None
     credit_config = None
     identifiers = [
-        MetadataIdentifier(
-            creator="Adobe Acrobat 23.3", producer="Adobe Acrobat Pro (64-bit)"
-        )
+        [
+            MetadataIdentifier(
+                creator="Adobe Acrobat 23.3", producer="Adobe Acrobat Pro (64-bit)"
+            )
+        ]
     ]
 
 
 class MockBankThree(BankBase):
     debit_config = None
     credit_config = None
-    identifiers = [MetadataIdentifier(creator="asdasd", producer="qwerty")]
+    identifiers = [[MetadataIdentifier(creator="asdasd", producer="qwerty")]]
 
 
 unencrypted_file_path = "path/to/unencrypted.pdf"
@@ -71,14 +75,18 @@ encrypted_file_path = "path/to/encrypted.pdf"
 
 
 @skip_if_encrypted
-def test_auto_detectbank_identified(
+def test_auto_detect_bank_identified(
     monkeypatch,
 ):
-    identifiers = MockBankTwo.identifiers
+    metadata_items = [
+        MetadataIdentifier(
+            creator="Adobe Acrobat 23.3", producer="Adobe Acrobat Pro (64-bit)"
+        )
+    ]
     mock_banks_list = [MockBankOne, MockBankTwo]
     monkeypatch.setattr("monopoly.banks.banks", mock_banks_list)
 
-    bank = detect_bank(identifiers)
+    bank = detect_bank(metadata_items)
 
     assert bank.__name__ == MockBankTwo.__name__
 

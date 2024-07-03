@@ -21,7 +21,9 @@ class ExampleBank(BankBase):
     )
 
     identifiers = [
-        MetadataIdentifier(
-            creator="Adobe Acrobat 23.3", producer="Adobe Acrobat Pro (64-bit)"
-        )
+        [
+            MetadataIdentifier(
+                creator="Adobe Acrobat 23.3", producer="Adobe Acrobat Pro (64-bit)"
+            )
+        ]
     ]

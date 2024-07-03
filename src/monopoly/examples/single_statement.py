@@ -1,4 +1,3 @@
-from monopoly.banks import ExampleBank
 from monopoly.pipeline import Pipeline
 
 
@@ -11,7 +10,8 @@ def example():
     detect the bank.
     """
     pipeline = Pipeline(
-        file_path="src/monopoly/examples/example_statement.pdf", bank=ExampleBank
+        file_path="src/monopoly/examples/example_statement.pdf",
+        # bank=ExampleBank
     )
 
     # This runs pdftotext on the PDF and
