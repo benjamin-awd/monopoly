@@ -2,7 +2,7 @@ import logging
 from dataclasses import Field, fields
 from typing import Type
 
-from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
+from monopoly.constants import Identifier
 
 from ..examples.example_bank import ExampleBank
 from .base import BankBase
@@ -31,7 +31,7 @@ class UnsupportedBankError(Exception):
 
 
 def detect_bank(
-    metadata_items: list[EncryptionIdentifier | MetadataIdentifier],
+    metadata_items: list[Identifier],
 ) -> Type[BankBase] | None:
     """
     Reads the encryption metadata or actual metadata (if the PDF is not encrypted),
@@ -44,7 +44,7 @@ def detect_bank(
 
 
 def is_bank_identified(
-    metadata_items: list[EncryptionIdentifier | MetadataIdentifier],
+    metadata_items: list[Identifier],
     bank: Type[BankBase],
 ) -> bool:
     """
@@ -62,8 +62,8 @@ def is_bank_identified(
 
 
 def all_identifiers_match(
-    metadata_items: list[EncryptionIdentifier | MetadataIdentifier],
-    grouped_identifiers: list[EncryptionIdentifier | MetadataIdentifier],
+    metadata_items: list[Identifier],
+    grouped_identifiers: list[Identifier],
 ) -> bool:
     """
     Checks if all identifiers in the group match at least one metadata item.
@@ -84,8 +84,8 @@ def all_identifiers_match(
 
 
 def check_matching_identifier(
-    metadata: EncryptionIdentifier | MetadataIdentifier,
-    identifier: EncryptionIdentifier | MetadataIdentifier,
+    metadata: Identifier,
+    identifier: Identifier,
 ) -> bool:
     """
     Checks if all fields in the metadata match the corresponding identifier fields.
@@ -97,8 +97,8 @@ def check_matching_identifier(
 
 def check_matching_field(
     field: Field,
-    metadata: EncryptionIdentifier | MetadataIdentifier,
-    identifier: EncryptionIdentifier | MetadataIdentifier,
+    metadata: Identifier,
+    identifier: Identifier,
 ) -> bool:
     """
     Checks if a field in the metadata matches the corresponding identifier field.

@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 from monopoly.config import CreditStatementConfig, DebitStatementConfig, PdfConfig
-from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
+from monopoly.constants import Identifier
 
 logger = logging.getLogger(__name__)
 
@@ -42,5 +42,5 @@ class BankBase(ABC):
 
     @property
     @abstractmethod
-    def identifiers(self) -> list[list[EncryptionIdentifier | MetadataIdentifier]]:
+    def identifiers(self) -> list[list[Identifier]]:
         raise NotImplementedError("Identifiers must be defined")
