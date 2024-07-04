@@ -161,7 +161,7 @@ def run(
     pprint: bool = False,
     single_process: bool = False,
     safety_check: bool = True,
-    **kwargs,
+    **_,
 ):
     """
     Process a collection of input files concurrently
