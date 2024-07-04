@@ -19,6 +19,7 @@ class DateFormats(StrEnum):
     YYYY = r"(?:20\d{2}\b)"
 
 
+# pylint: disable=too-many-instance-attributes
 @dataclass
 class DateRegexPatterns:
     """Holds date regex patterns used by the generic statement handler"""
