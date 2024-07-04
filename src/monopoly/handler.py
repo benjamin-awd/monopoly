@@ -46,7 +46,7 @@ class StatementHandler:
                     "Could not parse with debit config due to error: %s",
                     repr(err),
                 )
-            except Exception as err:
+            except Exception as err:  # pylint: disable=broad-exception-caught
                 logger.error(
                     "Unexpected error while parsing with debit config: %s",
                     repr(err),
