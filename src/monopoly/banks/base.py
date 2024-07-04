@@ -27,12 +27,11 @@ class BankBase(ABC):
 
     def validate_config(self, generic: bool):
         # Basic validation to ensure required attributes are set
-        if not generic:
-            if self.credit_config is None and self.debit_config is None:
-                raise NotImplementedError(
-                    f"{self.__class__.__name__} "
-                    "must implement either `credit_config` or `debit_config`"
-                )
+        if not generic and not any([self.credit_config, self.debit_config]):
+            raise NotImplementedError(
+                f"{self.__class__.__name__} "
+                "must implement either `credit_config` or `debit_config`"
+            )
 
     def populate_pdf_config(self):
         # Ensure that PDF config always exists
