@@ -1,6 +1,5 @@
 import logging
 from dataclasses import Field, fields
-from itertools import product
 from typing import Type
 
 from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
@@ -52,36 +51,48 @@ def is_bank_identified(
     Checks if a bank is identified based on a list of metadata items.
     """
     for grouped_identifiers in bank.identifiers:  # type: ignore
-        identifier_matches = []
-        for identifier, metadata in product(grouped_identifiers, metadata_items):
-            # Only compare matching identifier types
-            if type(metadata) is not type(identifier):
-                continue
+        if len(metadata_items) != len(grouped_identifiers):
+            continue
 
-            # if number of metadata items does not match bank identifiers
-            # continue to prevent partial matching
-            if len(metadata_items) != len(grouped_identifiers):
-                continue
-
-            logger.debug(
-                "Checking if PDF %s matches %s %s",
-                metadata.__class__.__name__,
-                bank.__name__,
-                identifier,
-            )
-
-            identifier_matches.append(
-                all(
-                    check_matching_field(field, metadata, identifier)
-                    for field in fields(metadata)
-                )
-            )
-
-        if identifier_matches and all(identifier_matches):
+        if all_identifiers_match(metadata_items, grouped_identifiers):
             logger.debug("Identified statement bank: %s", bank.__name__)
             return True
 
     return False
+
+
+def all_identifiers_match(
+    metadata_items: list[EncryptionIdentifier | MetadataIdentifier],
+    grouped_identifiers: list[EncryptionIdentifier | MetadataIdentifier],
+) -> bool:
+    """
+    Checks if all identifiers in the group match at least one metadata item.
+    """
+    for identifier in grouped_identifiers:
+        matching_metadata = [
+            metadata
+            for metadata in metadata_items
+            if type(metadata) is type(identifier)
+        ]
+
+        if not any(
+            check_matching_identifier(metadata, identifier)
+            for metadata in matching_metadata
+        ):
+            return False
+    return True
+
+
+def check_matching_identifier(
+    metadata: EncryptionIdentifier | MetadataIdentifier,
+    identifier: EncryptionIdentifier | MetadataIdentifier,
+) -> bool:
+    """
+    Checks if all fields in the metadata match the corresponding identifier fields.
+    """
+    return all(
+        check_matching_field(field, metadata, identifier) for field in fields(metadata)
+    )
 
 
 def check_matching_field(
@@ -95,29 +106,15 @@ def check_matching_field(
     field_value = getattr(metadata, field.name)
     identifier_value = getattr(identifier, field.name)
 
-    # if identifier is not set, we assume a match
+    # if identifier is empty, we assume a match
     # this means only the identifiers in the bank
     # class need to be matched.
     if not identifier_value:
         return True
 
-    # allow for partial string matching
-    # since '' in a string always is true
-    # add another condition to filter out blank strings
-    partial_string_match = (
-        isinstance(field.type(), str) and identifier_value in field_value
-    )
+    # support partial string matching
+    if isinstance(field_value, str) and isinstance(identifier_value, str):
+        return identifier_value in field_value and identifier_value != ""
 
-    # other types should match exactly
-    full_match = identifier_value == field_value
-
-    if any([partial_string_match, full_match]):
-        logger.debug(
-            "Match found for field `%s` : '%s' - '%s'",
-            field.name,
-            identifier_value,
-            field_value,
-        )
-        return True
-
-    return False
+    # if not a string, only support exact match
+    return identifier_value == field_value
