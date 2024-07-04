@@ -44,12 +44,12 @@ class StatementHandler:
             except (ValueError, TypeError) as err:
                 logger.debug(
                     "Could not parse with debit config due to error: %s",
-                    err.__repr__(),
+                    repr(err),
                 )
             except Exception as err:
                 logger.error(
                     "Unexpected error while parsing with debit config: %s",
-                    err.__repr__(),
+                    repr(err),
                 )
 
         if not credit_config:
