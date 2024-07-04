@@ -48,7 +48,7 @@ ruff = ">=0.4.7,<0.6.0"
 git-cliff = "^2.3.0"
 [tool.taskipy.tasks]
 format = "isort . && black ."
-lint = "flake8 src & pylint src & ruff check src"
+lint = "flake8 src && pylint src && ruff check src"
 test = "pytest ."
 mypy = "mypy src"
 ci = "poetry run task format && poetry run task lint && poetry run task test"
