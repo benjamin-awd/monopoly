@@ -1,5 +1,45 @@
 # Changelog
 
+## [0.10.0] - 2024-07-05
+
+### ⛰️ Features
+- Detect bank based on file text
+
+### 🛠️ Bug Fixes
+
+- *(ci)* Continue even if unlock step fails
+- *(ci)* Use && operator instead of &
+- if multiple identifiers are given, all should match
+
+### 🚜 Refactor
+
+- *(statements)* Cache safety check function
+- *(banks,config)* Use global password array
+- *(banks)* Allow multiple sets of identifiers per bank
+- *(pdf)* Split opening/unlocking logic to PdfDocument class
+- *(banks/identifier)* Add more functions & remove cartesian product
+- Rename MetadataAnalyzer to BankDetector
+
+### 🧪 Testing
+
+- Remove unused file_path var
+- Add tests for pipeline with bank arg
+
+### ⚙️ Miscellaneous Tasks
+
+- *(statements)* Add more detailed docstring for safety check error
+- *(examples)* Update single_statement with example bank arg
+- *(cli)* Rename unused kwargs to _
+- *(handler)* Use repr() instead of __repr__
+- *(handler)* Disable broad-exeception-caught for catchall
+- *(identifiers)* Use parent class for type
+- *(banks/base)* Remove unnecessary if condition from validate_config
+- *(constants)* Disable too-many-attrs for DateRegexPatterns
+
+### Build
+
+- *(deps)* Bump the deps group with 9 updates
+
 ## [0.9.6] - 2024-06-23
 
 ### 📚 Documentation
