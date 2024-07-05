@@ -1,11 +1,11 @@
 from unittest.mock import Mock
 
+from monopoly.bank_detector import BankDetector
 from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
-from monopoly.metadata import MetadataAnalyzer
 
 
 def test_check_metadata_identifier_field_exact_match(
-    metadata_analyzer: MetadataAnalyzer,
+    metadata_analyzer: BankDetector,
 ):
     field = Mock()
     field.name = "title"
@@ -17,7 +17,7 @@ def test_check_metadata_identifier_field_exact_match(
 
 
 def test_check_encryption_identifier_field_exact_match(
-    metadata_analyzer: MetadataAnalyzer,
+    metadata_analyzer: BankDetector,
 ):
     field = Mock()
     field.name = "pdf_version"
@@ -32,7 +32,7 @@ def test_check_encryption_identifier_field_exact_match(
     assert metadata_analyzer.check_matching_field(field, metadata, identifier)
 
 
-def test_check_matching_field_partial_string_match(metadata_analyzer: MetadataAnalyzer):
+def test_check_matching_field_partial_string_match(metadata_analyzer: BankDetector):
     field = Mock()
     field.name = "creator"
     field.type = str
@@ -42,7 +42,7 @@ def test_check_matching_field_partial_string_match(metadata_analyzer: MetadataAn
     assert metadata_analyzer.check_matching_field(field, metadata, identifier)
 
 
-def test_check_matching_field_no_match(metadata_analyzer: MetadataAnalyzer):
+def test_check_matching_field_no_match(metadata_analyzer: BankDetector):
     field = Mock()
     field.name = "author"
     field.type = str

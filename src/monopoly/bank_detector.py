@@ -36,7 +36,7 @@ class EncryptDict:
         self.revision = int(self.raw_encrypt_dict.get("R"))
 
 
-class MetadataAnalyzer:
+class BankDetector:
     def __init__(self, document: PdfDocument):
         self.document = document
 
