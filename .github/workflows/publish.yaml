@@ -20,6 +20,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install pdftotext
+        uses: daaku/gh-action-apt-install@v4
+        with:
+          packages: build-essential libpoppler-cpp-dev pkg-config
+
       - name: Setup Python & Poetry
         uses: ./.github/actions/setup-python-poetry
         with:
