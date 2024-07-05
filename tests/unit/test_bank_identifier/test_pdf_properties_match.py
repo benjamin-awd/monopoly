@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from unittest.mock import PropertyMock, patch
 
-from monopoly.metadata import MetadataAnalyzer
+from monopoly.bank_detector import BankDetector
 
 
 @dataclass
@@ -16,9 +16,9 @@ class MockIdentifier2:
     id: str = ""
 
 
-@patch.object(MetadataAnalyzer, "metadata_items", new_callable=PropertyMock)
+@patch.object(BankDetector, "metadata_items", new_callable=PropertyMock)
 def test_pdf_properties_match_partial(
-    mock_metadata_items, metadata_analyzer: MetadataAnalyzer
+    mock_metadata_items, metadata_analyzer: BankDetector
 ):
     metadata_items = [
         MockIdentifier1(key="test", value="123"),
@@ -34,9 +34,9 @@ def test_pdf_properties_match_partial(
     assert not metadata_analyzer.pdf_properties_match(grouped_identifiers)
 
 
-@patch.object(MetadataAnalyzer, "metadata_items", new_callable=PropertyMock)
+@patch.object(BankDetector, "metadata_items", new_callable=PropertyMock)
 def test_pdf_properties_match_type_mismatch(
-    mock_metadata_items, metadata_analyzer: MetadataAnalyzer
+    mock_metadata_items, metadata_analyzer: BankDetector
 ):
     metadata_items = [MockIdentifier1(key="test", value="123")]
     mock_metadata_items.return_value = metadata_items

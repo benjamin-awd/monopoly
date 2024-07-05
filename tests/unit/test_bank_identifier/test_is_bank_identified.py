@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from unittest.mock import PropertyMock, patch
 
-from monopoly.metadata import MetadataAnalyzer
+from monopoly.bank_detector import BankDetector
 
 
 @dataclass
@@ -30,8 +30,8 @@ class TestBank:
     ]
 
 
-@patch.object(MetadataAnalyzer, "metadata_items", new_callable=PropertyMock)
-def test_is_bank_identified(mock_metadata_items, metadata_analyzer: MetadataAnalyzer):
+@patch.object(BankDetector, "metadata_items", new_callable=PropertyMock)
+def test_is_bank_identified(mock_metadata_items, metadata_analyzer: BankDetector):
     """Test to check that all identifiers match on a bank"""
     # Test case 1: All identifiers match
     metadata_items = [

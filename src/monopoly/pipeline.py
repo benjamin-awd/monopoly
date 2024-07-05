@@ -6,12 +6,12 @@ from typing import Optional, Type
 from dateparser import parse
 from pydantic import SecretStr
 
+from monopoly.bank_detector import BankDetector
 from monopoly.banks import BankBase
 from monopoly.config import DateOrder
 from monopoly.generic import GenericStatementHandler
 from monopoly.generic.generic_handler import GenericBank
 from monopoly.handler import StatementHandler
-from monopoly.metadata import MetadataAnalyzer
 from monopoly.pdf import PdfDocument, PdfParser
 from monopoly.statements import CreditStatement, DebitStatement
 from monopoly.statements.transaction import Transaction
@@ -60,7 +60,7 @@ class Pipeline:
 
     @staticmethod
     def detect_bank(document) -> Type[BankBase]:
-        analyzer = MetadataAnalyzer(document)
+        analyzer = BankDetector(document)
         if bank := analyzer.detect_bank():
             return bank
         logger.warning("Unable to detect bank, transactions may be inaccurate")

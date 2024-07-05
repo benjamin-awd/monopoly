@@ -4,9 +4,9 @@ from unittest.mock import MagicMock, Mock, PropertyMock, patch
 import fitz
 import pytest
 
+from monopoly.bank_detector import BankDetector
 from monopoly.config import CreditStatementConfig, DateOrder, PdfConfig
 from monopoly.handler import StatementHandler
-from monopoly.metadata import MetadataAnalyzer
 from monopoly.pdf import PdfDocument, PdfPage, PdfParser
 from monopoly.statements import BaseStatement, CreditStatement, DebitStatement
 
@@ -25,7 +25,7 @@ def pdf_document():
 
 @pytest.fixture
 def metadata_analyzer(pdf_document):
-    yield MetadataAnalyzer(pdf_document)
+    yield BankDetector(pdf_document)
 
 
 @pytest.fixture

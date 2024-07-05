@@ -3,9 +3,9 @@ from unittest.mock import PropertyMock, patch
 import pytest
 from test_utils.skip import skip_if_encrypted
 
+from monopoly.bank_detector import BankDetector
 from monopoly.banks.base import BankBase
 from monopoly.constants import EncryptionIdentifier, MetadataIdentifier, TextIdentifier
-from monopoly.metadata import MetadataAnalyzer
 
 
 @pytest.fixture
@@ -69,9 +69,9 @@ encrypted_file_path = "path/to/encrypted.pdf"
 
 
 @skip_if_encrypted
-@patch.object(MetadataAnalyzer, "metadata_items", new_callable=PropertyMock)
+@patch.object(BankDetector, "metadata_items", new_callable=PropertyMock)
 def test_auto_detect_bank_identified(
-    mock_metadata_items, monkeypatch, metadata_analyzer: MetadataAnalyzer
+    mock_metadata_items, monkeypatch, metadata_analyzer: BankDetector
 ):
     mock_metadata_items.return_value = [
         MetadataIdentifier(
@@ -80,7 +80,7 @@ def test_auto_detect_bank_identified(
     ]
 
     mock_banks_list = [MockBankOne, MockBankTwo]
-    monkeypatch.setattr("monopoly.metadata.banks", mock_banks_list)
+    monkeypatch.setattr("monopoly.bank_detector.banks", mock_banks_list)
 
     bank = metadata_analyzer.detect_bank()
 
@@ -88,25 +88,25 @@ def test_auto_detect_bank_identified(
 
 
 @skip_if_encrypted
-@patch.object(MetadataAnalyzer, "metadata_items", new_callable=PropertyMock)
+@patch.object(BankDetector, "metadata_items", new_callable=PropertyMock)
 def test_detect_bank_not_identified(
-    mock_metadata_items, monkeypatch, metadata_analyzer: MetadataAnalyzer
+    mock_metadata_items, monkeypatch, metadata_analyzer: BankDetector
 ):
     mock_metadata_items.return_value = [
         MetadataIdentifier(creator="asdf", producer="qwerty")
     ]
     mock_banks_list = [MockBankThree]
-    monkeypatch.setattr("monopoly.metadata.banks", mock_banks_list)
+    monkeypatch.setattr("monopoly.bank_detector.banks", mock_banks_list)
 
     # None should be returned here
     assert not metadata_analyzer.detect_bank()
 
 
 @skip_if_encrypted
-@patch.object(MetadataAnalyzer, "raw_text", new_callable=PropertyMock)
-@patch.object(MetadataAnalyzer, "metadata_items", new_callable=PropertyMock)
+@patch.object(BankDetector, "raw_text", new_callable=PropertyMock)
+@patch.object(BankDetector, "metadata_items", new_callable=PropertyMock)
 def test_detect_bank_with_text_identifier(
-    mock_metadata_items, mock_raw_text, monkeypatch, metadata_analyzer: MetadataAnalyzer
+    mock_metadata_items, mock_raw_text, monkeypatch, metadata_analyzer: BankDetector
 ):
     mock_raw_text.return_value = "specific_string, other_specific_string"
     mock_metadata_items.return_value = [
@@ -117,7 +117,7 @@ def test_detect_bank_with_text_identifier(
     ]
 
     mock_banks_list = [MockBankTwo, MockBankWithMultipleTextIdentifier]
-    monkeypatch.setattr("monopoly.metadata.banks", mock_banks_list)
+    monkeypatch.setattr("monopoly.bank_detector.banks", mock_banks_list)
 
     bank = metadata_analyzer.detect_bank()
 
@@ -125,10 +125,10 @@ def test_detect_bank_with_text_identifier(
 
 
 @skip_if_encrypted
-@patch.object(MetadataAnalyzer, "raw_text", new_callable=PropertyMock)
-@patch.object(MetadataAnalyzer, "metadata_items", new_callable=PropertyMock)
+@patch.object(BankDetector, "raw_text", new_callable=PropertyMock)
+@patch.object(BankDetector, "metadata_items", new_callable=PropertyMock)
 def test_detect_bank_with_not_matching_text_identifier(
-    mock_metadata_items, mock_raw_text, monkeypatch, metadata_analyzer: MetadataAnalyzer
+    mock_metadata_items, mock_raw_text, monkeypatch, metadata_analyzer: BankDetector
 ):
     mock_raw_text.return_value = "not_a_match"
     mock_metadata_items.return_value = [
@@ -139,6 +139,6 @@ def test_detect_bank_with_not_matching_text_identifier(
     ]
 
     mock_banks_list = [MockBankTwo, MockBankWithMultipleTextIdentifier]
-    monkeypatch.setattr("monopoly.metadata.banks", mock_banks_list)
+    monkeypatch.setattr("monopoly.bank_detector.banks", mock_banks_list)
 
     assert not metadata_analyzer.detect_bank()
