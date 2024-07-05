@@ -1,6 +1,11 @@
 from monopoly.banks.base import BankBase
 from monopoly.config import CreditStatementConfig
-from monopoly.constants import InternalBankNames, MetadataIdentifier, SharedPatterns
+from monopoly.constants import (
+    InternalBankNames,
+    MetadataIdentifier,
+    SharedPatterns,
+    TextIdentifier,
+)
 
 
 class ExampleBank(BankBase):
@@ -25,5 +30,6 @@ class ExampleBank(BankBase):
             MetadataIdentifier(
                 creator="Adobe Acrobat 23.3", producer="Adobe Acrobat Pro (64-bit)"
             ),
+            TextIdentifier(text="HCBS12345(12345)"),
         ]
     ]
