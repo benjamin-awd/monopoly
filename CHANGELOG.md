@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.10.1] - 2024-07-10
+
+### 🛠️ Bug Fixes
+
+- Banks with only text identifiers
+
+### 🧪 Testing
+
+- Remove redundant `@skip_if_encrypted` from test_auto_detect_bank
+
+### ⚙️ Miscellaneous Tasks
+
+- *(examples)* Add text identifier example
+
 ## [0.10.0] - 2024-07-05
 
 ### ⛰️ Features
