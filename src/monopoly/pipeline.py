@@ -46,7 +46,6 @@ class Pipeline:
         bank = bank or self.detect_bank(document)
         parser = PdfParser(bank, document)
         self.handler = self.create_handler(bank, parser)
-        self.statement = self.handler.get_statement(parser)
 
     @staticmethod
     def create_handler(
@@ -69,8 +68,9 @@ class Pipeline:
     def extract(self, safety_check=True) -> CreditStatement | DebitStatement:
         """Extracts transactions from the statement, and performs
         a safety check to make sure that total transactions add up"""
-        transactions = self.statement.transactions
-        statement_date = self.statement.statement_date
+        statement = self.handler.get_statement()
+        transactions = statement.get_transactions()
+        statement_date = statement.statement_date
 
         if not transactions:
             raise ValueError("No transactions found - statement extraction failed")
@@ -81,9 +81,9 @@ class Pipeline:
             raise ValueError("No statement date found")
 
         if safety_check:
-            self.statement.perform_safety_check()
+            statement.perform_safety_check()
 
-        return self.statement
+        return statement
 
     @staticmethod
     def transform(statement: CreditStatement | DebitStatement) -> list[Transaction]:

@@ -24,7 +24,7 @@ def test_pipeline_initialization_with_bytes(pdf_file_bytes):
 def test_pipeline_with_bank():
     file_path = Path("src/monopoly/examples/example_statement.pdf")
     pipeline = Pipeline(file_path=file_path, bank=ExampleBank)
-    transactions = pipeline.statement.transactions
+    transactions = pipeline.extract().transactions
     assert len(transactions) == 53
     assert transactions[0].description == "LAST MONTH'S BALANCE"
 
