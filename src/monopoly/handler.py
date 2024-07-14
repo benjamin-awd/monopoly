@@ -16,7 +16,7 @@ class StatementHandler:
     def __init__(self, parser: PdfParser):
         self.parser = parser
         self.bank = parser.bank
-        self.statement = self.get_statement(self.parser)
+        self.statement = self.get_statement()
 
     @property
     def transactions(self):
@@ -29,13 +29,12 @@ class StatementHandler:
     def perform_safety_check(self):
         self.statement.perform_safety_check()
 
-    @classmethod
-    def get_statement(cls, parser: PdfParser) -> CreditStatement | DebitStatement:
-        bank = parser.bank
+    def get_statement(self) -> CreditStatement | DebitStatement:
+        bank = self.parser.bank
         debit_config, credit_config = bank.debit_config, bank.credit_config
 
         if debit_config:
-            debit_statement = DebitStatement(parser, debit_config)
+            debit_statement = DebitStatement(self.parser, debit_config)
             # if we can find transactions using the debit config
             # assume that it is a debit statement
             try:
@@ -56,4 +55,4 @@ class StatementHandler:
             raise RuntimeError("Missing credit config")
 
         # if it's not a debit statement, assume that it's a credit statement
-        return CreditStatement(parser, credit_config)
+        return CreditStatement(self.parser, credit_config)
