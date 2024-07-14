@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.10.3] - 2024-07-14
+
+### 🛠️ Bug Fixes
+
+- *(cd/publish)* Set release_to_pypi to true on push
+- *(banks/maybank)* Add missing encryption identifier for credit statements
+- *(detector)* Ensure pdf_property_identifiers are not bypassed
+- *(banks)* Add identifiers for decrypted PDFs without encrypt dict
+
 ## [0.10.2] - 2024-07-14
 
 ### ⛰️ Features
