@@ -4,11 +4,20 @@ from pathlib import Path
 from typing import Collection, Iterable, Optional, TypedDict
 
 import click
-from pydantic.dataclasses import dataclass
+from pydantic.dataclasses import Field, dataclass
 from tabulate import tabulate
 from tqdm import tqdm
 
 from monopoly.log import setup_logs
+
+
+@dataclass
+class RunConfig:
+    output_dir: Optional[Path] = None
+    pprint: bool = False
+    single_process: bool = False
+    safety_check: bool = True
+    verbose: bool = False
 
 
 class TqdmSettings(TypedDict):
@@ -32,7 +41,7 @@ class Result:
 
     source_file_name: str
     target_file_name: Optional[str] = None
-    error_info: Optional[dict[str, str]] = None
+    error_info: dict[str, str] = Field(default_factory=dict)
 
 
 @dataclass
@@ -157,14 +166,7 @@ def pprint_transactions(transactions: list, statement, file: Path) -> None:
     click.echo()
 
 
-def run(
-    input_files: Collection[Path],
-    output_dir: Optional[Path] = None,
-    pprint: bool = False,
-    single_process: bool = False,
-    safety_check: bool = True,
-    verbose=False,
-):
+def run(input_files: Collection[Path], config: RunConfig):
     """
     Process a collection of input files concurrently
 
@@ -182,16 +184,16 @@ def run(
         "bar_format": "{l_bar}{bar}| {n_fmt}/{total_fmt}",
     }
 
-    if not single_process:
+    if not config.single_process:
         with ProcessPoolExecutor() as executor:
             results = list(
                 tqdm(
                     executor.map(
                         process_statement,
                         input_files,
-                        [output_dir] * len(input_files),
-                        [pprint] * len(input_files),
-                        [safety_check] * len(input_files),
+                        [config.output_dir] * len(input_files),
+                        [config.pprint] * len(input_files),
+                        [config.safety_check] * len(input_files),
                     ),
                     **tqdm_settings,
                 )
@@ -200,14 +202,19 @@ def run(
     else:
         results = []
         for file in tqdm(input_files, **tqdm_settings):
-            result = process_statement(file, output_dir, pprint, safety_check)
+            result = process_statement(
+                file,
+                output_directory=config.output_dir,
+                print_df=config.pprint,
+                safety_check=config.safety_check,
+            )
             results.append(result)
 
     if any(results):
         # filter out null values, for cases where print_df is True
         # and processing errors occur to avoid pydantic validation errors
         report = Report([res for res in results if res])
-        report.display_report(verbose)
+        report.display_report(config.verbose)
 
 
 def get_statement_paths(files: Iterable[Path]) -> set[Path]:
@@ -281,7 +288,7 @@ def monopoly(ctx: click.Context, files: list[Path], **kwargs):
         matched_files = get_statement_paths(files)
 
         if matched_files:
-            run(matched_files, **kwargs)
+            run(matched_files, RunConfig(**kwargs))
 
         else:
             click.echo(
