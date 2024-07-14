@@ -25,11 +25,13 @@ class DebitStatement(BaseStatement):
     @lru_cache
     def find_debit_header_text(self) -> str:
         identifier = self.config.debit_statement_identifier
-        for page in self.pages:
-            for line in page.lines:
-                if re.search(identifier, line):
-                    return line.lower()
-        return None
+        if identifier:
+            for page in self.pages:
+                for line in page.lines:
+                    if re.search(identifier, line):
+                        return line.lower()
+
+        raise ValueError("Debit statement identifier not found in text")
 
     def pre_process_match(
         self, transaction_match: TransactionMatch
@@ -80,8 +82,7 @@ class DebitStatement(BaseStatement):
     def get_column_pos(self, column_type: str, page_number: int) -> int | None:
         pattern = re.compile(rf"{column_type}[\w()$]*", re.IGNORECASE)
         debit_header = self.find_debit_header_text()
-        match: re.Match | None = pattern.search(debit_header)
-        if match:
+        if match := pattern.search(debit_header):
             return self.get_header_pos(match.group(), page_number)
         logger.warning(f"`{column_type}` column not found in header")
         return None

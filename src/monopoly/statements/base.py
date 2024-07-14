@@ -7,7 +7,7 @@ from pathlib import Path
 
 from dateparser import parse
 
-from monopoly.config import CreditStatementConfig, DebitStatementConfig
+from monopoly.config import StatementConfig
 from monopoly.constants import Columns, SharedPatterns
 from monopoly.pdf import PdfParser
 from monopoly.statements.transaction import (
@@ -30,7 +30,7 @@ class BaseStatement(ABC):
     def __init__(
         self,
         parser: PdfParser,
-        config: CreditStatementConfig | DebitStatementConfig,
+        config: StatementConfig,
     ):
         self.pages = parser.get_pages()
         self.config = config

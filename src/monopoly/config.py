@@ -63,6 +63,7 @@ class StatementConfig:
     statement_date_order: DateOrder = DateOrder("DMY")
     multiline_transactions: bool = False
     has_withdraw_deposit_column: bool = False
+    debit_statement_identifier: Optional[str] = None
 
 
 @dataclass(config=ConfigDict(extra="forbid"), kw_only=True)
@@ -72,7 +73,6 @@ class DebitStatementConfig(StatementConfig):
     """
 
     has_withdraw_deposit_column: bool = True
-    debit_statement_identifier: Optional[str] = None
 
 
 @dataclass(config=ConfigDict(extra="forbid"))
