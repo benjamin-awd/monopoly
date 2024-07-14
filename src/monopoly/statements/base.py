@@ -42,6 +42,20 @@ class BaseStatement(ABC):
         self.parser = parser
         self.document = parser.document
 
+    @cached_property
+    def number_pattern(self) -> re.Pattern:
+        return re.compile(r"[\d.,]+")
+
+    @cached_property
+    def decimal_pattern(self) -> re.Pattern:
+        return re.compile(r"\d+\.\d+$")
+
+    @cached_property
+    def subtotal_pattern(self) -> re.Pattern:
+        return re.compile(
+            rf"(?:sub\stotal.*?)\s+{SharedPatterns.AMOUNT}", re.IGNORECASE
+        )
+
     @property
     def bank(self):
         return self.parser.bank
@@ -114,6 +128,9 @@ class BaseStatement(ABC):
         """Checks if a transaction description spans multiple lines, and
         tries to combine them into a single string"""
         description_pos = current_line.find(description)
+        next_line_words_pattern = re.compile(r"\s[A-Za-z]+")
+        next_line_numbers_pattern = re.compile(SharedPatterns.AMOUNT)
+
         for next_line in lines[idx + 1 :]:  # noqa: E203
             # if next line is blank, don't add the description
             if not next_line:
@@ -134,8 +151,8 @@ class BaseStatement(ABC):
             # if there's an amount in the next line, and it's further than
             # 20 spaces away, we assume that this isn't part of the description
             # and is a footer line like "Total" or "Balance Carried Forward"
-            next_line_words = re.search(r"\s[A-Za-z]+", next_line)
-            next_line_numbers = re.search(SharedPatterns.AMOUNT, next_line)
+            next_line_words = next_line_words_pattern.search(next_line)
+            next_line_numbers = next_line_numbers_pattern.search(next_line)
 
             if next_line_words and next_line_numbers:
                 _, words_end_pos = next_line_words.span()
@@ -175,19 +192,18 @@ class BaseStatement(ABC):
                         return statement_date
         raise ValueError("Statement date not found")
 
-    @staticmethod
-    def get_decimal_numbers(lines: list[str]) -> set[float]:
+    def get_decimal_numbers(self, lines: list[str]) -> set[float]:
         """Returns all decimal numbers in a statement. This is used
         to perform a safety check, to make sure no transactions have been missed"""
 
-        number_pattern = re.compile(r"[\d.,]+")
-        decimal_pattern = re.compile(r"\d+\.\d+$")
         numbers: set[str] = set()
         for line in lines:
-            numbers.update(number_pattern.findall(line))
+            numbers.update(self.number_pattern.findall(line))
             numbers = {number.replace(",", "") for number in numbers}
             decimal_numbers = {
-                float(number) for number in numbers if decimal_pattern.match(number)
+                float(number)
+                for number in numbers
+                if self.decimal_pattern.match(number)
             }
         return decimal_numbers
 
@@ -218,13 +234,10 @@ class BaseStatement(ABC):
         Useful for statements that don't give a total figure over
         several cards/months in a single statement.
         """
-        subtotal_pattern = re.compile(
-            rf"(?:sub\stotal.*?)\s+{SharedPatterns.AMOUNT}", re.IGNORECASE
-        )
         subtotals: list[str] = []
         for page in self.pages:
             for line in page.lines:
-                if match := subtotal_pattern.search(line):
+                if match := self.subtotal_pattern.search(line):
                     subtotals.append(match.groupdict()[Columns.AMOUNT])
         cleaned_subtotals = [float(amount.replace(",", "")) for amount in subtotals]
         return sum(cleaned_subtotals)
