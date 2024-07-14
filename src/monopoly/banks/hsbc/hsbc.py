@@ -4,10 +4,9 @@ from monopoly.config import CreditStatementConfig, PdfConfig
 from monopoly.constants import (
     BankNames,
     CreditTransactionPatterns,
-    EncryptionIdentifier,
-    MetadataIdentifier,
     StatementBalancePatterns,
 )
+from monopoly.identifiers import EncryptionIdentifier, MetadataIdentifier
 
 from ..base import BankBase
 

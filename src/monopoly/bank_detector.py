@@ -6,7 +6,7 @@ from typing import Any, Type
 import fitz
 
 from monopoly.banks import BankBase, banks
-from monopoly.constants import (
+from monopoly.identifiers import (
     EncryptionIdentifier,
     Identifier,
     MetadataIdentifier,

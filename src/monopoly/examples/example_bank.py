@@ -1,11 +1,7 @@
 from monopoly.banks.base import BankBase
 from monopoly.config import CreditStatementConfig
-from monopoly.constants import (
-    InternalBankNames,
-    MetadataIdentifier,
-    SharedPatterns,
-    TextIdentifier,
-)
+from monopoly.constants import InternalBankNames, SharedPatterns
+from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
 
 class ExampleBank(BankBase):

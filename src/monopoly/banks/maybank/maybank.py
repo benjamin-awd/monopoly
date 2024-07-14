@@ -5,9 +5,9 @@ from monopoly.constants import (
     BankNames,
     CreditTransactionPatterns,
     DebitTransactionPatterns,
-    MetadataIdentifier,
     StatementBalancePatterns,
 )
+from monopoly.identifiers import MetadataIdentifier
 
 from ..base import BankBase
 

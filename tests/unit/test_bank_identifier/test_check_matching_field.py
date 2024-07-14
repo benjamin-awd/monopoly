@@ -1,7 +1,7 @@
 from unittest.mock import Mock
 
 from monopoly.bank_detector import BankDetector
-from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
+from monopoly.identifiers import EncryptionIdentifier, MetadataIdentifier
 
 
 def test_check_metadata_identifier_field_exact_match(
