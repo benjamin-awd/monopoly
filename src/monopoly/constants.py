@@ -199,31 +199,3 @@ class DebitTransactionPatterns(StrEnum):
         + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
         + SharedPatterns.BALANCE
     )
-
-
-@dataclass
-class Identifier:
-    pass
-
-
-@dataclass
-class EncryptionIdentifier(Identifier):
-    pdf_version: float
-    algorithm: int
-    revision: int
-    length: int
-    permissions: int
-
-
-@dataclass
-class MetadataIdentifier(Identifier):
-    title: str = ""
-    author: str = ""
-    subject: str = ""
-    creator: str = ""
-    producer: str = ""
-
-
-@dataclass
-class TextIdentifier(Identifier):
-    text: str = ""

@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 import pytest
 
 from monopoly.bank_detector import BankDetector
-from monopoly.constants import EncryptionIdentifier, MetadataIdentifier
+from monopoly.identifiers import EncryptionIdentifier, MetadataIdentifier
 from monopoly.pdf import PdfDocument
 
 

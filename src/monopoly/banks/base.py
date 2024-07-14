@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 from monopoly.config import CreditStatementConfig, DebitStatementConfig, PdfConfig
-from monopoly.constants import Identifier
+from monopoly.identifiers import Identifier
 
 logger = logging.getLogger(__name__)
 

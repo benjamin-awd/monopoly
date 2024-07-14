@@ -4,7 +4,11 @@ import pytest
 
 from monopoly.bank_detector import BankDetector
 from monopoly.banks.base import BankBase
-from monopoly.constants import EncryptionIdentifier, MetadataIdentifier, TextIdentifier
+from monopoly.identifiers import (
+    EncryptionIdentifier,
+    MetadataIdentifier,
+    TextIdentifier,
+)
 from monopoly.pdf import PdfDocument
 
 
