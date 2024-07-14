@@ -135,8 +135,9 @@ class BankDetector:
                 return True
 
             # support for statements that only have text identifiers
-            if text_identifiers and self.text_identifiers_match(text_identifiers):
-                return True
+            if not pdf_property_identifiers:
+                if text_identifiers and self.text_identifiers_match(text_identifiers):
+                    return True
 
         return False
 
