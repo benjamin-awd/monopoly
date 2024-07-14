@@ -4,10 +4,6 @@ on:
   push:
     tags:
       - "v*.*.*"
-    inputs:
-      release_to_pypi:
-        type: boolean
-        default: true
   workflow_dispatch:
     inputs:
       release_to_pypi:
@@ -39,7 +35,7 @@ jobs:
         run: poetry build
 
       - name: Release to PyPI
-        if: inputs.release_to_pypi
+        if: inputs.release_to_pypi || github.event_name == 'push'
         env:
           POETRY_PYPI_TOKEN_PYPI: ${{ secrets.MONOPOLY_PYPI_TOKEN }}
         run: poetry publish
