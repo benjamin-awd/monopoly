@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.10.2] - 2024-07-14
+
+### ⛰️ Features
+
+- *(cli)* Add verbose output for error messages
+
+### 🛠️ Bug Fixes
+
+- *(pipeline)* Explicitly call get_transactions() in extract
+
+### 🚜 Refactor
+
+- *(statements/debit)* Recalculate debit header for each page
+- *(statements/debit)* Create separate has_debit_header property
+- *(statements/debit)* Remove redundant typehint for match
+- Store raw_text property in PdfDocument
+- *(statement)* Move regex from func to __init__
+- Move identifiers to separate file
+- Split up constants across multiple files
+- Use RunConfig class to hold run arguments
+- *(detector)* Cache metadata_items()
+
 ## [0.10.1] - 2024-07-10
 
 ### 🛠️ Bug Fixes
