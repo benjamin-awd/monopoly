@@ -47,38 +47,45 @@ class DebitStatement(BaseStatement):
         or credit entry based on the distance from the withdrawal
         or deposit columns.
         """
-        if self.withdrawal_pos and self.deposit_pos:
+        page_number = transaction_match.page_number
+        withdrawal_pos = self.get_withdrawal_pos(page_number)
+        deposit_pos = self.get_deposit_pos(page_number)
+
+        if deposit_pos and withdrawal_pos:
             amount = transaction_match.groupdict.amount
             line: str = transaction_match.match.string
             start_pos = line.find(amount)
             # assume that numbers are right aligned
             end_pos = start_pos + len(amount) - 1
-            withdrawal_diff = abs(end_pos - self.withdrawal_pos)
-            deposit_diff = abs(end_pos - self.deposit_pos)
+            withdrawal_diff = abs(end_pos - withdrawal_pos)
+            deposit_diff = abs(end_pos - deposit_pos)
             if withdrawal_diff > deposit_diff:
                 return "CR"
             return "DR"
         return transaction_match.groupdict.suffix
 
-    @cached_property
-    def withdrawal_pos(self) -> int | None:
-        return self.get_column_pos("withdraw")
+    @lru_cache
+    def get_withdrawal_pos(self, page_number: int) -> int | None:
+        return self.get_column_pos("withdraw", page_number=page_number)
 
-    @cached_property
-    def deposit_pos(self) -> int | None:
-        return self.get_column_pos("deposit")
+    @lru_cache
+    def get_deposit_pos(self, page_number: int) -> int | None:
+        return self.get_column_pos("deposit", page_number=page_number)
 
-    def get_column_pos(self, column_type: str) -> int | None:
+    @lru_cache
+    def get_column_pos(self, column_type: str, page_number: int) -> int | None:
         pattern = re.compile(rf"{column_type}[\w()$]*", re.IGNORECASE)
         match: re.Match | None = pattern.search(self.debit_header)
         if match:
-            return self.get_header_pos(match.group())
+            return self.get_header_pos(match.group(), page_number)
         logger.warning(f"`{column_type}` column not found in header")
         return None
 
-    def get_header_pos(self, column_name: str) -> int:
+    @lru_cache
+    def get_header_pos(self, column_name: str, page_number: int) -> int:
         """
         Returns position of the 'WITHDRAWAL' or 'DEPOSIT' header on a bank statement
+        for a particular page.
 
         An assumption is made here that numbers are right aligned, meaning
         that if an amount matches with the end of the withdrawal string position,
@@ -92,8 +99,12 @@ class DebitStatement(BaseStatement):
         ```
         """
         if self.debit_header:
-            result = self.debit_header.find(column_name) + len(column_name)
-            return result
+            lines = self.pages[page_number].lines
+            for line in lines:
+                header_start_pos = line.lower().find(column_name)
+                if header_start_pos == -1:
+                    continue
+                return header_start_pos + len(column_name)
 
         raise ValueError(f"Debit header {column_name} missing in {self.debit_header}")
 
