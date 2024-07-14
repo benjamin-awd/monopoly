@@ -55,6 +55,13 @@ class PdfDocument:
         self.file_path = file_path
         self.file_bytes = file_bytes
 
+    @cached_property
+    def raw_text(self) -> str:
+        raw_text = ""
+        for page in self.open():
+            raw_text += page.get_text()
+        return raw_text
+
     @property
     def passwords(self):
         if not self._passwords:
