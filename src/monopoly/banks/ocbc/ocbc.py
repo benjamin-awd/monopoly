@@ -7,7 +7,11 @@ from monopoly.constants import (
     DebitTransactionPatterns,
     StatementBalancePatterns,
 )
-from monopoly.identifiers import EncryptionIdentifier, MetadataIdentifier
+from monopoly.identifiers import (
+    EncryptionIdentifier,
+    MetadataIdentifier,
+    TextIdentifier,
+)
 
 from ..base import BankBase
 
@@ -46,5 +50,11 @@ class Ocbc(BankBase):
             MetadataIdentifier(
                 creator="pdfgen", producer="Streamline PDFGen for OCBC Group"
             ),
+        ],
+        [
+            MetadataIdentifier(
+                creator="pdfgen", producer="Streamline PDFGen for OCBC Group"
+            ),
+            TextIdentifier("OCBC"),
         ],
     ]

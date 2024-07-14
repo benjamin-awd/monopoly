@@ -6,7 +6,11 @@ from monopoly.constants import (
     CreditTransactionPatterns,
     StatementBalancePatterns,
 )
-from monopoly.identifiers import EncryptionIdentifier, MetadataIdentifier
+from monopoly.identifiers import (
+    EncryptionIdentifier,
+    MetadataIdentifier,
+    TextIdentifier,
+)
 
 from ..base import BankBase
 
@@ -36,5 +40,13 @@ class Hsbc(BankBase):
                 author="Registered to: HSBCGLOB",
                 creator="OpenText Exstream",
             ),
-        ]
+        ],
+        [
+            MetadataIdentifier(
+                title="PRJ_BEAGLE_ST_CNS_SGH_APP_Orchid",
+                author="Registered to: HSBCGLOB",
+                creator="OpenText Exstream",
+            ),
+            TextIdentifier("HSBC"),
+        ],
     ]

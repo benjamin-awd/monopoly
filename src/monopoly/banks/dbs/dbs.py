@@ -7,7 +7,11 @@ from monopoly.constants import (
     DebitTransactionPatterns,
     StatementBalancePatterns,
 )
-from monopoly.identifiers import EncryptionIdentifier, MetadataIdentifier
+from monopoly.identifiers import (
+    EncryptionIdentifier,
+    MetadataIdentifier,
+    TextIdentifier,
+)
 
 from ..base import BankBase
 
@@ -37,5 +41,9 @@ class Dbs(BankBase):
                 pdf_version=1.4, algorithm=2, revision=3, length=128, permissions=-1852
             ),
             MetadataIdentifier(creator="Quadient CXM AG"),
-        ]
+        ],
+        [
+            TextIdentifier("DBS"),
+            MetadataIdentifier(creator="Quadient CXM AG"),
+        ],
     ]
