@@ -64,7 +64,7 @@ class Report:
     def number_errored(self) -> int:
         return len(self.errored_results)
 
-    def display_report(self) -> None:
+    def display_report(self, verbose=False) -> None:
         """
         Parses all results, displaying the number of successfully
         processed statements and any errors.
@@ -79,10 +79,12 @@ class Report:
             click.echo(click.style(changed_msg, bold=True))
 
         for res in self.errored_results:
+            error_msg = res.error_info["message"]
+            if verbose:
+                error_msg = res.error_info["traceback"]
             click.echo(
                 click.style(
-                    f"{res.source_file_name} -- "
-                    f"{res.error_info['message'][:120]}",  # type: ignore
+                    f"{res.source_file_name} -- " f"{error_msg}",  # type: ignore
                     fg="red",
                 )
             )
@@ -161,7 +163,7 @@ def run(
     pprint: bool = False,
     single_process: bool = False,
     safety_check: bool = True,
-    **_,
+    verbose=False,
 ):
     """
     Process a collection of input files concurrently
@@ -205,7 +207,7 @@ def run(
         # filter out null values, for cases where print_df is True
         # and processing errors occur to avoid pydantic validation errors
         report = Report([res for res in results if res])
-        report.display_report()
+        report.display_report(verbose)
 
 
 def get_statement_paths(files: Iterable[Path]) -> set[Path]:
