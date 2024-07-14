@@ -18,8 +18,12 @@ class DebitStatement(BaseStatement):
     statement_type = EntryType.DEBIT
 
     @cached_property
-    def debit_header(self):
+    def has_debit_header(self) -> bool:
         """Checks if the statement is a debit statement"""
+        return bool(self.find_debit_header_text())
+
+    @lru_cache
+    def find_debit_header_text(self) -> str:
         identifier = self.config.debit_statement_identifier
         for page in self.pages:
             for line in page.lines:
@@ -75,7 +79,8 @@ class DebitStatement(BaseStatement):
     @lru_cache
     def get_column_pos(self, column_type: str, page_number: int) -> int | None:
         pattern = re.compile(rf"{column_type}[\w()$]*", re.IGNORECASE)
-        match: re.Match | None = pattern.search(self.debit_header)
+        debit_header = self.find_debit_header_text()
+        match: re.Match | None = pattern.search(debit_header)
         if match:
             return self.get_header_pos(match.group(), page_number)
         logger.warning(f"`{column_type}` column not found in header")
@@ -98,15 +103,16 @@ class DebitStatement(BaseStatement):
         16 OCT       item                                     123.12
         ```
         """
-        if self.debit_header:
-            lines = self.pages[page_number].lines
-            for line in lines:
-                header_start_pos = line.lower().find(column_name)
-                if header_start_pos == -1:
-                    continue
-                return header_start_pos + len(column_name)
+        lines = self.pages[page_number].lines
+        for line in lines:
+            header_start_pos = line.lower().find(column_name)
+            if header_start_pos == -1:
+                continue
+            return header_start_pos + len(column_name)
 
-        raise ValueError(f"Debit header {column_name} missing in {self.debit_header}")
+        raise ValueError(
+            f"Debit header {column_name} cannot be found on page {page_number}"
+        )
 
     @lru_cache
     def perform_safety_check(self) -> bool:
