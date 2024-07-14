@@ -21,7 +21,13 @@ def mock_results():
     result1 = Result(
         source_file_name="statement1.pdf", target_file_name="processed1.csv"
     )
-    result2 = Result(source_file_name="statement2.pdf", error_info={"message": "Error"})
+    result2 = Result(
+        source_file_name="statement2.pdf",
+        error_info={
+            "message": "Error",
+            "traceback": "Traceback (most recent call last)",
+        },
+    )
     return [result1, result2]
 
 
@@ -47,21 +53,21 @@ def run_cli_command(commands: list[str]) -> subprocess.CompletedProcess:
 
 
 def test_display_report(mock_results, capsys):
-    # Create a Report object with mock results
     report = Report(results=mock_results)
-
-    # Call the display_report method
     report.display_report()
-
-    # Capture and check the printed output
     captured = capsys.readouterr()
     printed_output = captured.out.strip().split("\n")
 
-    # Check assertions based on the mock results
     assert "1 statement(s) had errors while processing" in printed_output
     assert "1 statement(s) processed" in printed_output
     assert "statement1.pdf -> processed1.csv" in printed_output
     assert "statement2.pdf -- Error" in printed_output
+
+    # Test verbose output
+    report.display_report(verbose=True)
+    captured = capsys.readouterr()
+    printed_output = captured.out.strip().split("\n")
+    assert "statement2.pdf -- Traceback (most recent call last)" in printed_output
 
 
 def test_help_command() -> None:
