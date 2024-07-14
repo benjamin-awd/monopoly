@@ -57,17 +57,19 @@ class BaseStatement(ABC):
     def get_transactions(self) -> list[Transaction] | None:
         transactions: list[Transaction] = []
 
-        for page in self.pages:
-            for idx, line in enumerate(page.lines):
+        for page_num, page in enumerate(self.pages):
+            for line_num, line in enumerate(page.lines):
                 if match := self.pattern.search(line):
                     groupdict = TransactionGroupDict(**match.groupdict())
-                    transaction_match = TransactionMatch(groupdict, match)
+                    transaction_match = TransactionMatch(
+                        groupdict, match, page_number=page_num
+                    )
                     pre_processed_match = self.pre_process_match(transaction_match)
                     processed_match = self.process_match(
                         match=pre_processed_match,
                         line=line,
                         lines=page.lines,
-                        idx=idx,
+                        idx=line_num,
                     )
                     transaction = Transaction(**processed_match.groupdict)
                     transactions.append(transaction)

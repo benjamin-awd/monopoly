@@ -65,6 +65,7 @@ class TransactionGroupDict(Mapping):
 class TransactionMatch:
     groupdict: TransactionGroupDict
     match: re.Match
+    page_number: int
 
     def span(self):
         return self.match.span()

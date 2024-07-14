@@ -71,7 +71,9 @@ def test_process_match_multiline_description(statement: BaseStatement):
         "suffix": None,
     }
     match = TransactionMatch(
-        match=re.search("foo", "foo"), groupdict=TransactionGroupDict(**groupdict)
+        match=re.search("foo", "foo"),
+        groupdict=TransactionGroupDict(**groupdict),
+        page_number=0,
     )
 
     # case 1: transaction is found on next line
