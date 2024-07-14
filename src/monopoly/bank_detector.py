@@ -40,7 +40,7 @@ class BankDetector:
     def __init__(self, document: PdfDocument):
         self.document = document
 
-    @property
+    @cached_property
     def metadata_items(self) -> list[Any]:
         """
         Retrieves encryption and metadata identifiers from a bank statement PDF
