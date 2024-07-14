@@ -5,6 +5,7 @@ import pytest
 from monopoly.bank_detector import BankDetector
 from monopoly.banks.base import BankBase
 from monopoly.constants import EncryptionIdentifier, MetadataIdentifier, TextIdentifier
+from monopoly.pdf import PdfDocument
 
 
 @pytest.fixture
@@ -110,7 +111,7 @@ def test_detect_bank_not_identified(
     assert not metadata_analyzer.detect_bank()
 
 
-@patch.object(BankDetector, "raw_text", new_callable=PropertyMock)
+@patch.object(PdfDocument, "raw_text", new_callable=PropertyMock)
 @patch.object(BankDetector, "metadata_items", new_callable=PropertyMock)
 def test_detect_bank_with_text_identifier(
     mock_metadata_items, mock_raw_text, monkeypatch, metadata_analyzer: BankDetector
@@ -131,7 +132,7 @@ def test_detect_bank_with_text_identifier(
     assert bank.__name__ == MockBankWithMultipleTextIdentifier.__name__
 
 
-@patch.object(BankDetector, "raw_text", new_callable=PropertyMock)
+@patch.object(PdfDocument, "raw_text", new_callable=PropertyMock)
 @patch.object(BankDetector, "metadata_items", new_callable=PropertyMock)
 def test_detect_bank_with_not_matching_text_identifier(
     mock_metadata_items, mock_raw_text, monkeypatch, metadata_analyzer: BankDetector
@@ -150,7 +151,7 @@ def test_detect_bank_with_not_matching_text_identifier(
     assert not metadata_analyzer.detect_bank()
 
 
-@patch.object(BankDetector, "raw_text", new_callable=PropertyMock)
+@patch.object(PdfDocument, "raw_text", new_callable=PropertyMock)
 @patch.object(BankDetector, "metadata_items", new_callable=PropertyMock)
 def test_detect_bank_with_only_text_identifier(
     mock_metadata_items, mock_raw_text, monkeypatch, metadata_analyzer: BankDetector

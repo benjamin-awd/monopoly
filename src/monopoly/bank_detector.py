@@ -40,13 +40,6 @@ class BankDetector:
     def __init__(self, document: PdfDocument):
         self.document = document
 
-    @cached_property
-    def raw_text(self):
-        raw_text = ""
-        for page in self.document.open():
-            raw_text += page.get_text()
-        return raw_text
-
     @property
     def metadata_items(self) -> list[Any]:
         """
@@ -152,7 +145,7 @@ class BankDetector:
             return True
 
         for identifier in text_identifiers:
-            if identifier.text not in self.raw_text:
+            if identifier.text not in self.document.raw_text:
                 return False
 
         logger.debug("Text identifier found in PDF")
