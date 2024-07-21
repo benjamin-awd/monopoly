@@ -52,7 +52,7 @@ class StatementHandler:
                 )
 
         if not credit_config:
-            raise RuntimeError("Missing credit config")
+            raise RuntimeError(f"Missing credit config for bank: {bank}")
 
         # if it's not a debit statement, assume that it's a credit statement
         return CreditStatement(self.parser, credit_config)
