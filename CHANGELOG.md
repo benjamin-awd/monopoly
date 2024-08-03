@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.10.5] - 2024-08-03
+
+### ⚙️ Miscellaneous Tasks
+
+- Use simpler identifier for example bank
+
 ## [0.10.4] - 2024-08-03
 
 ### 🛠️ Bug Fixes
