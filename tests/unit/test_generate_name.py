@@ -2,7 +2,6 @@ from datetime import datetime
 from unittest.mock import MagicMock, patch
 
 import pytest
-from fitz import Document
 
 from monopoly.config import StatementConfig
 from monopoly.write import generate_name
@@ -17,7 +16,7 @@ def mock_generate_hash():
 
 @pytest.mark.usefixtures("mock_generate_hash")
 def test_generate_name():
-    document = MagicMock(spec=Document)
+    statement = MagicMock()
     statement_config = MagicMock(spec=StatementConfig)
     statement_config.bank_name = "hsbc"
     statement_date = datetime(2023, 6, 15)
@@ -26,7 +25,7 @@ def test_generate_name():
     expected_filename = "hsbc-credit-2023-06-b960bf1e.csv"
     # Test for format_type="file"
     filename = generate_name(
-        document=document,
+        statement=statement,
         format_type="file",
         statement_config=statement_config,
         statement_type=statement_type,
@@ -36,7 +35,7 @@ def test_generate_name():
 
     # Test for format_type="blob"
     filename = generate_name(
-        document=document,
+        statement=statement,
         format_type="blob",
         statement_config=statement_config,
         statement_type=statement_type,
@@ -50,7 +49,7 @@ def test_generate_name():
     # Test for invalid format_type
     with pytest.raises(ValueError, match="Invalid format_type"):
         generate_name(
-            document=document,
+            statement=statement,
             format_type="invalid_format",
             statement_config=statement_config,
             statement_type=statement_type,
