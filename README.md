@@ -60,12 +60,8 @@ monopoly ./statements
 
 If you need to run monopoly on a password protected file, ensure that passwords are set in the .env file:
 ```sh
-cp .env.template env
-```
-
-If you have multiple statements from the same bank with different passwords, make sure to set both passwords in an array format:
-```sh
-HSBC_PDF_PASSWORDS=["password1","password2"]
+cp .env.template .env
+PDF_PASSWORDS=["password1","password2"]
 ```
 
 Monopoly can also be run as a Python [library](src/monopoly/examples/single_statement.py):
