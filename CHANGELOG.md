@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.10.4] - 2024-08-03
+
+### 🛠️ Bug Fixes
+
+- *(publish)* Trigger on push of tags or manual workflow
+
+### 🚜 Refactor
+
+- *(handler)* Add more descriptive error for missing credit config
+- *(write)* Generate hash based on transactions
+
 ## [0.10.3] - 2024-07-14
 
 ### 🛠️ Bug Fixes
