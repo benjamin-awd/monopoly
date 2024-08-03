@@ -130,7 +130,7 @@ class Pipeline:
             output_directory = Path(output_directory)
 
         filename = generate_name(
-            document=statement.document,
+            statement=statement,
             format_type="file",
             statement_config=statement.config,
             statement_type=statement.statement_type,
