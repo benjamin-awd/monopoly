@@ -4,11 +4,7 @@ import pytest
 
 from monopoly.bank_detector import BankDetector
 from monopoly.banks.base import BankBase
-from monopoly.identifiers import (
-    EncryptionIdentifier,
-    MetadataIdentifier,
-    TextIdentifier,
-)
+from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 from monopoly.pdf import PdfDocument
 
 
@@ -27,9 +23,6 @@ class MockBankOne(BankBase):
     credit_config = None
     identifiers = [
         [
-            EncryptionIdentifier(
-                pdf_version=1.7, algorithm=5, revision=6, length=256, permissions=-1028
-            ),
             MetadataIdentifier(creator="foo", producer="bar"),
         ]
     ]
@@ -58,9 +51,6 @@ class MockBankWithMultipleTextIdentifier(BankBase):
     credit_config = None
     identifiers = [
         [
-            EncryptionIdentifier(
-                pdf_version=1.7, algorithm=5, revision=6, length=256, permissions=-1028
-            ),
             MetadataIdentifier(creator="foo", producer="bar"),
             TextIdentifier("specific_string"),
             TextIdentifier("other_specific_string"),
@@ -122,9 +112,6 @@ def test_detect_bank_with_text_identifier(
 ):
     mock_raw_text.return_value = "specific_string, other_specific_string"
     mock_metadata_items.return_value = [
-        EncryptionIdentifier(
-            pdf_version=1.7, algorithm=5, revision=6, length=256, permissions=-1028
-        ),
         MetadataIdentifier(creator="foo", producer="bar"),
     ]
 
@@ -143,9 +130,6 @@ def test_detect_bank_with_not_matching_text_identifier(
 ):
     mock_raw_text.return_value = "not_a_match"
     mock_metadata_items.return_value = [
-        EncryptionIdentifier(
-            pdf_version=1.7, algorithm=5, revision=6, length=256, permissions=-1028
-        ),
         MetadataIdentifier(creator="foo", producer="bar"),
     ]
 

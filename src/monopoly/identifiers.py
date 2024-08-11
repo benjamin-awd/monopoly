@@ -7,17 +7,6 @@ class Identifier:
 
 
 @dataclass
-class EncryptionIdentifier(Identifier):
-    """Stores encryption-related data taken from the encryption dictionary of a PDF"""
-
-    pdf_version: float
-    algorithm: int
-    revision: int
-    length: int
-    permissions: int
-
-
-@dataclass
 class MetadataIdentifier(Identifier):
     """Stores the metadata attributes of a PDF"""
 
