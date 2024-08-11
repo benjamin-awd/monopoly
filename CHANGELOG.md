@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.10.7] - 2024-08-11
+
+### 🚜 Refactor
+
+- *(banks)* Remove encryption identifier
+
+### ⚙️ Miscellaneous Tasks
+
+- *(banks/sc)* Add text identifier
+
 ## [0.10.6] - 2024-08-11
 
 ### 🚜 Refactor
