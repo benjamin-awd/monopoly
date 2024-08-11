@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.10.6] - 2024-08-11
+
+### 🚜 Refactor
+
+- Simplify bank detection function
+
+### 📚 Documentation
+
+- *(README)* Update information on PDF_PASSWORDS env var
+
+### Build
+
+- *(deps)* Bump the deps group with 7 updates
+
 ## [0.10.5] - 2024-08-03
 
 ### ⚙️ Miscellaneous Tasks
