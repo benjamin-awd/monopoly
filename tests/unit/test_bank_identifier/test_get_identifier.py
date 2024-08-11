@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 import pytest
 
 from monopoly.bank_detector import BankDetector
-from monopoly.identifiers import EncryptionIdentifier, MetadataIdentifier
+from monopoly.identifiers import MetadataIdentifier
 from monopoly.pdf import PdfDocument
 
 
@@ -55,19 +55,6 @@ def mock_non_encrypted_document():
             "producer": "",
         },
     )
-
-
-def test_encryption_identifier(mock_encrypted_document):
-    with patch("monopoly.bank_detector.BankDetector.get_raw_encrypt_dict") as mock:
-        metadata_analyzer = BankDetector(mock_encrypted_document)
-        mock.return_value = {"V": "4", "R": "4", "Length": "128", "P": "-1804"}
-
-        expected_identifier = EncryptionIdentifier(
-            pdf_version=1.6, algorithm=4, revision=4, length=128, permissions=-1804
-        )
-
-        assert isinstance(metadata_analyzer.metadata_items[0], EncryptionIdentifier)
-        assert metadata_analyzer.metadata_items[0] == expected_identifier
 
 
 def test_metadata_identifier(mock_non_encrypted_document):
