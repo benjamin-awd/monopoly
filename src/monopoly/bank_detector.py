@@ -121,12 +121,13 @@ class BankDetector:
                 filter(lambda i: not isinstance(i, TextIdentifier), grouped_identifiers)
             )
 
-            if pdf_property_identifiers and len(self.metadata_items) != len(
-                pdf_property_identifiers
-            ):
-                continue
+            if pdf_property_identifiers:
+                if len(self.metadata_items) != len(pdf_property_identifiers):
+                    continue
 
-            if self.pdf_properties_match(pdf_property_identifiers):
+                if not self.pdf_properties_match(pdf_property_identifiers):
+                    continue
+
                 if not self.text_identifiers_match(text_identifiers):
                     logger.warning("PDF metadata matches but text not found")
                     return False
@@ -134,9 +135,8 @@ class BankDetector:
                 logger.debug("Identified statement bank: %s", bank.__name__)
                 return True
 
-            # support for statements that only have text identifiers
-            if not pdf_property_identifiers:
-                if text_identifiers and self.text_identifiers_match(text_identifiers):
+            if text_identifiers:
+                if self.text_identifiers_match(text_identifiers):
                     return True
 
         return False
