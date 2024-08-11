@@ -7,7 +7,7 @@ from monopoly.constants import (
     DebitTransactionPatterns,
     StatementBalancePatterns,
 )
-from monopoly.identifiers import EncryptionIdentifier, MetadataIdentifier
+from monopoly.identifiers import MetadataIdentifier
 
 from ..base import BankBase
 
@@ -40,9 +40,6 @@ class Maybank(BankBase):
             ),
         ],
         [
-            EncryptionIdentifier(
-                pdf_version=1.4, algorithm=4, revision=4, length=128, permissions=-1852
-            ),
             MetadataIdentifier(
                 title="Credit Card Statement",
                 author="Maybank2U.com",
