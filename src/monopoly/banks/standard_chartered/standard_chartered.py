@@ -6,7 +6,7 @@ from monopoly.constants import (
     CreditTransactionPatterns,
     StatementBalancePatterns,
 )
-from monopoly.identifiers import MetadataIdentifier
+from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
 from ..base import BankBase
 
@@ -31,6 +31,7 @@ class StandardChartered(BankBase):
             MetadataIdentifier(
                 title="eStatement",
                 producer="iText",
-            )
+            ),
+            TextIdentifier("Standard Chartered"),
         ]
     ]
