@@ -3,7 +3,7 @@ import re
 
 from monopoly.config import CreditStatementConfig, DebitStatementConfig, StatementConfig
 from monopoly.pdf import PdfParser
-from monopoly.statements import CreditStatement, DebitStatement
+from monopoly.statements import BaseStatement, CreditStatement, DebitStatement
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +40,7 @@ class StatementHandler:
     def perform_safety_check(self):
         self.statement.perform_safety_check()
 
-    def get_statement(self) -> CreditStatement | DebitStatement:
+    def get_statement(self) -> BaseStatement:
         parser = self.parser
         bank = parser.bank
 

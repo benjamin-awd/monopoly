@@ -2,10 +2,10 @@ from datetime import datetime
 from hashlib import sha256
 
 from monopoly.config import StatementConfig
-from monopoly.statements import CreditStatement, DebitStatement
+from monopoly.statements import BaseStatement
 
 
-def generate_hash(statement: CreditStatement | DebitStatement) -> str:
+def generate_hash(statement: BaseStatement) -> str:
     """
     Generates a hash based on PDF metadata
     """
@@ -16,7 +16,7 @@ def generate_hash(statement: CreditStatement | DebitStatement) -> str:
 
 
 def generate_name(
-    statement: CreditStatement | DebitStatement,
+    statement: BaseStatement,
     format_type: str,
     statement_config: StatementConfig,
     statement_type: str,

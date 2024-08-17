@@ -13,7 +13,7 @@ from monopoly.generic import GenericStatementHandler
 from monopoly.generic.generic_handler import GenericBank
 from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfDocument, PdfParser
-from monopoly.statements import CreditStatement, DebitStatement
+from monopoly.statements import BaseStatement
 from monopoly.statements.transaction import Transaction
 from monopoly.write import generate_name
 
@@ -65,7 +65,7 @@ class Pipeline:
         logger.warning("Unable to detect bank, transactions may be inaccurate")
         return GenericBank
 
-    def extract(self, safety_check=True) -> CreditStatement | DebitStatement:
+    def extract(self, safety_check=True) -> BaseStatement:
         """Extracts transactions from the statement, and performs
         a safety check to make sure that total transactions add up"""
         statement = self.handler.get_statement()
@@ -86,7 +86,7 @@ class Pipeline:
         return statement
 
     @staticmethod
-    def transform(statement: CreditStatement | DebitStatement) -> list[Transaction]:
+    def transform(statement: BaseStatement) -> list[Transaction]:
         logger.debug("Running transformation functions on DataFrame")
         transactions = statement.transactions
         statement_date = statement.statement_date
@@ -123,7 +123,7 @@ class Pipeline:
     @staticmethod
     def load(
         transactions: list[Transaction],
-        statement: CreditStatement | DebitStatement,
+        statement: BaseStatement,
         output_directory: Path,
     ):
         if isinstance(output_directory, str):
