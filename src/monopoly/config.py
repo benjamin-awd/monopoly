@@ -2,22 +2,10 @@ import re
 from dataclasses import field
 from typing import Any, Optional
 
-from pydantic import ConfigDict, SecretStr
+from pydantic import ConfigDict
 from pydantic.dataclasses import dataclass
-from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from monopoly.constants import BankNames, EntryType, InternalBankNames
-
-
-class PdfPasswords(BaseSettings):
-    """
-    Pydantic model that automatically populates variables from a .env file,
-    or an environment variable called `passwords`.
-    e.g. export PDF_PASSWORDS='["password123", "secretpass"]'
-    """
-
-    pdf_passwords: list[SecretStr] = [SecretStr("")]
-    model_config = SettingsConfigDict(env_file=".env", extra="allow")
 
 
 @dataclass
@@ -109,6 +97,3 @@ class PdfConfig:
 
     page_range: tuple[Optional[int], Optional[int]] = (None, None)
     page_bbox: Optional[tuple[float, float, float, float]] = None
-
-
-passwords = PdfPasswords().pdf_passwords
