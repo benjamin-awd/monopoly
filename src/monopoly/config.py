@@ -1,4 +1,5 @@
 import re
+from dataclasses import field
 from typing import Any, Optional
 
 from pydantic import ConfigDict, SecretStr
@@ -19,7 +20,7 @@ class PdfPasswords(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="allow")
 
 
-@dataclass(frozen=True)
+@dataclass
 class DateOrder:
     """
     Supported `dateparser` DATE_ORDER arguments can be found here:
@@ -59,8 +60,8 @@ class StatementConfig:
     bank_name: BankNames | InternalBankNames
     transaction_pattern: str
     statement_date_pattern: str
-    transaction_date_order: DateOrder = DateOrder("DMY")
-    statement_date_order: DateOrder = DateOrder("DMY")
+    transaction_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
+    statement_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
     multiline_transactions: bool = False
     has_withdraw_deposit_column: bool = False
     header_pattern: str

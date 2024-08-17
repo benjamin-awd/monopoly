@@ -15,7 +15,7 @@ from monopoly.config import passwords as env_passwords
 logger = logging.getLogger(__name__)
 
 
-@dataclass(frozen=True)
+@dataclass
 class PdfPage:
     """
     Dataclass representation of a bank statement PDF page.
