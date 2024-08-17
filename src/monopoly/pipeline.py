@@ -68,7 +68,7 @@ class Pipeline:
     def extract(self, safety_check=True) -> BaseStatement:
         """Extracts transactions from the statement, and performs
         a safety check to make sure that total transactions add up"""
-        statement = self.handler.get_statement()
+        statement = self.handler.statement
         transactions = statement.get_transactions()
         statement_date = statement.statement_date
 

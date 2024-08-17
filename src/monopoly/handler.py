@@ -1,5 +1,6 @@
 import logging
 import re
+from functools import cached_property
 
 from monopoly.config import CreditStatementConfig, DebitStatementConfig, StatementConfig
 from monopoly.pdf import PdfParser
@@ -18,7 +19,6 @@ class StatementHandler:
     def __init__(self, parser: PdfParser):
         self.parser = parser
         self.bank = parser.bank
-        self.statement = self.get_statement()
 
     @property
     def transactions(self):
@@ -40,7 +40,8 @@ class StatementHandler:
     def perform_safety_check(self):
         self.statement.perform_safety_check()
 
-    def get_statement(self) -> BaseStatement:
+    @cached_property
+    def statement(self) -> BaseStatement:
         parser = self.parser
         bank = parser.bank
 
