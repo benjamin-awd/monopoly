@@ -1,5 +1,7 @@
 import logging
+import re
 
+from monopoly.config import CreditStatementConfig, DebitStatementConfig, StatementConfig
 from monopoly.pdf import PdfParser
 from monopoly.statements import CreditStatement, DebitStatement
 
@@ -26,33 +28,32 @@ class StatementHandler:
     def statement_date(self):
         return self.statement.statement_date
 
+    def get_header(self, config: StatementConfig) -> str | None:
+        header_pattern = re.compile(config.header_pattern)
+        pages = self.parser.get_pages()
+        for page in pages:
+            for line in page.lines:
+                if match := header_pattern.search(line):
+                    return match.group().lower()
+        return None
+
     def perform_safety_check(self):
         self.statement.perform_safety_check()
 
     def get_statement(self) -> CreditStatement | DebitStatement:
-        bank = self.parser.bank
-        debit_config, credit_config = bank.debit_config, bank.credit_config
+        parser = self.parser
+        bank = parser.bank
 
-        if debit_config:
-            debit_statement = DebitStatement(self.parser, debit_config)
-            # if we can find transactions using the debit config
-            # assume that it is a debit statement
-            try:
-                if debit_statement.get_transactions():
-                    return debit_statement
-            except (ValueError, TypeError) as err:
-                logger.debug(
-                    "Could not parse with debit config due to error: %s",
-                    repr(err),
-                )
-            except Exception as err:  # pylint: disable=broad-exception-caught
-                logger.error(
-                    "Unexpected error while parsing with debit config: %s",
-                    repr(err),
-                )
+        statement_factory = {
+            DebitStatementConfig: DebitStatement,
+            CreditStatementConfig: CreditStatement,
+        }
 
-        if not credit_config:
-            raise RuntimeError(f"Missing credit config for bank: {bank}")
+        configs = filter(None, [bank.debit_config, bank.credit_config])
 
-        # if it's not a debit statement, assume that it's a credit statement
-        return CreditStatement(self.parser, credit_config)
+        for config in configs:
+            if header := self.get_header(config):
+                statement_cls = statement_factory[type(config)]
+                return statement_cls(parser, config, header)
+
+        raise RuntimeError("Could not create statement object")

@@ -18,6 +18,7 @@ class Maybank(BankBase):
     debit_config = DebitStatementConfig(
         bank_name=BankNames.MAYBANK,
         statement_date_pattern=r"(?:結單日期)[:\s]+(\d{2}\/\d{2}\/\d{2})",
+        header_pattern=r"(DATE.*DESCRIPTION.*AMOUNT.*BALANCE)",
         transaction_pattern=DebitTransactionPatterns.MAYBANK,
         has_withdraw_deposit_column=False,
         multiline_transactions=True,
@@ -26,6 +27,7 @@ class Maybank(BankBase):
     credit_config = CreditStatementConfig(
         bank_name=BankNames.MAYBANK,
         statement_date_pattern=r"(\d{2}\s[A-Z]{3}\s\d{2})",
+        header_pattern=r"(Date.*Description.*Amount)",
         transaction_pattern=CreditTransactionPatterns.MAYBANK,
         prev_balance_pattern=StatementBalancePatterns.MAYBANK,
         multiline_transactions=True,

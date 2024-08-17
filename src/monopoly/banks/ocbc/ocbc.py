@@ -18,6 +18,7 @@ class Ocbc(BankBase):
     credit_config = CreditStatementConfig(
         bank_name=BankNames.OCBC,
         statement_date_pattern=r"(\d{2}\-\d{2}\-\d{4})",
+        header_pattern=r"(TRANSACTION DATE.*DESCRIPTION.*AMOUNT)",
         prev_balance_pattern=StatementBalancePatterns.OCBC,
         transaction_pattern=CreditTransactionPatterns.OCBC,
     )
@@ -25,7 +26,7 @@ class Ocbc(BankBase):
     debit_config = DebitStatementConfig(
         bank_name=BankNames.OCBC,
         statement_date_pattern=r"TO\s(\d+\s[A-Za-z]{3}\s\d{4})",
-        debit_statement_identifier=r"(Withdrawal.*Deposit.*Balance)",
+        header_pattern=r"(Withdrawal.*Deposit.*Balance)",
         transaction_pattern=DebitTransactionPatterns.OCBC,
         multiline_transactions=True,
     )

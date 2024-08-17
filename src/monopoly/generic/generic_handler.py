@@ -44,7 +44,7 @@ class GenericStatementHandler(StatementHandler):
                 transaction_pattern=self.transaction_pattern,
                 statement_date_pattern=self.statement_date_pattern,
                 multiline_transactions=self.multiline_transactions,
-                debit_statement_identifier=self.debit_statement_identifier,
+                header_pattern=self.header_pattern,
             )
         return None
 
@@ -58,6 +58,7 @@ class GenericStatementHandler(StatementHandler):
                 prev_balance_pattern=self.prev_balance_pattern,
                 transaction_pattern=self.transaction_pattern,
                 statement_date_pattern=self.statement_date_pattern,
+                header_pattern=self.header_pattern,
                 multiline_transactions=self.multiline_transactions,
             )
         return None
@@ -79,7 +80,7 @@ class GenericStatementHandler(StatementHandler):
         return self.analyzer.check_if_multiline()
 
     @cached_property
-    def debit_statement_identifier(self):
+    def header_pattern(self):
         return self.analyzer.get_debit_statement_header_line()
 
     @cached_property

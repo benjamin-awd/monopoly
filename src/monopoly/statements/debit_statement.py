@@ -1,6 +1,6 @@
 import logging
 import re
-from functools import cached_property, lru_cache
+from functools import lru_cache
 
 from monopoly.constants import EntryType
 from monopoly.statements.transaction import TransactionMatch
@@ -16,22 +16,6 @@ class DebitStatement(BaseStatement):
     """
 
     statement_type = EntryType.DEBIT
-
-    @cached_property
-    def has_debit_header(self) -> bool:
-        """Checks if the statement is a debit statement"""
-        return bool(self.find_debit_header_text())
-
-    @lru_cache
-    def find_debit_header_text(self) -> str:
-        identifier = self.config.debit_statement_identifier
-        if identifier:
-            for page in self.pages:
-                for line in page.lines:
-                    if re.search(identifier, line):
-                        return line.lower()
-
-        raise ValueError("Debit statement identifier not found in text")
 
     def pre_process_match(
         self, transaction_match: TransactionMatch
@@ -81,8 +65,7 @@ class DebitStatement(BaseStatement):
     @lru_cache
     def get_column_pos(self, column_type: str, page_number: int) -> int | None:
         pattern = re.compile(rf"{column_type}[\w()$]*", re.IGNORECASE)
-        debit_header = self.find_debit_header_text()
-        if match := pattern.search(debit_header):
+        if match := pattern.search(self.header):
             return self.get_header_pos(match.group(), page_number)
         logger.warning(f"`{column_type}` column not found in header")
         return None
@@ -104,7 +87,8 @@ class DebitStatement(BaseStatement):
         16 OCT       item                                     123.12
         ```
         """
-        lines = self.pages[page_number].lines
+        pages = list(self.pages)
+        lines = pages[page_number].lines
         for line in lines:
             header_start_pos = line.lower().find(column_name)
             if header_start_pos == -1:

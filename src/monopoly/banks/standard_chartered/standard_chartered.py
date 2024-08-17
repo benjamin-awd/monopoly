@@ -17,6 +17,7 @@ class StandardChartered(BankBase):
     credit_config = CreditStatementConfig(
         bank_name=BankNames.STANDARD_CHARTERED,
         statement_date_pattern=r"(\d{2}\s\w+\s\d{4})",
+        header_pattern=r"(Transaction.*Posting.*Amount)",
         prev_balance_pattern=StatementBalancePatterns.STANDARD_CHARTERED,
         transaction_pattern=CreditTransactionPatterns.STANDARD_CHARTERED,
     )
