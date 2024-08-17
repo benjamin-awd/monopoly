@@ -86,7 +86,7 @@ def setup_statement_fixture(
     document = MagicMock(spec=fitz.Document)
     document.name = "mock_document.pdf"
     mock_parser.document = document
-    statement = statement_cls(parser=mock_parser, config=statement_config)
+    statement = statement_cls(parser=mock_parser, config=statement_config, header="foo")
     yield statement
 
 
@@ -109,6 +109,7 @@ def statement(statement_config):
 def statement_config():
     statement_config = CreditStatementConfig(
         bank_name="example",
+        header_pattern="foo",
         transaction_pattern="foo",
         statement_date_pattern="",
         transaction_date_order=DateOrder("DMY"),

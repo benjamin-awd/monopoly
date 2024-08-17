@@ -5,7 +5,7 @@ from pydantic import ConfigDict, SecretStr
 from pydantic.dataclasses import dataclass
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from monopoly.constants import BankNames, InternalBankNames
+from monopoly.constants import BankNames, EntryType, InternalBankNames
 
 
 class PdfPasswords(BaseSettings):
@@ -52,8 +52,8 @@ class StatementConfig:
     Defaults to DMY.
     - `multiline_transactions` controls whether Monopoly tries to concatenate
     transactions that are split across two lines
-    - `debit_statement_identifier` is a regex pattern that is used to determine whether
-    a statement from a bank is a debit or credit card statement.
+    - `header_pattern` is a regex pattern that is used to find the 'header' line
+    of a statement, and determine if it is a debit or credit card statement.
     """
 
     bank_name: BankNames | InternalBankNames
@@ -63,7 +63,7 @@ class StatementConfig:
     statement_date_order: DateOrder = DateOrder("DMY")
     multiline_transactions: bool = False
     has_withdraw_deposit_column: bool = False
-    debit_statement_identifier: Optional[str] = None
+    header_pattern: str
 
 
 @dataclass(config=ConfigDict(extra="forbid"), kw_only=True)
@@ -72,6 +72,7 @@ class DebitStatementConfig(StatementConfig):
     Dataclass storing configuration values unique to debit statements
     """
 
+    statement_type = EntryType.DEBIT
     has_withdraw_deposit_column: bool = True
 
 
@@ -84,6 +85,7 @@ class CreditStatementConfig(StatementConfig):
     line in a credit statements, which is then treated as a transaction.
     """
 
+    statement_type = EntryType.CREDIT
     prev_balance_pattern: Optional[Any | re.Pattern] = None
 
     def __post_init__(self):

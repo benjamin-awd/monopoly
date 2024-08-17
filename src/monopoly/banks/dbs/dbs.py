@@ -19,6 +19,7 @@ class Dbs(BankBase):
         bank_name=BankNames.DBS,
         statement_date_pattern=r"(\d{2}\s[A-Za-z]{3}\s\d{4})",
         multiline_transactions=False,
+        header_pattern=r"(DATE.*DESCRIPTION.*AMOUNT)",
         transaction_pattern=CreditTransactionPatterns.DBS,
         prev_balance_pattern=StatementBalancePatterns.DBS,
     )
@@ -27,7 +28,7 @@ class Dbs(BankBase):
         bank_name=BankNames.DBS,
         statement_date_pattern=r"(\d{2}\s[A-Za-z]{3}\s\d{4})",
         multiline_transactions=True,
-        debit_statement_identifier=r"(WITHDRAWAL.*DEPOSIT.*BALANCE)",
+        header_pattern=r"(WITHDRAWAL.*DEPOSIT.*BALANCE)",
         transaction_pattern=DebitTransactionPatterns.DBS,
     )
 

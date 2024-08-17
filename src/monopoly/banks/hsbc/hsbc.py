@@ -17,6 +17,7 @@ class Hsbc(BankBase):
     credit_config = CreditStatementConfig(
         bank_name=BankNames.HSBC,
         statement_date_pattern=r"Statement From .* to (\d{2}\s[A-Z]{3}\s\d{4})",
+        header_pattern=r"(DATE.*DESCRIPTION.*AMOUNT)",
         prev_balance_pattern=StatementBalancePatterns.HSBC,
         transaction_pattern=CreditTransactionPatterns.HSBC,
         multiline_transactions=True,

@@ -10,6 +10,7 @@ class ExampleBank(BankBase):
     credit_config = CreditStatementConfig(
         bank_name=InternalBankNames.EXAMPLE,
         statement_date_pattern=r"(\d{2}\-\d{2}\-\d{4})",
+        header_pattern=r"(DATE.*DESCRIPTION.*AMOUNT)",
         prev_balance_pattern=(
             r"(?P<description>LAST MONTH'S BALANCE?)\s+"
             + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL

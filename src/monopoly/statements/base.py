@@ -27,11 +27,7 @@ class BaseStatement(ABC):
     and specific bank config.
     """
 
-    def __init__(
-        self,
-        parser: PdfParser,
-        config: StatementConfig,
-    ):
+    def __init__(self, parser: PdfParser, config: StatementConfig, header: str):
         self.pages = parser.get_pages()
         self.config = config
         self.columns: list[str] = [
@@ -41,6 +37,7 @@ class BaseStatement(ABC):
         ]
         self.parser = parser
         self.document = parser.document
+        self.header = header
 
     @cached_property
     def number_pattern(self) -> re.Pattern:

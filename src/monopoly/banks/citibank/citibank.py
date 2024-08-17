@@ -17,6 +17,7 @@ class Citibank(BankBase):
     credit_config = CreditStatementConfig(
         bank_name=BankNames.CITIBANK,
         statement_date_pattern=r"Statement\sDate\s+(.*)",
+        header_pattern=r"(DATE.*DESCRIPTION.*AMOUNT)",
         prev_balance_pattern=StatementBalancePatterns.CITIBANK,
         transaction_pattern=CreditTransactionPatterns.CITIBANK,
     )
