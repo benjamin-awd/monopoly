@@ -8,11 +8,22 @@ from typing import Optional, Type
 import fitz
 import pdftotext
 from pydantic import SecretStr
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from monopoly.banks import BankBase
-from monopoly.config import passwords as env_passwords
 
 logger = logging.getLogger(__name__)
+
+
+class PdfPasswords(BaseSettings):
+    """
+    Pydantic model that automatically populates variables from a .env file,
+    or an environment variable called `passwords`.
+    e.g. export PDF_PASSWORDS='["password123", "secretpass"]'
+    """
+
+    pdf_passwords: list[SecretStr] = [SecretStr("")]
+    model_config = SettingsConfigDict(env_file=".env", extra="allow")
 
 
 @dataclass
@@ -65,7 +76,7 @@ class PdfDocument:
     @property
     def passwords(self):
         if not self._passwords:
-            return env_passwords
+            return PdfPasswords().pdf_passwords
         return self._passwords
 
     @cached_property

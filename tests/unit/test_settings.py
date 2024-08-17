@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from monopoly.config import PdfPasswords
+from monopoly.pdf import PdfPasswords
 
 
 @pytest.fixture
