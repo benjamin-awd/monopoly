@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.10.8] - 2024-08-17
+
+### 🚜 Refactor
+
+- *(banks)* Remove EncryptionIdentifier
+- Use header patterns to identify statement type
+- Use default factory instead of frozen for DateOrder
+- Move PdfPasswords to pdf module
+- Reduce type hint verbosity by using BaseStatement
+
 ## [0.10.7] - 2024-08-11
 
 ### 🚜 Refactor
