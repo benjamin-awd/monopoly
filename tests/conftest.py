@@ -74,7 +74,7 @@ def parser(mock_bank):
 
 
 def setup_statement_fixture(
-    statement_cls: BaseStatement | DebitStatement | CreditStatement,
+    statement_cls: BaseStatement,
     statement_config,
 ):
     mock_parser = MagicMock(spec=PdfParser)
