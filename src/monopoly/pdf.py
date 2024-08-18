@@ -15,6 +15,12 @@ from monopoly.banks import BankBase
 logger = logging.getLogger(__name__)
 
 
+class MissingOCRError(Exception):
+    """
+    Error that is raised when PDF does not contain any selectable text
+    """
+
+
 class PdfPasswords(BaseSettings):
     """
     Pydantic model that automatically populates variables from a .env file,
@@ -196,6 +202,11 @@ class PdfParser:
             try:
                 pdf_byte_stream = BytesIO(document.tobytes(garbage=garbage))
                 pdf = pdftotext.PDF(pdf_byte_stream, physical=True)
+
+                # assume PDF is missing OCR if text is less than 10 chars on every page
+                if all(len(page) < 10 for page in pdf):
+                    raise MissingOCRError("No selectable text found")
+
                 return [PdfPage(page) for page in pdf]
             except pdftotext.Error:
                 continue
