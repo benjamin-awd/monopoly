@@ -2,7 +2,8 @@ import logging
 import re
 from functools import cached_property
 
-from monopoly.config import CreditStatementConfig, DebitStatementConfig, StatementConfig
+from monopoly.config import StatementConfig
+from monopoly.constants import EntryType
 from monopoly.pdf import PdfParser
 from monopoly.statements import BaseStatement, CreditStatement, DebitStatement
 
@@ -43,18 +44,15 @@ class StatementHandler:
     @cached_property
     def statement(self) -> BaseStatement:
         parser = self.parser
-        bank = parser.bank
 
-        statement_factory = {
-            DebitStatementConfig: DebitStatement,
-            CreditStatementConfig: CreditStatement,
-        }
-
-        configs = filter(None, [bank.debit_config, bank.credit_config])
-
-        for config in configs:
+        for config in self.bank.statement_configs:
             if header := self.get_header(config):
-                statement_cls = statement_factory[type(config)]
-                return statement_cls(parser, config, header)
+                match config.statement_type:
+                    case EntryType.DEBIT:
+                        logger.debug("Statement type detected: %s", EntryType.DEBIT)
+                        return DebitStatement(parser, config, header)
+                    case EntryType.CREDIT:
+                        logger.debug("Statement type detected: %s", EntryType.CREDIT)
+                        return CreditStatement(parser, config, header)
 
         raise RuntimeError("Could not create statement object")

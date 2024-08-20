@@ -8,6 +8,8 @@ from monopoly.statements.transaction import Transaction
 
 
 class MockProcessor(BankBase):
+    statement_configs = None
+    identifiers = None
     credit_config = None
     debit_config = None
 

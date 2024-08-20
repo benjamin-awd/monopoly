@@ -1,10 +1,11 @@
 import logging
 
-from monopoly.config import CreditStatementConfig, DebitStatementConfig
+from monopoly.config import StatementConfig
 from monopoly.constants import (
     BankNames,
     CreditTransactionPatterns,
     DebitTransactionPatterns,
+    EntryType,
     StatementBalancePatterns,
 )
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
@@ -15,7 +16,8 @@ logger = logging.getLogger(__name__)
 
 
 class Ocbc(BankBase):
-    credit_config = CreditStatementConfig(
+    credit_config = StatementConfig(
+        statement_type=EntryType.CREDIT,
         bank_name=BankNames.OCBC,
         statement_date_pattern=r"(\d{2}\-\d{2}\-\d{4})",
         header_pattern=r"(TRANSACTION DATE.*DESCRIPTION.*AMOUNT)",
@@ -23,7 +25,8 @@ class Ocbc(BankBase):
         transaction_pattern=CreditTransactionPatterns.OCBC,
     )
 
-    debit_config = DebitStatementConfig(
+    debit_config = StatementConfig(
+        statement_type=EntryType.DEBIT,
         bank_name=BankNames.OCBC,
         statement_date_pattern=r"TO\s(\d+\s[A-Za-z]{3}\s\d{4})",
         header_pattern=r"(Withdrawal.*Deposit.*Balance)",
@@ -39,3 +42,5 @@ class Ocbc(BankBase):
             TextIdentifier("OCBC"),
         ],
     ]
+
+    statement_configs = [debit_config, credit_config]

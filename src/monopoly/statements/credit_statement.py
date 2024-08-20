@@ -1,7 +1,6 @@
 import logging
 import re
 
-from monopoly.config import CreditStatementConfig
 from monopoly.constants import EntryType
 from monopoly.statements.transaction import Transaction, TransactionGroupDict
 
@@ -37,13 +36,14 @@ class CreditStatement(BaseStatement):
         """
         prev_balances = []
 
-        if isinstance(self.config, CreditStatementConfig):
-            if pattern := self.config.prev_balance_pattern:
-                for page in self.pages:
-                    for line in page.lines:
-                        match = pattern.search(line)
-                        if match:
-                            prev_balances.append(match)
+        if isinstance(self.config.prev_balance_pattern, str):
+            raise TypeError("Previous balance must be a compiled regex pattern")
+
+        if pattern := self.config.prev_balance_pattern:
+            for page in self.pages:
+                for line in page.lines:
+                    if match := pattern.search(line):
+                        prev_balances.append(match)
 
         return prev_balances
 

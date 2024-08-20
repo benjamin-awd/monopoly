@@ -23,7 +23,7 @@ class DebitStatement(BaseStatement):
         """
         Pre-processes transactions by adding a debit or credit suffix to the group dict
         """
-        if self.config.has_withdraw_deposit_column:
+        if self.config.statement_type == EntryType.DEBIT:
             transaction_match.groupdict.suffix = self.get_debit_suffix(
                 transaction_match
             )
@@ -90,7 +90,7 @@ class DebitStatement(BaseStatement):
         pages = list(self.pages)
         lines = pages[page_number].lines
         for line in lines:
-            header_start_pos = line.lower().find(column_name)
+            header_start_pos = line.lower().find(column_name.lower())
             if header_start_pos == -1:
                 continue
             return header_start_pos + len(column_name)

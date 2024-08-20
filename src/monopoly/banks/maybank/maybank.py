@@ -1,10 +1,11 @@
 import logging
 
-from monopoly.config import CreditStatementConfig, DebitStatementConfig
+from monopoly.config import StatementConfig
 from monopoly.constants import (
     BankNames,
     CreditTransactionPatterns,
     DebitTransactionPatterns,
+    EntryType,
     StatementBalancePatterns,
 )
 from monopoly.identifiers import MetadataIdentifier
@@ -15,7 +16,8 @@ logger = logging.getLogger(__name__)
 
 
 class Maybank(BankBase):
-    debit_config = DebitStatementConfig(
+    debit_config = StatementConfig(
+        statement_type=EntryType.DEBIT,
         bank_name=BankNames.MAYBANK,
         statement_date_pattern=r"(?:結單日期)[:\s]+(\d{2}\/\d{2}\/\d{2})",
         header_pattern=r"(DATE.*DESCRIPTION.*AMOUNT.*BALANCE)",
@@ -24,7 +26,8 @@ class Maybank(BankBase):
         multiline_transactions=True,
     )
 
-    credit_config = CreditStatementConfig(
+    credit_config = StatementConfig(
+        statement_type=EntryType.CREDIT,
         bank_name=BankNames.MAYBANK,
         statement_date_pattern=r"(\d{2}\s[A-Z]{3}\s\d{2})",
         header_pattern=r"(Date.*Description.*Amount)",
@@ -49,3 +52,5 @@ class Maybank(BankBase):
             ),
         ],
     ]
+
+    statement_configs = [debit_config, credit_config]
