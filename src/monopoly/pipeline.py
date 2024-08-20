@@ -70,14 +70,13 @@ class Pipeline:
         a safety check to make sure that total transactions add up"""
         statement = self.handler.statement
         transactions = statement.get_transactions()
-        statement_date = statement.statement_date
 
         if not transactions:
             raise ValueError("No transactions found - statement extraction failed")
 
         logger.debug("%s transactions found", len(transactions))
 
-        if not statement_date:
+        if not statement.statement_date:
             raise ValueError("No statement date found")
 
         if safety_check:

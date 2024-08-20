@@ -1,13 +1,14 @@
 from monopoly.banks.base import BankBase
-from monopoly.config import CreditStatementConfig
-from monopoly.constants import InternalBankNames, SharedPatterns
+from monopoly.config import StatementConfig
+from monopoly.constants import EntryType, InternalBankNames, SharedPatterns
 from monopoly.identifiers import TextIdentifier
 
 
 class ExampleBank(BankBase):
     """Dummy class to help with reading the example PDF statement"""
 
-    credit_config = CreditStatementConfig(
+    credit_config = StatementConfig(
+        statement_type=EntryType.CREDIT,
         bank_name=InternalBankNames.EXAMPLE,
         statement_date_pattern=r"(\d{2}\-\d{2}\-\d{4})",
         header_pattern=r"(DATE.*DESCRIPTION.*AMOUNT)",
@@ -27,3 +28,5 @@ class ExampleBank(BankBase):
             TextIdentifier(text="HCBS12345(12345)"),
         ]
     ]
+
+    statement_configs = [credit_config]

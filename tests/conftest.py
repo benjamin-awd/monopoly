@@ -5,7 +5,8 @@ import fitz
 import pytest
 
 from monopoly.bank_detector import BankDetector
-from monopoly.config import CreditStatementConfig, DateOrder, PdfConfig
+from monopoly.config import DateOrder, PdfConfig, StatementConfig
+from monopoly.constants import EntryType
 from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfDocument, PdfPage, PdfParser
 from monopoly.statements import BaseStatement, CreditStatement, DebitStatement
@@ -107,8 +108,9 @@ def statement(statement_config):
 
 @pytest.fixture(scope="session")
 def statement_config():
-    statement_config = CreditStatementConfig(
+    statement_config = StatementConfig(
         bank_name="example",
+        statement_type=EntryType.CREDIT,
         header_pattern="foo",
         transaction_pattern="foo",
         statement_date_pattern="",

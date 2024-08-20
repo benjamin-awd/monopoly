@@ -32,7 +32,7 @@ def test_pipeline_with_bank():
 def test_pipeline_with_bad_bank():
     file_path = Path("src/monopoly/examples/example_statement.pdf")
     pipeline = Pipeline(file_path=file_path, bank=Dbs)
-    with pytest.raises(ValueError, match="Statement date not found"):
+    with pytest.raises(ValueError, match="No transactions found"):
         pipeline.extract()
 
 

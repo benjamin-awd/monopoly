@@ -1,8 +1,8 @@
 import re
 from dataclasses import field
-from typing import Any, Optional
+from typing import Optional, Pattern
 
-from pydantic import ConfigDict
+from pydantic import field_validator
 from pydantic.dataclasses import dataclass
 
 from monopoly.constants import BankNames, EntryType, InternalBankNames
@@ -46,40 +46,28 @@ class StatementConfig:
     """
 
     bank_name: BankNames | InternalBankNames
-    transaction_pattern: str
-    statement_date_pattern: str
+    statement_type: EntryType
+    transaction_pattern: str | Pattern[str]
+    statement_date_pattern: str | Pattern[str]
+    header_pattern: str | Pattern[str]
     transaction_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
     statement_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
     multiline_transactions: bool = False
     has_withdraw_deposit_column: bool = False
-    header_pattern: str
+    prev_balance_pattern: Optional[str | Pattern[str]] = None
 
-
-@dataclass(config=ConfigDict(extra="forbid"), kw_only=True)
-class DebitStatementConfig(StatementConfig):
-    """
-    Dataclass storing configuration values unique to debit statements
-    """
-
-    statement_type = EntryType.DEBIT
-    has_withdraw_deposit_column: bool = True
-
-
-@dataclass(config=ConfigDict(extra="forbid"))
-class CreditStatementConfig(StatementConfig):
-    """
-    Dataclass storing configuration values unique to credit statements
-
-    - `prev_balance_pattern` is a regex pattern used to match the previous balance
-    line in a credit statements, which is then treated as a transaction.
-    """
-
-    statement_type = EntryType.CREDIT
-    prev_balance_pattern: Optional[Any | re.Pattern] = None
-
-    def __post_init__(self):
-        if self.prev_balance_pattern:
-            self.prev_balance_pattern = re.compile(self.prev_balance_pattern)
+    @field_validator(
+        "transaction_pattern",
+        "statement_date_pattern",
+        "header_pattern",
+        "prev_balance_pattern",
+        mode="before",
+    )
+    @classmethod
+    def compile_patterns(cls, v):
+        if v is None:
+            return None
+        return re.compile(v) if isinstance(v, str) else v
 
 
 @dataclass

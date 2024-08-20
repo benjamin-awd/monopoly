@@ -1,9 +1,10 @@
 import logging
 
-from monopoly.config import CreditStatementConfig, PdfConfig
+from monopoly.config import PdfConfig, StatementConfig
 from monopoly.constants import (
     BankNames,
     CreditTransactionPatterns,
+    EntryType,
     StatementBalancePatterns,
 )
 from monopoly.identifiers import MetadataIdentifier
@@ -14,7 +15,8 @@ logger = logging.getLogger(__name__)
 
 
 class Citibank(BankBase):
-    credit_config = CreditStatementConfig(
+    credit_config = StatementConfig(
+        statement_type=EntryType.CREDIT,
         bank_name=BankNames.CITIBANK,
         statement_date_pattern=r"Statement\sDate\s+(.*)",
         header_pattern=r"(DATE.*DESCRIPTION.*AMOUNT)",
@@ -35,3 +37,5 @@ class Citibank(BankBase):
             )
         ]
     ]
+
+    statement_configs = [credit_config]

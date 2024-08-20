@@ -2,7 +2,7 @@ import logging
 from functools import cached_property
 
 from monopoly.banks import BankBase
-from monopoly.config import CreditStatementConfig, DebitStatementConfig
+from monopoly.config import StatementConfig
 from monopoly.constants import EntryType, InternalBankNames
 from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfParser
@@ -18,8 +18,10 @@ class GenericBank(BankBase):
     the `GenericStatementHandler` class
     """
 
-    def __init__(self):
-        super().__init__(generic=True)
+    # populated by generic statement handler
+    @property
+    def statement_configs(self):
+        return None
 
     @property
     def identifiers(self):
@@ -30,16 +32,23 @@ class GenericStatementHandler(StatementHandler):
     def __init__(self, parser: PdfParser):
         pages = parser.get_pages()
         self.analyzer = DatePatternAnalyzer(pages)
-        parser.bank.debit_config = self.debit_config
-        parser.bank.credit_config = self.credit_config
+        parser.bank.statement_configs = list(
+            filter(None, [self.debit_config, self.credit_config])
+        )
         super().__init__(parser)
+
+    # override get_header and ignore passed config, since
+    # the header line has already been found
+    def get_header(self, _: StatementConfig):
+        return self.header_pattern
 
     @cached_property
     def debit_config(self):
         if self.statement_type == EntryType.DEBIT:
             logger.debug("Creating debit statement config")
 
-            return DebitStatementConfig(
+            return StatementConfig(
+                statement_type=EntryType.DEBIT,
                 bank_name=InternalBankNames.GENERIC,
                 transaction_pattern=self.transaction_pattern,
                 statement_date_pattern=self.statement_date_pattern,
@@ -53,7 +62,8 @@ class GenericStatementHandler(StatementHandler):
         if self.statement_type == EntryType.CREDIT:
             logger.debug("Creating credit statement config")
 
-            return CreditStatementConfig(
+            return StatementConfig(
+                statement_type=EntryType.CREDIT,
                 bank_name=InternalBankNames.GENERIC,
                 prev_balance_pattern=self.prev_balance_pattern,
                 transaction_pattern=self.transaction_pattern,
