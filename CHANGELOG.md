@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.10.9] - 2024-08-21
+
+### ⛰️ Features
+
+- *(constants)* Add RegexEnum class to automatically compile patterns
+
+### 🚜 Refactor
+
+- Prevent redundant get_statement() call
+- *(constants)* Add case insensitive flag directly to date groups
+- *(banks)* Use single StatementConfig class
+- *(banks)* Shift responsibility of regex pattern creation to config class
+
+### 📚 Documentation
+
+- Update PDF_PASSWORDS env var info
+- Add docstring for DateFormats
+
+### ⚙️ Miscellaneous Tasks
+
+- Add check for missing OCR layer
+- *(ci)* Disable too-few-public-methods
+
 ## [0.10.8] - 2024-08-17
 
 ### 🚜 Refactor
