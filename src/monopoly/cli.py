@@ -280,7 +280,7 @@ def get_statement_paths(files: Iterable[Path]) -> set[Path]:
 @setup_logs
 def monopoly(ctx: click.Context, files: list[Path], **kwargs):
     """
-    Monopoly helps convert your bank statements from PDF to CSV.
+    Monopoly converts your bank statements from PDF to CSV.
 
     A file or directory can be passed in via the FILES argument
     """
@@ -311,7 +311,7 @@ def show_welcome_message():
     """
 
     click.echo(art)
-    message = "Monopoly helps convert your bank statements from PDF to CSV"
+    message = "Monopoly converts your bank statements from PDF to CSV"
     click.echo(message)
     commands = [
         (
