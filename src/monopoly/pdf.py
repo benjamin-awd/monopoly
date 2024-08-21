@@ -24,7 +24,7 @@ class MissingOCRError(Exception):
 class PdfPasswords(BaseSettings):
     """
     Pydantic model that automatically populates variables from a .env file,
-    or an environment variable called `passwords`.
+    or an environment variable called `PDF_PASSWORDS`.
     e.g. export PDF_PASSWORDS='["password123", "secretpass"]'
     """
 
