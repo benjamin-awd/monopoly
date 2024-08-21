@@ -1,5 +1,4 @@
 import logging
-import re
 from functools import cached_property
 
 from monopoly.config import StatementConfig
@@ -30,11 +29,12 @@ class StatementHandler:
         return self.statement.statement_date
 
     def get_header(self, config: StatementConfig) -> str | None:
-        header_pattern = re.compile(config.header_pattern)
+        pattern = config.header_pattern
+
         pages = self.parser.get_pages()
         for page in pages:
             for line in page.lines:
-                if match := header_pattern.search(line):
+                if match := pattern.search(line):
                     return match.group().lower()
         return None
 

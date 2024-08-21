@@ -1,4 +1,5 @@
 import logging
+from re import compile as regex
 
 from monopoly.config import PdfConfig, StatementConfig
 from monopoly.constants import (
@@ -18,8 +19,8 @@ class Citibank(BankBase):
     credit_config = StatementConfig(
         statement_type=EntryType.CREDIT,
         bank_name=BankNames.CITIBANK,
-        statement_date_pattern=r"Statement\sDate\s+(.*)",
-        header_pattern=r"(DATE.*DESCRIPTION.*AMOUNT)",
+        statement_date_pattern=regex(r"Statement\sDate\s+(.*)"),
+        header_pattern=regex(r"(DATE.*DESCRIPTION.*AMOUNT)"),
         prev_balance_pattern=StatementBalancePatterns.CITIBANK,
         transaction_pattern=CreditTransactionPatterns.CITIBANK,
     )

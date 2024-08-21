@@ -2,17 +2,7 @@
 
 from enum import auto
 
-from strenum import StrEnum
-
-
-# pylint: disable=unused-argument,no-self-argument
-class AutoEnum(StrEnum):
-    """Generates lower case values for enums
-    e.g. CITIBANK -> citibank
-    """
-
-    def _generate_next_value_(name: str, *_):  # type: ignore
-        return name.lower()
+from monopoly.constants.enums import AutoEnum
 
 
 class EntryType(AutoEnum):

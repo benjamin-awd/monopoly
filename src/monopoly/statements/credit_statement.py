@@ -36,9 +36,6 @@ class CreditStatement(BaseStatement):
         """
         prev_balances = []
 
-        if isinstance(self.config.prev_balance_pattern, str):
-            raise TypeError("Previous balance must be a compiled regex pattern")
-
         if pattern := self.config.prev_balance_pattern:
             for page in self.pages:
                 for line in page.lines:

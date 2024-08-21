@@ -11,9 +11,9 @@ from monopoly.statements.transaction import (
 
 
 def test_get_transactions(statement: BaseStatement):
-    statement.config.transaction_pattern = re.compile(
-        Ocbc.credit_config.transaction_pattern
-    )
+    pattern = Ocbc.credit_config.transaction_pattern
+    statement.config.transaction_pattern = pattern
+
     statement.pages = [
         PdfPage("19/06 YA KUN KAYA TOAST 3.20\n20/06 FAIRPRICE FINEST 9.90")
     ]
@@ -36,10 +36,9 @@ def test_get_transactions(statement: BaseStatement):
 
 
 def test_get_multiline_transactions(statement: BaseStatement):
+    pattern = Hsbc.credit_config.transaction_pattern
     statement.config.multiline_transactions = True
-    statement.config.transaction_pattern = re.compile(
-        Hsbc.credit_config.transaction_pattern
-    )
+    statement.config.transaction_pattern = pattern
     statement.pages = [
         PdfPage(
             "04 Aug 02 Aug SHOPEE 3.20\n"
@@ -60,10 +59,10 @@ def test_get_multiline_transactions(statement: BaseStatement):
 
 
 def test_process_match_multiline_description(statement: BaseStatement):
-    statement.config.transaction_pattern = re.compile(
-        Hsbc.credit_config.transaction_pattern
-    )
+    pattern = Hsbc.credit_config.transaction_pattern
     statement.config.multiline_transactions = True
+    statement.config.transaction_pattern = pattern
+
     groupdict = {
         "transaction_date": "04 Aug",
         "description": "SHOPEE",
