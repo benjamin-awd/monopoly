@@ -3,6 +3,7 @@
 from strenum import StrEnum
 
 from .date import DateRegexPatterns
+from .enums import RegexEnum
 
 
 class SharedPatterns(StrEnum):
@@ -33,7 +34,7 @@ class SharedPatterns(StrEnum):
     POSTING_DATE_ABBREVIATED_PROPER = r"(?P<posting_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
 
 
-class StatementBalancePatterns(StrEnum):
+class StatementBalancePatterns(RegexEnum):
     DBS = (
         r"(?P<description>PREVIOUS BALANCE?)\s+"
         + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
@@ -60,7 +61,7 @@ class StatementBalancePatterns(StrEnum):
     )
 
 
-class CreditTransactionPatterns(StrEnum):
+class CreditTransactionPatterns(RegexEnum):
     DBS = (
         rf"(?P<transaction_date>{DateRegexPatterns.dd_mmm})\s+"
         + SharedPatterns.DESCRIPTION
@@ -97,7 +98,7 @@ class CreditTransactionPatterns(StrEnum):
     )
 
 
-class DebitTransactionPatterns(StrEnum):
+class DebitTransactionPatterns(RegexEnum):
     DBS = (
         rf"(?P<transaction_date>{DateRegexPatterns.dd_mmm})\s+"
         + SharedPatterns.DESCRIPTION

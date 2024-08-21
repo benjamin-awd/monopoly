@@ -60,10 +60,7 @@ class BaseStatement(ABC):
 
     @property
     def pattern(self):
-        pattern = self.config.transaction_pattern
-        if not isinstance(self.config.transaction_pattern, re.Pattern):
-            pattern = re.compile(self.config.transaction_pattern, re.IGNORECASE)
-        return pattern
+        return self.config.transaction_pattern
 
     @lru_cache
     def get_transactions(self) -> list[Transaction] | None:
@@ -179,9 +176,13 @@ class BaseStatement(ABC):
 
     @cached_property
     def statement_date(self) -> datetime:
+        pattern = self.config.statement_date_pattern
+        if not isinstance(pattern, re.Pattern):
+            raise TypeError(f"Pattern must be a string, not {type(pattern)}")
+
         for page in self.pages:
             for line in page.lines:
-                if match := re.search(self.config.statement_date_pattern, line):
+                if match := pattern.search(line):
                     statement_date = parse(
                         date_string=match.group(1),
                         settings=self.config.statement_date_order.settings,

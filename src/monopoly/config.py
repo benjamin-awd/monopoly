@@ -1,11 +1,10 @@
-import re
 from dataclasses import field
 from typing import Optional, Pattern
 
-from pydantic import field_validator
 from pydantic.dataclasses import dataclass
 
 from monopoly.constants import BankNames, EntryType, InternalBankNames
+from monopoly.constants.enums import RegexEnum
 
 
 @dataclass
@@ -47,27 +46,14 @@ class StatementConfig:
 
     bank_name: BankNames | InternalBankNames
     statement_type: EntryType
-    transaction_pattern: str | Pattern[str]
-    statement_date_pattern: str | Pattern[str]
-    header_pattern: str | Pattern[str]
+    transaction_pattern: Pattern[str] | RegexEnum
+    statement_date_pattern: Pattern[str] | RegexEnum
+    header_pattern: Pattern[str] | RegexEnum
     transaction_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
     statement_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
     multiline_transactions: bool = False
     has_withdraw_deposit_column: bool = False
-    prev_balance_pattern: Optional[str | Pattern[str]] = None
-
-    @field_validator(
-        "transaction_pattern",
-        "statement_date_pattern",
-        "header_pattern",
-        "prev_balance_pattern",
-        mode="before",
-    )
-    @classmethod
-    def compile_patterns(cls, v):
-        if v is None:
-            return None
-        return re.compile(v) if isinstance(v, str) else v
+    prev_balance_pattern: Optional[Pattern[str] | RegexEnum] = None
 
 
 @dataclass
