@@ -54,7 +54,6 @@ class DatePatternAnalyzer:
     def get_patterns_with_date_matches(self) -> dict[str, list[DateMatch]]:
         """Retrieves all possible transactions from every page, based on the assumption
         that a transaction line will always start with a date"""
-        results: dict[str, list] = {}
         results = {
             pattern_name: self._find_matches(pattern, pattern_name, self.pages)
             for pattern_name, pattern in self.date_regex_patterns.items()
