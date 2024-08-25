@@ -32,9 +32,7 @@ class DateMatch:
 class DatePatternAnalyzer:
     def __init__(self, pages: list[PdfPage]):
         self.pages = pages
-        self.date_regex_patterns: dict[str, re.Pattern] = (
-            DateRegexPatterns().as_pattern_dict()
-        )
+        self.date_regex_patterns = DateRegexPatterns().as_pattern_dict()
         self.patterns_with_date_matches = self.get_patterns_with_date_matches()
         self.pattern_spans_mapping = self.find_tuples_with_highest_occurrence(
             self.unique_matches_by_pattern
