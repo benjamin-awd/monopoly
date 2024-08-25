@@ -55,19 +55,17 @@ class DatePatternAnalyzer:
         """Retrieves all possible transactions from every page, based on the assumption
         that a transaction line will always start with a date"""
         results = {
-            pattern_name: self._find_matches(pattern, pattern_name, self.pages)
+            pattern_name: self._find_matches(pattern, pattern_name)
             for pattern_name, pattern in self.date_regex_patterns.items()
         }
 
         # filter out patterns with no matches
         return {k: v for k, v in results.items() if v}
 
-    def _find_matches(
-        self, pattern: re.Pattern, pattern_name: str, pages: list[PdfPage]
-    ) -> list[DateMatch]:
+    def _find_matches(self, pattern: re.Pattern, pattern_name: str) -> list[DateMatch]:
         matches = []
         logger.debug("Searching for date matches for pattern %s", pattern_name)
-        for page_num, page in enumerate(pages):
+        for page_num, page in enumerate(self.pages):
             for line_num, line in enumerate(page.lines):
                 matches.extend(
                     self._extract_date_matches(pattern, line, page_num, line_num)
