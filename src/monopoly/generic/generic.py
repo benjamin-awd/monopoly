@@ -147,7 +147,7 @@ class DatePatternAnalyzer:
         """
         span_occurrences = 0
         most_common_pattern = ""
-        most_common_tuples = []
+        most_common_tuples = set()
 
         # Sort patterns so that those ending with "yy" come first
         sorted_patterns = sorted(
@@ -159,7 +159,9 @@ class DatePatternAnalyzer:
             max_span_occurrences = max(unique_date_matches[pattern].values())
 
             if max_span_occurrences > span_occurrences:
-                tuples = [k for k, v in spans_dict.items() if v == max_span_occurrences]
+                tuples = set(
+                    k for k, v in spans_dict.items() if v == max_span_occurrences
+                )
                 span_occurrences = max_span_occurrences
                 most_common_pattern = pattern
                 most_common_tuples = tuples
@@ -177,13 +179,12 @@ class DatePatternAnalyzer:
         # this adds tolerance for tuples that may be misaligned across pages
         # e.g. {(3, 8): 7, (4, 9): 16, (23, 28): 23}
         if len(most_common_tuples) == 1:
-            del unique_date_matches[most_common_pattern][most_common_tuples[0]]
             for key in unique_date_matches[most_common_pattern].keys():
                 if (
                     unique_date_matches[most_common_pattern][key]
                     > span_occurrences * 0.5
                 ):
-                    most_common_tuples.append(key)
+                    most_common_tuples.add(key)
                     logger.debug("Adding additional span: %s", key)
                     break
         logger.debug(

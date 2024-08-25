@@ -257,10 +257,10 @@ def test_find_tuples_with_highest_occurrence(
     single_match = {"dd_mmm": {(0, 6): 3, (33, 39): 1}}
     double_match = {"dd_mmm": {(1, 7): 12, (11, 17): 12, (33, 39): 1}}
     assert date_pattern_analyzer.find_tuples_with_highest_occurrence(single_match) == {
-        "dd_mmm": [(0, 6)]
+        "dd_mmm": {(0, 6)}
     }
     assert date_pattern_analyzer.find_tuples_with_highest_occurrence(double_match) == {
-        "dd_mmm": [(1, 7), (11, 17)]
+        "dd_mmm": {(1, 7), (11, 17)}
     }
 
 
