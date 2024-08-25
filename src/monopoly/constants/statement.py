@@ -2,7 +2,7 @@
 
 from strenum import StrEnum
 
-from .date import DateRegexPatterns
+from .date import ISO8601
 from .enums import RegexEnum
 
 
@@ -63,24 +63,24 @@ class StatementBalancePatterns(RegexEnum):
 
 class CreditTransactionPatterns(RegexEnum):
     DBS = (
-        rf"(?P<transaction_date>{DateRegexPatterns.dd_mmm})\s+"
+        rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT_EXTENDED
     )
     CITIBANK = (
-        rf"(?P<transaction_date>{DateRegexPatterns.dd_mmm})\s+"
+        rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT_EXTENDED
     )
     HSBC = (
-        rf"(?P<posting_date>{DateRegexPatterns.dd_mmm})\s+"
-        rf"(?P<transaction_date>{DateRegexPatterns.dd_mmm})\s+"
+        rf"(?P<posting_date>{ISO8601.DD_MMM})\s+"
+        rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT_EXTENDED
     )
     MAYBANK = (
-        rf"(?P<posting_date>{DateRegexPatterns.dd_mm})\s+"
-        rf"(?P<transaction_date>{DateRegexPatterns.dd_mm})\s+"
+        rf"(?P<posting_date>{ISO8601.DD_MM})\s+"
+        rf"(?P<transaction_date>{ISO8601.DD_MM})\s+"
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT_EXTENDED
     )
@@ -90,8 +90,8 @@ class CreditTransactionPatterns(RegexEnum):
         + SharedPatterns.AMOUNT_EXTENDED
     )
     STANDARD_CHARTERED = (
-        rf"(?P<transaction_date>{DateRegexPatterns.dd_mmm})\s+"
-        rf"(?P<posting_date>{DateRegexPatterns.dd_mmm})\s+"
+        rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
+        rf"(?P<posting_date>{ISO8601.DD_MMM})\s+"
         + SharedPatterns.DESCRIPTION
         + r"(?:(?P<transaction_ref>Transaction\sRef\s\d+)?)\s+"
         + SharedPatterns.AMOUNT_EXTENDED
@@ -100,13 +100,13 @@ class CreditTransactionPatterns(RegexEnum):
 
 class DebitTransactionPatterns(RegexEnum):
     DBS = (
-        rf"(?P<transaction_date>{DateRegexPatterns.dd_mmm})\s+"
+        rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
         + SharedPatterns.BALANCE
     )
     MAYBANK = (
-        rf"(?P<transaction_date>{DateRegexPatterns.dd_mm_yy})\s+"
+        rf"(?P<transaction_date>{ISO8601.DD_MM_YY})\s+"
         + SharedPatterns.DESCRIPTION
         # remove *\s
         + SharedPatterns.AMOUNT[:-3]
@@ -114,8 +114,8 @@ class DebitTransactionPatterns(RegexEnum):
         + SharedPatterns.BALANCE
     )
     OCBC = (
-        rf"(?P<transaction_date>{DateRegexPatterns.dd_mmm})\s+"
-        rf"(?P<posting_date>{DateRegexPatterns.dd_mmm})\s+"
+        rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
+        rf"(?P<posting_date>{ISO8601.DD_MMM})\s+"
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
         + SharedPatterns.BALANCE

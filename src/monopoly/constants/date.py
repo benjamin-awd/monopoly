@@ -1,10 +1,12 @@
 """This file stores date-related regex patterns and constants"""
 
-import re
-from dataclasses import asdict
+import logging
 
-from pydantic.dataclasses import dataclass
 from strenum import StrEnum
+
+from .enums import RegexEnum
+
+logger = logging.getLogger(__name__)
 
 
 # flake8: noqa
@@ -22,30 +24,18 @@ class DateFormats(StrEnum):
     YYYY = r"(?i:20\d{2}\b)"
 
 
-# pylint: disable=too-many-instance-attributes
-@dataclass
-class DateRegexPatterns:
-    """Holds date regex patterns used by the generic statement handler"""
-
-    dd_mm: str = rf"\b({DateFormats.DD}[\/\-\s]{DateFormats.MM})"
-    dd_mm_yy: str = (
-        rf"\b({DateFormats.DD}[\/\-\s]{DateFormats.MM}[\/\-\s]{DateFormats.YY})"
-    )
-    dd_mmm: str = rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM})"
-    dd_mmm_yy: str = rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM}[-\s]{DateFormats.YY})"
-    dd_mmm_yyyy: str = (
+class ISO8601(RegexEnum):
+    DD_MM = rf"\b({DateFormats.DD}[\/\-\s]{DateFormats.MM})"
+    DD_MM_YY = rf"\b({DateFormats.DD}[\/\-\s]{DateFormats.MM}[\/\-\s]{DateFormats.YY})"
+    DD_MMM = rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM})"
+    DD_MMM_YY = rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM}[-\s]{DateFormats.YY})"
+    DD_MMM_YYYY = (
         rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM}[,\s]{{1,2}}{DateFormats.YYYY})"
     )
-    dd_mm_yyyy: str = (
-        rf"\b({DateFormats.DD}[\/\-\s]{DateFormats.MM}[\/\-\s]{DateFormats.YYYY})"
-    )
-    mmmm_dd_yyyy: str = (
+    MMMM_DD_YYYY = (
         rf"\b({DateFormats.MMMM}\s{DateFormats.DD}[,\s]{{1,2}}{DateFormats.YYYY})"
     )
-    mmm_dd: str = rf"\b({DateFormats.MMM}[-\s]{DateFormats.DD})"
-    mmm_dd_yyyy: str = (
+    MMM_DD = rf"\b({DateFormats.MMM}[-\s]{DateFormats.DD})"
+    MMM_DD_YYYY = (
         rf"\b({DateFormats.MMM}[-\s]{DateFormats.DD}[,\s]{{1,2}}{DateFormats.YYYY})"
     )
-
-    def as_pattern_dict(self):
-        return {k: re.compile(v, re.IGNORECASE) for k, v in asdict(self).items()}
