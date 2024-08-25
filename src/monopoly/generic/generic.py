@@ -34,7 +34,7 @@ class DatePatternAnalyzer:
         self.pages = pages
         self.date_regex_patterns = DateRegexPatterns().as_pattern_dict()
         self.patterns_with_date_matches = self.get_patterns_with_date_matches()
-        self.pattern_spans_mapping = self.find_tuples_with_highest_occurrence(
+        self.pattern_spans_mapping = self.find_spans_with_highest_occurrence(
             self.unique_matches_by_pattern
         )
         self.filtered_lines_with_dates = self.get_filtered_lines_with_dates(
@@ -124,17 +124,17 @@ class DatePatternAnalyzer:
         return match_dict
 
     @staticmethod
-    def find_tuples_with_highest_occurrence(
+    def find_spans_with_highest_occurrence(
         unique_date_matches: dict[str, dict[tuple, int]]
     ) -> dict:
         """
-        Finds one or more tuples with the highest occurrence over several lines.
+        Finds one or more spans with the highest occurrence over several lines.
         For example, a line like '01 Oct  <description>' has a span of (0, 6) - we then
         check for repeats of this span, and sum it over all lines.
 
-        If there are two tuples with the same number of occurrences e.g. (0, 6) has 17
+        If there are two spans with the same number of occurrences e.g. (0, 6) has 17
         occurrences and (11, 17) has 17 occurrences, we return both
-        tuples since there is a strong likelihood that one is a transaction date,
+        spans since there is a strong likelihood that one is a transaction date,
         and the other is a posting date.
 
         Patterns ending with "yy" are analyzed first, to avoid cases where we have
@@ -142,7 +142,7 @@ class DatePatternAnalyzer:
         """
         span_occurrences = 0
         most_common_pattern = ""
-        most_common_tuples = set()
+        most_common_spans = set()
 
         # Sort patterns so that those ending with "yy" come first
         sorted_patterns = sorted(
@@ -154,39 +154,39 @@ class DatePatternAnalyzer:
             max_span_occurrences = max(unique_date_matches[pattern].values())
 
             if max_span_occurrences > span_occurrences:
-                tuples = set(
+                spans = set(
                     k for k, v in spans_dict.items() if v == max_span_occurrences
                 )
                 span_occurrences = max_span_occurrences
                 most_common_pattern = pattern
-                most_common_tuples = tuples
+                most_common_spans = spans
 
         logger.debug(
             "Pattern %s matched %s times at span(s) %s",
             most_common_pattern,
             span_occurrences,
-            most_common_tuples,
+            most_common_spans,
         )
 
         # If the another span tuple pair occurs
         # at a rate of at least 0.5x the most common pair,
-        # add it to the most_common_tuples list
-        # this adds tolerance for tuples that may be misaligned across pages
+        # add it to the most_common_spans list
+        # this adds tolerance for spans that may be misaligned across pages
         # e.g. {(3, 8): 7, (4, 9): 16, (23, 28): 23}
-        if len(most_common_tuples) == 1:
-            for key in unique_date_matches[most_common_pattern].keys():
+        if len(most_common_spans) == 1:
+            for span in unique_date_matches[most_common_pattern].keys():
                 if (
-                    unique_date_matches[most_common_pattern][key]
+                    unique_date_matches[most_common_pattern][span]
                     > span_occurrences * 0.5
                 ):
-                    most_common_tuples.add(key)
-                    logger.debug("Adding additional span: %s", key)
+                    most_common_spans.add(span)
+                    logger.debug("Adding additional span: %s", span)
                     break
         logger.debug(
-            "Most common pattern / tuples: %s",
-            {most_common_pattern: most_common_tuples},
+            "Most common pattern / spans: %s",
+            {most_common_pattern: most_common_spans},
         )
-        return {most_common_pattern: most_common_tuples}
+        return {most_common_pattern: most_common_spans}
 
     @staticmethod
     def get_items_with_same_page_and_line(items: list[DateMatch]) -> list[tuple]:
@@ -196,7 +196,7 @@ class DatePatternAnalyzer:
             key = f"{item.page_number}-{item.line_number}"
             grouped_items[key].append(item.parsed_date)
 
-        # Convert the dictionary into a list of tuples
+        # Convert the dictionary into a list of tuple
         result = [(key, *values) for key, values in grouped_items.items()]
         return result
 
@@ -206,7 +206,7 @@ class DatePatternAnalyzer:
         """
         Helper function to retrieve lines that are the most likely to contain
         transactions, based on the transaction pattern and spans from the
-        `find_tuples_with_highest_occurrence()` function
+        `find_spans_with_highest_occurrence()` function
         """
         pattern, spans = next(iter(pattern_spans_mapping.items()))
         filtered_lines_with_dates = []
@@ -259,7 +259,7 @@ class DatePatternAnalyzer:
         spans = self.pattern_spans_mapping[pattern]
 
         if len(spans) > 2:
-            raise ValueError("More than two date tuples found in statement")
+            raise ValueError("More than two date spans found in statement")
 
         pattern = date_regex
 

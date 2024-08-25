@@ -251,15 +251,15 @@ def test_count_unique_date_matches(
     }
 
 
-def test_find_tuples_with_highest_occurrence(
+def test_find_spans_with_highest_occurrence(
     date_pattern_analyzer: DatePatternAnalyzer,
 ):
     single_match = {"dd_mmm": {(0, 6): 3, (33, 39): 1}}
     double_match = {"dd_mmm": {(1, 7): 12, (11, 17): 12, (33, 39): 1}}
-    assert date_pattern_analyzer.find_tuples_with_highest_occurrence(single_match) == {
+    assert date_pattern_analyzer.find_spans_with_highest_occurrence(single_match) == {
         "dd_mmm": {(0, 6)}
     }
-    assert date_pattern_analyzer.find_tuples_with_highest_occurrence(double_match) == {
+    assert date_pattern_analyzer.find_spans_with_highest_occurrence(double_match) == {
         "dd_mmm": {(1, 7), (11, 17)}
     }
 
