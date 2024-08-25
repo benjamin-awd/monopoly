@@ -1,6 +1,7 @@
 import re
 from enum import Enum
 from functools import cached_property
+from typing import Any
 
 from strenum import StrEnum
 
@@ -48,11 +49,17 @@ class RegexEnum(Enum):
         """
         return self.regex.search(value)
 
-    def findall(self, value) -> re.Match:
+    def findall(self, value) -> list[Any]:
         """
         Wrapper for re.findall
         """
         return self.regex.findall(value)
+
+    def finditer(self, value) -> list[re.Match]:
+        """
+        Wrapper for re.finditer
+        """
+        return self.regex.finditer(value)
 
     def search(self, value) -> re.Match:
         """

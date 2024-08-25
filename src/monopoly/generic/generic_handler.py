@@ -91,7 +91,8 @@ class GenericStatementHandler(StatementHandler):
 
     @cached_property
     def header_pattern(self):
-        return self.analyzer.get_debit_statement_header_line()
+        lines = self.analyzer.lines_before_first_transaction
+        return self.analyzer.get_debit_statement_header_line(lines)
 
     @cached_property
     def prev_balance_pattern(self):
