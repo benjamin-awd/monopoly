@@ -4,8 +4,9 @@ from enum import auto
 
 from strenum import StrEnum
 
+from monopoly.enums import AutoEnum, RegexEnum
+
 from .date import ISO8601
-from .enums import AutoEnum, RegexEnum
 
 
 class EntryType(AutoEnum):
