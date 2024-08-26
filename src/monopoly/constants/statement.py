@@ -1,9 +1,38 @@
 """This file stores statement-related enums and constants"""
 
+from enum import auto
+
 from strenum import StrEnum
 
 from .date import ISO8601
-from .enums import RegexEnum
+from .enums import AutoEnum, RegexEnum
+
+
+class EntryType(AutoEnum):
+    CREDIT = auto()
+    DEBIT = auto()
+
+
+class BankNames(AutoEnum):
+    CITIBANK = auto()
+    DBS = auto()
+    HSBC = auto()
+    MAYBANK = auto()
+    OCBC = auto()
+    STANDARD_CHARTERED = auto()
+
+
+class InternalBankNames(AutoEnum):
+    EXAMPLE = auto()
+    GENERIC = auto()
+
+
+class Columns(AutoEnum):
+    AMOUNT = auto()
+    DATE = auto()
+    DESCRIPTION = auto()
+    SUFFIX = auto()
+    TRANSACTION_DATE = auto()
 
 
 class SharedPatterns(StrEnum):

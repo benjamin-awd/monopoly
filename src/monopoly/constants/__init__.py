@@ -1,7 +1,10 @@
-from .config import BankNames, Columns, EntryType, InternalBankNames
 from .statement import (
+    BankNames,
+    Columns,
     CreditTransactionPatterns,
     DebitTransactionPatterns,
+    EntryType,
+    InternalBankNames,
     SharedPatterns,
     StatementBalancePatterns,
 )
