@@ -4,7 +4,7 @@ import logging
 
 from strenum import StrEnum
 
-from .enums import RegexEnum
+from monopoly.enums import RegexEnum
 
 logger = logging.getLogger(__name__)
 

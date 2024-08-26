@@ -4,7 +4,7 @@ from typing import Optional, Pattern
 from pydantic.dataclasses import dataclass
 
 from monopoly.constants import BankNames, EntryType, InternalBankNames
-from monopoly.constants.enums import RegexEnum
+from monopoly.enums import RegexEnum
 
 
 @dataclass

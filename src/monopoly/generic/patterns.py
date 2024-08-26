@@ -7,7 +7,7 @@ from typing import Iterator
 from dateparser import parse
 
 from monopoly.constants.date import ISO8601
-from monopoly.constants.enums import RegexEnum
+from monopoly.enums import RegexEnum
 from monopoly.pdf import PdfPage
 
 logger = logging.getLogger(__name__)
