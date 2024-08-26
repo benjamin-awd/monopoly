@@ -17,23 +17,6 @@
 - *(generic)* Rename vars/functions to use "spans" instead of tuples
 - *(constants)* Move enums in config to statement
 
-## [0.11.0] - 2024-08-26
-
-### 🚜 Refactor
-
-- *(generic)* Make most common tuples into set instead of list
-- *(generic)* Create separate class for pattern matching
-- *(constants)* Make enums into top level file
-
-### ⚙️ Miscellaneous Tasks
-
-- Make CLI banner more concise
-- *(generic)* Remove redundant typehint for date_regex_patterns
-- *(generic)* Remove redundant results var
-- *(generic)* Use self.pages directly instead of passing self.pages
-- *(generic)* Rename vars/functions to use "spans" instead of tuples
-- *(constants)* Move enums in config to statement
-
 ## [0.10.9] - 2024-08-21
 
 ### ⛰️ Features
