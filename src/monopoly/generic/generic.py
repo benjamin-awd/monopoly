@@ -11,6 +11,10 @@ from .patterns import DateMatch, DatePattern, PatternMatcher
 logger = logging.getLogger(__name__)
 
 
+class GenericParserError(Exception):
+    """Exception raised when the generic parser fails to find exceptions"""
+
+
 class DatePatternAnalyzer:
     def __init__(self, pages: list[PdfPage]):
         self.pages = pages
@@ -230,4 +234,4 @@ class DatePatternAnalyzer:
                         "Found first transaction at page %s line %s", page_num, line_num
                     )
                     return page_num, line_num
-        raise RuntimeError("Could not find first transaction")
+        raise GenericParserError("Could not find any transactions")
