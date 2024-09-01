@@ -20,7 +20,7 @@ class BankDetector:
         Retrieves encryption and metadata identifiers from a bank statement PDF
         """
         identifiers: list[Identifier] = []
-        if metadata := self.document.open().metadata:
+        if metadata := self.document.metadata:
             metadata_identifier = MetadataIdentifier(**metadata)
             identifiers.append(metadata_identifier)
 
