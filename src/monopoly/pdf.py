@@ -110,18 +110,6 @@ class PdfDocument:
         return fitz.Document(**args)
 
     @lru_cache
-    def get_byte_stream(self) -> BytesIO:
-        if self.file_path:
-            with open(self.file_path, "rb") as file:
-                stream = BytesIO(file.read())
-            return stream
-
-        if self.file_bytes:
-            return BytesIO(self.file_bytes)
-
-        raise RuntimeError("Unable to create document")
-
-    @lru_cache
     def open(self) -> fitz.Document:
         """
         Opens and decrypts a PDF document
