@@ -1,4 +1,3 @@
-from io import BytesIO
 from unittest.mock import Mock, patch
 
 import pytest
@@ -24,9 +23,6 @@ class MockPdfDocument:
 
     def open(self):
         return MockDocument(self.is_encrypted, self.metadata)
-
-    def get_byte_stream(self):
-        return BytesIO(b"%PDF-1.6")
 
 
 @pytest.fixture
