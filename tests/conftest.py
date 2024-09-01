@@ -1,5 +1,5 @@
 import os
-from unittest.mock import MagicMock, Mock, PropertyMock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 import fitz
 import pytest
@@ -34,22 +34,6 @@ def mock_get_pages():
     with patch.object(PdfParser, "get_pages") as mock_get_pages:
         mock_get_pages.return_value = MagicMock()
         yield mock_get_pages
-
-
-@pytest.fixture
-def mock_document():
-    with patch(
-        "monopoly.pdf.PdfDocument.document", new_callable=PropertyMock
-    ) as mock_document_prop:
-        mock_document_instance = mock_document_prop.return_value
-        type(mock_document_instance).metadata = PropertyMock(
-            return_value={
-                "creator": "Adobe Acrobat 23.3",
-                "producer": "Adobe Acrobat Pro (64-bit)",
-            }
-        )
-        type(mock_document_instance).name = PropertyMock(return_value="foo")
-        yield mock_document_prop
 
 
 @pytest.fixture(scope="function")
