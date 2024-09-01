@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest.mock import PropertyMock, patch
+from unittest.mock import MagicMock, patch
 
 from pydantic import SecretStr
 from pytest import raises
@@ -14,73 +14,92 @@ from monopoly.pdf import (
 fixture_directory = Path(__file__).parent / "fixtures"
 
 
-def test_can_open_file_stream(pdf_document: PdfDocument):
+def test_can_open_file_stream():
     with open(fixture_directory / "4_pages_blank.pdf", "rb") as file:
-        pdf_document.file_bytes = file.read()
-        document = pdf_document.open()
-        assert len(document) == 4
+        pdf_document = PdfDocument(file_bytes=file.read())
+        assert len(pdf_document) == 4
 
 
 def test_can_open_protected(pdf_document: PdfDocument):
-    pdf_document.file_path = fixture_directory / "protected.pdf"
-    pdf_document._passwords = [SecretStr("foobar123")]
+    mock_pdf_passwords_instance = MagicMock()
+    mock_pdf_passwords_instance.pdf_passwords = [SecretStr("foobar123")]
 
-    pdf_document.open()
+    with patch("monopoly.pdf.PdfPasswords", return_value=mock_pdf_passwords_instance):
+        pdf_document = PdfDocument(
+            passwords=None, file_path=fixture_directory / "protected.pdf"
+        )
+        pdf_document._unlock_document()
 
 
-def test_wrong_password_raises_error(pdf_document: PdfDocument):
-    pdf_document.file_path = fixture_directory / "protected.pdf"
-    pdf_document._passwords = [SecretStr("wrong_pw")]
-
+def test_wrong_password_raises_error():
     with raises(WrongPasswordError, match="Could not open"):
-        pdf_document.open()
+        pdf_document: PdfDocument = PdfDocument(
+            passwords=[SecretStr("wrongpw_123")],
+            file_path=fixture_directory / "protected.pdf",
+        )
+        pdf_document._unlock_document()
 
 
-def test_override_password(pdf_document: PdfDocument):
-    pdf_document.file_path = fixture_directory / "protected.pdf"
-    pdf_document._passwords = [SecretStr("foobar123")]
-    pdf_document = pdf_document.open()
+def test_override_password():
+    pdf_document: PdfDocument = PdfDocument(
+        passwords=[SecretStr("foobar123")],
+        file_path=fixture_directory / "protected.pdf",
+    )
+    pdf_document._unlock_document()
     assert not pdf_document.is_encrypted
 
 
-def test_error_raised_if_override_is_wrong(pdf_document: PdfDocument):
-    with raises(WrongPasswordError, match="Could not open"):
-        pdf_document.file_path = fixture_directory / "protected.pdf"
-        pdf_document._passwords = [SecretStr("wrongpw")]
-        pdf_document.open()
+def test_missing_password_raises_error():
+    mock_pdf_passwords_instance = MagicMock()
+    mock_pdf_passwords_instance.pdf_passwords = []
 
-
-def test_missing_password_raises_error(pdf_document: PdfDocument):
-    pdf_document.file_path = fixture_directory / "protected.pdf"
-    with patch(
-        "monopoly.pdf.PdfDocument.passwords", new_callable=PropertyMock
-    ) as mock_passwords:
-        mock_passwords.return_value = None
-        with raises(
-            MissingPasswordError, match="No password found in PDF configuration"
+    with raises(MissingPasswordError):
+        with patch(
+            "monopoly.pdf.PdfPasswords", return_value=mock_pdf_passwords_instance
         ):
-            pdf_document.open()
+            pdf_document = PdfDocument(
+                passwords=None, file_path=fixture_directory / "protected.pdf"
+            )
+            pdf_document._unlock_document()
 
 
-def test_null_password_raises_error(pdf_document: PdfDocument):
-    pdf_document.file_path = fixture_directory / "protected.pdf"
-    pdf_document._passwords = [SecretStr("")]
+def test_null_password_raises_error():
+    mock_pdf_passwords_instance = MagicMock()
+    mock_pdf_passwords_instance.pdf_passwords = [SecretStr("")]
 
     with raises(MissingPasswordError, match="is empty"):
-        pdf_document.open()
+        with patch(
+            "monopoly.pdf.PdfPasswords", return_value=mock_pdf_passwords_instance
+        ):
+            pdf_document = PdfDocument(
+                passwords=None, file_path=fixture_directory / "protected.pdf"
+            )
+            pdf_document._unlock_document()
 
 
-def test_invalid_password_type_raises_error(pdf_document: PdfDocument):
-    pdf_document.file_path = fixture_directory / "protected.pdf"
-    pdf_document._passwords = "not a list"
+def test_invalid_password_type_raises_error():
+    mock_pdf_passwords_instance = MagicMock()
+    mock_pdf_passwords_instance.pdf_passwords = "not a list"
 
     with raises(BadPasswordFormatError, match="should be stored in a list"):
-        pdf_document.open()
+        with patch(
+            "monopoly.pdf.PdfPasswords", return_value=mock_pdf_passwords_instance
+        ):
+            pdf_document = PdfDocument(
+                passwords=None, file_path=fixture_directory / "protected.pdf"
+            )
+            pdf_document._unlock_document()
 
 
 def test_plain_text_passwords_raises_error(pdf_document: PdfDocument):
-    pdf_document.file_path = fixture_directory / "protected.pdf"
-    pdf_document._passwords = ["password"]
+    mock_pdf_passwords_instance = MagicMock()
+    mock_pdf_passwords_instance.pdf_passwords = ["insecure"]
 
     with raises(BadPasswordFormatError, match="should be stored as SecretStr"):
-        pdf_document.open()
+        with patch(
+            "monopoly.pdf.PdfPasswords", return_value=mock_pdf_passwords_instance
+        ):
+            pdf_document = PdfDocument(
+                passwords=None, file_path=fixture_directory / "protected.pdf"
+            )
+            pdf_document._unlock_document()
