@@ -27,6 +27,8 @@ class BaseStatement(ABC):
     and specific bank config.
     """
 
+    statement_type = "base"
+
     def __init__(self, parser: PdfParser, config: StatementConfig, header: str):
         self.pages = parser.get_pages()
         self.config = config
@@ -38,7 +40,6 @@ class BaseStatement(ABC):
         self.parser = parser
         self.document = parser.document
         self.header = header
-        self.statement_type = "base"
 
     @cached_property
     def number_pattern(self) -> re.Pattern:
