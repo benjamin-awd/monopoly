@@ -54,8 +54,10 @@ def mock_non_encrypted_document():
 
 
 def test_metadata_identifier(mock_non_encrypted_document):
-    with patch.object(PdfDocument, "open", new_callable=Mock) as mock_open:
-        mock_open.return_value = mock_non_encrypted_document
+    with patch.object(
+        PdfDocument, "_unlock_document", new_callable=Mock
+    ) as mock_unlock:
+        mock_unlock.return_value = mock_non_encrypted_document
 
         expected_identifier = MetadataIdentifier(
             title="foo",

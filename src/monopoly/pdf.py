@@ -59,8 +59,8 @@ class BadPasswordFormatError(Exception):
     """Exception raised passwords are not provided in a proper format"""
 
 
-class PdfDocument:
-    """Handles logic related to the opening, unlocking and storage of a PDF document"""
+class PdfDocument(fitz.Document):
+    """Handles logic related to the opening, unlocking, and storage of a PDF document."""
 
     def __init__(
         self,
@@ -68,56 +68,20 @@ class PdfDocument:
         file_path: Optional[Path] = None,
         file_bytes: Optional[bytes] = None,
     ):
-        self._passwords = passwords
+        self.passwords = passwords or PdfPasswords().pdf_passwords
         self.file_path = file_path
         self.file_bytes = file_bytes
 
-    @cached_property
-    def raw_text(self) -> str:
-        raw_text = ""
-        for page in self.open():
-            raw_text += page.get_text()
-        return raw_text
-
-    @property
-    def passwords(self):
-        if not self._passwords:
-            return PdfPasswords().pdf_passwords
-        return self._passwords
-
-    @cached_property
-    def name(self):
-        return self.open().name
-
-    @cached_property
-    def metadata(self):
-        return self.open().metadata
-
-    @cached_property
-    def document(self) -> fitz.Document:
-        """
-        Returns a Python representation of a PDF document.
-        """
-        if not self.file_path and not self.file_bytes:
-            raise RuntimeError("Either `file_path` or `file_bytes` must be passed")
-
-        if self.file_path and self.file_bytes:
-            raise RuntimeError(
-                "Only one of `file_path` or `file_bytes` should be defined"
-            )
-
         args = {"filename": self.file_path, "stream": self.file_bytes}
-        return fitz.Document(**args)
+        super().__init__(**args)
 
-    @lru_cache
-    def open(self) -> fitz.Document:
-        """
-        Opens and decrypts a PDF document
-        """
-        document = self.document
+        if self.is_encrypted:
+            self._unlock_document()
 
-        if not document.is_encrypted:
-            return document
+    def _unlock_document(self):
+        """Attempt to unlock the document using the provided passwords."""
+        if not self.is_encrypted:
+            return self
 
         if not self.passwords:
             raise MissingPasswordError("No password found in PDF configuration")
@@ -132,12 +96,19 @@ class PdfDocument:
             raise BadPasswordFormatError("Passwords should be stored as SecretStr")
 
         for password in self.passwords:
-            document.authenticate(password.get_secret_value())
-
-            if not document.is_encrypted:
+            if self.authenticate(password.get_secret_value()):
                 logger.debug("Successfully authenticated with password")
-                return document
-        raise WrongPasswordError(f"Could not open document: {document.name}")
+                return self
+
+        raise WrongPasswordError(f"Could not open document: {self.name}")
+
+    @cached_property
+    def raw_text(self) -> str:
+        """Extracts and returns the text from the PDF"""
+        raw_text = ""
+        for page in self:
+            raw_text += page.get_text()
+        return raw_text
 
 
 class PdfParser:
@@ -166,7 +137,7 @@ class PdfParser:
     @lru_cache
     def get_pages(self) -> list[PdfPage]:
         logger.debug("Extracting text from PDF")
-        document = self.document.open()
+        document = self.document
 
         num_pages = list(range(document.page_count))
         document.select(num_pages[self.page_range])
