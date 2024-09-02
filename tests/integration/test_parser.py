@@ -24,7 +24,7 @@ def test_get_pages_with_no_text(parser: PdfParser):
 
 
 def test_get_pages_invalid_returns_error(parser: PdfParser):
-    pdf_document = PdfDocument(fixture_directory / "4_pages_blank.pdf")
+    pdf_document = PdfDocument(file_path=fixture_directory / "4_pages_blank.pdf")
     parser.document = pdf_document
     parser.page_range = slice(99, -99)
 

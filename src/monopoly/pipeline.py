@@ -42,7 +42,7 @@ class Pipeline:
                 "Only one of `file_path` or `file_bytes` should be passed"
             )
 
-        document = PdfDocument(passwords, file_bytes=file_bytes, file_path=file_path)
+        document = PdfDocument(file_path, file_bytes, passwords)
         bank = bank or self.detect_bank(document)
         parser = PdfParser(bank, document)
         self.handler = self.create_handler(bank, parser)
