@@ -26,9 +26,7 @@ class Hsbc(BankBase):
         multiline_transactions=True,
     )
 
-    pdf_config = PdfConfig(
-        page_bbox=(0, 0, 379, 842),
-    )
+    pdf_config = PdfConfig(page_bbox=(0, 0, 379, 840), apply_ocr=True)
 
     identifiers = [
         [
@@ -38,6 +36,11 @@ class Hsbc(BankBase):
                 creator="OpenText Exstream",
             ),
             TextIdentifier("HSBC"),
+        ],
+        [
+            MetadataIdentifier(
+                format="PDF 1.7", producer="OpenText Output Transformation Engine"
+            )
         ],
     ]
 
