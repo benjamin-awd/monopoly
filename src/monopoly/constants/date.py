@@ -28,6 +28,7 @@ class ISO8601(RegexEnum):
     DD_MM = rf"\b({DateFormats.DD}[\/\-\s]{DateFormats.MM})"
     DD_MM_YY = rf"\b({DateFormats.DD}[\/\-\s]{DateFormats.MM}[\/\-\s]{DateFormats.YY})"
     DD_MMM = rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM})"
+    DD_MMM_RELAXED = DD_MMM.replace(r"[-\s]", r"(?:[-\s]|)")
     DD_MMM_YY = rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM}[-\s]{DateFormats.YY})"
     DD_MMM_YYYY = (
         rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM}[,\s]{{1,2}}{DateFormats.YYYY})"

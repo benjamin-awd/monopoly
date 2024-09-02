@@ -7,6 +7,8 @@ from typing import Optional, Type
 
 import fitz
 import pdftotext
+from ocrmypdf import Verbosity, configure_logging, ocr
+from ocrmypdf.exceptions import PriorOcrFoundError, TaggedPDFError
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -66,7 +68,7 @@ class PdfDocument(fitz.Document):
         self,
         passwords: Optional[list[SecretStr]] = None,
         file_path: Optional[Path] = None,
-        file_bytes: Optional[bytes] = None,
+        file_bytes: Optional[bytes | BytesIO] = None,
     ):
         self.passwords = passwords or PdfPasswords().pdf_passwords
         self.file_path = file_path
@@ -134,6 +136,10 @@ class PdfParser:
     def page_bbox(self):
         return self.pdf_config.page_bbox
 
+    @cached_property
+    def apply_ocr(self):
+        return self.pdf_config.apply_ocr
+
     @lru_cache
     def get_pages(self) -> list[PdfPage]:
         logger.debug("Extracting text from PDF")
@@ -151,7 +157,10 @@ class PdfParser:
                 page.set_cropbox(cropbox)
             page = self._remove_vertical_text(page)
 
-        # certain statements require garbage collection, so that duplicate objects
+        if self.apply_ocr:
+            document = self._apply_ocr(document)
+
+        # certain statements requsire garbage collection, so that duplicate objects
         # do not cause pdftotext to fail due to missing xrefs/null values
         # however, setting `garbage=2` may cause issues with other statements
         # so an initial attempt should be made to run using `garbage=0`
@@ -197,3 +206,32 @@ class PdfParser:
                     page.add_redact_annot(line["bbox"])
         page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE)
         return page
+
+    @staticmethod
+    def _apply_ocr(document: PdfDocument) -> PdfDocument:
+        added_ocr = False
+        try:
+            logger.debug("Applying OCR")
+            original_metadata = document.metadata
+            output_bytes = BytesIO()
+            configure_logging(Verbosity.quiet)
+            logging.getLogger("ocrmypdf").setLevel(logging.ERROR)
+            ocr(
+                BytesIO(document.tobytes()),
+                output_bytes,
+                language="eng",
+                tesseract_config="tesseract.cfg",
+                progress_bar=False,
+            )
+            output_bytes.seek(0)
+            added_ocr = True
+
+        except (PriorOcrFoundError, TaggedPDFError):
+            pass
+
+        # pylint: disable=attribute-defined-outside-init
+        if added_ocr:
+            logger.debug("Adding OCR layer to document")
+            document = PdfDocument(file_bytes=output_bytes)
+            document.metadata = original_metadata
+        return document

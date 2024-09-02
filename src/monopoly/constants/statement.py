@@ -103,8 +103,8 @@ class CreditTransactionPatterns(RegexEnum):
         + SharedPatterns.AMOUNT_EXTENDED
     )
     HSBC = (
-        rf"(?P<posting_date>{ISO8601.DD_MMM})\s+"
-        rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
+        rf"(?P<posting_date>{ISO8601.DD_MMM_RELAXED})\s+"
+        rf"(?P<transaction_date>{ISO8601.DD_MMM_RELAXED})\s+"
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT_EXTENDED
     )

@@ -17,6 +17,7 @@ def get_logger() -> logging.Logger:
     logging.getLogger("pdf2john").setLevel(logging.ERROR)
     logging.getLogger("pyhanko").setLevel(logging.ERROR)
     logging.getLogger("tzlocal").setLevel(logging.ERROR)
+    logging.getLogger("pikepdf").setLevel(logging.ERROR)
     return logger
 
 

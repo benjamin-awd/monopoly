@@ -10,6 +10,7 @@ class Identifier:
 class MetadataIdentifier(Identifier):
     """Stores the metadata attributes of a PDF"""
 
+    format: str = ""
     title: str = ""
     author: str = ""
     subject: str = ""
