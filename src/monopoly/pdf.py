@@ -66,13 +66,13 @@ class PdfDocument(fitz.Document):
 
     def __init__(
         self,
-        passwords: Optional[list[SecretStr]] = None,
         file_path: Optional[Path] = None,
         file_bytes: Optional[bytes | BytesIO] = None,
+        passwords: Optional[list[SecretStr]] = None,
     ):
-        self.passwords = passwords or PdfPasswords().pdf_passwords
         self.file_path = file_path
         self.file_bytes = file_bytes
+        self.passwords = passwords or PdfPasswords().pdf_passwords
 
         args = {"filename": self.file_path, "stream": self.file_bytes}
         super().__init__(**args)
