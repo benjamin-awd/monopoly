@@ -26,13 +26,13 @@ Monopoly is a pip-installable Python package on [PyPI](https://pypi.org/project/
 Since Monopoly uses `pdftotext`, you'll need to install additional dependencies:
 
 ```sh
-apt-get install build-essential libpoppler-cpp-dev pkg-config
+apt-get install build-essential libpoppler-cpp-dev pkg-config ocrmypdf
 ```
 
 or
 
 ```sh
-brew install gcc@11 pkg-config poppler
+brew install gcc@11 pkg-config poppler ocrmypdf
 ```
 
 Then install with pipx:
