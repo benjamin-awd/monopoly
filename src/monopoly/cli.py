@@ -1,10 +1,10 @@
 import traceback
 from concurrent.futures import ProcessPoolExecutor
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Collection, Iterable, Optional, TypedDict
 
 import click
-from pydantic.dataclasses import Field, dataclass
 from tabulate import tabulate
 from tqdm import tqdm
 
@@ -41,7 +41,7 @@ class Result:
 
     source_file_name: str
     target_file_name: Optional[str] = None
-    error_info: dict[str, str] = Field(default_factory=dict)
+    error_info: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass

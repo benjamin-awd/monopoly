@@ -1,4 +1,4 @@
-from pydantic.dataclasses import dataclass
+from dataclasses import dataclass
 
 
 @dataclass
@@ -16,6 +16,11 @@ class MetadataIdentifier(Identifier):
     subject: str = ""
     creator: str = ""
     producer: str = ""
+    keywords: str = ""
+    creationDate: str = ""
+    modDate: str = ""
+    trapped: str = ""
+    encryption: dict = None
 
 
 @dataclass
