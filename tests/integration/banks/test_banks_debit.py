@@ -29,7 +29,7 @@ def test_bank_debit_statements(
 ):
     bank_name = bank.debit_config.bank_name
     test_directory = Path(__file__).parent / bank_name / "debit"
-    pipeline = Pipeline(test_directory / "input.pdf")
+    pipeline = Pipeline(test_directory / "input.pdf", bank=bank)
     statement: DebitStatement = pipeline.extract()
 
     # check raw data

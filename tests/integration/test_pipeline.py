@@ -61,7 +61,7 @@ def test_pipeline_initialization_with_neither_raises_error():
 
 
 def test_pipeline_bytes_etl(pdf_file_bytes):
-    pipeline = Pipeline(file_bytes=pdf_file_bytes)
+    pipeline = Pipeline(file_bytes=pdf_file_bytes, bank=ExampleBank)
     statement = pipeline.extract()
     transactions = pipeline.transform(statement)
     assert len(transactions) == 53
