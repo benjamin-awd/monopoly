@@ -3,13 +3,12 @@ import re
 from abc import ABC
 from datetime import datetime
 from functools import cached_property, lru_cache
-from pathlib import Path
 
 from dateparser import parse
 
 from monopoly.config import StatementConfig
 from monopoly.constants import Columns, SharedPatterns
-from monopoly.pdf import PdfParser
+from monopoly.pdf import PdfPage
 from monopoly.statements.transaction import (
     Transaction,
     TransactionGroupDict,
@@ -28,17 +27,20 @@ class BaseStatement(ABC):
     """
 
     statement_type = "base"
+    columns: list[str] = [
+        Columns.DATE,
+        Columns.DESCRIPTION,
+        Columns.AMOUNT,
+    ]
 
-    def __init__(self, parser: PdfParser, config: StatementConfig, header: str):
-        self.pages = parser.get_pages()
+    def __init__(
+        self,
+        pages: list[PdfPage],
+        config: StatementConfig,
+        header: str,
+    ):
         self.config = config
-        self.columns: list[str] = [
-            Columns.DATE,
-            Columns.DESCRIPTION,
-            Columns.AMOUNT,
-        ]
-        self.parser = parser
-        self.document = parser.document
+        self.pages = pages
         self.header = header
 
     @cached_property
@@ -54,10 +56,6 @@ class BaseStatement(ABC):
         return re.compile(
             rf"(?:sub\stotal.*?)\s+{SharedPatterns.AMOUNT}", re.IGNORECASE
         )
-
-    @property
-    def bank(self):
-        return self.parser.bank
 
     @property
     def pattern(self):
@@ -166,10 +164,7 @@ class BaseStatement(ABC):
 
     @property
     def failed_safety_message(self) -> str:
-        return (
-            f"Safety check for {Path(self.document.name).stem} failed - "
-            "transactions may be inaccurate"
-        )
+        return "Safety check for failed - transactions may be inaccurate"
 
     @cached_property
     def transactions(self):
