@@ -1,11 +1,13 @@
 import logging
 from dataclasses import Field, fields
 from functools import cached_property
-from typing import Any, Type
+from typing import TYPE_CHECKING, Any, Type
 
-from monopoly.banks import BankBase, banks
 from monopoly.identifiers import Identifier, MetadataIdentifier, TextIdentifier
 from monopoly.pdf import PdfDocument
+
+if TYPE_CHECKING:
+    from .base import BankBase
 
 logger = logging.getLogger(__name__)
 
@@ -29,11 +31,16 @@ class BankDetector:
 
         return identifiers
 
-    def detect_bank(self) -> Type[BankBase] | None:
+    def detect_bank(
+        self, banks: list[Type["BankBase"]] = None
+    ) -> Type["BankBase"] | None:
         """
         Reads the encryption metadata or actual metadata (if the PDF is not encrypted),
         and checks for a bank based on unique identifiers.
         """
+        if not banks:
+            banks = []
+
         logger.debug("Found PDF properties: %s", self.metadata_items)
 
         for bank in banks:
@@ -43,7 +50,7 @@ class BankDetector:
 
     def is_bank_identified(
         self,
-        bank: Type[BankBase],
+        bank: Type["BankBase"],
     ) -> bool:
         """
         Checks if a bank is identified based on a list of metadata items.

@@ -1,9 +1,10 @@
 from re import compile as regex
 
-from monopoly.banks.base import BankBase
 from monopoly.config import StatementConfig
 from monopoly.constants import EntryType, InternalBankNames, SharedPatterns
 from monopoly.identifiers import TextIdentifier
+
+from .base import BankBase
 
 
 class ExampleBank(BankBase):

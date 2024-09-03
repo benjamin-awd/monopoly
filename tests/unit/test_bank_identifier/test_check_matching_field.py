@@ -1,6 +1,6 @@
 from unittest.mock import Mock
 
-from monopoly.bank_detector import BankDetector
+from monopoly.banks.detector import BankDetector
 from monopoly.identifiers import MetadataIdentifier
 
 

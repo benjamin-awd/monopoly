@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, Mock, patch
 import fitz
 import pytest
 
-from monopoly.bank_detector import BankDetector
+from monopoly.banks.detector import BankDetector
 from monopoly.config import DateOrder, PdfConfig, StatementConfig
 from monopoly.constants import EntryType
 from monopoly.handler import StatementHandler
