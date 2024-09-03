@@ -12,8 +12,7 @@ from monopoly.config import DateOrder
 from monopoly.generic import GenericBank, GenericStatementHandler
 from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfDocument, PdfPage, PdfParser
-from monopoly.statements import BaseStatement
-from monopoly.statements.transaction import Transaction
+from monopoly.statements import BaseStatement, Transaction
 from monopoly.write import generate_name
 
 logger = logging.getLogger(__name__)
