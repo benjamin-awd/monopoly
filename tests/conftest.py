@@ -1,8 +1,8 @@
 import os
 from unittest.mock import MagicMock, Mock, patch
 
-import fitz
 import pytest
+from pymupdf import Document
 
 from monopoly.banks.detector import BankDetector
 from monopoly.config import DateOrder, PdfConfig, StatementConfig
@@ -65,7 +65,7 @@ def setup_statement_fixture(
     mock_page = Mock(spec=PdfPage)
     mock_page.lines = ["foo", "bar"]
     mock_page.raw_text = ["foo\nbar"]
-    document = MagicMock(spec=fitz.Document)
+    document = MagicMock(spec=Document)
     document.name = "mock_document.pdf"
     statement = statement_cls(pages=[mock_page], config=statement_config, header="foo")
     yield statement

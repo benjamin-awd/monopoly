@@ -1,5 +1,5 @@
-import fitz
 import pytest
+from pymupdf import Document
 
 from monopoly.banks import BankBase
 from monopoly.statements import CreditStatement, DebitStatement
@@ -15,7 +15,7 @@ class MockProcessor(BankBase):
 
 
 def test_credit_safety_check(credit_statement: CreditStatement):
-    document = fitz.Document()
+    document = Document()
     page = document.new_page()
     text = "Page 1\n3\nfoo\n02 May\n2.27\n27 Apr\n2.67\ntotal amount 31.50"
     page.lines = text.split("\n")
@@ -35,7 +35,7 @@ def test_credit_safety_check(credit_statement: CreditStatement):
 
 
 def test_debit_safety_check(debit_statement: DebitStatement):
-    document = fitz.Document()
+    document = Document()
     page = document.new_page()
     text = (
         "Page 1\n3\nfoo\n02 May\n-2.5\n27 Apr\n2.67\ntotal credit 30.0 total debit 2.5"
@@ -64,7 +64,7 @@ def test_debit_safety_check(debit_statement: DebitStatement):
 
 
 def test_debit_safety_check_failure(debit_statement: DebitStatement):
-    document = fitz.Document()
+    document = Document()
     page = document.new_page()
     text = "Page 1\n3\nfoo\n02 May\n-999\n27 Apr\n456\nrandom transaction 123"
     page.lines = text.split("\n")
