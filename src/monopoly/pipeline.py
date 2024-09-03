@@ -9,8 +9,7 @@ from pydantic import SecretStr
 from monopoly.bank_detector import BankDetector
 from monopoly.banks import BankBase
 from monopoly.config import DateOrder
-from monopoly.generic import GenericStatementHandler
-from monopoly.generic.generic_handler import GenericBank
+from monopoly.generic import GenericBank, GenericStatementHandler
 from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfDocument, PdfPage, PdfParser
 from monopoly.statements import BaseStatement
