@@ -222,6 +222,9 @@ class PdfParser:
                 language="eng",
                 tesseract_config="tesseract.cfg",
                 progress_bar=False,
+                optimize=0,
+                fast_web_view=999999,
+                output_type="pdf",
             )
             output_bytes.seek(0)
             added_ocr = True
