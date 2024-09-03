@@ -87,8 +87,7 @@ class DebitStatement(BaseStatement):
         16 OCT       item                                     123.12
         ```
         """
-        pages = list(self.pages)
-        lines = pages[page_number].lines
+        lines = self.pages[page_number].lines
         for line in lines:
             header_start_pos = line.lower().find(column_name.lower())
             if header_start_pos == -1:

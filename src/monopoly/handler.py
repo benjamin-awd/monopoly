@@ -1,9 +1,11 @@
 import logging
-from functools import cached_property
+from functools import lru_cache
+from typing import Type
 
+from monopoly.banks import BankBase
 from monopoly.config import StatementConfig
 from monopoly.constants import EntryType
-from monopoly.pdf import PdfParser
+from monopoly.pdf import PdfPage
 from monopoly.statements import BaseStatement, CreditStatement, DebitStatement
 
 logger = logging.getLogger(__name__)
@@ -16,43 +18,30 @@ class StatementHandler:
     based on the debit and credit config.
     """
 
-    def __init__(self, parser: PdfParser):
-        self.parser = parser
-        self.bank = parser.bank
-
-    @property
-    def transactions(self):
-        return self.statement.transactions
-
-    @property
-    def statement_date(self):
-        return self.statement.statement_date
+    def __init__(self, bank: Type[BankBase], pages: list[PdfPage]):
+        self.bank = bank
+        self.pages = pages
 
     def get_header(self, config: StatementConfig) -> str | None:
         pattern = config.header_pattern
 
-        pages = self.parser.get_pages()
-        for page in pages:
+        for page in self.pages:
             for line in page.lines:
                 if match := pattern.search(line):
                     return match.group().lower()
         return None
 
-    def perform_safety_check(self):
-        self.statement.perform_safety_check()
-
-    @cached_property
-    def statement(self) -> BaseStatement:
-        parser = self.parser
-
+    @lru_cache
+    def get_statement(self) -> BaseStatement:
+        pages = self.pages
         for config in self.bank.statement_configs:
             if header := self.get_header(config):
                 match config.statement_type:
                     case EntryType.DEBIT:
                         logger.debug("Statement type detected: %s", EntryType.DEBIT)
-                        return DebitStatement(parser, config, header)
+                        return DebitStatement(pages, config, header)
                     case EntryType.CREDIT:
                         logger.debug("Statement type detected: %s", EntryType.CREDIT)
-                        return CreditStatement(parser, config, header)
+                        return CreditStatement(pages, config, header)
 
         raise RuntimeError("Could not create statement object")

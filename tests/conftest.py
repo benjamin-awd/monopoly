@@ -62,16 +62,12 @@ def setup_statement_fixture(
     statement_cls: BaseStatement,
     statement_config,
 ):
-    mock_parser = MagicMock(spec=PdfParser)
     mock_page = Mock(spec=PdfPage)
     mock_page.lines = ["foo", "bar"]
     mock_page.raw_text = ["foo\nbar"]
-    mock_parser.get_pages.return_value = [mock_page]
-
     document = MagicMock(spec=fitz.Document)
     document.name = "mock_document.pdf"
-    mock_parser.document = document
-    statement = statement_cls(parser=mock_parser, config=statement_config, header="foo")
+    statement = statement_cls(pages=[mock_page], config=statement_config, header="foo")
     yield statement
 
 

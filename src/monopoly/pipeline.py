@@ -12,7 +12,7 @@ from monopoly.config import DateOrder
 from monopoly.generic import GenericStatementHandler
 from monopoly.generic.generic_handler import GenericBank
 from monopoly.handler import StatementHandler
-from monopoly.pdf import PdfDocument, PdfParser
+from monopoly.pdf import PdfDocument, PdfPage, PdfParser
 from monopoly.statements import BaseStatement
 from monopoly.statements.transaction import Transaction
 from monopoly.write import generate_name
@@ -46,12 +46,12 @@ class Pipeline:
         self.bank = bank or self.detect_bank(self.document)
 
     @staticmethod
-    def create_handler(bank: Type[BankBase], parser: PdfParser) -> StatementHandler:
+    def create_handler(bank: Type[BankBase], pages: list[PdfPage]) -> StatementHandler:
         if issubclass(bank, GenericBank):
             logger.debug("Using generic statement handler")
-            return GenericStatementHandler(parser)
+            return GenericStatementHandler(bank, pages)
         logger.debug("Using statement handler with bank: %s", bank.__name__)
-        return StatementHandler(parser)
+        return StatementHandler(bank, pages)
 
     @staticmethod
     def detect_bank(document) -> Type[BankBase]:
@@ -65,8 +65,9 @@ class Pipeline:
         """Extracts transactions from the statement, and performs
         a safety check to make sure that total transactions add up"""
         parser = PdfParser(self.bank, self.document)
-        handler = self.create_handler(self.bank, parser)
-        statement = handler.statement
+        pages = parser.get_pages()
+        handler = self.create_handler(self.bank, pages)
+        statement = handler.get_statement()
         transactions = statement.get_transactions()
 
         if not transactions:
