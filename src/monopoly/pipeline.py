@@ -42,10 +42,8 @@ class Pipeline:
                 "Only one of `file_path` or `file_bytes` should be passed"
             )
 
-        document = PdfDocument(file_path, file_bytes, passwords)
-        bank = bank or self.detect_bank(document)
-        parser = PdfParser(bank, document)
-        self.handler = self.create_handler(bank, parser)
+        self.document = PdfDocument(file_path, file_bytes, passwords)
+        self.bank = bank or self.detect_bank(self.document)
 
     @staticmethod
     def create_handler(bank: Type[BankBase], parser: PdfParser) -> StatementHandler:
@@ -66,7 +64,9 @@ class Pipeline:
     def extract(self, safety_check=True) -> BaseStatement:
         """Extracts transactions from the statement, and performs
         a safety check to make sure that total transactions add up"""
-        statement = self.handler.statement
+        parser = PdfParser(self.bank, self.document)
+        handler = self.create_handler(self.bank, parser)
+        statement = handler.statement
         transactions = statement.get_transactions()
 
         if not transactions:
