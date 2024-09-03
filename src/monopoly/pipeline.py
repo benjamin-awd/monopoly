@@ -6,7 +6,6 @@ from typing import Optional, Type
 from dateparser import parse
 from pydantic import SecretStr
 
-from monopoly.bank_detector import BankDetector
 from monopoly.banks import BankBase
 from monopoly.config import DateOrder
 from monopoly.generic import GenericBank, GenericStatementHandler
@@ -26,11 +25,12 @@ class Pipeline:
         file_path: Optional[Path] = None,
         file_bytes: Optional[bytes] = None,
         passwords: Optional[list[SecretStr]] = None,
-        bank: Optional[Type[BankBase]] = None,
+        bank: Type[BankBase] = GenericBank,
     ):
         self.file_path = file_path
         self.file_bytes = file_bytes
         self.passwords = passwords
+        self.bank = bank
 
         if not any([self.file_path, self.file_bytes]):
             raise RuntimeError("Either `file_path` or `file_bytes` must be passed")
@@ -41,7 +41,6 @@ class Pipeline:
             )
 
         self.document = PdfDocument(file_path, file_bytes, passwords)
-        self.bank = bank or self.detect_bank(self.document)
 
     @staticmethod
     def create_handler(bank: Type[BankBase], pages: list[PdfPage]) -> StatementHandler:
@@ -50,14 +49,6 @@ class Pipeline:
             return GenericStatementHandler(bank, pages)
         logger.debug("Using statement handler with bank: %s", bank.__name__)
         return StatementHandler(bank, pages)
-
-    @staticmethod
-    def detect_bank(document) -> Type[BankBase]:
-        analyzer = BankDetector(document)
-        if bank := analyzer.detect_bank():
-            return bank
-        logger.warning("Unable to detect bank, transactions may be inaccurate")
-        return GenericBank
 
     def extract(self, safety_check=True) -> BaseStatement:
         """Extracts transactions from the statement, and performs

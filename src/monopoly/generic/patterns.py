@@ -144,8 +144,8 @@ class PatternMatcher:
         max_span_occurrences = 0
         most_common_pattern = None
 
-        # Sort patterns so that those ending with "yy" come first
-        sorted_patterns = sorted(self, key=lambda p: not p.name.endswith("yy"))
+        # Sort patterns so that those ending with "yy" come last
+        sorted_patterns = sorted(self, key=lambda p: p.name.endswith("yy"))
 
         for pattern in sorted_patterns:
             if counter := pattern.span_occurrences:

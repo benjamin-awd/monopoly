@@ -123,10 +123,18 @@ def process_statement(
         information about the processed statement. If an error occurs during processing,
         returns a Result object with error information.
     """
-    from monopoly.pipeline import Pipeline  # pylint: disable=import-outside-toplevel
+    # pylint: disable=import-outside-toplevel, too-many-locals
+    from monopoly.bank_detector import BankDetector
+    from monopoly.generic import GenericBank
+    from monopoly.pdf import PdfDocument
+    from monopoly.pipeline import Pipeline
 
     try:
-        pipeline = Pipeline(file)
+        document = PdfDocument(file)
+        analyzer = BankDetector(document)
+        bank = analyzer.detect_bank() or GenericBank
+
+        pipeline = Pipeline(file, bank=bank)
         statement = pipeline.extract(safety_check=safety_check)
         transactions = pipeline.transform(statement)
 

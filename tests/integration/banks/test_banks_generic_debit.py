@@ -32,7 +32,6 @@ def test_bank_debit_statements(
     expected_debit_sum: float,
     expected_credit_sum: float,
     statement_date: datetime,
-    no_banks,
 ):
     bank_name = bank.debit_config.bank_name
     test_directory = Path(__file__).parent / bank_name / "debit"
