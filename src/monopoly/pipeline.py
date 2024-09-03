@@ -48,9 +48,7 @@ class Pipeline:
         self.handler = self.create_handler(bank, parser)
 
     @staticmethod
-    def create_handler(
-        bank: Type[BankBase], parser: PdfParser
-    ) -> GenericStatementHandler | StatementHandler:
+    def create_handler(bank: Type[BankBase], parser: PdfParser) -> StatementHandler:
         if issubclass(bank, GenericBank):
             logger.debug("Using generic statement handler")
             return GenericStatementHandler(parser)
