@@ -2,8 +2,8 @@ from unittest.mock import PropertyMock, patch
 
 import pytest
 
-from monopoly.bank_detector import BankDetector
 from monopoly.banks.base import BankBase
+from monopoly.banks.detector import BankDetector
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 from monopoly.pdf import PdfDocument
 
@@ -81,7 +81,7 @@ encrypted_file_path = "path/to/encrypted.pdf"
 
 @patch.object(BankDetector, "metadata_items", new_callable=PropertyMock)
 def test_auto_detect_bank_identified(
-    mock_metadata_items, monkeypatch, metadata_analyzer: BankDetector
+    mock_metadata_items, metadata_analyzer: BankDetector
 ):
     mock_metadata_items.return_value = [
         MetadataIdentifier(
@@ -90,30 +90,26 @@ def test_auto_detect_bank_identified(
     ]
 
     mock_banks_list = [MockBankOne, MockBankTwo]
-    monkeypatch.setattr("monopoly.bank_detector.banks", mock_banks_list)
 
-    bank = metadata_analyzer.detect_bank()
-
+    bank = metadata_analyzer.detect_bank(mock_banks_list)
     assert bank.__name__ == MockBankTwo.__name__
 
 
 @patch.object(BankDetector, "metadata_items", new_callable=PropertyMock)
 def test_detect_bank_not_identified(
-    mock_metadata_items, monkeypatch, metadata_analyzer: BankDetector
+    mock_metadata_items, metadata_analyzer: BankDetector
 ):
     mock_metadata_items.return_value = [
         MetadataIdentifier(creator="asdf", producer="qwerty")
     ]
     mock_banks_list = [MockBankThree]
-    monkeypatch.setattr("monopoly.bank_detector.banks", mock_banks_list)
-
-    assert not metadata_analyzer.detect_bank()
+    assert not metadata_analyzer.detect_bank(mock_banks_list)
 
 
 @patch.object(PdfDocument, "raw_text", new_callable=PropertyMock)
 @patch.object(BankDetector, "metadata_items", new_callable=PropertyMock)
 def test_detect_bank_with_text_identifier(
-    mock_metadata_items, mock_raw_text, monkeypatch, metadata_analyzer: BankDetector
+    mock_metadata_items, mock_raw_text, metadata_analyzer: BankDetector
 ):
     mock_raw_text.return_value = "specific_string, other_specific_string"
     mock_metadata_items.return_value = [
@@ -121,9 +117,7 @@ def test_detect_bank_with_text_identifier(
     ]
 
     mock_banks_list = [MockBankTwo, MockBankWithMultipleTextIdentifier]
-    monkeypatch.setattr("monopoly.bank_detector.banks", mock_banks_list)
-
-    bank = metadata_analyzer.detect_bank()
+    bank = metadata_analyzer.detect_bank(mock_banks_list)
 
     assert bank.__name__ == MockBankWithMultipleTextIdentifier.__name__
 
@@ -139,7 +133,7 @@ def test_detect_bank_with_not_matching_text_identifier(
     ]
 
     mock_banks_list = [MockBankTwo, MockBankWithMultipleTextIdentifier]
-    monkeypatch.setattr("monopoly.bank_detector.banks", mock_banks_list)
+    monkeypatch.setattr("monopoly.banks.banks", mock_banks_list)
 
     assert not metadata_analyzer.detect_bank()
 
@@ -147,7 +141,7 @@ def test_detect_bank_with_not_matching_text_identifier(
 @patch.object(PdfDocument, "raw_text", new_callable=PropertyMock)
 @patch.object(BankDetector, "metadata_items", new_callable=PropertyMock)
 def test_detect_bank_with_only_text_identifier(
-    mock_metadata_items, mock_raw_text, monkeypatch, metadata_analyzer: BankDetector
+    mock_metadata_items, mock_raw_text, metadata_analyzer: BankDetector
 ):
     mock_raw_text.return_value = "foo baz bar"
     mock_metadata_items.return_value = [
@@ -158,7 +152,6 @@ def test_detect_bank_with_only_text_identifier(
         MockBankWithMultipleTextIdentifier,
         MockBankWithOnlyTextIdentifier,
     ]
-    monkeypatch.setattr("monopoly.bank_detector.banks", mock_banks_list)
 
-    bank = metadata_analyzer.detect_bank()
+    bank = metadata_analyzer.detect_bank(mock_banks_list)
     assert bank.__name__ == MockBankWithOnlyTextIdentifier.__name__

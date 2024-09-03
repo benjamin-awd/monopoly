@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from functools import cached_property, lru_cache
 from io import BytesIO
 from pathlib import Path
-from typing import Optional, Type
+from typing import Optional
 
 import fitz
 import pdftotext
@@ -114,7 +114,7 @@ class PdfDocument(fitz.Document):
 
 
 class PdfParser:
-    def __init__(self, bank: Type[BankBase], document: PdfDocument):
+    def __init__(self, bank: BankBase, document: PdfDocument):
         """
         Class responsible for parsing PDFs and returning raw text
 

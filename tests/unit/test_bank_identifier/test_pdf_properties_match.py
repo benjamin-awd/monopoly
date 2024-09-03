@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from unittest.mock import PropertyMock, patch
 
-from monopoly.bank_detector import BankDetector
+from monopoly.banks.detector import BankDetector
 
 
 @dataclass

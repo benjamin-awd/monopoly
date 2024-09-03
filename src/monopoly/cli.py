@@ -124,7 +124,7 @@ def process_statement(
         returns a Result object with error information.
     """
     # pylint: disable=import-outside-toplevel, too-many-locals
-    from monopoly.bank_detector import BankDetector
+    from monopoly.banks import BankDetector, banks
     from monopoly.generic import GenericBank
     from monopoly.pdf import PdfDocument
     from monopoly.pipeline import Pipeline
@@ -132,7 +132,7 @@ def process_statement(
     try:
         document = PdfDocument(file)
         analyzer = BankDetector(document)
-        bank = analyzer.detect_bank() or GenericBank
+        bank = analyzer.detect_bank(banks) or GenericBank
 
         pipeline = Pipeline(file, bank=bank)
         statement = pipeline.extract(safety_check=safety_check)
