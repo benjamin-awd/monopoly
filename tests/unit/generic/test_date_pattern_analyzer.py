@@ -286,7 +286,7 @@ def test_create_transaction_pattern_with_transaction_first(
     date_pattern_analyzer.matches = matches_with_transaction_posting_dates
 
     result = date_pattern_analyzer.create_transaction_pattern()
-    assert result == expected
+    assert result == re.compile(expected, re.IGNORECASE)
 
 
 def test_create_transaction_pattern_with_posting_first(
@@ -305,7 +305,7 @@ def test_create_transaction_pattern_with_posting_first(
         + SharedPatterns.AMOUNT_EXTENDED
     )
     result = date_pattern_analyzer.create_transaction_pattern()
-    assert result == expected
+    assert result == re.compile(expected, re.IGNORECASE)
 
 
 def test_get_statement_type_debit(date_pattern_analyzer: DatePatternAnalyzer):

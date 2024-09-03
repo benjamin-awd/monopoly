@@ -70,7 +70,7 @@ class DatePatternAnalyzer:
         return True
 
     @lru_cache
-    def create_transaction_pattern(self) -> str:
+    def create_transaction_pattern(self) -> re.Pattern:
         """
         Create a regex pattern that will be used for date parsing
         by the generic statement handler.
@@ -100,16 +100,16 @@ class DatePatternAnalyzer:
         if self.get_statement_type() == EntryType.CREDIT:
             pattern += SharedPatterns.AMOUNT_EXTENDED
 
-        return pattern
+        return re.compile(pattern, re.IGNORECASE)
 
     @lru_cache
-    def create_statement_date_pattern(self) -> str:
+    def create_statement_date_pattern(self) -> re.Pattern:
         """
         Creates a regex pattern for the statement date based on the first statement
         date.
         """
         statement_date = self.matcher.get_statement_date_pattern()
-        return f"({statement_date})"
+        return re.compile(f"({statement_date})")
 
     @lru_cache
     def get_statement_type(self) -> str:
@@ -186,7 +186,7 @@ class DatePatternAnalyzer:
         return average_line_distance > 2
 
     @lru_cache
-    def create_previous_balance_regex(self) -> str | None:
+    def create_previous_balance_regex(self) -> re.Pattern | None:
         """Helper function to check for a previous balance line items.
         Makes the assumption that the previous balance line item, if it
         exists, will be the line before the first line item with a date.
@@ -218,13 +218,13 @@ class DatePatternAnalyzer:
                         + SharedPatterns.AMOUNT
                     )
                     logger.debug("Found words, generated pattern %s", pattern)
-                    return pattern
+                    return re.compile(pattern)
         return None
 
     @lru_cache
     def get_first_transaction_location(self):
         # uses the transaction pattern to find the first transaction
-        pattern = re.compile(self.create_transaction_pattern(), re.IGNORECASE)
+        pattern = self.create_transaction_pattern()
 
         for page_num, page in enumerate(self.pages):
             for line_num, line in enumerate(page.lines):

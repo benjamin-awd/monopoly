@@ -1,7 +1,5 @@
-from dataclasses import field
+from dataclasses import dataclass, field
 from typing import Optional, Pattern
-
-from pydantic.dataclasses import dataclass
 
 from monopoly.constants import BankNames, EntryType, InternalBankNames
 from monopoly.enums import RegexEnum

@@ -59,7 +59,10 @@ class BaseStatement(ABC):
 
     @property
     def pattern(self):
-        return self.config.transaction_pattern
+        pattern = self.config.transaction_pattern
+        if isinstance(pattern, str):
+            pattern = re.compile(pattern)
+        return pattern
 
     @lru_cache
     def get_transactions(self) -> list[Transaction] | None:
