@@ -5,12 +5,12 @@ from io import BytesIO
 from pathlib import Path
 from typing import Optional
 
-import fitz
 import pdftotext
 from ocrmypdf import Verbosity, configure_logging, ocr
 from ocrmypdf.exceptions import PriorOcrFoundError, TaggedPDFError
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pymupdf import TEXTFLAGS_TEXT, Document, Page
 
 from monopoly.banks import BankBase
 
@@ -61,7 +61,7 @@ class BadPasswordFormatError(Exception):
     """Exception raised passwords are not provided in a proper format"""
 
 
-class PdfDocument(fitz.Document):
+class PdfDocument(Document):
     """Handles logic related to the opening, unlocking, and storage of a PDF document."""
 
     def __init__(
@@ -181,7 +181,7 @@ class PdfParser:
         raise RuntimeError("Unable to retrieve pages")
 
     @staticmethod
-    def _remove_vertical_text(page: fitz.Page):
+    def _remove_vertical_text(page: Page):
         """Helper function to remove vertical text, based on writing direction (wdir).
 
         This helps avoid situations where the PDF is oddly parsed, due to vertical text
@@ -199,12 +199,12 @@ class PdfParser:
             If line["dir"] != (1, 0), the text of its spans is rotated.
 
         """
-        for block in page.get_text("dict", flags=fitz.TEXTFLAGS_TEXT)["blocks"]:
+        for block in page.get_text("dict", flags=TEXTFLAGS_TEXT)["blocks"]:
             for line in block["lines"]:
                 writing_direction = line["dir"]
                 if writing_direction != (1, 0):
                     page.add_redact_annot(line["bbox"])
-        page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE)
+        page.apply_redactions(images=0)
         return page
 
     @staticmethod
