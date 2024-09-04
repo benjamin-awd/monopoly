@@ -19,10 +19,10 @@ class MockDocument:
 class MockPdfDocument:
     def __init__(self, is_encrypted: bool, metadata: dict):
         self.is_encrypted = is_encrypted
-        self.metadata = metadata
+        self.metadata_identifier = MetadataIdentifier(**metadata)
 
     def open(self):
-        return MockDocument(self.is_encrypted, self.metadata)
+        return MockDocument(self.is_encrypted, self.metadata_identifier)
 
 
 @pytest.fixture
