@@ -6,8 +6,6 @@ from pathlib import Path
 from typing import Optional
 
 import pdftotext
-from ocrmypdf import Verbosity, configure_logging, ocr
-from ocrmypdf.exceptions import PriorOcrFoundError, TaggedPDFError
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pymupdf import TEXTFLAGS_TEXT, Document, Page
@@ -212,6 +210,14 @@ class PdfParser:
 
     @staticmethod
     def _apply_ocr(document: PdfDocument) -> PdfDocument:
+        # pylint: disable=import-outside-toplevel
+        try:
+            from ocrmypdf import Verbosity, configure_logging, ocr
+            from ocrmypdf.exceptions import PriorOcrFoundError, TaggedPDFError
+        except ImportError:
+            logger.warning("ocrmypdf not installed, skipping OCR")
+            return document
+
         added_ocr = False
         try:
             logger.debug("Applying OCR")
