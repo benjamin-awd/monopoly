@@ -3,6 +3,7 @@ from typing import Optional, Pattern
 
 from monopoly.constants import BankNames, EntryType, InternalBankNames
 from monopoly.enums import RegexEnum
+from monopoly.identifiers import MetadataIdentifier
 
 
 @dataclass
@@ -65,10 +66,11 @@ class PdfConfig:
     - `page_bbox`: A tuple representing the bounding box range for every
     page. This is used to avoid weirdness like vertical text, and other
     PDF artifacts that may affect parsing.
-    - `apply_ocr`: Whether to attempt to apply OCR on the PDF. If the PDF already
-    has OCR, the original OCR text will be retained.
+    - `ocr_identifiers`: Applies OCR on PDFs with a specific metadata identifier.
     """
 
     page_range: tuple[Optional[int], Optional[int]] = (None, None)
     page_bbox: Optional[tuple[float, float, float, float]] = None
-    apply_ocr: bool = False
+    ocr_identifiers: list[Optional[MetadataIdentifier]] = field(
+        default_factory=list[None]
+    )

@@ -26,22 +26,26 @@ class Hsbc(BankBase):
         multiline_transactions=True,
     )
 
-    pdf_config = PdfConfig(page_bbox=(0, 0, 379, 840), apply_ocr=True)
-
-    identifiers = [
-        [
-            MetadataIdentifier(
-                title="PRJ_BEAGLE_ST_CNS_SGH_APP_Orchid",
-                author="Registered to: HSBCGLOB",
-                creator="OpenText Exstream",
-            ),
-            TextIdentifier("HSBC"),
-        ],
-        [
-            MetadataIdentifier(
-                format="PDF 1.7", producer="OpenText Output Transformation Engine"
-            )
-        ],
+    email_statement_identifier = [
+        MetadataIdentifier(
+            title="PRJ_BEAGLE_ST_CNS_SGH_APP_Orchid",
+            author="Registered to: HSBCGLOB",
+            creator="OpenText Exstream",
+        ),
+        TextIdentifier("HSBC"),
     ]
+
+    web_and_mobile_statement_identifier = [
+        MetadataIdentifier(
+            format="PDF 1.7", producer="OpenText Output Transformation Engine"
+        )
+    ]
+
+    pdf_config = PdfConfig(
+        page_bbox=(0, 0, 379, 840),
+        ocr_identifiers=web_and_mobile_statement_identifier,
+    )
+
+    identifiers = [email_statement_identifier, web_and_mobile_statement_identifier]
 
     statement_configs = [credit_config]

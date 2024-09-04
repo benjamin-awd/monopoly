@@ -54,7 +54,11 @@ def mock_bank():
 
 @pytest.fixture
 def parser(mock_bank):
-    parser = PdfParser(bank=mock_bank, document=None)
+    class MockDocument:
+        metadata_identifier = [None]
+
+    document = MockDocument()
+    parser = PdfParser(bank=mock_bank, document=document)
     yield parser
 
 
