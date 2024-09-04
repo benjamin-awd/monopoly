@@ -115,7 +115,11 @@ class PdfDocument(Document):
 
 
 class PdfParser:
-    def __init__(self, bank: BankBase, document: PdfDocument):
+    def __init__(
+        self,
+        bank: BankBase,
+        document: PdfDocument,
+    ):
         """
         Class responsible for parsing PDFs and returning raw text
 
@@ -124,6 +128,7 @@ class PdfParser:
         """
         self.bank = bank
         self.document = document
+        self.metadata_identifier = document.metadata_identifier
 
     @property
     def pdf_config(self):
@@ -138,8 +143,8 @@ class PdfParser:
         return self.pdf_config.page_bbox
 
     @cached_property
-    def apply_ocr(self):
-        return self.pdf_config.apply_ocr
+    def ocr_identifiers(self):
+        return self.pdf_config.ocr_identifiers
 
     @lru_cache
     def get_pages(self) -> list[PdfPage]:
@@ -158,8 +163,9 @@ class PdfParser:
                 page.set_cropbox(cropbox)
             page = self._remove_vertical_text(page)
 
-        if self.apply_ocr:
-            document = self._apply_ocr(document)
+        for identifier in self.ocr_identifiers:
+            if self.metadata_identifier.matches(identifier):
+                document = self._apply_ocr(document)
 
         # certain statements requsire garbage collection, so that duplicate objects
         # do not cause pdftotext to fail due to missing xrefs/null values
