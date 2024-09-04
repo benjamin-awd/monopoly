@@ -3,7 +3,7 @@ from dataclasses import Field, fields
 from functools import cached_property
 from typing import TYPE_CHECKING, Any, Type
 
-from monopoly.identifiers import Identifier, MetadataIdentifier, TextIdentifier
+from monopoly.identifiers import Identifier, TextIdentifier
 from monopoly.pdf import PdfDocument
 
 if TYPE_CHECKING:
@@ -22,8 +22,7 @@ class BankDetector:
         Retrieves encryption and metadata identifiers from a bank statement PDF
         """
         identifiers: list[Identifier] = []
-        if metadata := self.document.metadata:
-            metadata_identifier = MetadataIdentifier(**metadata)
+        if metadata_identifier := self.document.metadata_identifier:
             identifiers.append(metadata_identifier)
 
         if not identifiers:

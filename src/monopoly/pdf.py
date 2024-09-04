@@ -13,6 +13,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from pymupdf import TEXTFLAGS_TEXT, Document, Page
 
 from monopoly.banks import BankBase
+from monopoly.identifiers import MetadataIdentifier
 
 logger = logging.getLogger(__name__)
 
@@ -79,6 +80,8 @@ class PdfDocument(Document):
 
         if self.is_encrypted:
             self._unlock_document()
+
+        self.metadata_identifier = MetadataIdentifier(**self.metadata)
 
     def _unlock_document(self):
         """Attempt to unlock the document using the provided passwords."""
