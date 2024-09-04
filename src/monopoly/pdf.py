@@ -3,15 +3,17 @@ from dataclasses import dataclass
 from functools import cached_property, lru_cache
 from io import BytesIO
 from pathlib import Path
-from typing import Optional
+from typing import TYPE_CHECKING, Optional, Type
 
 import pdftotext
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pymupdf import TEXTFLAGS_TEXT, Document, Page
 
-from monopoly.banks import BankBase
 from monopoly.identifiers import MetadataIdentifier
+
+if TYPE_CHECKING:
+    from monopoly.banks import BankBase
 
 logger = logging.getLogger(__name__)
 
@@ -117,7 +119,7 @@ class PdfDocument(Document):
 class PdfParser:
     def __init__(
         self,
-        bank: BankBase,
+        bank: Type["BankBase"],
         document: PdfDocument,
     ):
         """
@@ -144,7 +146,7 @@ class PdfParser:
 
     @cached_property
     def ocr_identifiers(self):
-        return self.pdf_config.ocr_identifiers
+        return self.pdf_config.ocr_identifiers or []
 
     @lru_cache
     def get_pages(self) -> list[PdfPage]:

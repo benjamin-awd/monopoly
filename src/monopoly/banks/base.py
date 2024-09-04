@@ -1,7 +1,7 @@
 import logging
+from typing import Any
 
 from monopoly.config import PdfConfig, StatementConfig
-from monopoly.identifiers import Identifier
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +16,7 @@ class BankBase:
 
     statement_configs: list[StatementConfig]
     pdf_config: PdfConfig = PdfConfig()
-    identifiers: list[Identifier]
+    identifiers: list[list[Any]]
 
     def __init_subclass__(cls, **kwargs) -> None:
         if not hasattr(cls, "statement_configs"):

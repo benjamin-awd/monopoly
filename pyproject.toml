@@ -87,7 +87,9 @@ disable_error_code = [
 
 [[tool.mypy.overrides]]
 module = [
-    "fitz",
+    "pymupdf",
+    "ocrmypdf",
+    "ocrmypdf.exceptions",
     "pdftotext",
     "pdf2john",
 ]
