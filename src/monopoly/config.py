@@ -71,6 +71,4 @@ class PdfConfig:
 
     page_range: tuple[Optional[int], Optional[int]] = (None, None)
     page_bbox: Optional[tuple[float, float, float, float]] = None
-    ocr_identifiers: list[Optional[MetadataIdentifier]] = field(
-        default_factory=list[None]
-    )
+    ocr_identifiers: Optional[list[MetadataIdentifier]] = None

@@ -135,7 +135,7 @@ def test_detect_bank_with_not_matching_text_identifier(
     mock_banks_list = [MockBankTwo, MockBankWithMultipleTextIdentifier]
     monkeypatch.setattr("monopoly.banks.banks", mock_banks_list)
 
-    assert not metadata_analyzer.detect_bank()
+    assert not metadata_analyzer.detect_bank(mock_banks_list)
 
 
 @patch.object(PdfDocument, "raw_text", new_callable=PropertyMock)

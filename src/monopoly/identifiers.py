@@ -1,4 +1,6 @@
-from dataclasses import dataclass, fields
+from dataclasses import fields
+
+from pydantic.dataclasses import dataclass
 
 
 @dataclass
@@ -16,11 +18,6 @@ class MetadataIdentifier(Identifier):
     subject: str = ""
     creator: str = ""
     producer: str = ""
-    keywords: str = ""
-    creationDate: str = ""
-    modDate: str = ""
-    trapped: str = ""
-    encryption: dict = None
 
     def matches(self, other: "MetadataIdentifier") -> bool:
         """Check for partial matches on all string fields."""

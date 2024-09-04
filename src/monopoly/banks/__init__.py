@@ -23,4 +23,4 @@ banks: list[Type["BankBase"]] = [
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["BankDetector", "BankBase", *banks]
+__all__ = ["BankDetector", "BankBase", *[bank.__name__ for bank in banks]]

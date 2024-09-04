@@ -30,9 +30,7 @@ class BankDetector:
 
         return identifiers
 
-    def detect_bank(
-        self, banks: list[Type["BankBase"]] = None
-    ) -> Type["BankBase"] | None:
+    def detect_bank(self, banks: list[Type["BankBase"]]) -> Type["BankBase"] | None:
         """
         Reads the encryption metadata or actual metadata (if the PDF is not encrypted),
         and checks for a bank based on unique identifiers.
