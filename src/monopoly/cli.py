@@ -134,10 +134,9 @@ def process_statement(
         analyzer = BankDetector(document)
         bank = analyzer.detect_bank(banks) or GenericBank
         parser = PdfParser(bank, document)
-        pages = parser.get_pages()
+        pipeline = Pipeline(parser)
 
-        pipeline = Pipeline(file, bank=bank)
-        statement = pipeline.extract(pages, safety_check=safety_check)
+        statement = pipeline.extract(safety_check=safety_check)
         transactions = pipeline.transform(statement)
 
         if print_df:

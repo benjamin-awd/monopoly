@@ -1,5 +1,5 @@
 from monopoly.banks import ExampleBank
-from monopoly.pdf import PdfParser
+from monopoly.pdf import PdfDocument, PdfParser
 from monopoly.pipeline import Pipeline
 
 
@@ -10,15 +10,13 @@ def example():
     You can pass in the bank class if you want to specify a specific bank,
     or use the BankDetector class to try to detect the bank automatically.
     """
-    pipeline = Pipeline(
-        file_path="src/monopoly/examples/example_statement.pdf", bank=ExampleBank
-    )
-    parser = PdfParser(pipeline.bank, pipeline.document)
-    pages = parser.get_pages()
+    document = PdfDocument(file_path="src/monopoly/examples/example_statement.pdf")
+    parser = PdfParser(ExampleBank, document)
+    pipeline = Pipeline(parser)
 
     # This runs pdftotext on the PDF and
     # extracts transactions as raw text
-    statement = pipeline.extract(pages)
+    statement = pipeline.extract()
 
     # Dates are converted into an ISO 8601 date format
     transactions = pipeline.transform(statement)
@@ -30,7 +28,7 @@ def example():
         output_directory="src/monopoly/examples",
     )
 
-    with open(file_path) as file:
+    with open(file_path, encoding="utf8") as file:
         print(file.read()[0:248])
 
 

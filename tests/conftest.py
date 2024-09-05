@@ -21,7 +21,7 @@ def mock_env():
 
 @pytest.fixture
 def pdf_document():
-    yield PdfDocument()
+    yield PdfDocument(file_path="src/monopoly/examples/example_statement.pdf")
 
 
 @pytest.fixture
