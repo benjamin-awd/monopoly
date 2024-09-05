@@ -1,5 +1,57 @@
 # Changelog
 
+## [0.11.0] - 2024-09-05
+
+### ⛰️ Features
+
+- *(banks/hsbc)* Add support for non-OCR credit statements
+
+### 🛠️ Bug Fixes
+
+- *(write)* Incorrect 'base' statement type in final result
+
+### 🚜 Refactor
+
+- *(pdf)* Make PdfDocument a child class of fitz.Document
+- *(pdf)* Use file_path as first arg to PdfDocument
+- *(pipeline)* Move parser & handler creation logic to extract
+- Pass PdfPages instead of parser
+- *(pipeline)* Move bank detection logic to CLI
+- *(detector)* Move detector to banks namespace
+- Remove unnecessary usage of pydantic dataclasses
+- *(pdf)* Add metadata identifier attr to PdfDocument
+- *(banks/base)* Fix type hint for identifiers
+- *(pdf)* Lazily import ocrmypdf
+- *(pdf)* Perform ocr based on metadata identifiers
+- *(pipeline)* Move parser instantiation logic to CLI
+- *(pipeline)* Allow custom document to be passed
+
+### 📚 Documentation
+
+- Remove false version from changelog
+- *(README)* Add note about OCR feature
+
+### ⚙️ Miscellaneous Tasks
+
+- *(generic)* Add GenericParserError
+- Remove unused import
+- *(pdf)* Remove old get_byte_stream function
+- Remove old mock_document fixture
+- *(constants)* Remove case insensitive modifier from formats with no words
+- *(pdf)* Improve ocrmypdf performance
+- *(pipeline)* Shorten create_handler function signature
+- *(generic)* Move GenericBank to generic __init__
+- *(pipeline)* Import Transaction from statements namespace
+- Rename generic/generic_handler to generic/handler
+- Import from pymupdf instead of fitz
+- Linting for ocr changes
+
+### Build
+
+- *(deps)* Bump the deps group with 7 updates
+- *(deps)* Add ocrmypdf as a system dependency
+- *(deps)* Move ocrmypdf to extras
+
 ## [0.10.10] - 2024-08-26
 
 ### 🚜 Refactor
