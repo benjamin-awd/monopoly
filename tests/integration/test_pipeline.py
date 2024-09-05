@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 
 from monopoly.banks import Dbs, ExampleBank
+from monopoly.pdf import PdfParser
 from monopoly.pipeline import Pipeline
 
 
@@ -24,7 +25,9 @@ def test_pipeline_initialization_with_bytes(pdf_file_bytes):
 def test_pipeline_with_bank():
     file_path = Path("src/monopoly/examples/example_statement.pdf")
     pipeline = Pipeline(file_path=file_path, bank=ExampleBank)
-    transactions = pipeline.extract().transactions
+    parser = PdfParser(pipeline.bank, pipeline.document)
+    pages = parser.get_pages()
+    transactions = pipeline.extract(pages).transactions
     assert len(transactions) == 53
     assert transactions[0].description == "LAST MONTH'S BALANCE"
 
@@ -32,8 +35,11 @@ def test_pipeline_with_bank():
 def test_pipeline_with_bad_bank():
     file_path = Path("src/monopoly/examples/example_statement.pdf")
     pipeline = Pipeline(file_path=file_path, bank=Dbs)
+    parser = PdfParser(pipeline.bank, pipeline.document)
+    pages = parser.get_pages()
+
     with pytest.raises(ValueError, match="No transactions found"):
-        pipeline.extract()
+        pipeline.extract(pages)
 
 
 def test_pipeline_initialization_with_file_path():
@@ -62,6 +68,8 @@ def test_pipeline_initialization_with_neither_raises_error():
 
 def test_pipeline_bytes_etl(pdf_file_bytes):
     pipeline = Pipeline(file_bytes=pdf_file_bytes, bank=ExampleBank)
-    statement = pipeline.extract()
+    parser = PdfParser(pipeline.bank, pipeline.document)
+    pages = parser.get_pages()
+    statement = pipeline.extract(pages)
     transactions = pipeline.transform(statement)
     assert len(transactions) == 53
