@@ -10,7 +10,7 @@ from monopoly.banks import BankBase
 from monopoly.config import DateOrder
 from monopoly.generic import GenericBank, GenericStatementHandler
 from monopoly.handler import StatementHandler
-from monopoly.pdf import PdfDocument, PdfPage
+from monopoly.pdf import PdfPage, PdfParser
 from monopoly.statements import BaseStatement, Transaction
 from monopoly.write import generate_name
 
@@ -22,25 +22,12 @@ class Pipeline:
 
     def __init__(
         self,
-        file_path: Optional[Path] = None,
-        file_bytes: Optional[bytes] = None,
+        parser: PdfParser,
         passwords: Optional[list[SecretStr]] = None,
-        bank: Type[BankBase] = GenericBank,
     ):
-        self.file_path = file_path
-        self.file_bytes = file_bytes
         self.passwords = passwords
-        self.bank = bank
-
-        if not any([self.file_path, self.file_bytes]):
-            raise RuntimeError("Either `file_path` or `file_bytes` must be passed")
-
-        if self.file_path and self.file_bytes:
-            raise RuntimeError(
-                "Only one of `file_path` or `file_bytes` should be passed"
-            )
-
-        self.document = PdfDocument(file_path, file_bytes, passwords)
+        pages = parser.get_pages()
+        self.handler = self.create_handler(parser.bank, pages)
 
     @staticmethod
     def create_handler(bank: Type[BankBase], pages: list[PdfPage]) -> StatementHandler:
@@ -50,11 +37,10 @@ class Pipeline:
         logger.debug("Using statement handler with bank: %s", bank.__name__)
         return StatementHandler(bank, pages)
 
-    def extract(self, pages: list[PdfPage], safety_check=True) -> BaseStatement:
+    def extract(self, safety_check=True) -> BaseStatement:
         """Extracts transactions from the statement, and performs
         a safety check to make sure that total transactions add up"""
-        handler = self.create_handler(self.bank, pages)
-        statement = handler.get_statement()
+        statement = self.handler.get_statement()
         transactions = statement.get_transactions()
 
         if not transactions:

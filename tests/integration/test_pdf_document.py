@@ -14,6 +14,21 @@ from monopoly.pdf import (
 fixture_directory = Path(__file__).parent / "fixtures"
 
 
+def test_document_initialization_with_both_raises_error():
+    file_path = Path("src/monopoly/examples/example_statement.pdf")
+    with raises(
+        RuntimeError, match="Only one of `file_path` or `file_bytes` should be passed"
+    ):
+        PdfDocument(file_path=file_path, file_bytes=b"123")
+
+
+def test_document_initialization_with_neither_raises_error():
+    with raises(
+        RuntimeError, match="Either `file_path` or `file_bytes` must be passed"
+    ):
+        PdfDocument()
+
+
 def test_can_open_file_stream():
     with open(fixture_directory / "4_pages_blank.pdf", "rb") as file:
         pdf_document = PdfDocument(file_bytes=file.read())

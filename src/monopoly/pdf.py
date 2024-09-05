@@ -75,6 +75,14 @@ class PdfDocument(Document):
         self.file_bytes = file_bytes
         self.passwords = passwords or PdfPasswords().pdf_passwords
 
+        if not any([self.file_path, self.file_bytes]):
+            raise RuntimeError("Either `file_path` or `file_bytes` must be passed")
+
+        if self.file_path and self.file_bytes:
+            raise RuntimeError(
+                "Only one of `file_path` or `file_bytes` should be passed"
+            )
+
         args = {"filename": self.file_path, "stream": self.file_bytes}
         super().__init__(**args)
 

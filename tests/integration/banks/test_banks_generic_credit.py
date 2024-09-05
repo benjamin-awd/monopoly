@@ -7,7 +7,7 @@ from test_utils.transactions import get_transactions_as_dict, read_transactions_
 
 from monopoly.banks import BankBase, Citibank, Dbs, Maybank, Ocbc, StandardChartered
 from monopoly.constants import Columns
-from monopoly.pdf import PdfParser
+from monopoly.pdf import PdfDocument, PdfParser
 from monopoly.pipeline import Pipeline
 from monopoly.statements import CreditStatement
 
@@ -32,11 +32,11 @@ def test_bank_credit_statements(
 ):
     bank_name = bank.credit_config.bank_name
     test_directory = Path(__file__).parent / bank_name / "credit"
-    pipeline = Pipeline(test_directory / "input.pdf")
 
-    parser = PdfParser(bank, pipeline.document)
-    pages = parser.get_pages()
-    statement: CreditStatement = pipeline.extract(pages)
+    document = PdfDocument(test_directory / "input.pdf")
+    parser = PdfParser(bank, document)
+    pipeline = Pipeline(parser)
+    statement: CreditStatement = pipeline.extract()
 
     # check raw data
     expected_raw_transactions = read_transactions_from_csv(test_directory, "raw.csv")
