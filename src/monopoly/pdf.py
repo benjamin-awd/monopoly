@@ -145,8 +145,12 @@ class PdfParser:
         return self.pdf_config.page_bbox
 
     @cached_property
-    def ocr_identifiers(self):
-        return self.pdf_config.ocr_identifiers or []
+    def ocr_available(self):
+        if ids := self.pdf_config.ocr_identifiers:
+            for identifiers in ids:
+                if self.metadata_identifier.matches(identifiers):
+                    return True
+        return False
 
     @lru_cache
     def get_pages(self) -> list[PdfPage]:
@@ -164,10 +168,6 @@ class PdfParser:
             if self.page_bbox:
                 page.set_cropbox(cropbox)
             page = self._remove_vertical_text(page)
-
-        for identifier in self.ocr_identifiers:
-            if self.metadata_identifier.matches(identifier):
-                document = self._apply_ocr(document)
 
         # certain statements requsire garbage collection, so that duplicate objects
         # do not cause pdftotext to fail due to missing xrefs/null values
@@ -217,7 +217,7 @@ class PdfParser:
         return page
 
     @staticmethod
-    def _apply_ocr(document: PdfDocument) -> PdfDocument:
+    def apply_ocr(document: PdfDocument) -> PdfDocument:
         # pylint: disable=import-outside-toplevel
         try:
             from ocrmypdf import Verbosity, configure_logging, ocr
