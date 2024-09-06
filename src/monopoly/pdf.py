@@ -86,12 +86,11 @@ class PdfDocument(Document):
         args = {"filename": self.file_path, "stream": self.file_bytes}
         super().__init__(**args)
 
-        if self.is_encrypted:
-            self._unlock_document()
+    @cached_property
+    def metadata_identifier(self):
+        return MetadataIdentifier(**self.metadata)
 
-        self.metadata_identifier = MetadataIdentifier(**self.metadata)
-
-    def _unlock_document(self):
+    def unlock_document(self):
         """Attempt to unlock the document using the provided passwords."""
         if not self.is_encrypted:
             return self
