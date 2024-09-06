@@ -131,6 +131,7 @@ def process_statement(
 
     try:
         document = PdfDocument(file)
+        document.unlock_document()
         analyzer = BankDetector(document)
         bank = analyzer.detect_bank(banks) or GenericBank
         parser = PdfParser(bank, document)

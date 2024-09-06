@@ -43,7 +43,7 @@ def test_can_open_protected(pdf_document: PdfDocument):
         pdf_document = PdfDocument(
             passwords=None, file_path=fixture_directory / "protected.pdf"
         )
-        pdf_document._unlock_document()
+        pdf_document.unlock_document()
 
 
 def test_wrong_password_raises_error():
@@ -52,7 +52,7 @@ def test_wrong_password_raises_error():
             passwords=[SecretStr("wrongpw_123")],
             file_path=fixture_directory / "protected.pdf",
         )
-        pdf_document._unlock_document()
+        pdf_document.unlock_document()
 
 
 def test_override_password():
@@ -60,7 +60,7 @@ def test_override_password():
         passwords=[SecretStr("foobar123")],
         file_path=fixture_directory / "protected.pdf",
     )
-    pdf_document._unlock_document()
+    pdf_document.unlock_document()
     assert not pdf_document.is_encrypted
 
 
@@ -75,7 +75,7 @@ def test_missing_password_raises_error():
             pdf_document = PdfDocument(
                 passwords=None, file_path=fixture_directory / "protected.pdf"
             )
-            pdf_document._unlock_document()
+            pdf_document.unlock_document()
 
 
 def test_null_password_raises_error():
@@ -89,7 +89,7 @@ def test_null_password_raises_error():
             pdf_document = PdfDocument(
                 passwords=None, file_path=fixture_directory / "protected.pdf"
             )
-            pdf_document._unlock_document()
+            pdf_document.unlock_document()
 
 
 def test_invalid_password_type_raises_error():
@@ -103,7 +103,7 @@ def test_invalid_password_type_raises_error():
             pdf_document = PdfDocument(
                 passwords=None, file_path=fixture_directory / "protected.pdf"
             )
-            pdf_document._unlock_document()
+            pdf_document.unlock_document()
 
 
 def test_plain_text_passwords_raises_error(pdf_document: PdfDocument):
@@ -117,4 +117,4 @@ def test_plain_text_passwords_raises_error(pdf_document: PdfDocument):
             pdf_document = PdfDocument(
                 passwords=None, file_path=fixture_directory / "protected.pdf"
             )
-            pdf_document._unlock_document()
+            pdf_document.unlock_document()
