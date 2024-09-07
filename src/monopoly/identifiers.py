@@ -1,14 +1,15 @@
 from dataclasses import fields
+from functools import lru_cache
 
 from pydantic.dataclasses import dataclass
 
 
-@dataclass
+@dataclass(frozen=True)
 class Identifier:
     """Parent class for identifiers, used for type hinting"""
 
 
-@dataclass
+@dataclass(frozen=True)
 class MetadataIdentifier(Identifier):
     """Stores the metadata attributes of a PDF"""
 
@@ -19,6 +20,7 @@ class MetadataIdentifier(Identifier):
     creator: str = ""
     producer: str = ""
 
+    @lru_cache
     def matches(self, other: "MetadataIdentifier") -> bool:
         """Check for partial matches on all string fields."""
         for field in fields(self):
@@ -33,7 +35,7 @@ class MetadataIdentifier(Identifier):
         return True
 
 
-@dataclass
+@dataclass(frozen=True)
 class TextIdentifier(Identifier):
     """Stores a specific string that exists in the content of a PDF"""
 
