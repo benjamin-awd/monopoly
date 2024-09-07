@@ -1,7 +1,7 @@
 import logging
 from re import compile as regex
 
-from monopoly.config import PdfConfig, StatementConfig
+from monopoly.config import StatementConfig
 from monopoly.constants import (
     BankNames,
     CreditTransactionPatterns,
@@ -23,11 +23,6 @@ class StandardChartered(BankBase):
         header_pattern=regex(r"(Transaction.*Posting.*Amount)"),
         prev_balance_pattern=StatementBalancePatterns.STANDARD_CHARTERED,
         transaction_pattern=CreditTransactionPatterns.STANDARD_CHARTERED,
-    )
-
-    pdf_config = PdfConfig(
-        page_range=(0, -1),
-        page_bbox=(0, 0, 580, 820),
     )
 
     identifiers = [
