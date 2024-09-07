@@ -14,19 +14,13 @@ logger = logging.getLogger(__name__)
 
 
 class GenericBank(BankBase):
+    identifiers = []
+    statement_configs = None
+
     """
     Empty bank class with variables that can be populated by
     the `GenericStatementHandler` class
     """
-
-    # populated by generic statement handler
-    @property
-    def statement_configs(self):
-        return None
-
-    @property
-    def identifiers(self):
-        return None
 
 
 class GenericStatementHandler(StatementHandler):

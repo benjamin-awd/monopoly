@@ -29,4 +29,10 @@ class BankBase:
                 f"{cls.__class__.__name__} "
                 "must implement `identifiers` class variable"
             )
+
+        # validation logic only applies to regular banks
+        if cls.identifiers:
+            if not any(isinstance(item, list) for item in cls.identifiers):
+                raise TypeError("`identifiers` must be a list of lists")
+
         return super().__init_subclass__(**kwargs)
