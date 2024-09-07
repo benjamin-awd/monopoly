@@ -1,45 +1,36 @@
-from dataclasses import dataclass
-from unittest.mock import PropertyMock, patch
-
 from monopoly.banks.detector import BankDetector
+from monopoly.identifiers import MetadataIdentifier
 
 
-@dataclass
-class MockIdentifier1:
-    key: str = ""
-    value: str = ""
+def test_metadata_identifiers_match_partial(metadata_analyzer: BankDetector):
+    metadata_identifier = MetadataIdentifier(
+        format="PDF 1.6", creator="incorrect creator"
+    )
+    metadata_analyzer.document.metadata_identifier = metadata_identifier
 
-
-@dataclass
-class MockIdentifier2:
-    name: str = ""
-    id: str = ""
-
-
-@patch.object(BankDetector, "metadata_items", new_callable=PropertyMock)
-def test_pdf_properties_match_partial(
-    mock_metadata_items, metadata_analyzer: BankDetector
-):
-    metadata_items = [
-        MockIdentifier1(key="test", value="123"),
-        MockIdentifier2(name="doc", id="456"),
-    ]
-    mock_metadata_items.return_value = metadata_items
-
-    grouped_identifiers = [
-        MockIdentifier1(key="test", value="123"),
-        MockIdentifier2(name="other", id="789"),
+    bank_metadata_identifiers = [
+        MetadataIdentifier(format="PDF 1.6", creator="correct creator"),
     ]
 
-    assert not metadata_analyzer.pdf_properties_match(grouped_identifiers)
+    assert not metadata_analyzer.metadata_identifiers_match(bank_metadata_identifiers)
 
 
-@patch.object(BankDetector, "metadata_items", new_callable=PropertyMock)
-def test_pdf_properties_match_type_mismatch(
-    mock_metadata_items, metadata_analyzer: BankDetector
-):
-    metadata_items = [MockIdentifier1(key="test", value="123")]
-    mock_metadata_items.return_value = metadata_items
+def test_metadata_identifiers_match_wrong(metadata_analyzer: BankDetector):
+    metadata_identifier = MetadataIdentifier(format="PDF 1.2", producer="foo")
+    metadata_analyzer.metadata_identifier = metadata_identifier
 
-    grouped_identifiers = [MockIdentifier2(name="doc", id="456")]
-    assert not metadata_analyzer.pdf_properties_match(grouped_identifiers)
+    bank_metadata_identifiers = [MetadataIdentifier(format="PDF 1.6", producer="bar")]
+    assert not metadata_analyzer.metadata_identifiers_match(bank_metadata_identifiers)
+
+
+def test_metadata_identifiers_match_correct(metadata_analyzer: BankDetector):
+    metadata_identifier = MetadataIdentifier(
+        format="PDF 1.6", creator="correct creator"
+    )
+    metadata_analyzer.metadata_identifier = metadata_identifier
+
+    bank_metadata_identifiers = [
+        MetadataIdentifier(format="PDF 1.6", creator="correct creator"),
+    ]
+
+    assert metadata_analyzer.metadata_identifiers_match(bank_metadata_identifiers)

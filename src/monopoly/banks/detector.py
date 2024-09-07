@@ -1,9 +1,7 @@
 import logging
-from dataclasses import Field, fields
-from functools import cached_property
-from typing import TYPE_CHECKING, Any, Type
+from typing import TYPE_CHECKING, Type
 
-from monopoly.identifiers import Identifier, MetadataIdentifier, TextIdentifier
+from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 from monopoly.pdf import PdfDocument
 
 if TYPE_CHECKING:
@@ -15,20 +13,7 @@ logger = logging.getLogger(__name__)
 class BankDetector:
     def __init__(self, document: PdfDocument):
         self.document = document
-
-    @cached_property
-    def metadata_items(self) -> list[Any]:
-        """
-        Retrieves encryption and metadata identifiers from a bank statement PDF
-        """
-        identifiers: list[MetadataIdentifier] = []
-        if identifier := self.document.metadata_identifier:
-            identifiers.append(identifier)
-
-        if not identifiers:
-            raise ValueError("Could not get identifier")
-
-        return identifiers
+        self.metadata_identifier = document.metadata_identifier
 
     def detect_bank(self, banks: list[Type["BankBase"]]) -> Type["BankBase"] | None:
         """
@@ -38,7 +23,7 @@ class BankDetector:
         if not banks:
             banks = []
 
-        logger.debug("Found PDF properties: %s", self.metadata_items)
+        logger.debug("Found PDF properties: %s", self.metadata_identifier)
 
         for bank in banks:
             if self.is_bank_identified(bank):
@@ -56,15 +41,12 @@ class BankDetector:
             text_identifiers = list(
                 filter(lambda i: isinstance(i, TextIdentifier), grouped_identifiers)
             )
-            pdf_property_identifiers = list(
-                filter(lambda i: not isinstance(i, TextIdentifier), grouped_identifiers)
+            metadata_identifiers = list(
+                filter(lambda i: isinstance(i, MetadataIdentifier), grouped_identifiers)
             )
 
-            if pdf_property_identifiers:
-                if len(self.metadata_items) != len(pdf_property_identifiers):
-                    continue
-
-                if not self.pdf_properties_match(pdf_property_identifiers):
+            if metadata_identifiers:
+                if not self.metadata_identifiers_match(metadata_identifiers):
                     continue
 
                 if not self.text_identifiers_match(text_identifiers):
@@ -91,61 +73,10 @@ class BankDetector:
         logger.debug("Text identifier found in PDF")
         return True
 
-    def pdf_properties_match(
-        self,
-        grouped_identifiers: list[Identifier],
+    def metadata_identifiers_match(
+        self, bank_metadata_identifiers: list[MetadataIdentifier]
     ) -> bool:
-        """
-        Checks if all identifiers in the group match at least one metadata item.
-        """
-        for identifier in grouped_identifiers:
-            matching_metadata = [
-                metadata
-                for metadata in self.metadata_items
-                if type(metadata) is type(identifier)
-            ]
-
-            if not any(
-                self.check_matching_identifier(metadata, identifier)
-                for metadata in matching_metadata
-            ):
-                return False
-        return True
-
-    def check_matching_identifier(
-        self,
-        metadata: Identifier,
-        identifier: Identifier,
-    ) -> bool:
-        """
-        Checks if all fields in the metadata match the corresponding identifier fields.
-        """
-        return all(
-            self.check_matching_field(field, metadata, identifier)
-            for field in fields(metadata)
-        )
-
-    def check_matching_field(
-        self,
-        dataclass_field: Field,
-        metadata: Identifier,
-        identifier: Identifier,
-    ) -> bool:
-        """
-        Checks if a field in the metadata matches the corresponding identifier field.
-        """
-        field_value = getattr(metadata, dataclass_field.name)
-        identifier_value = getattr(identifier, dataclass_field.name)
-
-        # if identifier is empty, we assume a match
-        # this means only the identifiers in the bank
-        # class need to be matched.
-        if not identifier_value:
-            return True
-
-        # support partial string matching
-        if isinstance(field_value, str) and isinstance(identifier_value, str):
-            return identifier_value in field_value and identifier_value != ""
-
-        # if not a string, only support exact match
-        return identifier_value == field_value
+        for identifier in bank_metadata_identifiers:
+            if self.metadata_identifier.matches(identifier):
+                return True
+        return False
