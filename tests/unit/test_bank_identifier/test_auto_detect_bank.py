@@ -79,15 +79,10 @@ unencrypted_file_path = "path/to/unencrypted.pdf"
 encrypted_file_path = "path/to/encrypted.pdf"
 
 
-@patch.object(BankDetector, "metadata_items", new_callable=PropertyMock)
-def test_auto_detect_bank_identified(
-    mock_metadata_items, metadata_analyzer: BankDetector
-):
-    mock_metadata_items.return_value = [
-        MetadataIdentifier(
-            creator="Adobe Acrobat 23.3", producer="Adobe Acrobat Pro (64-bit)"
-        )
-    ]
+def test_auto_detect_bank_identified(metadata_analyzer: BankDetector):
+    metadata_analyzer.metadata_identifier = MetadataIdentifier(
+        creator="Adobe Acrobat 23.3", producer="Adobe Acrobat Pro (64-bit)"
+    )
 
     mock_banks_list = [MockBankOne, MockBankTwo]
 
@@ -95,26 +90,22 @@ def test_auto_detect_bank_identified(
     assert bank.__name__ == MockBankTwo.__name__
 
 
-@patch.object(BankDetector, "metadata_items", new_callable=PropertyMock)
-def test_detect_bank_not_identified(
-    mock_metadata_items, metadata_analyzer: BankDetector
-):
-    mock_metadata_items.return_value = [
-        MetadataIdentifier(creator="asdf", producer="qwerty")
-    ]
+def test_detect_bank_not_identified(metadata_analyzer: BankDetector):
+    metadata_analyzer.metadata_identifier = MetadataIdentifier(
+        creator="asdf", producer="qwerty"
+    )
     mock_banks_list = [MockBankThree]
     assert not metadata_analyzer.detect_bank(mock_banks_list)
 
 
 @patch.object(PdfDocument, "raw_text", new_callable=PropertyMock)
-@patch.object(BankDetector, "metadata_items", new_callable=PropertyMock)
 def test_detect_bank_with_text_identifier(
-    mock_metadata_items, mock_raw_text, metadata_analyzer: BankDetector
+    mock_raw_text, metadata_analyzer: BankDetector
 ):
     mock_raw_text.return_value = "specific_string, other_specific_string"
-    mock_metadata_items.return_value = [
-        MetadataIdentifier(creator="foo", producer="bar"),
-    ]
+    metadata_analyzer.metadata_identifier = MetadataIdentifier(
+        creator="foo", producer="bar"
+    )
 
     mock_banks_list = [MockBankTwo, MockBankWithMultipleTextIdentifier]
     bank = metadata_analyzer.detect_bank(mock_banks_list)
@@ -123,14 +114,13 @@ def test_detect_bank_with_text_identifier(
 
 
 @patch.object(PdfDocument, "raw_text", new_callable=PropertyMock)
-@patch.object(BankDetector, "metadata_items", new_callable=PropertyMock)
 def test_detect_bank_with_not_matching_text_identifier(
-    mock_metadata_items, mock_raw_text, monkeypatch, metadata_analyzer: BankDetector
+    mock_raw_text, monkeypatch, metadata_analyzer: BankDetector
 ):
     mock_raw_text.return_value = "not_a_match"
-    mock_metadata_items.return_value = [
-        MetadataIdentifier(creator="foo", producer="bar"),
-    ]
+    metadata_analyzer.metadata_identifier = MetadataIdentifier(
+        creator="foo", producer="bar"
+    )
 
     mock_banks_list = [MockBankTwo, MockBankWithMultipleTextIdentifier]
     monkeypatch.setattr("monopoly.banks.banks", mock_banks_list)
@@ -139,14 +129,13 @@ def test_detect_bank_with_not_matching_text_identifier(
 
 
 @patch.object(PdfDocument, "raw_text", new_callable=PropertyMock)
-@patch.object(BankDetector, "metadata_items", new_callable=PropertyMock)
 def test_detect_bank_with_only_text_identifier(
-    mock_metadata_items, mock_raw_text, metadata_analyzer: BankDetector
+    mock_raw_text, metadata_analyzer: BankDetector
 ):
     mock_raw_text.return_value = "foo baz bar"
-    mock_metadata_items.return_value = [
-        MetadataIdentifier(creator="foo", producer="bar")
-    ]
+    metadata_analyzer.metadata_identifier = MetadataIdentifier(
+        creator="foo", producer="bar"
+    )
 
     mock_banks_list = [
         MockBankWithMultipleTextIdentifier,

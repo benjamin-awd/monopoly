@@ -64,5 +64,5 @@ def test_metadata_identifier(mock_non_encrypted_document):
 
         metadata_analyzer = BankDetector(mock_non_encrypted_document)
 
-        assert isinstance(metadata_analyzer.metadata_items[0], MetadataIdentifier)
-        assert metadata_analyzer.metadata_items[0] == expected_identifier
+        assert isinstance(metadata_analyzer.metadata_identifier, MetadataIdentifier)
+        assert metadata_analyzer.metadata_identifier == expected_identifier
