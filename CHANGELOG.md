@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.11.1] - 2024-09-07
+
+### 🚜 Refactor
+
+- *(pdf)* Decouple unlock from PdfDocument __init__
+
 ## [0.11.0] - 2024-09-05
 
 ### ⛰️ Features
