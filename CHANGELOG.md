@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.12.0] - 2024-09-08
+
+### ⛰️ Features
+
+- *(banks)* Add support for UOB
+
+### 🛠️ Bug Fixes
+
+- *(transaction)* Avoid negative zero value
+
+### 🚜 Refactor
+
+- *(banks)* Remove pdfconfig for stan chart and uob
+- *(detector)* Simplify matching logic
+- *(identifiers)* Add caching for metadata identifier
+- *(detector)* Split up functions within is_bank_identified
+- *(cli)* Show number of files processed/errors as final action
+
+### ⚙️ Miscellaneous Tasks
+
+- *(banks)* Add type check for identifiers
+- *(base)* Add boundary check for transactions
+
 ## [0.11.1] - 2024-09-07
 
 ### 🚜 Refactor
