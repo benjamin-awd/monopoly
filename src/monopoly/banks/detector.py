@@ -38,27 +38,9 @@ class BankDetector:
         Checks if a bank is identified based on a list of metadata items.
         """
         for grouped_identifiers in bank.identifiers:  # type: ignore
-            text_identifiers = list(
-                filter(lambda i: isinstance(i, TextIdentifier), grouped_identifiers)
-            )
-            metadata_identifiers = list(
-                filter(lambda i: isinstance(i, MetadataIdentifier), grouped_identifiers)
-            )
-
-            if metadata_identifiers:
-                if not self.metadata_identifiers_match(metadata_identifiers):
-                    continue
-
-                if not self.text_identifiers_match(text_identifiers):
-                    logger.warning("PDF metadata matches but text not found")
-                    return False
-
+            if self.identifiers_match(grouped_identifiers):
                 logger.debug("Identified statement bank: %s", bank.__name__)
                 return True
-
-            if text_identifiers:
-                if self.text_identifiers_match(text_identifiers):
-                    return True
 
         return False
 
@@ -67,7 +49,7 @@ class BankDetector:
             return True
 
         for identifier in text_identifiers:
-            if identifier.text not in self.document.raw_text:
+            if not identifier.matches(self.document.raw_text):
                 return False
 
         logger.debug("Text identifier found in PDF")
@@ -80,3 +62,20 @@ class BankDetector:
             if self.metadata_identifier.matches(identifier):
                 return True
         return False
+
+    def identifiers_match(self, identifiers: list) -> bool:
+        text_identifiers = self.get_identifiers_of_type(identifiers, TextIdentifier)
+        metadata_identifiers = self.get_identifiers_of_type(
+            identifiers, MetadataIdentifier
+        )
+
+        if metadata_identifiers:
+            if not self.metadata_identifiers_match(metadata_identifiers):
+                return False
+            if not self.text_identifiers_match(text_identifiers):
+                return False
+
+        return self.text_identifiers_match(text_identifiers)
+
+    def get_identifiers_of_type(self, identifiers: list, identifier_type: Type) -> list:
+        return [i for i in identifiers if isinstance(i, identifier_type)]

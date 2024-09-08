@@ -40,3 +40,8 @@ class TextIdentifier(Identifier):
     """Stores a specific string that exists in the content of a PDF"""
 
     text: str = ""
+
+    @lru_cache
+    def matches(self, raw_text: str) -> bool:
+        """Check for partial matches on all string fields."""
+        return self.text in raw_text
