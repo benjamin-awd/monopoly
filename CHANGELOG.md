@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.12.1] - 2024-09-08
+
+### ⛰️ Features
+
+- *(banks)* Add support for zurcherkantonalbank
+
 ## [0.12.0] - 2024-09-08
 
 ### ⛰️ Features
