@@ -177,7 +177,7 @@ class BaseStatement(ABC):
 
     @property
     def failed_safety_message(self) -> str:
-        return "Safety check for failed - transactions may be inaccurate"
+        return "Safety check failed - transactions may be inaccurate"
 
     @cached_property
     def transactions(self):
