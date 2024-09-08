@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.12.2] - 2024-09-08
+
+### 🛠️ Bug Fixes
+
+- *(banks/zkb)* Add missing apostrophe in balance regex group
+
+### 🚜 Refactor
+
+- Allow safety check to be disabled for specific banks
+
+### ⚙️ Miscellaneous Tasks
+
+- Fix typo in safety check message
+- Remove redundant has_no_withdrawal_deposit_columns
+
 ## [0.12.1] - 2024-09-08
 
 ### ⛰️ Features
