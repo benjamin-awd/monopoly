@@ -58,7 +58,6 @@ class StatementConfig:
     statement_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
     multiline_transactions: bool = False
     transaction_bound: Optional[int] = None
-    has_withdraw_deposit_column: bool = False
     prev_balance_pattern: Optional[Pattern[str] | RegexEnum] = None
 
 

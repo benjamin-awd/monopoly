@@ -23,7 +23,6 @@ class Maybank(BankBase):
         statement_date_pattern=regex(r"(?:結單日期)[:\s]+(\d{2}\/\d{2}\/\d{2})"),
         header_pattern=regex(r"(DATE.*DESCRIPTION.*AMOUNT.*BALANCE)"),
         transaction_pattern=DebitTransactionPatterns.MAYBANK,
-        has_withdraw_deposit_column=False,
         multiline_transactions=True,
     )
 
