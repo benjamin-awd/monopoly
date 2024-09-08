@@ -47,6 +47,9 @@ class StatementConfig:
     number of spaces will be ignored. For example, if `transaction_bound` = 32:
         "01 NOV  BALANCE B/F              190.77" (will be ignored)
         "01 NOV  YA KUN KAYA TOAST  12.00       " (will be kept)
+    - `safety_check` controls whether the safety check for banks. Use
+    for banks that don't provide total amount (or total debit/credit)
+    in the statement. Enabled by default.
     """
 
     bank_name: BankNames | InternalBankNames
@@ -59,6 +62,7 @@ class StatementConfig:
     multiline_transactions: bool = False
     transaction_bound: Optional[int] = None
     prev_balance_pattern: Optional[Pattern[str] | RegexEnum] = None
+    safety_check: bool = True
 
 
 @dataclass

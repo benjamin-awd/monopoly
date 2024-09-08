@@ -19,6 +19,7 @@ class ZurcherKantonalBank(BankBase):
         header_pattern=regex(r"(Date.*Booking text.*Debit CHF.*Credit CHF)"),
         transaction_pattern=DebitTransactionPatterns.ZKB,
         multiline_transactions=True,
+        safety_check=False,
     )
 
     identifiers = [
