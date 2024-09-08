@@ -44,9 +44,9 @@ class StatementConfig:
     - `header_pattern` is a regex pattern that is used to find the 'header' line
     of a statement, and determine if it is a debit or credit card statement.
     - `transaction_bound` will cause transactions that have an amount past a certain
-    number of spaces will be ignored. For example, if `transaction_bound` = 5:
-        "01 NOV  BALANCE B/F                       190.77" (will be ignored)
-        "01 NOV  YA KUN KAYA TOAST  12.00" (will be kept)
+    number of spaces will be ignored. For example, if `transaction_bound` = 32:
+        "01 NOV  BALANCE B/F              190.77" (will be ignored)
+        "01 NOV  YA KUN KAYA TOAST  12.00       " (will be kept)
     """
 
     bank_name: BankNames | InternalBankNames

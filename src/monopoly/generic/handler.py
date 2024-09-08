@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 class GenericBank(BankBase):
     identifiers = []
-    statement_configs = None
+    statement_configs = None  # type: ignore
 
     """
     Empty bank class with variables that can be populated by
