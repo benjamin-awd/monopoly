@@ -35,6 +35,27 @@ def test_get_transactions(statement: BaseStatement):
     assert transactions == expected
 
 
+def test_check_bound(statement: BaseStatement):
+    pattern = Ocbc.credit_config.transaction_pattern
+    statement.config.transaction_pattern = pattern
+    statement.config.transaction_bound = 30
+
+    statement.pages = [
+        PdfPage("19/06 YA KUN KAYA TOAST 3.20\n20/06 FAIRPRICE FINEST             9.90")
+    ]
+    transactions = statement.get_transactions()
+    expected = [
+        Transaction(
+            transaction_date="19/06",
+            description="YA KUN KAYA TOAST",
+            amount=-3.2,
+            suffix=None,
+        ),
+    ]
+    statement.config.transaction_bound = None
+    assert transactions == expected
+
+
 def test_get_multiline_transactions(statement: BaseStatement):
     pattern = Hsbc.credit_config.transaction_pattern
     statement.config.multiline_transactions = True

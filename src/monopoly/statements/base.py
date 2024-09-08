@@ -71,6 +71,9 @@ class BaseStatement(ABC):
         for page_num, page in enumerate(self.pages):
             for line_num, line in enumerate(page.lines):
                 if match := self.pattern.search(line):
+                    if self._check_bound(match):
+                        continue
+
                     groupdict = TransactionGroupDict(**match.groupdict())
                     transaction_match = TransactionMatch(
                         groupdict, match, page_number=page_num
@@ -90,6 +93,13 @@ class BaseStatement(ABC):
 
         post_processed_transactions = self.post_process_transactions(transactions)
         return post_processed_transactions
+
+    def _check_bound(self, match: re.Match):
+        if bound := self.config.transaction_bound:
+            if match.span(Columns.AMOUNT)[0] >= bound:
+                logger.debug("Transaction exists beyond boundary, ignoring")
+                return True
+        return False
 
     def pre_process_match(
         self, transaction_match: TransactionMatch
