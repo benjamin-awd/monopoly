@@ -78,6 +78,9 @@ class Report:
         Parses all results, displaying the number of successfully
         processed statements and any errors.
         """
+        for res in self.processed_results:
+            click.echo(f"{res.source_file_name} -> {res.target_file_name}")
+
         if self.number_errored > 0:
             error_msg = (
                 f"{self.number_errored} statement(s) had errors while processing"
@@ -97,9 +100,6 @@ class Report:
                     fg="red",
                 )
             )
-
-        for res in self.processed_results:
-            click.echo(f"{res.source_file_name} -> {res.target_file_name}")
 
 
 def process_statement(
