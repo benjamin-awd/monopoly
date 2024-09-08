@@ -56,18 +56,27 @@ class DebitStatement(BaseStatement):
 
     @lru_cache
     def get_withdrawal_pos(self, page_number: int) -> int | None:
-        return self.get_column_pos("withdraw", page_number=page_number)
+        common_names = ["withdraw", "debit"]
+        for name in common_names:
+            if pos := self.get_column_pos(name, page_number=page_number):
+                return pos
+        logger.warning("`withdrawal` column not found in header")
+        return False
 
     @lru_cache
     def get_deposit_pos(self, page_number: int) -> int | None:
-        return self.get_column_pos("deposit", page_number=page_number)
+        common_names = ["deposit", "credit"]
+        for name in common_names:
+            if pos := self.get_column_pos(name, page_number=page_number):
+                return pos
+        logger.warning("`deposit` column not found in header")
+        return False
 
     @lru_cache
     def get_column_pos(self, column_type: str, page_number: int) -> int | None:
         pattern = re.compile(rf"{column_type}[\w()$]*", re.IGNORECASE)
         if match := pattern.search(self.header):
             return self.get_header_pos(match.group(), page_number)
-        logger.warning(f"`{column_type}` column not found in header")
         return None
 
     @lru_cache
