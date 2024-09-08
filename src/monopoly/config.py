@@ -37,10 +37,16 @@ class StatementConfig:
     - `transaction_date_order` represents the datetime format that a specific bank uses
     for transactions. For example, "DMY" will parse 01/02/2024 as 1 Feb 2024.
     Defaults to DMY.
+    - `statement_date_format` represents the datetime format that a specific bank uses
+    to represent a statement date.
     - `multiline_transactions` controls whether Monopoly tries to concatenate
     transactions that are split across two lines
     - `header_pattern` is a regex pattern that is used to find the 'header' line
     of a statement, and determine if it is a debit or credit card statement.
+    - `transaction_bound` will cause transactions that have an amount past a certain
+    number of spaces will be ignored. For example, if `transaction_bound` = 5:
+        "01 NOV  BALANCE B/F                       190.77" (will be ignored)
+        "01 NOV  YA KUN KAYA TOAST  12.00" (will be kept)
     """
 
     bank_name: BankNames | InternalBankNames
@@ -51,6 +57,7 @@ class StatementConfig:
     transaction_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
     statement_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
     multiline_transactions: bool = False
+    transaction_bound: Optional[int] = None
     has_withdraw_deposit_column: bool = False
     prev_balance_pattern: Optional[Pattern[str] | RegexEnum] = None
 
