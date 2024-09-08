@@ -11,6 +11,7 @@ from .maybank import Maybank
 from .ocbc import Ocbc
 from .standard_chartered import StandardChartered
 from .uob import Uob
+from .zkb import ZurcherKantonalBank
 
 banks: list[Type["BankBase"]] = [
     Citibank,
@@ -21,6 +22,7 @@ banks: list[Type["BankBase"]] = [
     Ocbc,
     StandardChartered,
     Uob,
+    ZurcherKantonalBank,
 ]
 
 logger = logging.getLogger(__name__)

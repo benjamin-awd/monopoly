@@ -22,6 +22,7 @@ class BankNames(AutoEnum):
     OCBC = auto()
     STANDARD_CHARTERED = auto()
     UOB = auto()
+    ZKB = auto()
 
 
 class InternalBankNames(AutoEnum):
@@ -165,5 +166,12 @@ class DebitTransactionPatterns(RegexEnum):
         rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+        + SharedPatterns.BALANCE
+    )
+    ZKB = (
+        rf"(?P<transaction_date>{ISO8601.DD_MM_YYYY})\s+"
+        + SharedPatterns.DESCRIPTION
+        + r"(?P<amount>\d{1,3}(\'\d{3})*(\.\d+)?)\s+"
+        + rf"(?P<value_date>{ISO8601.DD_MM_YYYY})\s+"
         + SharedPatterns.BALANCE
     )
