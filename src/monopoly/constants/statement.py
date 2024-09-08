@@ -173,5 +173,5 @@ class DebitTransactionPatterns(RegexEnum):
         + SharedPatterns.DESCRIPTION
         + r"(?P<amount>\d{1,3}(\'\d{3})*(\.\d+)?)\s+"
         + rf"(?P<value_date>{ISO8601.DD_MM_YYYY})\s+"
-        + SharedPatterns.BALANCE
+        + r"(?P<balance>\d{1,3}(\'\d{3})*(\.\d+)?)$"
     )
