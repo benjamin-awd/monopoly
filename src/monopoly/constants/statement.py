@@ -21,6 +21,7 @@ class BankNames(AutoEnum):
     MAYBANK = auto()
     OCBC = auto()
     STANDARD_CHARTERED = auto()
+    UOB = auto()
 
 
 class InternalBankNames(AutoEnum):
@@ -89,6 +90,10 @@ class StatementBalancePatterns(RegexEnum):
         r"(?P<description>BALANCE FROM PREVIOUS STATEMENT?)\s+"
         + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
     )
+    UOB = (
+        r"(?P<description>PREVIOUS BALANCE?)\s+"
+        + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+    )
 
 
 class CreditTransactionPatterns(RegexEnum):
@@ -126,6 +131,12 @@ class CreditTransactionPatterns(RegexEnum):
         + r"(?:(?P<transaction_ref>Transaction\sRef\s\d+)?)\s+"
         + SharedPatterns.AMOUNT_EXTENDED
     )
+    UOB = (
+        rf"(?P<posting_date>{ISO8601.DD_MMM})\s+"
+        rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
+        + SharedPatterns.DESCRIPTION
+        + SharedPatterns.AMOUNT_EXTENDED
+    )
 
 
 class DebitTransactionPatterns(RegexEnum):
@@ -146,6 +157,12 @@ class DebitTransactionPatterns(RegexEnum):
     OCBC = (
         rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
         rf"(?P<posting_date>{ISO8601.DD_MMM})\s+"
+        + SharedPatterns.DESCRIPTION
+        + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+        + SharedPatterns.BALANCE
+    )
+    UOB = (
+        rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
         + SharedPatterns.BALANCE
