@@ -46,4 +46,4 @@ class StatementHandler:
                         logger.debug("Statement type detected: %s", EntryType.CREDIT)
                         return CreditStatement(pages, bank_name, config, header)
 
-        raise RuntimeError("Could not create statement object")
+        raise RuntimeError("Could not find header in statement")
