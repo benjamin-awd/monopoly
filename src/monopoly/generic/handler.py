@@ -26,9 +26,7 @@ class GenericBank(BankBase):
 class GenericStatementHandler(StatementHandler):
     def __init__(self, bank: Type[BankBase], pages: list[PdfPage]):
         self.analyzer = DatePatternAnalyzer(pages)
-        bank.statement_configs = list(
-            filter(None, [self.debit_config, self.credit_config])
-        )
+        bank.statement_configs = list(filter(None, [self.debit, self.credit]))
         super().__init__(bank, pages)
 
     # override get_header and ignore passed config, since
@@ -37,7 +35,7 @@ class GenericStatementHandler(StatementHandler):
         return self.header_pattern
 
     @cached_property
-    def debit_config(self):
+    def debit(self):
         if self.statement_type == EntryType.DEBIT:
             logger.debug("Creating debit statement config")
 
@@ -52,7 +50,7 @@ class GenericStatementHandler(StatementHandler):
         return None
 
     @cached_property
-    def credit_config(self):
+    def credit(self):
         if self.statement_type == EntryType.CREDIT:
             logger.debug("Creating credit statement config")
 

@@ -31,7 +31,7 @@ def test_bank_credit_statements(
     total_amount: float,
     statement_date: datetime,
 ):
-    bank_name = bank.credit_config.bank_name
+    bank_name = bank.credit.bank_name
     test_directory = Path(__file__).parent / bank_name / "credit"
 
     document = PdfDocument(test_directory / "input.pdf")

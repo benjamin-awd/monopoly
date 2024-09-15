@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 class Uob(BankBase):
-    credit_config = StatementConfig(
+    credit = StatementConfig(
         statement_type=EntryType.CREDIT,
         bank_name=BankNames.UOB,
         statement_date_pattern=regex(rf"Statement Date.*{ISO8601.DD_MMM_YYYY}"),
@@ -27,7 +27,7 @@ class Uob(BankBase):
         multiline_transactions=True,
     )
 
-    debit_config = StatementConfig(
+    debit = StatementConfig(
         statement_type=EntryType.DEBIT,
         bank_name=BankNames.UOB,
         statement_date_pattern=regex(rf"Period: .* to {ISO8601.DD_MMM_YYYY}"),
@@ -46,4 +46,4 @@ class Uob(BankBase):
             ),
         ]
     ]
-    statement_configs = [credit_config, debit_config]
+    statement_configs = [credit, debit]
