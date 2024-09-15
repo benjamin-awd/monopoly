@@ -20,8 +20,8 @@ def mock_encrypted_document():
 
 class MockBankOne(BankBase):
     statement_configs = None
-    debit_config = None
-    credit_config = None
+    debit = None
+    credit = None
     identifiers = [
         [
             MetadataIdentifier(creator="foo", producer="bar"),
@@ -31,8 +31,8 @@ class MockBankOne(BankBase):
 
 class MockBankTwo(BankBase):
     statement_configs = None
-    debit_config = None
-    credit_config = None
+    debit = None
+    credit = None
     identifiers = [
         [
             MetadataIdentifier(
@@ -44,15 +44,15 @@ class MockBankTwo(BankBase):
 
 class MockBankThree(BankBase):
     statement_configs = None
-    debit_config = None
-    credit_config = None
+    debit = None
+    credit = None
     identifiers = [[MetadataIdentifier(creator="asdasd", producer="qwerty")]]
 
 
 class MockBankWithMultipleTextIdentifier(BankBase):
     statement_configs = None
-    debit_config = None
-    credit_config = None
+    debit = None
+    credit = None
     identifiers = [
         [
             MetadataIdentifier(creator="foo", producer="bar"),
@@ -64,8 +64,8 @@ class MockBankWithMultipleTextIdentifier(BankBase):
 
 class MockBankWithOnlyTextIdentifier(BankBase):
     statement_configs = None
-    debit_config = None
-    credit_config = None
+    debit = None
+    credit = None
     identifiers = [
         [
             TextIdentifier("foo"),

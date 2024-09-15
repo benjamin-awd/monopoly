@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 class Hsbc(BankBase):
-    credit_config = StatementConfig(
+    credit = StatementConfig(
         statement_type=EntryType.CREDIT,
         bank_name=BankNames.HSBC,
         statement_date_pattern=regex(rf"Statement From .* to {ISO8601.DD_MMM_YYYY}"),
@@ -49,4 +49,4 @@ class Hsbc(BankBase):
 
     identifiers = [email_statement_identifier, web_and_mobile_statement_identifier]
 
-    statement_configs = [credit_config]
+    statement_configs = [credit]

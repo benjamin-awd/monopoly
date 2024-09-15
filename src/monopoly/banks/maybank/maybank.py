@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 class Maybank(BankBase):
-    debit_config = StatementConfig(
+    debit = StatementConfig(
         statement_type=EntryType.DEBIT,
         bank_name=BankNames.MAYBANK,
         statement_date_pattern=regex(rf"(?:結單日期)[:\s]+{ISO8601.DD_MM_YY}"),
@@ -27,7 +27,7 @@ class Maybank(BankBase):
         multiline_transactions=True,
     )
 
-    credit_config = StatementConfig(
+    credit = StatementConfig(
         statement_type=EntryType.CREDIT,
         bank_name=BankNames.MAYBANK,
         statement_date_pattern=ISO8601.DD_MMM_YY,
@@ -54,4 +54,4 @@ class Maybank(BankBase):
         ],
     ]
 
-    statement_configs = [debit_config, credit_config]
+    statement_configs = [credit, debit]

@@ -11,7 +11,7 @@ from monopoly.statements.transaction import (
 
 
 def test_get_transactions(statement: BaseStatement):
-    pattern = Ocbc.credit_config.transaction_pattern
+    pattern = Ocbc.credit.transaction_pattern
     statement.config.transaction_pattern = pattern
 
     statement.pages = [
@@ -36,7 +36,7 @@ def test_get_transactions(statement: BaseStatement):
 
 
 def test_check_bound(statement: BaseStatement):
-    pattern = Ocbc.credit_config.transaction_pattern
+    pattern = Ocbc.credit.transaction_pattern
     statement.config.transaction_pattern = pattern
     statement.config.transaction_bound = 30
 
@@ -57,7 +57,7 @@ def test_check_bound(statement: BaseStatement):
 
 
 def test_get_multiline_transactions(statement: BaseStatement):
-    pattern = Hsbc.credit_config.transaction_pattern
+    pattern = Hsbc.credit.transaction_pattern
     statement.config.multiline_transactions = True
     statement.config.transaction_pattern = pattern
     statement.pages = [
@@ -80,7 +80,7 @@ def test_get_multiline_transactions(statement: BaseStatement):
 
 
 def test_process_match_multiline_description(statement: BaseStatement):
-    pattern = Hsbc.credit_config.transaction_pattern
+    pattern = Hsbc.credit.transaction_pattern
     statement.config.multiline_transactions = True
     statement.config.transaction_pattern = pattern
 

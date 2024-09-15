@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 class Dbs(BankBase):
-    credit_config = StatementConfig(
+    credit = StatementConfig(
         statement_type=EntryType.CREDIT,
         bank_name=BankNames.DBS,
         statement_date_pattern=ISO8601.DD_MMM_YYYY,
@@ -28,7 +28,7 @@ class Dbs(BankBase):
         prev_balance_pattern=StatementBalancePatterns.DBS,
     )
 
-    debit_config = StatementConfig(
+    debit = StatementConfig(
         statement_type=EntryType.DEBIT,
         bank_name=BankNames.DBS,
         statement_date_pattern=ISO8601.DD_MMM_YYYY,
@@ -44,4 +44,4 @@ class Dbs(BankBase):
         ],
     ]
 
-    statement_configs = [debit_config, credit_config]
+    statement_configs = [credit, debit]

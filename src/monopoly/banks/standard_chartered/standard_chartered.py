@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 class StandardChartered(BankBase):
-    credit_config = StatementConfig(
+    credit = StatementConfig(
         statement_type=EntryType.CREDIT,
         bank_name=BankNames.STANDARD_CHARTERED,
         statement_date_pattern=regex(rf": {ISO8601.DD_MMM_YYYY}$"),
@@ -36,4 +36,4 @@ class StandardChartered(BankBase):
         ]
     ]
 
-    statement_configs = [credit_config]
+    statement_configs = [credit]
