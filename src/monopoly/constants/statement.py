@@ -145,7 +145,6 @@ class DebitTransactionPatterns(RegexEnum):
         rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
-        + SharedPatterns.BALANCE
     )
     MAYBANK = (
         rf"(?P<transaction_date>{ISO8601.DD_MM_YY})\s+"
