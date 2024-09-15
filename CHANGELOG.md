@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.12.3] - 2024-09-15
+
+### 🛠️ Bug Fixes
+
+- *(banks/ocbc)* Support statement date without 'TO'
+- *(banks/dbs)* Use transaction_bound to exclude balances
+
+### 🚜 Refactor
+
+- Add ISO8601 to constants namespace
+- Use ISO8601 for bank statement date patterns
+- *(banks)* Shorten config variable names
+- *(banks)* Declare name in bank instead of config
+
+### ⚙️ Miscellaneous Tasks
+
+- Remove redundant RELEASE_CHANGELOG.md
+- Lower missing debit headers to debug log level
+
 ## [0.12.2] - 2024-09-08
 
 ### 🛠️ Bug Fixes
