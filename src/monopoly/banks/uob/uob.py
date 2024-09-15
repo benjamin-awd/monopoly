@@ -3,12 +3,12 @@ from re import compile as regex
 
 from monopoly.config import StatementConfig
 from monopoly.constants import (
+    ISO8601,
     BankNames,
     DebitTransactionPatterns,
     EntryType,
     StatementBalancePatterns,
 )
-from monopoly.constants.date import ISO8601
 from monopoly.identifiers import MetadataIdentifier
 
 from ..base import BankBase
