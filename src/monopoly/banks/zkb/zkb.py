@@ -11,9 +11,10 @@ logger = logging.getLogger(__name__)
 
 
 class ZurcherKantonalBank(BankBase):
+    name = BankNames.ZKB
+
     debit = StatementConfig(
         statement_type=EntryType.DEBIT,
-        bank_name=BankNames.ZKB,
         statement_date_pattern=regex(rf"Balance as of: ({ISO8601.DD_MM_YYYY})"),
         header_pattern=regex(r"(Date.*Booking text.*Debit CHF.*Credit CHF)"),
         transaction_pattern=DebitTransactionPatterns.ZKB,

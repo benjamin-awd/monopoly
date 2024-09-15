@@ -3,7 +3,6 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from monopoly.config import StatementConfig
 from monopoly.write import generate_name
 
 
@@ -17,8 +16,7 @@ def mock_generate_hash():
 @pytest.mark.usefixtures("mock_generate_hash")
 def test_generate_name():
     statement = MagicMock()
-    statement_config = MagicMock(spec=StatementConfig)
-    statement_config.bank_name = "hsbc"
+    bank_name = "hsbc"
     statement_date = datetime(2023, 6, 15)
     statement_type = "credit"
 
@@ -27,7 +25,7 @@ def test_generate_name():
     filename = generate_name(
         statement=statement,
         format_type="file",
-        statement_config=statement_config,
+        bank_name=bank_name,
         statement_type=statement_type,
         statement_date=statement_date,
     )
@@ -37,7 +35,7 @@ def test_generate_name():
     filename = generate_name(
         statement=statement,
         format_type="blob",
-        statement_config=statement_config,
+        bank_name=bank_name,
         statement_type=statement_type,
         statement_date=statement_date,
     )
@@ -51,7 +49,7 @@ def test_generate_name():
         generate_name(
             statement=statement,
             format_type="invalid_format",
-            statement_config=statement_config,
+            bank_name=bank_name,
             statement_type=statement_type,
             statement_date=statement_date,
         )

@@ -30,8 +30,7 @@ test_cases = [
 def test_bank_credit_statements(
     bank: BankBase, total_amount: float, statement_date: datetime
 ):
-    bank_name = bank.credit.bank_name
-    test_directory = Path(__file__).parent / bank_name / "credit"
+    test_directory = Path(__file__).parent / bank.name / "credit"
 
     document = PdfDocument(test_directory / "input.pdf")
     parser = PdfParser(bank, document)

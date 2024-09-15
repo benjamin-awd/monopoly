@@ -1,17 +1,9 @@
 import pytest
 from pymupdf import Document
 
-from monopoly.banks import BankBase
 from monopoly.statements import CreditStatement, DebitStatement
 from monopoly.statements.base import SafetyCheckError
 from monopoly.statements.transaction import Transaction
-
-
-class MockProcessor(BankBase):
-    statement_configs = None
-    identifiers = None
-    credit = None
-    debit = None
 
 
 def test_credit_safety_check(credit_statement: CreditStatement):

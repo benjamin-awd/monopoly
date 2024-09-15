@@ -17,9 +17,10 @@ logger = logging.getLogger(__name__)
 
 
 class Uob(BankBase):
+    name = BankNames.UOB
+
     credit = StatementConfig(
         statement_type=EntryType.CREDIT,
-        bank_name=BankNames.UOB,
         statement_date_pattern=regex(rf"Statement Date.*{ISO8601.DD_MMM_YYYY}"),
         header_pattern=regex(r"(Description of Transaction.*Transaction Amount)"),
         prev_balance_pattern=StatementBalancePatterns.UOB,
@@ -29,7 +30,6 @@ class Uob(BankBase):
 
     debit = StatementConfig(
         statement_type=EntryType.DEBIT,
-        bank_name=BankNames.UOB,
         statement_date_pattern=regex(rf"Period: .* to {ISO8601.DD_MMM_YYYY}"),
         header_pattern=regex(r"(Date.*Description.*Withdrawals.*Deposits.*Balance)"),
         transaction_pattern=DebitTransactionPatterns.UOB,

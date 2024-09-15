@@ -71,7 +71,9 @@ def setup_statement_fixture(
     mock_page.raw_text = ["foo\nbar"]
     document = MagicMock(spec=Document)
     document.name = "mock_document.pdf"
-    statement = statement_cls(pages=[mock_page], config=statement_config, header="foo")
+    statement = statement_cls(
+        pages=[mock_page], bank_name="example", config=statement_config, header="foo"
+    )
     yield statement
 
 
@@ -93,7 +95,6 @@ def statement(statement_config):
 @pytest.fixture(scope="session")
 def statement_config():
     statement_config = StatementConfig(
-        bank_name="example",
         statement_type=EntryType.CREDIT,
         header_pattern="foo",
         transaction_pattern="foo",

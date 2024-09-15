@@ -18,9 +18,10 @@ logger = logging.getLogger(__name__)
 
 
 class Maybank(BankBase):
+    name = BankNames.MAYBANK
+
     debit = StatementConfig(
         statement_type=EntryType.DEBIT,
-        bank_name=BankNames.MAYBANK,
         statement_date_pattern=regex(rf"(?:結單日期)[:\s]+{ISO8601.DD_MM_YY}"),
         header_pattern=regex(r"(DATE.*DESCRIPTION.*AMOUNT.*BALANCE)"),
         transaction_pattern=DebitTransactionPatterns.MAYBANK,
@@ -29,7 +30,6 @@ class Maybank(BankBase):
 
     credit = StatementConfig(
         statement_type=EntryType.CREDIT,
-        bank_name=BankNames.MAYBANK,
         statement_date_pattern=ISO8601.DD_MMM_YY,
         header_pattern=regex(r"(Date.*Description.*Amount)"),
         transaction_pattern=CreditTransactionPatterns.MAYBANK,

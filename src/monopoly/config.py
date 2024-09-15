@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Optional, Pattern
 
-from monopoly.constants import BankNames, EntryType, InternalBankNames
+from monopoly.constants import EntryType
 from monopoly.enums import RegexEnum
 from monopoly.identifiers import MetadataIdentifier
 
@@ -52,7 +52,6 @@ class StatementConfig:
     in the statement. Enabled by default.
     """
 
-    bank_name: BankNames | InternalBankNames
     statement_type: EntryType
     transaction_pattern: Pattern[str] | RegexEnum
     statement_date_pattern: Pattern[str] | RegexEnum

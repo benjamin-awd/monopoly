@@ -37,10 +37,12 @@ class BaseStatement(ABC):
     def __init__(
         self,
         pages: list[PdfPage],
+        bank_name: str,
         config: StatementConfig,
         header: str,
     ):
         self.config = config
+        self.bank_name = bank_name
         self.pages = pages
         self.header = header
 

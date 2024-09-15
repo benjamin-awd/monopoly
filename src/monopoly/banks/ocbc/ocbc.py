@@ -18,9 +18,10 @@ logger = logging.getLogger(__name__)
 
 
 class Ocbc(BankBase):
+    name = BankNames.OCBC
+
     credit = StatementConfig(
         statement_type=EntryType.CREDIT,
-        bank_name=BankNames.OCBC,
         statement_date_pattern=ISO8601.DD_MM_YYYY,
         header_pattern=regex(r"(TRANSACTION DATE.*DESCRIPTION.*AMOUNT)"),
         prev_balance_pattern=StatementBalancePatterns.OCBC,
@@ -29,7 +30,6 @@ class Ocbc(BankBase):
 
     debit = StatementConfig(
         statement_type=EntryType.DEBIT,
-        bank_name=BankNames.OCBC,
         statement_date_pattern=regex(rf"\s{ISO8601.DD_MMM_YYYY}$"),
         header_pattern=regex(r"(Withdrawal.*Deposit.*Balance)"),
         transaction_pattern=DebitTransactionPatterns.OCBC,
