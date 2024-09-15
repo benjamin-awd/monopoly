@@ -1,7 +1,6 @@
 from datetime import datetime
 from hashlib import sha256
 
-from monopoly.config import StatementConfig
 from monopoly.statements import BaseStatement
 
 
@@ -18,7 +17,7 @@ def generate_hash(statement: BaseStatement) -> str:
 def generate_name(
     statement: BaseStatement,
     format_type: str,
-    statement_config: StatementConfig,
+    bank_name: str,
     statement_type: str,
     statement_date: datetime,
 ) -> str:
@@ -31,7 +30,6 @@ def generate_name(
     The appended UUID ensures that two statements from the same bank in a
     month will not overwrite each other.
     """
-    bank_name = statement_config.bank_name
     year = statement_date.year
     month = statement_date.month
     file_uuid = generate_hash(statement)

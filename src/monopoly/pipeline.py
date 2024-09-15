@@ -104,7 +104,7 @@ class Pipeline:
         filename = generate_name(
             statement=statement,
             format_type="file",
-            statement_config=statement.config,
+            bank_name=statement.bank_name,
             statement_type=statement.statement_type,
             statement_date=statement.statement_date,
         )

@@ -34,14 +34,16 @@ class StatementHandler:
     @lru_cache
     def get_statement(self) -> BaseStatement:
         pages = self.pages
+        bank_name = self.bank.name
+
         for config in self.bank.statement_configs:
             if header := self.get_header(config):
                 match config.statement_type:
                     case EntryType.DEBIT:
                         logger.debug("Statement type detected: %s", EntryType.DEBIT)
-                        return DebitStatement(pages, config, header)
+                        return DebitStatement(pages, bank_name, config, header)
                     case EntryType.CREDIT:
                         logger.debug("Statement type detected: %s", EntryType.CREDIT)
-                        return CreditStatement(pages, config, header)
+                        return CreditStatement(pages, bank_name, config, header)
 
         raise RuntimeError("Could not create statement object")

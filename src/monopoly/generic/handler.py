@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class GenericBank(BankBase):
     identifiers = []
     statement_configs = None  # type: ignore
-
+    name = InternalBankNames.GENERIC
     """
     Empty bank class with variables that can be populated by
     the `GenericStatementHandler` class
@@ -41,7 +41,6 @@ class GenericStatementHandler(StatementHandler):
 
             return StatementConfig(
                 statement_type=EntryType.DEBIT,
-                bank_name=InternalBankNames.GENERIC,
                 transaction_pattern=self.transaction_pattern,
                 statement_date_pattern=self.statement_date_pattern,
                 multiline_transactions=self.multiline_transactions,
@@ -56,7 +55,6 @@ class GenericStatementHandler(StatementHandler):
 
             return StatementConfig(
                 statement_type=EntryType.CREDIT,
-                bank_name=InternalBankNames.GENERIC,
                 prev_balance_pattern=self.prev_balance_pattern,
                 transaction_pattern=self.transaction_pattern,
                 statement_date_pattern=self.statement_date_pattern,

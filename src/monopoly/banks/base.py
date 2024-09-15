@@ -14,6 +14,7 @@ class BankBase:
     Ensures consistency between bank classes.
     """
 
+    name: str
     statement_configs: list[StatementConfig]
     pdf_config: PdfConfig = PdfConfig()
     identifiers: list[list[Any]]
@@ -28,6 +29,10 @@ class BankBase:
             raise NotImplementedError(
                 f"{cls.__class__.__name__} "
                 "must implement `identifiers` class variable"
+            )
+        if not hasattr(cls, "name"):
+            raise NotImplementedError(
+                f"{cls.__class__.__name__} " "must implement `name` class variable"
             )
 
         # validation logic only applies to regular banks

@@ -19,6 +19,7 @@ def mock_encrypted_document():
 
 
 class MockBankOne(BankBase):
+    name = "bank1"
     statement_configs = None
     debit = None
     credit = None
@@ -30,6 +31,7 @@ class MockBankOne(BankBase):
 
 
 class MockBankTwo(BankBase):
+    name = "bank2"
     statement_configs = None
     debit = None
     credit = None
@@ -43,6 +45,7 @@ class MockBankTwo(BankBase):
 
 
 class MockBankThree(BankBase):
+    name = "bank3"
     statement_configs = None
     debit = None
     credit = None
@@ -50,6 +53,7 @@ class MockBankThree(BankBase):
 
 
 class MockBankWithMultipleTextIdentifier(BankBase):
+    name = "bank-multi"
     statement_configs = None
     debit = None
     credit = None
@@ -63,6 +67,7 @@ class MockBankWithMultipleTextIdentifier(BankBase):
 
 
 class MockBankWithOnlyTextIdentifier(BankBase):
+    name = "bank-text"
     statement_configs = None
     debit = None
     credit = None

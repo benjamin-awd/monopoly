@@ -28,8 +28,7 @@ def test_bank_debit_statements(
     expected_credit_sum: float,
     statement_date: datetime,
 ):
-    bank_name = bank.debit.bank_name
-    test_directory = Path(__file__).parent / bank_name / "debit"
+    test_directory = Path(__file__).parent / bank.name / "debit"
 
     document = PdfDocument(test_directory / "input.pdf")
     parser = PdfParser(bank, document)
