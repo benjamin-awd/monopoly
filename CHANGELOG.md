@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.12.4] - 2024-09-15
+
+### ⛰️ Features
+
+- *(banks/dbs)* Add support for dbs-posb consolidated
+
+### 🚜 Refactor
+
+- *(statement/debit)* Use regex to find header on each page
+
+### ⚙️ Miscellaneous Tasks
+
+- Add more specific error message for missing header
+
 ## [0.12.3] - 2024-09-15
 
 ### 🛠️ Bug Fixes
