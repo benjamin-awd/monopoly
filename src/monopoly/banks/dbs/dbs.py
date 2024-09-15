@@ -35,6 +35,7 @@ class Dbs(BankBase):
         multiline_transactions=True,
         header_pattern=regex(r"(WITHDRAWAL.*DEPOSIT.*BALANCE)"),
         transaction_pattern=DebitTransactionPatterns.DBS,
+        transaction_bound=170,
     )
 
     identifiers = [
