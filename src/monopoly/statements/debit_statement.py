@@ -100,12 +100,15 @@ class DebitStatement(BaseStatement):
         16 OCT       item                                     123.12
         ```
         """
+        header_pattern = self.config.header_pattern
         lines = self.pages[page_number].lines
         for line in lines:
-            header_start_pos = line.lower().find(column_name.lower())
-            if header_start_pos == -1:
-                continue
-            return header_start_pos + len(column_name)
+            if match := header_pattern.search(line):
+                header = match.string.lower()
+                header_start_pos = header.find(column_name.lower())
+                if header_start_pos == -1:
+                    continue
+                return header_start_pos + len(column_name)
 
         raise ValueError(
             f"Debit header {column_name} cannot be found on page {page_number}"
