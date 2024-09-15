@@ -60,7 +60,9 @@ class DebitStatement(BaseStatement):
         for name in common_names:
             if pos := self.get_column_pos(name, page_number=page_number):
                 return pos
-        logger.warning("`withdrawal` column not found in header")
+        logger.debug(
+            "%s column not found in header on page %s", common_names, page_number
+        )
         return False
 
     @lru_cache
@@ -69,7 +71,9 @@ class DebitStatement(BaseStatement):
         for name in common_names:
             if pos := self.get_column_pos(name, page_number=page_number):
                 return pos
-        logger.warning("`deposit` column not found in header")
+        logger.debug(
+            "%s column not found in header on page %s", common_names, page_number
+        )
         return False
 
     @lru_cache
