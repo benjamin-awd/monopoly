@@ -29,10 +29,11 @@ class Ocbc(BankBase):
     debit_config = StatementConfig(
         statement_type=EntryType.DEBIT,
         bank_name=BankNames.OCBC,
-        statement_date_pattern=regex(r"TO\s(\d+\s[A-Za-z]{3}\s\d{4})"),
+        statement_date_pattern=regex(r"\s(\d+\s[A-Za-z]{3}\s\d{4})$"),
         header_pattern=regex(r"(Withdrawal.*Deposit.*Balance)"),
         transaction_pattern=DebitTransactionPatterns.OCBC,
         multiline_transactions=True,
+        transaction_bound=170,
     )
 
     identifiers = [
