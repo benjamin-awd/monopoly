@@ -155,9 +155,10 @@ class DatePatternAnalyzer:
             if line:
                 # assume that the header always starts with `date` or `DATE`
                 result = header_pattern.search(line)
-
                 if result:
-                    escaped_result = f"({re.escape(result.string)})"
+                    generalized_result = re.sub(r"\s{3,}", r"\\s+", result.string)
+                    escaped_result = re.escape(generalized_result)
+                    escaped_result = escaped_result.replace("\\\\s\\+", r"\s+")
                     logger.debug("Found header statement: %s", escaped_result)
                     return escaped_result
 

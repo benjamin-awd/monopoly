@@ -6,6 +6,7 @@ from test_utils.skip import skip_if_encrypted
 from test_utils.transactions import get_transactions_as_dict, read_transactions_from_csv
 
 from monopoly.banks import BankBase, Dbs, Maybank, Ocbc
+from monopoly.generic import GenericBank
 from monopoly.pdf import PdfDocument, PdfParser
 from monopoly.pipeline import Pipeline
 from monopoly.statements import DebitStatement
@@ -17,17 +18,11 @@ test_cases = [
 ]
 
 
-@pytest.fixture
-def no_banks(monkeypatch):
-    monkeypatch.setattr("monopoly.banks.banks", [])
-
-
 @skip_if_encrypted
 @pytest.mark.parametrize(
     "bank, expected_debit_sum, expected_credit_sum, statement_date",
     test_cases,
 )
-@pytest.mark.usefixtures("no_banks")
 def test_bank_debit_statements(
     bank: BankBase,
     expected_debit_sum: float,
@@ -38,6 +33,7 @@ def test_bank_debit_statements(
 
     document = PdfDocument(test_directory / "input.pdf")
     parser = PdfParser(bank, document)
+    parser.bank = GenericBank
     pipeline = Pipeline(parser)
     statement: DebitStatement = pipeline.extract()
 
