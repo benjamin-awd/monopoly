@@ -1,5 +1,6 @@
 import logging
 from functools import cached_property
+from re import compile as regex
 from typing import Type
 
 from monopoly.banks import BankBase
@@ -44,7 +45,7 @@ class GenericStatementHandler(StatementHandler):
                 transaction_pattern=self.transaction_pattern,
                 statement_date_pattern=self.statement_date_pattern,
                 multiline_transactions=self.multiline_transactions,
-                header_pattern=self.header_pattern,
+                header_pattern=regex(self.header_pattern),
             )
         return None
 
@@ -58,7 +59,7 @@ class GenericStatementHandler(StatementHandler):
                 prev_balance_pattern=self.prev_balance_pattern,
                 transaction_pattern=self.transaction_pattern,
                 statement_date_pattern=self.statement_date_pattern,
-                header_pattern=self.header_pattern,
+                header_pattern=regex(self.header_pattern),
                 multiline_transactions=self.multiline_transactions,
             )
         return None
