@@ -349,14 +349,15 @@ def test_get_debit_statement_header_line(
     pages = [MockPdfPage(lines_before_first_transaction)]
     date_pattern_analyzer.pages = pages
     date_pattern_analyzer.matches = [MockDateMatch(line_number=22, page_number=0)]
-    expected_header = re.escape(
-        " DATE    DETAILS OF TRANSACTIONS     WITHDRAWAL($)    DEPOSIT($)     BALANCE($)"
+    expected_header = (
+        "\\ DATE\\s+DETAILS\\ OF\\ TRANSACTIONS\\s+WITHDRAWAL\\(\\$\\)"
+        + "\\s+DEPOSIT\\(\\$\\)\\s+BALANCE\\(\\$\\)"
     )
 
     result = date_pattern_analyzer.get_debit_statement_header_line(
-        frozenset(lines_before_first_transaction)
+        lines_before_first_transaction
     )
-    assert result == f"({expected_header})"
+    assert result == expected_header
 
 
 def test_check_if_multiline(date_pattern_analyzer: DatePatternAnalyzer):

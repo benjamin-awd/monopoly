@@ -110,9 +110,10 @@ class DebitStatement(BaseStatement):
                     continue
                 return header_start_pos + len(column_name)
 
-        raise ValueError(
+        logger.debug(
             f"Debit header {column_name} cannot be found on page {page_number}"
         )
+        return -1
 
     @lru_cache
     def perform_safety_check(self) -> bool:
