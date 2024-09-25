@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.12.5] - 2024-09-25
+
+### ⛰️ Features
+
+- *(generic)* Support inconsistent header spacing across pages
+
+### 🛠️ Bug Fixes
+
+- *(generic)* Compile header_pattern
+
 ## [0.12.4] - 2024-09-15
 
 ### ⛰️ Features
