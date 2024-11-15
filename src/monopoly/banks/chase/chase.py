@@ -21,6 +21,7 @@ class Chase(BankBase):
         header_pattern=regex(r"(.*Transaction.*Merchant Name .*\$ Amount)"),
         transaction_pattern=CreditTransactionPatterns.CHASE,
         multiline_transactions=True,
+        auto_polarity=False,
     )
 
     identifiers = [
