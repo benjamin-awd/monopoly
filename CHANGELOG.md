@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.13.0] - 2024-11-15
+
+### ⛰️ Features
+
+- *(banks)* Add support for chase credit
+- *(banks)* Add bank of america combined statement
+
+### 📚 Documentation
+
+- *(README)* Update list of supported banks
+
+### ⚙️ Miscellaneous Tasks
+
+- *(banks/hsbc)* Add specific opentext version id
+- *(banks/base)* Add logging for failed statement date parse
+
+### Build
+
+- *(deps)* Bump the deps group with 7 updates
+- *(deps)* Bump the deps group with 8 updates
+
 ## [0.12.5] - 2024-09-25
 
 ### ⛰️ Features
