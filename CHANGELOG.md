@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.13.1] - 2024-11-15
+
+### 🛠️ Bug Fixes
+
+- *(banks/chase)* Disable transaction auto polarity
+
+### 🚜 Refactor
+
+- *(banks)* Rename auto_polarity to transaction_auto_polarity
+
+### 📚 Documentation
+
+- *(README)* Fix bank order
+
 ## [0.13.0] - 2024-11-15
 
 ### ⛰️ Features
