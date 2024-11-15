@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.13.4] - 2024-11-15
+
+### ⚙️ Miscellaneous Tasks
+
+- *(banks/boa)* Disable safety check
+
 ## [0.13.3] - 2024-11-15
 
 ### 🚜 Refactor
