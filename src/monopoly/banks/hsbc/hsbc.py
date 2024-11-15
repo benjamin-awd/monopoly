@@ -39,8 +39,8 @@ class Hsbc(BankBase):
 
     web_and_mobile_statement_identifier = [
         MetadataIdentifier(
-            format="PDF 1.7", producer="OpenText Output Transformation Engine"
-        )
+            format="PDF 1.7", producer="OpenText Output Transformation Engine - 20.4"
+        ),
     ]
 
     pdf_config = PdfConfig(
