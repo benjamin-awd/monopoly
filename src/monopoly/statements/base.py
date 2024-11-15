@@ -204,8 +204,7 @@ class BaseStatement(ABC):
                     )
                     if statement_date:
                         return statement_date
-                    else:
-                        logger.info("Unable to parse statement date %s", match.group(1))
+                    logger.info("Unable to parse statement date %s", match.group(1))
         raise ValueError("Statement date not found")
 
     def get_decimal_numbers(self, lines: list[str]) -> set[float]:
