@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.13.2] - 2024-11-15
+
+### ⚙️ Miscellaneous Tasks
+
+- *(banks/chase)* Disable safety check
+
 ## [0.13.1] - 2024-11-15
 
 ### 🛠️ Bug Fixes
