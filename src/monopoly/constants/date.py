@@ -37,6 +37,7 @@ class ISO8601(RegexEnum):
         rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM}[,\s]{{1,2}}{DateFormats.YYYY})"
     )
     MM_DD = rf"\b({DateFormats.MM}[\/\-\s]{DateFormats.DD})"
+    MM_DD_YY = rf"\b({DateFormats.MM}[\/\-\s]{DateFormats.DD}[\/\-\s]{DateFormats.YY})"
     MMMM_DD_YYYY = (
         rf"\b({DateFormats.MMMM}\s{DateFormats.DD}[,\s]{{1,2}}{DateFormats.YYYY})"
     )
