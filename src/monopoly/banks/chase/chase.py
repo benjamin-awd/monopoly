@@ -22,6 +22,7 @@ class Chase(BankBase):
         transaction_pattern=CreditTransactionPatterns.CHASE,
         multiline_transactions=True,
         transaction_auto_polarity=False,
+        safety_check=False,
     )
 
     identifiers = [
