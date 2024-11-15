@@ -23,7 +23,7 @@ class BankOfAmerica(BankBase):
         transaction_pattern=CreditTransactionPatterns.BANK_OF_AMERICA,
         multiline_transactions=True,
         safety_check=False,
-        auto_polarity=False,
+        transaction_auto_polarity=False,
     )
 
     identifiers = [

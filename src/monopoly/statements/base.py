@@ -90,7 +90,7 @@ class BaseStatement(ABC):
                     )
                     transaction = Transaction(
                         **processed_match.groupdict,
-                        auto_polarity=self.config.auto_polarity,
+                        auto_polarity=self.config.transaction_auto_polarity,
                     )
                     transactions.append(transaction)
 
