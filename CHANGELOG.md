@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.13.3] - 2024-11-15
+
+### 🚜 Refactor
+
+- *(banks)* Add debit statement safety check as backup for credit statements
+
 ## [0.13.2] - 2024-11-15
 
 ### ⚙️ Miscellaneous Tasks
