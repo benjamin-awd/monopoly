@@ -2,6 +2,7 @@ import logging
 from typing import Type
 
 from .base import BankBase
+from .chase import Chase
 from .citibank import Citibank
 from .dbs import Dbs
 from .detector import BankDetector
@@ -14,6 +15,7 @@ from .uob import Uob
 from .zkb import ZurcherKantonalBank
 
 banks: list[Type["BankBase"]] = [
+    Chase,
     Citibank,
     Dbs,
     ExampleBank,

@@ -15,6 +15,7 @@ class EntryType(AutoEnum):
 
 
 class BankNames(AutoEnum):
+    CHASE = auto()
     CITIBANK = auto()
     DBS = auto()
     HSBC = auto()
@@ -100,6 +101,11 @@ class StatementBalancePatterns(RegexEnum):
 class CreditTransactionPatterns(RegexEnum):
     DBS = (
         rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
+        + SharedPatterns.DESCRIPTION
+        + SharedPatterns.AMOUNT_EXTENDED
+    )
+    CHASE = (
+        rf"(?P<transaction_date>{ISO8601.MM_DD})\s+"
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT_EXTENDED
     )
