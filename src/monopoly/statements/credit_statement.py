@@ -2,6 +2,7 @@ import logging
 import re
 
 from monopoly.constants import EntryType
+from monopoly.statements.debit_statement import DebitStatement
 from monopoly.statements.transaction import Transaction, TransactionGroupDict
 
 from .base import BaseStatement, SafetyCheckError
@@ -59,10 +60,14 @@ class CreditStatement(BaseStatement):
         amounts = [transaction.amount for transaction in transactions]
         total_amount = abs(round(sum(amounts), 2))
 
-        result = total_amount in numbers
-        if not result:
-            raise SafetyCheckError(
-                f"Total amount {total_amount} cannot be found in credit statement"
-            )
+        total_amount_found = total_amount in numbers
 
-        return result
+        # attempt a debit-statement style safety for banks that have
+        # debit and credit amounts as separate numbers and not a single total sum
+        if total_amount_found or DebitStatement.perform_safety_check(self):
+            logger.debug("Running debit statement safety check for credit statement")
+            return True
+
+        raise SafetyCheckError(
+            f"Total amount {total_amount} cannot be found in credit statement"
+        )

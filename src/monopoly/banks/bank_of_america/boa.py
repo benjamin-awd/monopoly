@@ -22,7 +22,6 @@ class BankOfAmerica(BankBase):
         header_pattern=regex(r"(Date.*Description.*Amount)"),
         transaction_pattern=CreditTransactionPatterns.BANK_OF_AMERICA,
         multiline_transactions=True,
-        safety_check=False,
         transaction_auto_polarity=False,
     )
 
