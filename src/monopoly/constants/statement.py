@@ -15,6 +15,7 @@ class EntryType(AutoEnum):
 
 
 class BankNames(AutoEnum):
+    BANK_OF_AMERICA = auto()
     CHASE = auto()
     CITIBANK = auto()
     DBS = auto()
@@ -42,7 +43,7 @@ class Columns(AutoEnum):
 class SharedPatterns(StrEnum):
     """
     AMOUNT matches the following patterns:
-    1,123.12 | 123.12 | (123.12) | ( 123.12) | 123.12 CR
+    1,123.12 | 123.12 | (123.12) | ( 123.12) | 123.12 CR | -1,123.12
 
     AMOUNT_EXTENDED is generally used for credit statements and to
     find statement balances, while AMOUNT_EXTENDED_WITHOUT_EOL is used
@@ -52,9 +53,10 @@ class SharedPatterns(StrEnum):
 
     COMMA_FORMAT = r"\d{1,3}(,\d{3})*\.\d*"
     ENCLOSED_COMMA_FORMAT = rf"\({COMMA_FORMAT}\s{{0,1}}\))"
+    OPTIONAL_NEGATIVE_SYMBOL = r"(?:-)?"
     DEBIT_CREDIT_SUFFIX = r"(?P<suffix>CR\b|DR\b|\+|\-)?\s*"
 
-    AMOUNT = rf"(?P<amount>{COMMA_FORMAT}|{ENCLOSED_COMMA_FORMAT}\s*"
+    AMOUNT = rf"(?P<amount>{OPTIONAL_NEGATIVE_SYMBOL}{COMMA_FORMAT}|{ENCLOSED_COMMA_FORMAT}\s*"
     AMOUNT_EXTENDED_WITHOUT_EOL = AMOUNT + DEBIT_CREDIT_SUFFIX
     AMOUNT_EXTENDED = AMOUNT_EXTENDED_WITHOUT_EOL + r"$"
 
@@ -99,6 +101,11 @@ class StatementBalancePatterns(RegexEnum):
 
 
 class CreditTransactionPatterns(RegexEnum):
+    BANK_OF_AMERICA = (
+        rf"(?P<transaction_date>{ISO8601.MM_DD_YY})\s+"
+        + SharedPatterns.DESCRIPTION
+        + SharedPatterns.AMOUNT_EXTENDED
+    )
     DBS = (
         rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
         + SharedPatterns.DESCRIPTION

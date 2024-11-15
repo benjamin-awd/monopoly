@@ -88,7 +88,10 @@ class BaseStatement(ABC):
                         lines=page.lines,
                         idx=line_num,
                     )
-                    transaction = Transaction(**processed_match.groupdict)
+                    transaction = Transaction(
+                        **processed_match.groupdict,
+                        auto_polarity=self.config.auto_polarity,
+                    )
                     transactions.append(transaction)
 
         if not transactions:

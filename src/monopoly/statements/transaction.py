@@ -85,6 +85,9 @@ class Transaction:
     amount: float
     date: str = Field(alias="transaction_date")
     suffix: Optional[str] = None
+    # avoid storing config logic, since the Transaction object is used to create
+    # a single unique hash which should not change
+    auto_polarity: bool = Field(default=True, init=True, repr=False)
 
     def as_raw_dict(self, show_suffix=False):
         """Returns stringified dictionary version of the transaction"""
@@ -136,6 +139,9 @@ class Transaction:
         """
         # avoid negative zero
         if self.amount == 0:
+            return self
+
+        if not self.auto_polarity:
             return self
 
         if self.suffix in ("CR", "+"):
