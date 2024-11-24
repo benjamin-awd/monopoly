@@ -62,6 +62,11 @@ class CreditStatement(BaseStatement):
 
         total_amount_found = total_amount in numbers
 
+        # if sum of debit and credit is the same as the total amount
+        # then the statement is safe
+        if round(sum(amounts), 2) == total_amount:
+            return True
+
         # attempt a debit-statement style safety for banks that have
         # debit and credit amounts as separate numbers and not a single total sum
         if total_amount_found or DebitStatement.perform_safety_check(self):
