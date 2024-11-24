@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.13.5] - 2024-11-24
+
+### 🚜 Refactor
+
+- *(statements/safety)* Add additional safety check
+
+### ⚙️ Miscellaneous Tasks
+
+- *(banks/hsbc)* Support new statement header format
+
 ## [0.13.4] - 2024-11-15
 
 ### ⚙️ Miscellaneous Tasks
