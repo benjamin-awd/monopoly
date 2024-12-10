@@ -42,9 +42,9 @@ class Dbs(BankBase):
         statement_type=EntryType.DEBIT,
         statement_date_pattern=regex(rf"Details as at {ISO8601.DD_MMM_YYYY}"),
         multiline_transactions=True,
-        header_pattern=regex(r"(\s+Date\s+Description\s+Withdrawal \(-\).*)"),
+        header_pattern=regex(r"(\s*Date\s+Description\s+Withdrawal \(-\).*)"),
         transaction_pattern=DebitTransactionPatterns.DBS_POSB_CONSOLIDATED,
-        transaction_bound=100,
+        transaction_bound=114,
     )
 
     identifiers = [
