@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.13.6] - 2024-12-13
+
+### 🛠️ Bug Fixes
+
+- *(banks/dbs)* Parsing transactions
+
 ## [0.13.5] - 2024-11-24
 
 ### 🚜 Refactor
