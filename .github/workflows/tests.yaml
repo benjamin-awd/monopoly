@@ -24,7 +24,7 @@ jobs:
           poetry-version: "1.8.3"
 
       - name: Install git crypt & run tests
-        uses: Flydiverny/setup-git-crypt@v3
+        uses: Flydiverny/setup-git-crypt@v4
 
       - name: Unlock files
         continue-on-error: true
