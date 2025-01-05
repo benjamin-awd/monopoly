@@ -9,7 +9,7 @@ from monopoly.constants import (
     EntryType,
     StatementBalancePatterns,
 )
-from monopoly.identifiers import MetadataIdentifier
+from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
 from ..base import BankBase
 
@@ -44,6 +44,7 @@ class Uob(BankBase):
                 creator="Vault Rendering Engine",
                 producer="Rendering Engine",
             ),
-        ]
+        ],
+        [TextIdentifier("card.centre@uobgroup.com")],
     ]
     statement_configs = [credit, debit]
