@@ -211,42 +211,14 @@ def matches_with_posting_transaction_dates():
     ]
 
 
-# def test_get_patterns_with_date_matches(
-#     date_pattern_analyzer: DatePatternAnalyzer,
-#     patterns_with_date_matches,
-#     caplog: pytest.LogCaptureFixture,
-# ):
-#     caplog.set_level(logging.DEBUG)
-#     expected = patterns_with_date_matches
-#     result = date_pattern_analyzer.get_patterns_with_date_matches()
-
-#     assert expected == result
-
-
-# def test_count_unique_date_matches(
-#     date_pattern_analyzer: DatePatternAnalyzer,
-#     matches_with_transaction_posting_dates,
-# ):
-#     assert date_pattern_analyzer.count_unique_date_matches() == {
-#         "dd_mmm": {(0, 6): 3, (19, 25): 1, (33, 39): 1},
-#         "dd_mmm_yyyy": {(19, 30): 1, (33, 44): 1},
-#         "mmm_dd": {(22, 28): 1, (36, 42): 1},
-#     }
-#     date_pattern_analyzer.patterns_with_date_matches = (
-#         matches_with_transaction_posting_dates
-#     )
-#     assert date_pattern_analyzer.count_unique_date_matches() == {
-#         "dd_mmm": {(10, 16): 2, (27, 33): 2}
-#     }
-
-
 def test_get_items_with_same_page_line(date_pattern_analyzer: DatePatternAnalyzer):
+    year = datetime.now().year
     expected = [
-        ("0-0", datetime(2024, 10, 31, 0, 0)),
-        ("1-0", datetime(2024, 10, 1, 0, 0)),
-        ("1-1", datetime(2024, 10, 2, 0, 0)),
-        ("2-0", datetime(2024, 10, 4, 0, 0)),
-        ("2-1", datetime(2024, 8, 21, 0, 0)),
+        ("0-0", datetime(year, 10, 31, 0, 0)),
+        ("1-0", datetime(year, 10, 1, 0, 0)),
+        ("1-1", datetime(year, 10, 2, 0, 0)),
+        ("2-0", datetime(year, 10, 4, 0, 0)),
+        ("2-1", datetime(year, 8, 21, 0, 0)),
     ]
     assert date_pattern_analyzer.get_items_with_same_page_and_line() == expected
 
