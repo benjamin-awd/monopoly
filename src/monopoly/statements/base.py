@@ -126,7 +126,12 @@ class BaseStatement(ABC):
     ) -> TransactionMatch:
         if self.config.multiline_transactions and idx < len(lines) - 1:
             multiline_description = self.get_multiline_description(
-                match.groupdict.description, line, lines, idx
+                match.groupdict.description,
+                line,
+                lines,
+                idx,
+                self.config.multiline_transactions_include_prev,
+                self.config.multiline_transactions_include_prev_margin,
             )
             match.groupdict.description = multiline_description
         return match
@@ -137,12 +142,29 @@ class BaseStatement(ABC):
         current_line: str,
         lines: list[str],
         idx: int,
+        include_prev: bool,
+        include_prev_margin: int,
     ) -> str:
         """Checks if a transaction description spans multiple lines, and
         tries to combine them into a single string"""
         description_pos = current_line.find(description)
         next_line_words_pattern = re.compile(r"\s[A-Za-z]+")
         next_line_numbers_pattern = re.compile(SharedPatterns.AMOUNT)
+
+        if include_prev and idx - 1 > 0:
+            prev_line = lines[idx - 1]
+            if prev_line:
+                # if previous line is a transaction, it cannot be part of the description
+                if not self.pattern.search(prev_line):
+                    prev_line_text = prev_line.strip()
+                    prev_line_start_pos = prev_line.find(prev_line_text.split(" ")[0])
+                    # don't process line if the description across both lines
+                    # doesn't align with a margin of three spaces
+                    if (
+                        abs(description_pos - prev_line_start_pos)
+                        <= include_prev_margin
+                    ):
+                        description = prev_line_text + " " + description
 
         for next_line in lines[idx + 1 :]:  # noqa: E203
             # if next line is blank, don't add the description

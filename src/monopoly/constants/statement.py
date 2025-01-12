@@ -25,6 +25,7 @@ class BankNames(AutoEnum):
     STANDARD_CHARTERED = auto()
     UOB = auto()
     ZKB = auto()
+    TRUST = auto()
 
 
 class InternalBankNames(AutoEnum):
@@ -98,6 +99,10 @@ class StatementBalancePatterns(RegexEnum):
         r"(?P<description>PREVIOUS BALANCE?)\s+"
         + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
     )
+    TRUST = (
+        r"(?P<description>Previous balance?)\s+"
+        + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+    )
 
 
 class CreditTransactionPatterns(RegexEnum):
@@ -150,6 +155,13 @@ class CreditTransactionPatterns(RegexEnum):
         rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT_EXTENDED
+    )
+    TRUST = (
+        rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
+        + r"(?P<description>(?:(?!Total outstanding balance).)*?)"
+        + r"(?P<suffix>\+)?"
+        + SharedPatterns.AMOUNT
+        + "$"  # necessary to ignore FCY
     )
 
 
