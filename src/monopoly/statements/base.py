@@ -1,8 +1,10 @@
 import logging
 import re
 from abc import ABC
+from dataclasses import dataclass
 from datetime import datetime
 from functools import cached_property, lru_cache
+from typing import Optional
 
 from dateparser import parse
 
@@ -18,6 +20,15 @@ from monopoly.statements.transaction import (
 
 # pylint: disable=bad-classmethod-argument
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class MatchContext:
+    line: str
+    lines: list[str]
+    idx: int
+    description: str
+    multiline_config: Optional[MultilineConfig] = None
 
 
 class BaseStatement(ABC):
@@ -81,13 +92,15 @@ class BaseStatement(ABC):
                     transaction_match = TransactionMatch(
                         groupdict, match, page_number=page_num
                     )
-                    pre_processed_match = self.pre_process_match(transaction_match)
-                    processed_match = self.process_match(
-                        match=pre_processed_match,
+                    match = self.pre_process_match(transaction_match)
+                    context = MatchContext(
                         line=line,
                         lines=page.lines,
                         idx=line_num,
+                        description=match.groupdict.description,
+                        multiline_config=self.config.multiline_config,
                     )
+                    processed_match = self.process_match(match, context)
                     transaction = Transaction(
                         **processed_match.groupdict,
                         auto_polarity=self.config.transaction_auto_polarity,
@@ -118,30 +131,20 @@ class BaseStatement(ABC):
         return transactions
 
     def process_match(
-        self,
-        match: TransactionMatch,
-        line: str,
-        lines: list[str],
-        idx: int,
+        self, match: TransactionMatch, context: MatchContext
     ) -> TransactionMatch:
-        if self.config.multiline_config and idx < len(lines) - 1:
-            multiline_description = self.get_multiline_description(
-                match.groupdict.description,
-                line,
-                lines,
-                idx,
-                self.config.multiline_config,
-            )
+        # early exit if no multiline config
+        if not context.multiline_config:
+            return match
+
+        if context.idx < len(context.lines) - 1:
+            multiline_description = self.get_multiline_description(context)
             match.groupdict.description = multiline_description
         return match
 
     def get_multiline_description(
         self,
-        description: str,
-        current_line: str,
-        lines: list[str],
-        idx: int,
-        multiline_config: MultilineConfig,
+        context: MatchContext,
     ) -> str:
         """
         Combines a transaction description spanning multiple lines into a single string.
@@ -177,21 +180,24 @@ class BaseStatement(ABC):
                     return True  # Likely a footer line
             return False
 
-        description_pos = current_line.find(description)
+        description = context.description
+        description_pos = context.line.find(description)
         next_line_words_pattern = re.compile(r"\s[A-Za-z]+")
         next_line_numbers_pattern = re.compile(SharedPatterns.AMOUNT)
-        margin = multiline_config.include_prev_margin
+
+        if config := context.multiline_config:
+            margin = config.include_prev_margin
 
         # Include previous line if within margin
-        if margin and idx > 0:
-            prev_line = lines[idx - 1].strip()
+        if margin and context.idx > 0:
+            prev_line = context.lines[context.idx - 1].strip()
             if prev_line and not self.pattern.search(prev_line):
                 prev_line_start_pos = get_start_pos(prev_line)
                 if is_within_margin(description_pos, prev_line_start_pos, margin):
                     description = f"{prev_line} {description}"
 
         # Include subsequent lines
-        for next_line in lines[idx + 1 :]:  # noqa: E203
+        for next_line in context.lines[context.idx + 1 :]:  # noqa: E203
             if should_skip_line(next_line, description_pos):
                 break
             description += f" {next_line.strip()}"

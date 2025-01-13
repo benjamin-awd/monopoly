@@ -4,6 +4,7 @@ from monopoly.banks import Hsbc, Ocbc
 from monopoly.config import MultilineConfig
 from monopoly.pdf import PdfPage
 from monopoly.statements import BaseStatement
+from monopoly.statements.base import MatchContext
 from monopoly.statements.transaction import (
     Transaction,
     TransactionGroupDict,
@@ -106,11 +107,12 @@ def test_process_match_multiline_description(statement: BaseStatement):
         "description": "SHOPEE",
         "suffix": None,
     }
-    match = statement.process_match(match, line, lines, 0)
+    context = MatchContext(line=line, lines=lines, idx=0, description="SHOPEE")
+    match = statement.process_match(match, context)
     assert match.groupdict.asdict() == expected_groupdict
 
     # case 2: description across next line is more than three spaces apart
     line = "04 Aug 02 Aug SHOPEE 3.20"
     lines = ["04 Aug 02 Aug SHOPEE 3.20", "foo", "bar"]
-    match = statement.process_match(match, line, lines, 0)
+    context = MatchContext(line=line, lines=lines, idx=0, description="SHOPEE")
     assert match.groupdict.asdict() == groupdict
