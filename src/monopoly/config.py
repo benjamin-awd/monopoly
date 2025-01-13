@@ -23,7 +23,7 @@ class DateOrder:
 @dataclass
 class MultilineConfig:
     multiline_transactions: bool
-    include_prev_margin: Optional[int] = 3
+    include_prev_margin: Optional[int] = None
 
 
 # pylint: disable=too-many-instance-attributes
