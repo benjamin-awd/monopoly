@@ -6,7 +6,7 @@ from functools import cached_property, lru_cache
 
 from dateparser import parse
 
-from monopoly.config import StatementConfig
+from monopoly.config import MultilineConfig, StatementConfig
 from monopoly.constants import Columns, SharedPatterns
 from monopoly.constants.date import ISO8601
 from monopoly.pdf import PdfPage
@@ -124,14 +124,13 @@ class BaseStatement(ABC):
         lines: list[str],
         idx: int,
     ) -> TransactionMatch:
-        if self.config.multiline_transactions and idx < len(lines) - 1:
+        if self.config.multiline_config and idx < len(lines) - 1:
             multiline_description = self.get_multiline_description(
                 match.groupdict.description,
                 line,
                 lines,
                 idx,
-                self.config.multiline_transactions_include_prev,
-                self.config.multiline_transactions_include_prev_margin,
+                self.config.multiline_config,
             )
             match.groupdict.description = multiline_description
         return match
@@ -142,64 +141,60 @@ class BaseStatement(ABC):
         current_line: str,
         lines: list[str],
         idx: int,
-        include_prev: bool,
-        include_prev_margin: int,
+        multiline_config: MultilineConfig,
     ) -> str:
-        """Checks if a transaction description spans multiple lines, and
-        tries to combine them into a single string"""
-        description_pos = current_line.find(description)
-        next_line_words_pattern = re.compile(r"\s[A-Za-z]+")
-        next_line_numbers_pattern = re.compile(SharedPatterns.AMOUNT)
+        """
+        Combines a transaction description spanning multiple lines into a single string.
+        """
 
-        if include_prev and idx - 1 > 0:
-            prev_line = lines[idx - 1]
-            if prev_line:
-                # if previous line is a transaction, it cannot be part of the description
-                if not self.pattern.search(prev_line):
-                    prev_line_text = prev_line.strip()
-                    prev_line_start_pos = prev_line.find(prev_line_text.split(" ")[0])
-                    # don't process line if the description across both lines
-                    # doesn't align with a margin of three spaces
-                    if (
-                        abs(description_pos - prev_line_start_pos)
-                        <= include_prev_margin
-                    ):
-                        description = prev_line_text + " " + description
+        def get_start_pos(line: str) -> int:
+            """Returns the starting position of the first word in a line."""
+            stripped_line = line.strip()
+            return line.find(stripped_line.split(" ")[0]) if stripped_line else -1
 
-        for next_line in lines[idx + 1 :]:  # noqa: E203
-            # if next line is blank, don't add the description
-            if not next_line:
-                break
+        def is_within_margin(pos1: int, pos2: int, margin: int) -> bool:
+            """Checks if two positions are within a specified margin."""
+            return abs(pos1 - pos2) <= margin
 
-            # if transaction found on next line then break
+        def should_skip_line(next_line: str, description_pos: int) -> bool:
+            """Determines if the next line should be added to the description."""
+            if not next_line.strip():
+                return True  # Blank line
             if self.pattern.search(next_line):
-                break
-
-            # don't process line if the description across both lines
-            # doesn't align with a margin of three spaces
-            next_line_text = next_line.strip()
-            next_line_start_pos = next_line.find(next_line_text.split(" ")[0])
-
-            if abs(description_pos - next_line_start_pos) > 3:
-                break
-
-            # if there's an amount in the next line, and it's further than
-            # 20 spaces away, we assume that this isn't part of the description
-            # and is a footer line like "Total" or "Balance Carried Forward"
+                return True  # Transaction line
+            next_line_start_pos = get_start_pos(next_line)
+            if not is_within_margin(description_pos, next_line_start_pos, 3):
+                return True
             next_line_words = next_line_words_pattern.search(next_line)
             next_line_numbers = next_line_numbers_pattern.search(next_line)
-
             if next_line_words and next_line_numbers:
                 _, words_end_pos = next_line_words.span()
                 numbers_start_pos, _ = next_line_numbers.span()
-
                 if (
                     numbers_start_pos > words_end_pos
                     and numbers_start_pos - words_end_pos > 20
                 ):
-                    break
+                    return True  # Likely a footer line
+            return False
 
-            description += " " + next_line
+        description_pos = current_line.find(description)
+        next_line_words_pattern = re.compile(r"\s[A-Za-z]+")
+        next_line_numbers_pattern = re.compile(SharedPatterns.AMOUNT)
+        margin = multiline_config.include_prev_margin
+
+        # Include previous line if within margin
+        if margin and idx > 0:
+            prev_line = lines[idx - 1].strip()
+            if prev_line and not self.pattern.search(prev_line):
+                prev_line_start_pos = get_start_pos(prev_line)
+                if is_within_margin(description_pos, prev_line_start_pos, margin):
+                    description = f"{prev_line} {description}"
+
+        # Include subsequent lines
+        for next_line in lines[idx + 1 :]:  # noqa: E203
+            if should_skip_line(next_line, description_pos):
+                break
+            description += f" {next_line.strip()}"
 
         return description
 

@@ -1,7 +1,7 @@
 import logging
 from re import compile as regex
 
-from monopoly.config import StatementConfig
+from monopoly.config import MultilineConfig, StatementConfig
 from monopoly.constants import (
     ISO8601,
     BankNames,
@@ -23,7 +23,6 @@ class Dbs(BankBase):
     credit = StatementConfig(
         statement_type=EntryType.CREDIT,
         statement_date_pattern=ISO8601.DD_MMM_YYYY,
-        multiline_transactions=False,
         header_pattern=regex(r"(DATE.*DESCRIPTION.*AMOUNT)"),
         transaction_pattern=CreditTransactionPatterns.DBS,
         prev_balance_pattern=StatementBalancePatterns.DBS,
@@ -32,7 +31,7 @@ class Dbs(BankBase):
     debit = StatementConfig(
         statement_type=EntryType.DEBIT,
         statement_date_pattern=ISO8601.DD_MMM_YYYY,
-        multiline_transactions=True,
+        multiline_config=MultilineConfig(multiline_transactions=True),
         header_pattern=regex(r"(WITHDRAWAL.*DEPOSIT.*BALANCE)"),
         transaction_pattern=DebitTransactionPatterns.DBS,
         transaction_bound=170,
@@ -41,7 +40,7 @@ class Dbs(BankBase):
     consolidated = StatementConfig(
         statement_type=EntryType.DEBIT,
         statement_date_pattern=regex(rf"Details as at {ISO8601.DD_MMM_YYYY}"),
-        multiline_transactions=True,
+        multiline_config=MultilineConfig(multiline_transactions=True),
         header_pattern=regex(r"(\s*Date\s+Description\s+Withdrawal \(-\).*)"),
         transaction_pattern=DebitTransactionPatterns.DBS_POSB_CONSOLIDATED,
         transaction_bound=114,

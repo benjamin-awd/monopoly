@@ -4,7 +4,7 @@ from re import compile as regex
 from typing import Type
 
 from monopoly.banks import BankBase
-from monopoly.config import StatementConfig
+from monopoly.config import MultilineConfig, StatementConfig
 from monopoly.constants import EntryType, InternalBankNames
 from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfPage
@@ -44,7 +44,7 @@ class GenericStatementHandler(StatementHandler):
                 statement_type=EntryType.DEBIT,
                 transaction_pattern=self.transaction_pattern,
                 statement_date_pattern=self.statement_date_pattern,
-                multiline_transactions=self.multiline_transactions,
+                multiline_config=MultilineConfig(self.multiline_transactions),
                 header_pattern=regex(self.header_pattern),
             )
         return None
@@ -60,7 +60,7 @@ class GenericStatementHandler(StatementHandler):
                 transaction_pattern=self.transaction_pattern,
                 statement_date_pattern=self.statement_date_pattern,
                 header_pattern=regex(self.header_pattern),
-                multiline_transactions=self.multiline_transactions,
+                multiline_config=MultilineConfig(self.multiline_transactions),
             )
         return None
 

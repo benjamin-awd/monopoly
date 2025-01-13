@@ -1,7 +1,7 @@
 import logging
 from re import compile as regex
 
-from monopoly.config import StatementConfig
+from monopoly.config import MultilineConfig, StatementConfig
 from monopoly.constants import (
     ISO8601,
     BankNames,
@@ -25,7 +25,7 @@ class Uob(BankBase):
         header_pattern=regex(r"(Description of Transaction.*Transaction Amount)"),
         prev_balance_pattern=StatementBalancePatterns.UOB,
         transaction_pattern=DebitTransactionPatterns.UOB,
-        multiline_transactions=True,
+        multiline_config=MultilineConfig(multiline_transactions=True),
     )
 
     debit = StatementConfig(
@@ -34,7 +34,7 @@ class Uob(BankBase):
         header_pattern=regex(r"(Date.*Description.*Withdrawals.*Deposits.*Balance)"),
         transaction_pattern=DebitTransactionPatterns.UOB,
         transaction_bound=170,
-        multiline_transactions=True,
+        multiline_config=MultilineConfig(multiline_transactions=True),
     )
 
     identifiers = [

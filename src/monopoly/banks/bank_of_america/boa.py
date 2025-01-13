@@ -1,7 +1,7 @@
 import logging
 from re import compile as regex
 
-from monopoly.config import DateOrder, StatementConfig
+from monopoly.config import DateOrder, MultilineConfig, StatementConfig
 from monopoly.constants import BankNames, CreditTransactionPatterns, EntryType
 from monopoly.constants.date import ISO8601
 from monopoly.identifiers import MetadataIdentifier
@@ -21,7 +21,7 @@ class BankOfAmerica(BankBase):
         transaction_date_order=DateOrder("MDY"),
         header_pattern=regex(r"(Date.*Description.*Amount)"),
         transaction_pattern=CreditTransactionPatterns.BANK_OF_AMERICA,
-        multiline_transactions=True,
+        multiline_config=MultilineConfig(multiline_transactions=True),
         safety_check=False,
         transaction_auto_polarity=False,
     )

@@ -1,7 +1,7 @@
 import logging
 from re import compile as regex
 
-from monopoly.config import PdfConfig, StatementConfig
+from monopoly.config import MultilineConfig, PdfConfig, StatementConfig
 from monopoly.constants import (
     ISO8601,
     BankNames,
@@ -27,7 +27,7 @@ class Hsbc(BankBase):
         header_pattern=regex(r"(DATE.*DESCRIPTION.*AMOUNT)"),
         prev_balance_pattern=StatementBalancePatterns.HSBC,
         transaction_pattern=CreditTransactionPatterns.HSBC,
-        multiline_transactions=True,
+        multiline_config=MultilineConfig(multiline_transactions=True),
     )
 
     email_statement_identifier = [
