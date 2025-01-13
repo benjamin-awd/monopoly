@@ -1,7 +1,7 @@
 import logging
 from re import compile as regex
 
-from monopoly.config import DateOrder, StatementConfig
+from monopoly.config import DateOrder, MultilineConfig, StatementConfig
 from monopoly.constants import BankNames, CreditTransactionPatterns, EntryType
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
@@ -20,7 +20,7 @@ class Chase(BankBase):
         transaction_date_order=DateOrder("MDY"),
         header_pattern=regex(r"(.*Transaction.*Merchant Name .*\$ Amount)"),
         transaction_pattern=CreditTransactionPatterns.CHASE,
-        multiline_transactions=True,
+        multiline_config=MultilineConfig(multiline_transactions=True),
         transaction_auto_polarity=False,
     )
 

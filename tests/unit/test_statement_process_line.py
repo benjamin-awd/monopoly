@@ -1,6 +1,7 @@
 import re
 
 from monopoly.banks import Hsbc, Ocbc
+from monopoly.config import MultilineConfig
 from monopoly.pdf import PdfPage
 from monopoly.statements import BaseStatement
 from monopoly.statements.transaction import (
@@ -58,7 +59,7 @@ def test_check_bound(statement: BaseStatement):
 
 def test_get_multiline_transactions(statement: BaseStatement):
     pattern = Hsbc.credit.transaction_pattern
-    statement.config.multiline_transactions = True
+    statement.config.multiline_config = MultilineConfig(True)
     statement.config.transaction_pattern = pattern
     statement.pages = [
         PdfPage(
@@ -81,7 +82,7 @@ def test_get_multiline_transactions(statement: BaseStatement):
 
 def test_process_match_multiline_description(statement: BaseStatement):
     pattern = Hsbc.credit.transaction_pattern
-    statement.config.multiline_transactions = True
+    statement.config.multiline_config = MultilineConfig(True)
     statement.config.transaction_pattern = pattern
 
     groupdict = {

@@ -20,6 +20,12 @@ class DateOrder:
         return {"DATE_ORDER": self.date_order}
 
 
+@dataclass
+class MultilineConfig:
+    multiline_transactions: bool
+    include_prev_margin: Optional[int] = 3
+
+
 # pylint: disable=too-many-instance-attributes
 @dataclass(kw_only=True)
 class StatementConfig:
@@ -39,7 +45,7 @@ class StatementConfig:
     Defaults to DMY.
     - `statement_date_format` represents the datetime format that a specific bank uses
     to represent a statement date.
-    - `multiline_transactions` controls whether Monopoly tries to concatenate
+    - `multiline_config` determines whether Monopoly tries to concatenate
     transactions that are split across two lines
     - `header_pattern` is a regex pattern that is used to find the 'header' line
     of a statement, and determine if it is a debit or credit card statement.
@@ -61,9 +67,7 @@ class StatementConfig:
     header_pattern: Pattern[str] | RegexEnum
     transaction_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
     statement_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
-    multiline_transactions: bool = False
-    multiline_transactions_include_prev: bool = False
-    multiline_transactions_include_prev_margin: int = 3
+    multiline_config: Optional[MultilineConfig] = None
     transaction_bound: Optional[int] = None
     prev_balance_pattern: Optional[Pattern[str] | RegexEnum] = None
     safety_check: bool = True
