@@ -1,5 +1,6 @@
 import csv
 import logging
+import re
 from pathlib import Path
 from typing import Optional, Type
 
@@ -8,6 +9,7 @@ from pydantic import SecretStr
 
 from monopoly.banks import BankBase
 from monopoly.config import DateOrder
+from monopoly.constants.date import DateFormats
 from monopoly.generic import GenericBank, GenericStatementHandler
 from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfPage, PdfParser
@@ -73,18 +75,27 @@ class Pipeline:
             e.g. if the statement month is Jan/Feb 2024, transactions from
             Oct/Nov/Dec should be attributed to the previous year.
             """
-            if str(statement_date.year) not in transaction.date:
-                transaction.date += f" {statement_date.year}"
-            parsed_date = parse(
-                transaction.date,
-                settings=transaction_date_order.settings,
-            )
-            if parsed_date:
-                if statement_date.month in (1, 2) and parsed_date.month > 2:
-                    parsed_date = parsed_date.replace(year=parsed_date.year - 1)
+            # do not include year if transaction already includes date
+            has_year = bool(re.search(DateFormats.YYYY, transaction.date))
 
-                return parsed_date.isoformat()[:10]
-            raise RuntimeError("Could not convert date")
+            if not has_year and str(statement_date.year) not in transaction.date:
+                transaction.date = f"{transaction.date} {statement_date.year}"
+
+            parsed_date = parse(
+                transaction.date, settings=transaction_date_order.settings
+            )
+
+            if not parsed_date:
+                raise RuntimeError("Could not convert date")
+
+            if (
+                statement_date.month in (1, 2)
+                and parsed_date.month > 2
+                and not has_year
+            ):
+                parsed_date = parsed_date.replace(year=parsed_date.year - 1)
+
+            return parsed_date.isoformat()[:10]
 
         logger.debug("Transforming dates to ISO 8601")
 
