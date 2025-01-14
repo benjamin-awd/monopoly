@@ -78,7 +78,7 @@ class Pipeline:
             # do not include year if transaction already includes date
             has_year = bool(re.search(DateFormats.YYYY, transaction.date))
 
-            if not has_year and str(statement_date.year) not in transaction.date:
+            if not has_year:
                 transaction.date = f"{transaction.date} {statement_date.year}"
 
             parsed_date = parse(
