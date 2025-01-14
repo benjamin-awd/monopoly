@@ -1,5 +1,37 @@
 # Changelog
 
+## [0.14.0] - 2025-01-14
+
+### ⛰️ Features
+
+- *(banks)* Add trust
+
+### 🛠️ Bug Fixes
+
+- *(ci)* Pin runner to ubuntu-22.04
+- *(banks/uob)* Identify
+- Conditionally append statement date according to transaction
+
+### 🚜 Refactor
+
+- *(config)* Store multiline config in dataclass
+- *(statements)* Store match data in dataclass
+- *(statements)* Use OOP pattern for multiline transactions
+
+### 📚 Documentation
+
+- *(README)* Add Trust to supported bank list
+
+### ⚙️ Miscellaneous Tasks
+
+- *(generic)* Update test suite to use current year
+
+### Build
+
+- *(deps)* Bump the deps group with 10 updates
+- *(deps)* Bump Flydiverny/setup-git-crypt from 3 to 4
+- *(deps)* Bump the deps group with 12 updates
+
 ## [0.13.6] - 2024-12-13
 
 ### 🛠️ Bug Fixes
