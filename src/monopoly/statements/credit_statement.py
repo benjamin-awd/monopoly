@@ -72,14 +72,9 @@ class CreditStatement(BaseStatement):
 
         # attempt a debit-statement style safety for banks that have
         # debit and credit amounts as separate numbers and not a single total sum
-        try:
-            logger.debug("Running debit statement safety check for credit statement")
-            if DebitStatement.perform_safety_check(self):
-                return True
-        # the try-catch is needed to prevent a SafetyCheckError from being raised
-        # a more verbose exception is raised later
-        except SafetyCheckError:
-            pass
+        logger.debug("Running debit statement safety check for credit statement")
+        if DebitStatement.perform_safety_check(self):
+            return True
 
         raise SafetyCheckError(
             f"Total amount {total_amount} cannot be found in credit statement"
