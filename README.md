@@ -21,6 +21,7 @@ Supported banks:
 | Maybank              | ✅                 | ✅                   |
 | OCBC                 | ✅                 | ✅                   |
 | Standard Chartered   | ✅                 | ❌                   |
+| Trust                | ✅                 | ❌                   |
 | UOB                  | ✅                 | ✅                   |
 | Zürcher Kantonalbank | ❌                 | ✅                   |
 
