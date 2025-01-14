@@ -31,6 +31,107 @@ class MatchContext:
     multiline_config: Optional[MultilineConfig] = None
 
 
+class DescriptionExtractor:
+    """Handles extraction and combination of multiline transaction descriptions."""
+
+    def __init__(self, pattern: re.Pattern):
+        self.pattern = pattern
+
+    def get_multiline_description(self, context: MatchContext) -> Optional[str]:
+        """Combines a transaction description spanning multiple lines into a single string."""
+        if not context.multiline_config:
+            return None
+
+        builder = DescriptionBuilder(
+            initial_description=context.description,
+            description_pos=context.line.find(context.description),
+            pattern=self.pattern,
+        )
+
+        # Handle previous line if within margin
+        margin = context.multiline_config.include_prev_margin
+        if margin and context.idx > 0:
+            builder.include_previous_line(context.lines[context.idx - 1], margin)
+
+        # Include subsequent lines until a break condition is met
+        for next_line in context.lines[context.idx + 1 :]:
+            if builder.should_break_at_line(next_line):
+                break
+            builder.append_line(next_line)
+
+        return builder.get_result()
+
+
+class DescriptionBuilder:
+    """Handles the building and validation of multiline descriptions."""
+
+    def __init__(
+        self,
+        initial_description: str,
+        description_pos: int,
+        pattern: re.Pattern,
+    ):
+        self.description = initial_description
+        self.description_pos = description_pos
+        self.pattern = pattern
+        self.words_pattern = re.compile(r"\s[A-Za-z]+")
+        self.numbers_pattern = re.compile(SharedPatterns.AMOUNT)
+
+    @staticmethod
+    def get_start_pos(line: str) -> int:
+        """Returns the starting position of the first word in a line."""
+        stripped = line.strip()
+        return line.find(stripped.split(" ")[0]) if stripped else -1
+
+    @staticmethod
+    def is_within_margin(pos1: int, pos2: int, margin: int) -> bool:
+        """Checks if two positions are within a specified margin."""
+        return abs(pos1 - pos2) <= margin
+
+    def should_break_at_line(self, line: str) -> bool:
+        """Determines if processing should stop at the current line."""
+        # Blank line
+        if not line.strip():
+            return True
+
+        # Transaction line
+        if self.pattern.search(line):
+            return True
+
+        next_pos = self.get_start_pos(line)
+        if not self.is_within_margin(self.description_pos, next_pos, 3):
+            return True
+
+        words_match = self.words_pattern.search(line)
+        numbers_match = self.numbers_pattern.search(line)
+
+        # Exclude footer lines
+        if words_match and numbers_match:
+            words_end = words_match.span()[1]
+            numbers_start = numbers_match.span()[0]
+            return numbers_start > words_end and numbers_start - words_end > 20
+
+        return False
+
+    def include_previous_line(self, prev_line: str, margin: int) -> None:
+        """Attempts to include the previous line in the description."""
+        prev_line = prev_line.strip()
+        if not prev_line or self.pattern.search(prev_line):
+            return
+
+        prev_pos = self.get_start_pos(prev_line)
+        if self.is_within_margin(self.description_pos, prev_pos, margin):
+            self.description = f"{prev_line} {self.description}"
+
+    def append_line(self, line: str) -> None:
+        """Appends a new line to the current description."""
+        self.description += f" {line.strip()}"
+
+    def get_result(self) -> str:
+        """Returns the final combined description."""
+        return self.description
+
+
 class BaseStatement(ABC):
     """
     A dataclass representation of a bank statement, containing
@@ -149,61 +250,8 @@ class BaseStatement(ABC):
         """
         Combines a transaction description spanning multiple lines into a single string.
         """
-
-        def get_start_pos(line: str) -> int:
-            """Returns the starting position of the first word in a line."""
-            stripped_line = line.strip()
-            return line.find(stripped_line.split(" ")[0]) if stripped_line else -1
-
-        def is_within_margin(pos1: int, pos2: int, margin: int) -> bool:
-            """Checks if two positions are within a specified margin."""
-            return abs(pos1 - pos2) <= margin
-
-        def should_skip_line(next_line: str, description_pos: int) -> bool:
-            """Determines if the next line should be added to the description."""
-            if not next_line.strip():
-                return True  # Blank line
-            if self.pattern.search(next_line):
-                return True  # Transaction line
-            next_line_start_pos = get_start_pos(next_line)
-            if not is_within_margin(description_pos, next_line_start_pos, 3):
-                return True
-            next_line_words = next_line_words_pattern.search(next_line)
-            next_line_numbers = next_line_numbers_pattern.search(next_line)
-            if next_line_words and next_line_numbers:
-                _, words_end_pos = next_line_words.span()
-                numbers_start_pos, _ = next_line_numbers.span()
-                if (
-                    numbers_start_pos > words_end_pos
-                    and numbers_start_pos - words_end_pos > 20
-                ):
-                    return True  # Likely a footer line
-            return False
-
-        if not context.multiline_config:
-            return None
-
-        description = context.description
-        description_pos = context.line.find(description)
-        next_line_words_pattern = re.compile(r"\s[A-Za-z]+")
-        next_line_numbers_pattern = re.compile(SharedPatterns.AMOUNT)
-        margin = context.multiline_config.include_prev_margin
-
-        # Include previous line if within margin
-        if margin and context.idx > 0:
-            prev_line = context.lines[context.idx - 1].strip()
-            if prev_line and not self.pattern.search(prev_line):
-                prev_line_start_pos = get_start_pos(prev_line)
-                if is_within_margin(description_pos, prev_line_start_pos, margin):
-                    description = f"{prev_line} {description}"
-
-        # Include subsequent lines
-        for next_line in context.lines[context.idx + 1 :]:  # noqa: E203
-            if should_skip_line(next_line, description_pos):
-                break
-            description += f" {next_line.strip()}"
-
-        return description
+        extractor = DescriptionExtractor(self.pattern)
+        return extractor.get_multiline_description(context) or ""
 
     @property
     def failed_safety_message(self) -> str:
