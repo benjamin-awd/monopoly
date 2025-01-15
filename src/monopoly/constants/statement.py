@@ -57,7 +57,7 @@ class SharedPatterns(StrEnum):
     OPTIONAL_NEGATIVE_SYMBOL = r"(?:-)?"
     DEBIT_CREDIT_SUFFIX = r"(?P<suffix>CR\b|DR\b|\+|\-)?\s*"
 
-    AMOUNT = rf"(?P<amount>{OPTIONAL_NEGATIVE_SYMBOL}{COMMA_FORMAT}|{ENCLOSED_COMMA_FORMAT}\s*"
+    AMOUNT = rf"(?P<amount>{COMMA_FORMAT}|{ENCLOSED_COMMA_FORMAT}\s*"
     AMOUNT_EXTENDED_WITHOUT_EOL = AMOUNT + DEBIT_CREDIT_SUFFIX
     AMOUNT_EXTENDED = AMOUNT_EXTENDED_WITHOUT_EOL + r"$"
 
@@ -109,7 +109,8 @@ class CreditTransactionPatterns(RegexEnum):
     BANK_OF_AMERICA = (
         rf"(?P<transaction_date>{ISO8601.MM_DD_YY})\s+"
         + SharedPatterns.DESCRIPTION
-        + SharedPatterns.AMOUNT_EXTENDED
+        + r"(?P<suffix>\-)?"
+        + SharedPatterns.AMOUNT
     )
     DBS = (
         rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
