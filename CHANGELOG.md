@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.14.1] - 2025-01-15
+
+### 🚜 Refactor
+
+- Rename suffix -> polarity
+
+### 📚 Documentation
+
+- *(pyproject)* Add python classifiers for 3.12 and 3.13
+
+### ⚙️ Miscellaneous Tasks
+
+- *(ci)* Add stale workflow
+- *(pipeline/transform)* Remove redundant if clause
+- *(banks)* Declare negative symbol explicitly in boa
+
 ## [0.14.0] - 2025-01-14
 
 ### ⛰️ Features
