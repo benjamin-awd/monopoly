@@ -54,7 +54,7 @@ class StatementConfig:
         "01 NOV  BALANCE B/F              190.77" (will be ignored)
         "01 NOV  YA KUN KAYA TOAST  12.00       " (will be kept)
     - `transaction_auto_polarity` controls whether transaction amounts are set as negative.
-    or positive if they have 'CR' or '+' as a suffix. Enabled by default.
+    or positive if they have 'CR' or '+' as a polarity identifier. Enabled by default.
     If enabled, only 'CR' or '+' will make a transaction positive. Disabled by default.
     - `safety_check` controls whether the safety check for banks. Use
     for banks that don't provide total amount (or total debit/credit)

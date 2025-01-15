@@ -37,7 +37,7 @@ class Columns(AutoEnum):
     AMOUNT = auto()
     DATE = auto()
     DESCRIPTION = auto()
-    SUFFIX = auto()
+    POLARITY = auto()
     TRANSACTION_DATE = auto()
 
 
@@ -55,10 +55,10 @@ class SharedPatterns(StrEnum):
     COMMA_FORMAT = r"\d{1,3}(,\d{3})*\.\d*"
     ENCLOSED_COMMA_FORMAT = rf"\({COMMA_FORMAT}\s{{0,1}}\))"
     OPTIONAL_NEGATIVE_SYMBOL = r"(?:-)?"
-    DEBIT_CREDIT_SUFFIX = r"(?P<suffix>CR\b|DR\b|\+|\-)?\s*"
+    POLARITY = r"(?P<polarity>CR\b|DR\b|\+|\-)?\s*"
 
     AMOUNT = rf"(?P<amount>{COMMA_FORMAT}|{ENCLOSED_COMMA_FORMAT}\s*"
-    AMOUNT_EXTENDED_WITHOUT_EOL = AMOUNT + DEBIT_CREDIT_SUFFIX
+    AMOUNT_EXTENDED_WITHOUT_EOL = AMOUNT + POLARITY
     AMOUNT_EXTENDED = AMOUNT_EXTENDED_WITHOUT_EOL + r"$"
 
     BALANCE = rf"(?P<balance>{COMMA_FORMAT})?$"
@@ -109,7 +109,7 @@ class CreditTransactionPatterns(RegexEnum):
     BANK_OF_AMERICA = (
         rf"(?P<transaction_date>{ISO8601.MM_DD_YY})\s+"
         + SharedPatterns.DESCRIPTION
-        + r"(?P<suffix>\-)?"
+        + r"(?P<polarity>\-)?"
         + SharedPatterns.AMOUNT
     )
     DBS = (
@@ -160,7 +160,7 @@ class CreditTransactionPatterns(RegexEnum):
     TRUST = (
         rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
         + r"(?P<description>(?:(?!Total outstanding balance).)*?)"
-        + r"(?P<suffix>\+)?"
+        + r"(?P<polarity>\+)?"
         + SharedPatterns.AMOUNT
         + "$"  # necessary to ignore FCY
     )
@@ -182,7 +182,7 @@ class DebitTransactionPatterns(RegexEnum):
         + SharedPatterns.DESCRIPTION
         # remove *\s
         + SharedPatterns.AMOUNT[:-3]
-        + r"(?P<suffix>\-|\+)\s+"
+        + r"(?P<polarity>\-|\+)\s+"
         + SharedPatterns.BALANCE
     )
     OCBC = (

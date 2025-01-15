@@ -40,13 +40,13 @@ def test_debit_safety_check(debit_statement: DebitStatement):
 
     debit_statement.transactions = [
         Transaction(
-            transaction_date="23/01", description="foo", amount=10.0, suffix="CR"
+            transaction_date="23/01", description="foo", amount=10.0, polarity="CR"
         ),
         Transaction(
-            transaction_date="24/01", description="bar", amount=20.0, suffix="CR"
+            transaction_date="24/01", description="bar", amount=20.0, polarity="CR"
         ),
         Transaction(
-            transaction_date="25/01", description="baz", amount=-2.5, suffix="DR"
+            transaction_date="25/01", description="baz", amount=-2.5, polarity="DR"
         ),
     ]
 
@@ -66,13 +66,13 @@ def test_debit_safety_check_failure(debit_statement: DebitStatement):
     debit_statement.document = document
     debit_statement.transactions = [
         Transaction(
-            transaction_date="23/01", description="foo", amount=10.0, suffix="CR"
+            transaction_date="23/01", description="foo", amount=10.0, polarity="CR"
         ),
         Transaction(
-            transaction_date="24/01", description="bar", amount=20.0, suffix="CR"
+            transaction_date="24/01", description="bar", amount=20.0, polarity="CR"
         ),
         Transaction(
-            transaction_date="25/01", description="baz", amount=-2.5, suffix="DR"
+            transaction_date="25/01", description="baz", amount=-2.5, polarity="DR"
         ),
     ]
 

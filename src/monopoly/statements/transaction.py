@@ -29,13 +29,13 @@ class TransactionGroupDict(Mapping):
         description: str,
         amount: str,
         transaction_date: Optional[str] = None,
-        suffix: Optional[str] = None,
+        polarity: Optional[str] = None,
         **_,
     ):
         self.transaction_date = transaction_date
         self.amount = amount
         self.description = description
-        self.suffix = suffix
+        self.polarity = polarity
 
     def __getitem__(self, x):
         return self.__dict__[x]
@@ -84,20 +84,20 @@ class Transaction:
     description: str
     amount: float
     date: str = Field(alias="transaction_date")
-    suffix: Optional[str] = None
+    polarity: Optional[str] = None
     # avoid storing config logic, since the Transaction object is used to create
     # a single unique hash which should not change
     auto_polarity: bool = Field(default=True, init=True, repr=False)
 
-    def as_raw_dict(self, show_suffix=False):
+    def as_raw_dict(self, show_polarity=False):
         """Returns stringified dictionary version of the transaction"""
         items = {
             Columns.DATE.value: self.date,
             Columns.DESCRIPTION.value: self.description,
             Columns.AMOUNT.value: str(self.amount),
         }
-        if show_suffix:
-            items[Columns.SUFFIX] = self.suffix
+        if show_polarity:
+            items[Columns.POLARITY] = self.polarity
         return items
 
     @field_validator("description", mode="after")
@@ -129,13 +129,13 @@ class Transaction:
             amount: str = self.kwargs[Columns.AMOUNT]
             if isinstance(amount, str):
                 if amount.startswith("(") and amount.endswith(")"):
-                    self.kwargs[Columns.SUFFIX] = "CR"
+                    self.kwargs[Columns.POLARITY] = "CR"
         return self
 
     @model_validator(mode="after")
     def convert_credit_amount_to_negative(self: "Transaction") -> "Transaction":
         """
-        Converts transactions with a suffix of "CR" or "+" to positive
+        Converts transactions with a polarity of "CR" or "+" to positive
         """
         # avoid negative zero
         if self.amount == 0:
@@ -144,7 +144,7 @@ class Transaction:
         if not self.auto_polarity:
             return self
 
-        if self.suffix in ("CR", "+"):
+        if self.polarity in ("CR", "+"):
             self.amount = abs(self.amount)
 
         else:
@@ -152,4 +152,4 @@ class Transaction:
         return self
 
     def __str__(self):
-        return json.dumps(self.as_raw_dict(show_suffix=True))
+        return json.dumps(self.as_raw_dict(show_polarity=True))

@@ -21,17 +21,18 @@ class DebitStatement(BaseStatement):
         self, transaction_match: TransactionMatch
     ) -> TransactionMatch:
         """
-        Pre-processes transactions by adding a debit or credit suffix to the group dict
+        Pre-processes transactions by adding a debit or credit
+        polarity identifier to the group dict
         """
         if self.config.statement_type == EntryType.DEBIT:
-            transaction_match.groupdict.suffix = self.get_debit_suffix(
+            transaction_match.groupdict.polarity = self.get_debit_polarity(
                 transaction_match
             )
         return transaction_match
 
-    def get_debit_suffix(self, transaction_match: TransactionMatch) -> str | None:
+    def get_debit_polarity(self, transaction_match: TransactionMatch) -> str | None:
         """
-        Gets the accounting suffix for debit card statements
+        Gets the accounting polarity for debit card statements
 
         Attempts to identify whether a transaction is a debit
         or credit entry based on the distance from the withdrawal
@@ -52,7 +53,7 @@ class DebitStatement(BaseStatement):
             if withdrawal_diff > deposit_diff:
                 return "CR"
             return "DR"
-        return transaction_match.groupdict.suffix
+        return transaction_match.groupdict.polarity
 
     @lru_cache
     def get_withdrawal_pos(self, page_number: int) -> int | None:

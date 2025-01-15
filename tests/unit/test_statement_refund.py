@@ -18,13 +18,13 @@ def test_statement_process_refund(statement: BaseStatement):
             transaction_date="08 SEP",
             description="AIRBNB * FOO123 456 GB",
             amount=343.01,
-            suffix="CR",
+            polarity="CR",
         ),
         Transaction(
             transaction_date="14 AUG",
             description="AIRBNB * FOO123 456 GB",
             amount=-343.01,
-            suffix=None,
+            polarity=None,
         ),
     ]
     assert statement.transactions == expected_transactions

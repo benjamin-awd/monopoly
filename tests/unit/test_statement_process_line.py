@@ -25,13 +25,13 @@ def test_get_transactions(statement: BaseStatement):
             transaction_date="19/06",
             description="YA KUN KAYA TOAST",
             amount=-3.2,
-            suffix=None,
+            polarity=None,
         ),
         Transaction(
             transaction_date="20/06",
             description="FAIRPRICE FINEST",
             amount=-9.9,
-            suffix=None,
+            polarity=None,
         ),
     ]
     assert transactions == expected
@@ -51,7 +51,7 @@ def test_check_bound(statement: BaseStatement):
             transaction_date="19/06",
             description="YA KUN KAYA TOAST",
             amount=-3.2,
-            suffix=None,
+            polarity=None,
         ),
     ]
     statement.config.transaction_bound = None
@@ -75,7 +75,7 @@ def test_get_multiline_transactions(statement: BaseStatement):
             transaction_date="02 Aug",
             description="SHOPEE CCY FEE 1.25 SINGAPORE SG",
             amount=-3.2,
-            suffix=None,
+            polarity=None,
         )
     ]
     assert transactions == expected
@@ -90,7 +90,7 @@ def test_process_match_multiline_description(statement: BaseStatement):
         "transaction_date": "04 Aug",
         "description": "SHOPEE",
         "amount": "3.20",
-        "suffix": None,
+        "polarity": None,
     }
     match = TransactionMatch(
         match=re.search("foo", "foo"),
@@ -105,7 +105,7 @@ def test_process_match_multiline_description(statement: BaseStatement):
         "transaction_date": "04 Aug",
         "amount": "3.20",
         "description": "SHOPEE",
-        "suffix": None,
+        "polarity": None,
     }
     context = MatchContext(line=line, lines=lines, idx=0, description="SHOPEE")
     match = statement.process_match(match, context)
