@@ -8,7 +8,7 @@ packages = [
     { include = "monopoly", from = "src" },
     { include = "test_utils", from = "tests" },
 ]
-license = "MIT"
+license = "AGPL-3.0"
 readme = "README.md"
 classifiers = [
     "Development Status :: 3 - Alpha",
