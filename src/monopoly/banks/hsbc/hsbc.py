@@ -33,7 +33,7 @@ class Hsbc(BankBase):
     email_statement_identifier = [
         MetadataIdentifier(
             title="PRJ_BEAGLE_ST_CNS_SGH_APP_Orchid",
-            author="Registered to: HSBCGLOB",
+            author="Registered to:",
             creator="OpenText Exstream",
         ),
         TextIdentifier("HSBC"),
