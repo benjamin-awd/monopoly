@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.14.2] - 2025-03-22
+
+### 🛠️ Bug Fixes
+
+- *(banks/hsbc)* Use 'Registered to:' substring match
+
+### 📚 Documentation
+
+- *(pyproject)* Fix incorrect license
+
+### Build
+
+- *(deps)* Bump the deps group with 9 updates
+- *(deps)* Bump the deps group with 10 updates
+
 ## [0.14.1] - 2025-01-15
 
 ### 🚜 Refactor
