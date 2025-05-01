@@ -45,6 +45,11 @@ Then install with pipx:
 pipx install monopoly-core
 ```
 
+For additional OCR support:
+```sh
+pipx install 'monopoly-core[ocr]'
+```
+
 ## Usage
 Monopoly runs in your terminal, allowing you to extract, transform and write bank statements to a CSV file.
 
