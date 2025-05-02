@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.15.0-rc.1] - 2025-05-02
+
+### ⛰️ Features
+
+- Add ocr support
+
+### 📚 Documentation
+
+- *(README)* Add instructions to install OCR extra
+
+### Build
+
+- *(deps)* Bump the deps group with 7 updates
+- *(ci)* Do not cache pdftotext install
+
 ## [0.14.2] - 2025-03-22
 
 ### 🛠️ Bug Fixes
