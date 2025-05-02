@@ -18,6 +18,7 @@ class RunConfig:
     single_process: bool = False
     safety_check: bool = True
     verbose: bool = False
+    use_ocr: bool = False
 
 
 class TqdmSettings(TypedDict):
@@ -107,6 +108,7 @@ def process_statement(
     output_directory: Optional[Path],
     print_df: bool,
     safety_check: bool = True,
+    use_ocr: bool = False,
 ) -> Optional[Result]:
     """
     Extracts, transforms, and loads transactions from bank statements.
@@ -117,6 +119,8 @@ def process_statement(
             Defaults to the parent directory of the input file if not provided.
         print_df: If True, the transformed DataFrame is printed to the console
             in a tabular format. No file is generated in this case.
+        safety_check: If False, validation checks on the extracted data are always skipped.
+        use_ocr: If True, applies OCR to the document to extract text.
 
     Returns:
         Optional[Result]: If print_df is False, returns a Result object containing
@@ -132,6 +136,10 @@ def process_statement(
     try:
         document = PdfDocument(file)
         document.unlock_document()
+
+        if use_ocr:
+            document = PdfParser.apply_ocr(document)
+
         analyzer = BankDetector(document)
         bank = analyzer.detect_bank(banks) or GenericBank
         parser = PdfParser(bank, document)
@@ -204,6 +212,7 @@ def run(input_files: Collection[Path], config: RunConfig):
                         [config.output_dir] * len(input_files),
                         [config.pprint] * len(input_files),
                         [config.safety_check] * len(input_files),
+                        [config.use_ocr] * len(input_files),
                     ),
                     **tqdm_settings,
                 )
@@ -217,6 +226,7 @@ def run(input_files: Collection[Path], config: RunConfig):
                 output_directory=config.output_dir,
                 print_df=config.pprint,
                 safety_check=config.safety_check,
+                use_ocr=config.use_ocr,
             )
             results.append(result)
 
@@ -286,6 +296,12 @@ def get_statement_paths(files: Iterable[Path]) -> set[Path]:
     is_flag=True,
     help=("Increases logging verbosity."),
 )
+@click.option(
+    "--ocr",
+    "use_ocr",
+    is_flag=True,
+    help=("Apply OCR to extract text from scanned documents."),
+)
 @click.pass_context
 @setup_logs
 def monopoly(ctx: click.Context, files: list[Path], **kwargs):
@@ -339,6 +355,10 @@ def show_welcome_message():
         (
             "monopoly . --pprint",
             "prints results instead of saving them",
+        ),
+        (
+            "monopoly . --ocr",
+            "applies OCR to extract text from scanned documents",
         ),
         (
             "monopoly --help",
