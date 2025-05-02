@@ -235,7 +235,7 @@ class PdfParser:
 
         added_ocr = False
         try:
-            logger.debug("Applying OCR")
+            logger.debug(f"Attempting to apply OCR on {document.name}")
             original_metadata = document.metadata
             output_bytes = BytesIO()
             configure_logging(Verbosity.quiet)
@@ -252,9 +252,11 @@ class PdfParser:
             )
             output_bytes.seek(0)
             added_ocr = True
+            if added_ocr:
+                logger.debug(f"OCR applied to {document.name}")
 
-        except (PriorOcrFoundError, TaggedPDFError):
-            pass
+        except (PriorOcrFoundError, TaggedPDFError) as err:
+            logger.debug("OCR skipped: %s", str(err))
 
         # pylint: disable=attribute-defined-outside-init
         if added_ocr:
