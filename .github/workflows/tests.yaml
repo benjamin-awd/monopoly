@@ -13,9 +13,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install pdftotext
-        uses: daaku/gh-action-apt-install@v4
-        with:
-          packages: build-essential libpoppler-cpp-dev pkg-config ocrmypdf
+        run: |
+          sudo apt-get update
+          sudo apt-get install build-essential libpoppler-cpp-dev pkg-config ocrmypdf
 
       - name: Setup Python & Poetry
         uses: ./.github/actions/setup-python-poetry
