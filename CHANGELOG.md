@@ -1,10 +1,15 @@
 # Changelog
 
-## [0.15.0-rc.1] - 2025-05-02
+## [0.15.0] - 2025-05-08
 
 ### ⛰️ Features
 
 - Add ocr support
+
+### Build
+
+- *(ci)* Do not cache pdftotext install
+- *(deps)* Bump the deps group with 7 updates
 
 ### 📚 Documentation
 
@@ -14,6 +19,7 @@
 
 - *(deps)* Bump the deps group with 7 updates
 - *(ci)* Do not cache pdftotext install
+- *(deps)* Bump the deps group with 7 updates
 
 ## [0.14.2] - 2025-03-22
 
@@ -430,14 +436,11 @@
 
 ## [0.10.0] - 2024-07-05
 
-### ⛰️ Features
-- Detect bank based on file text
-
 ### 🛠️ Bug Fixes
 
 - *(ci)* Continue even if unlock step fails
 - *(ci)* Use && operator instead of &
-- if multiple identifiers are given, all should match
+- *(ci)* Add pdftotext deps for publish
 
 ### 🚜 Refactor
 
@@ -447,6 +450,10 @@
 - *(pdf)* Split opening/unlocking logic to PdfDocument class
 - *(banks/identifier)* Add more functions & remove cartesian product
 - Rename MetadataAnalyzer to BankDetector
+
+### 📚 Documentation
+
+- *(CHANGELOG)* Only include latest changes in release
 
 ### 🧪 Testing
 
@@ -467,14 +474,6 @@
 ### Build
 
 - *(deps)* Bump the deps group with 9 updates
-
-## [0.9.6] - 2024-06-23
-
-### 📚 Documentation
-
-- *(CHANGELOG)* Only include latest changes in release
-
-All notable changes to this project will be documented in this file.
 
 ## [0.9.5] - 2024-06-23
 
@@ -513,6 +512,7 @@ All notable changes to this project will be documented in this file.
 
 ### ⛰️ Features
 
+- *(ci)* Add publish workflow
 - *(generic/constants)* Add dd_mm_yy pattern
 - *(generic/constants)* Add support for dd_mm_yy pattern
 - *(banks)* Add Maybank debit and credit support
@@ -520,11 +520,18 @@ All notable changes to this project will be documented in this file.
 
 ### 🛠️ Bug Fixes
 
+- *(ci)* Update step name to setup-python
+- *(ci)* Run poetry tasks one at a time
+- *(cli)* Allow safety_check to be passed to concurrent executor
 - *(generic)* Use better default types for most_common_pattern/tuples
 - *(config/typing)* Add has_withdraw_deposit_column to base statement
 
 ### 🚜 Refactor
 
+- *(ci)* Run git-crypt unlock without temp file
+- *(statement/debit)* Add better handling for suffixes
+- *(metadata)* Use consistent return statement
+- *(generic)* Conform to snake_case naming pattern
 - *(generic/constants)* Add DRY pattern for YYYY
 - *(generic/constants)* Add spaces in delimiter for all dd_mm_ patterns
 - *(statements)* Remove outdated re-parsing of document with pymupdf
@@ -536,38 +543,10 @@ All notable changes to this project will be documented in this file.
 
 ### 📚 Documentation
 
-- Move web demo gif to monopoly-streamlit
-- Use emoji instead of : syntax
-
-### ⚙️ Miscellaneous Tasks
-
-- *(generic/constants)* Change all patterns to raw string
-- *(release)* Change features emoji to ⛰️
-- Use 🛠️ as bug fix emoji
-
-## [0.9.3] - 2024-06-09
-
-### ⛰️ Features
-
-- *(ci)* Add publish workflow
-
-### 🛠️ Bug Fixes
-
-- *(ci)* Update step name to setup-python
-- *(ci)* Run poetry tasks one at a time
-- *(cli)* Allow safety_check to be passed to concurrent executor
-
-### 🚜 Refactor
-
-- *(ci)* Run git-crypt unlock without temp file
-- *(statement/debit)* Add better handling for suffixes
-- *(metadata)* Use consistent return statement
-- *(generic)* Conform to snake_case naming pattern
-
-### 📚 Documentation
-
 - Add POSB to supported banks
 - Add CHANGELOG using git cliff
+- Move web demo gif to monopoly-streamlit
+- Use emoji instead of : syntax
 
 ### 🧪 Testing
 
@@ -580,8 +559,11 @@ All notable changes to this project will be documented in this file.
 - Update ruff syntax
 - *(ci)* Re-add flake8
 - *(cli)* Add kwargs to run function
+- *(generic/constants)* Change all patterns to raw string
+- *(release)* Change features emoji to ⛰️
+- Use 🛠️ as bug fix emoji
 
-## [0.9.1] - 2024-06-09
+## [0.9.2] - 2024-06-06
 
 ### ⛰️ Features
 
@@ -591,7 +573,7 @@ All notable changes to this project will be documented in this file.
 
 - *(deps)* Support python 3.12 and pipx install
 
-## [0.9.0] - 2024-06-09
+## [0.9.1] - 2024-06-05
 
 ### ⛰️ Features
 
@@ -637,7 +619,7 @@ All notable changes to this project will be documented in this file.
 
 - *(deps)* Bump the deps group with 5 updates
 
-## [0.8.2] - 2024-06-09
+## [0.9.0] - 2024-06-02
 
 ### ⛰️ Features
 
@@ -666,7 +648,7 @@ All notable changes to this project will be documented in this file.
 - Re-add flake8
 - Bump to 0.9.0
 
-## [0.8.1] - 2024-06-09
+## [0.8.2] - 2024-05-26
 
 ### 🚜 Refactor
 
@@ -679,7 +661,7 @@ All notable changes to this project will be documented in this file.
 
 - Bump to 0.8.1
 
-## [0.8.0] - 2024-06-09
+## [0.8.1] - 2024-05-26
 
 ### ⛰️ Features
 
@@ -698,7 +680,7 @@ All notable changes to this project will be documented in this file.
 - Add test for generate_name()
 - Add test for cli pprint function
 
-## [0.7.10] - 2024-06-09
+## [0.8.0] - 2024-05-25
 
 ### 🚜 Refactor
 
@@ -709,7 +691,7 @@ All notable changes to this project will be documented in this file.
 - [**breaking**] Rename processors to banks
 - [**breaking**] Decouple banks from statements and parser
 
-## [0.7.9] - 2024-06-09
+## [0.7.10] - 2024-05-22
 
 ### 🚜 Refactor
 
@@ -727,19 +709,19 @@ All notable changes to this project will be documented in this file.
 - *(deps)* Bump the deps group with 7 updates
 - *(deps)* Bump tqdm from 4.66.2 to 4.66.3
 
-## [0.7.8] - 2024-06-09
+## [0.7.9] - 2024-04-21
 
 ### 📚 Documentation
 
 - Add streamlit demo
 
-## [0.7.7] - 2024-06-09
+## [0.7.8] - 2024-04-21
 
 ### 🛠️ Bug Fixes
 
 - Use correct date format for standard chartered
 
-## [0.7.6] - 2024-06-09
+## [0.7.7] - 2024-04-21
 
 ### ⛰️ Features
 
@@ -753,14 +735,14 @@ All notable changes to this project will be documented in this file.
 
 - Bump to 0.7.7
 
-## [0.7.5] - 2024-06-09
+## [0.7.6] - 2024-04-21
 
 ### ⚙️ Miscellaneous Tasks
 
 - Add png logo
 - Add new logo
 
-## [0.7.4] - 2024-06-09
+## [0.7.5] - 2024-04-20
 
 ### ⛰️ Features
 
@@ -771,13 +753,13 @@ All notable changes to this project will be documented in this file.
 
 - Bump to 0.7.5
 
-## [0.7.3] - 2024-06-09
+## [0.7.4] - 2024-04-19
 
 ### ⛰️ Features
 
 - Add passwords as kwarg to detect_processor
 
-## [0.7.2] - 2024-06-09
+## [0.7.3] - 2024-04-19
 
 ### 🛠️ Bug Fixes
 
@@ -787,7 +769,7 @@ All notable changes to this project will be documented in this file.
 
 - *(deps-dev)* Bump idna from 3.6 to 3.7
 
-## [0.7.1] - 2024-06-09
+## [0.7.2] - 2024-04-05
 
 ### 🛠️ Bug Fixes
 
@@ -802,7 +784,7 @@ All notable changes to this project will be documented in this file.
 - *(deps)* Bump the deps group with 7 updates
 - *(deps)* Bump the deps group with 5 updates
 
-## [0.7.0] - 2024-06-09
+## [0.7.1] - 2024-02-11
 
 ### 🛠️ Bug Fixes
 
@@ -813,13 +795,13 @@ All notable changes to this project will be documented in this file.
 - *(deps)* Bump the deps group with 6 updates
 - *(deps-dev)* Bump cryptography from 41.0.6 to 42.0.0
 
-## [0.6.7] - 2024-06-09
+## [0.7.0] - 2024-02-07
 
 ### 🚜 Refactor
 
 - *(statements)* Raise exception if safety check fails
 
-## [0.6.6] - 2024-06-09
+## [0.6.7] - 2024-02-07
 
 ### ⛰️ Features
 
@@ -837,7 +819,7 @@ All notable changes to this project will be documented in this file.
 
 - Note for dbs debit statement
 
-## [0.6.5] - 2024-06-09
+## [0.6.6] - 2024-01-12
 
 ### ⛰️ Features
 
@@ -853,13 +835,13 @@ All notable changes to this project will be documented in this file.
 
 - Bump to 0.6.6
 
-## [0.6.4] - 2024-06-09
+## [0.6.5] - 2024-01-07
 
 ### 🚜 Refactor
 
 - *(statement)* Use re.search to catch hsbc second date
 
-## [0.6.3] - 2024-06-09
+## [0.6.4] - 2024-01-07
 
 ### 🛠️ Bug Fixes
 
@@ -869,14 +851,14 @@ All notable changes to this project will be documented in this file.
 
 - *(deps)* Bump the deps group with 9 updates
 
-## [0.6.2] - 2024-06-09
+## [0.6.3] - 2024-01-03
 
 ### 🛠️ Bug Fixes
 
 - *(dbs)* Statements may sometimes have transactions on the last page
 - *(pdf)* Attempt to proceed without garbage collection on first pass
 
-## [0.6.1] - 2024-06-09
+## [0.6.2] - 2024-01-02
 
 ### ⛰️ Features
 
@@ -896,13 +878,13 @@ All notable changes to this project will be documented in this file.
 
 - Bump to 0.6.2
 
-## [0.6.0] - 2024-06-09
+## [0.6.1] - 2023-12-29
 
 ### 🛠️ Bug Fixes
 
 - *(write)* Use variable instead of string
 
-## [0.5.0] - 2024-06-09
+## [0.6.0] - 2023-12-28
 
 ### 🛠️ Bug Fixes
 
@@ -931,7 +913,7 @@ All notable changes to this project will be documented in this file.
 - Update example statement
 - Bump to 0.6.0
 
-## [0.4.7] - 2024-06-09
+## [0.5.0] - 2023-12-05
 
 ### ⛰️ Features
 
@@ -951,25 +933,25 @@ All notable changes to this project will be documented in this file.
 - Bump dependencies
 - *(deps-dev)* Bump the deps group with 2 updates
 
-## [0.4.6] - 2024-06-09
+## [0.4.7] - 2023-12-02
 
 ### 🚜 Refactor
 
 - *(load)* Hash using raw pdf content instead of filename
 
-## [0.4.5] - 2024-06-09
+## [0.4.6] - 2023-12-01
 
 ### 🚜 Refactor
 
 - *(processor)* Allow file path to be passed as string or Path
 
-## [0.4.4] - 2024-06-09
+## [0.4.5] - 2023-11-30
 
 ### Build
 
 - Switch from using apt to brew for poppler
 
-## [0.4.3] - 2024-06-09
+## [0.4.4] - 2023-11-30
 
 ### 🚜 Refactor
 
@@ -987,7 +969,7 @@ All notable changes to this project will be documented in this file.
 
 - *(deps)* Bump cryptography from 41.0.5 to 41.0.6
 
-## [0.4.2] - 2024-06-09
+## [0.4.3] - 2023-11-27
 
 ### ⛰️ Features
 
@@ -1006,19 +988,19 @@ All notable changes to this project will be documented in this file.
 
 - Bump monopoly to 0.4.3
 
-## [0.4.1] - 2024-06-09
+## [0.4.2] - 2023-11-27
 
 ### ⛰️ Features
 
 - *(processor)* Add unique ids for output files
 
-## [0.4.0] - 2024-06-09
+## [0.4.1] - 2023-11-26
 
 ### ⛰️ Features
 
 - *(cli)* Add concurrency
 
-## [0.3.0] - 2024-06-09
+## [0.4.0] - 2023-11-26
 
 ### ⛰️ Features
 
@@ -1060,7 +1042,7 @@ All notable changes to this project will be documented in this file.
 - *(deps-dev)* Bump pytest from 7.4.1 to 7.4.3 (#56)
 - *(deps)* Bump pydantic-settings from 2.0.3 to 2.1.0 (#57)
 
-## [0.2.0] - 2024-06-09
+## [0.3.0] - 2023-11-23
 
 ### ⛰️ Features
 
@@ -1093,7 +1075,7 @@ All notable changes to this project will be documented in this file.
 
 - Pin python to 3.11.x
 
-## [0.1.2] - 2024-06-09
+## [0.2.0] - 2023-11-05
 
 ### ⛰️ Features
 
@@ -1133,14 +1115,14 @@ All notable changes to this project will be documented in this file.
 
 - Bump pdf2john to 0.1.5
 
-## [0.1.1] - 2024-06-09
+## [0.1.2] - 2023-10-30
 
 ### 📚 Documentation
 
 - *(README)* Add more specific project description
 - *(README)* Use raw image for readme
 
-## [0.1.0] - 2024-06-09
+## [0.1.1] - 2023-10-30
 
 ### ⛰️ Features
 
@@ -1412,3 +1394,13 @@ All notable changes to this project will be documented in this file.
 - *(ci)* Update to setup buildx v3 and remove QEMU support
 - Add dist to gitignore
 - Remove redundant main entrypoint
+
+## [0.1.0] - 2023-09-09
+
+### ⛰️ Features
+
+- Initial commit
+- Gitignore
+- Add dependencies
+
+<!-- generated by git-cliff -->
