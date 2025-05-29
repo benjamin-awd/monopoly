@@ -278,14 +278,29 @@ class BaseStatement(ABC):
                 text = self._get_search_text(lines, i, line)
 
                 if match := pattern.search(text):
+                    date_string = self._construct_date_string(match)
                     statement_date = parse(
-                        date_string=match.group(1),
+                        date_string=date_string,
                         settings=self.config.statement_date_order.settings,
                     )
                     if statement_date:
                         return statement_date
-                    logger.info("Unable to parse statement date %s", match.group(1))
+                    logger.info("Unable to parse statement date %s", date_string)
         raise ValueError("Statement date not found")
+
+    @staticmethod
+    def _construct_date_string(match: re.Match):
+        """
+        Construct date with named groups 'day', 'month', and 'year' if they exist,
+        otherwise use group 1.
+        """
+        if {"day", "month", "year"}.issubset(match.groupdict()):
+            day = match.group("day")
+            month = match.group("month")
+            year = match.group("year")
+
+            return f"{day}-{month}-{year}"
+        return match.group(1)
 
     def _get_search_text(self, lines, i, line):
         """Get text to search, optionally combining multiple lines and removing whitespace."""
@@ -293,7 +308,7 @@ class BaseStatement(ABC):
             return line
 
         if self.config.multiline_config.multiline_statement_date:
-            return " ".join(" ".join(lines[i:i + 2]).split())
+            return " ".join(" ".join(lines[i : i + 3]).split())
 
         return line
 
