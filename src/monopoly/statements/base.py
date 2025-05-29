@@ -265,14 +265,19 @@ class BaseStatement(ABC):
     def statement_date(self) -> datetime:
         pattern = self.config.statement_date_pattern
         allowed_patterns = (re.Pattern, ISO8601)
+
         if not isinstance(pattern, allowed_patterns):
             raise TypeError(
                 f"Pattern must be one of {allowed_patterns}, not {type(pattern)}"
             )
 
         for page in self.pages:
-            for line in page.lines:
-                if match := pattern.search(line):
+            lines = page.lines
+
+            for i, line in enumerate(lines):
+                text = self._get_search_text(lines, i, line)
+
+                if match := pattern.search(text):
                     statement_date = parse(
                         date_string=match.group(1),
                         settings=self.config.statement_date_order.settings,
@@ -281,6 +286,16 @@ class BaseStatement(ABC):
                         return statement_date
                     logger.info("Unable to parse statement date %s", match.group(1))
         raise ValueError("Statement date not found")
+
+    def _get_search_text(self, lines, i, line):
+        """Get text to search, optionally combining multiple lines and removing whitespace."""
+        if not self.config.multiline_config:
+            return line
+
+        if self.config.multiline_config.multiline_statement_date:
+            return " ".join(" ".join(lines[i:i + 2]).split())
+
+        return line
 
     def get_decimal_numbers(self, lines: list[str]) -> set[float]:
         """Returns all decimal numbers in a statement. This is used
