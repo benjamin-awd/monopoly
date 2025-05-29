@@ -20,7 +20,7 @@ class Trust(BankBase):
         # prev_balance_pattern=StatementBalancePatterns.TRUST,
         transaction_pattern=CreditTransactionPatterns.TRUST,
         multiline_config=MultilineConfig(
-            multiline_transactions=True, include_prev_margin=99
+            multiline_transactions=True, include_prev_margin=99, multiline_statement_date=True
         ),
         safety_check=True,
     )

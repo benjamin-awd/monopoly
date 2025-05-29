@@ -23,6 +23,7 @@ class DateOrder:
 @dataclass
 class MultilineConfig:
     multiline_transactions: bool
+    multiline_statement_date: bool = False
     include_prev_margin: Optional[int] = None
 
 
