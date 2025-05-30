@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "monopoly-core"
-version = "0.15.1-rc2"
+version = "0.15.0-rc2"
 description = "Monopoly is a Python library & CLI that converts bank statement PDFs to CSV"
 repository = "https://github.com/benjamin-awd/monopoly"
 authors = ["benjamin-awd <benjamindornel@gmail.com>"]
