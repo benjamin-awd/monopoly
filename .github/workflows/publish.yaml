@@ -8,6 +8,7 @@ on:
     inputs:
       release_to_pypi:
         type: boolean
+        description: Whether to release to pypi
         default: true
 
 jobs:
@@ -21,31 +22,34 @@ jobs:
           fetch-depth: 0
 
       - name: Install pdftotext
-        uses: daaku/gh-action-apt-install@v4
-        with:
-          packages: build-essential libpoppler-cpp-dev pkg-config ocrmypdf
+        run: |
+          sudo apt-get update
+          sudo apt-get install build-essential libpoppler-cpp-dev pkg-config ocrmypdf
 
-      - name: Setup Python & Poetry
-        uses: ./.github/actions/setup-python-poetry
-        with:
-          python-version: "3.11"
-          poetry-version: "1.8.3"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install dependencies
+        run: |
+          uv venv
+          uv sync --all-extras
 
       - name: Build source and wheels
-        run: poetry build
+        run: uv build
 
       - name: Release to PyPI
         if: inputs.release_to_pypi || github.event_name == 'push'
-        env:
-          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.MONOPOLY_PYPI_TOKEN }}
-        run: poetry publish
+        run: uv publish
 
       - name: Get monopoly version
         id: monopoly_version
-        run: echo "monopoly_version=$(poetry version --short)" >> $GITHUB_OUTPUT
+        run: echo "monopoly_version=$(uv version --short)" >> $GITHUB_OUTPUT
 
       - name: Create release changelog
-        run: poetry run git cliff --latest > RELEASE_CHANGELOG.md
+        run: uv run git cliff --latest > RELEASE_CHANGELOG.md
 
       - name: Create a Github Release
         uses: softprops/action-gh-release@v2

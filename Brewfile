@@ -1,6 +1,6 @@
 brew "gcc@11"
 brew "pkg-config"
-brew "poetry"
+brew "uv"
 brew "poppler"
 brew "python@3.11"
 brew "git-crypt"

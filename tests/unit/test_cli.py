@@ -69,7 +69,7 @@ def test_display_report(mock_results, capsys):
 
 
 def test_help_command() -> None:
-    cli_runner = CliRunner(mix_stderr=False)
+    cli_runner = CliRunner()
     help_results = cli_runner.invoke(monopoly, args="--help")
     assert help_results.exit_code == 0
     assert help_results.stdout.startswith("Usage: monopoly")

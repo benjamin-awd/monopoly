@@ -3,7 +3,7 @@ name: tests
 on:
   pull_request:
   push:
-    branches: main
+    branches: [main]
 
 jobs:
   tests:
@@ -17,11 +17,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install build-essential libpoppler-cpp-dev pkg-config ocrmypdf
 
-      - name: Setup Python & Poetry
-        uses: ./.github/actions/setup-python-poetry
-        with:
-          python-version: "3.11"
-          poetry-version: "1.8.3"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install dependencies
+        run: |
+          uv venv
+          uv sync --all-extras
 
       - name: Install git crypt & run tests
         uses: Flydiverny/setup-git-crypt@v4
@@ -31,4 +36,4 @@ jobs:
         run: echo "${{ secrets.GIT_CRYPT_KEY }}" | base64 --decode | git-crypt unlock -
 
       - name: Run tests
-        run: poetry run task test
+        run: uv run task test
