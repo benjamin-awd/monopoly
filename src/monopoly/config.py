@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Optional, Pattern
+from re import Pattern
 
 from monopoly.constants import EntryType
 from monopoly.enums import RegexEnum
@@ -9,8 +9,10 @@ from monopoly.identifiers import MetadataIdentifier
 @dataclass
 class DateOrder:
     """
+    Store for date order argument to date parser.
+
     Supported `dateparser` DATE_ORDER arguments can be found here:
-    https://dateparser.readthedocs.io/en/latest/settings.html#date-order
+    https://dateparser.readthedocs.io/en/latest/settings.html#date-order.
     """
 
     date_order: str
@@ -24,15 +26,17 @@ class DateOrder:
 class MultilineConfig:
     multiline_transactions: bool
     multiline_statement_date: bool = False
-    include_prev_margin: Optional[int] = None
+    include_prev_margin: int | None = None
 
 
 # pylint: disable=too-many-instance-attributes
 @dataclass(kw_only=True)
 class StatementConfig:
-    """
+    r"""
+    Configuration store for statements that are dynamically generated at runtime.
+
     Base configuration class storing configuration values for debit and
-    credit card statements
+    credit card statements.
 
     - `transaction_pattern` refers to the regex pattern used to capture transactions,
     where a pattern like:
@@ -68,16 +72,17 @@ class StatementConfig:
     header_pattern: Pattern[str] | RegexEnum
     transaction_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
     statement_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
-    multiline_config: Optional[MultilineConfig] = None
-    transaction_bound: Optional[int] = None
-    prev_balance_pattern: Optional[Pattern[str] | RegexEnum] = None
+    multiline_config: MultilineConfig | None = None
+    transaction_bound: int | None = None
+    prev_balance_pattern: Pattern[str] | RegexEnum | None = None
     safety_check: bool = True
     transaction_auto_polarity: bool = True
 
 
 @dataclass
 class PdfConfig:
-    """Stores PDF configuration values for the `PdfParser` class
+    """
+    Stores PDF configuration values for the `PdfParser` class.
 
     - `password`: The password used to unlock the PDF (if it is locked)
     - `page_range`: A slice representing which pages to process. For
@@ -89,6 +94,6 @@ class PdfConfig:
     - `ocr_identifiers`: Applies OCR on PDFs with a specific metadata identifier.
     """
 
-    page_range: tuple[Optional[int], Optional[int]] = (None, None)
-    page_bbox: Optional[tuple[float, float, float, float]] = None
-    ocr_identifiers: Optional[list[MetadataIdentifier]] = None
+    page_range: tuple[int | None, int | None] = (None, None)
+    page_bbox: tuple[float, float, float, float] | None = None
+    ocr_identifiers: list[MetadataIdentifier] | None = None

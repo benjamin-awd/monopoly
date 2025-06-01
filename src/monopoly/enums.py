@@ -8,29 +8,27 @@ from strenum import StrEnum
 
 # pylint: disable=unused-argument,no-self-argument
 class AutoEnum(StrEnum):
-    """Generates lower case values for enums
-    e.g. CITIBANK -> citibank
-    """
+    """Generates lower case values for enums e.g. CITIBANK -> citibank."""
 
-    def _generate_next_value_(name: str, *_):  # type: ignore
-        return name.lower()
+    def _generate_next_value_(self: str, *_):  # type: ignore[override]
+        return self.lower()
 
 
 class RegexEnum(Enum):
-    """
-    A subclass of `Enum` that converts member to a compiled
-    regular expression pattern.
-    """
+    """A subclass of `Enum` that converts member to a compiled regular expression pattern."""
 
     def __new__(cls, pattern):
         """
         Create a new `RegexEnum` member.
 
         Args:
+        ----
             pattern (str): A regular expression pattern.
+
         """
         if not isinstance(pattern, str):
-            raise TypeError(f"Pattern must be a string, not {type(pattern)}")
+            msg = f"Pattern must be a string, not {type(pattern)}"
+            raise TypeError(msg)
 
         obj = object.__new__(cls)
         obj._value_ = pattern
@@ -44,25 +42,13 @@ class RegexEnum(Enum):
         return self.value
 
     def match(self, value) -> re.Match:
-        """
-        Wrapper for re.match
-        """
         return self.regex.search(value)
 
     def findall(self, value) -> list[Any]:
-        """
-        Wrapper for re.findall
-        """
         return self.regex.findall(value)
 
     def finditer(self, value) -> list[re.Match]:
-        """
-        Wrapper for re.finditer
-        """
         return self.regex.finditer(value)
 
     def search(self, value) -> re.Match:
-        """
-        Wrapper for re.search
-        """
         return self.regex.search(value)

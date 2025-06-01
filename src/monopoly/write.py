@@ -5,13 +5,10 @@ from monopoly.statements import BaseStatement
 
 
 def generate_hash(statement: BaseStatement) -> str:
-    """
-    Generates a hash based on PDF metadata
-    """
+    """Generate a hash based on PDF metadata."""
     hash_object = sha256()
     hash_object.update(str(statement.transactions).encode("utf-8"))
-    file_hash = hash_object.hexdigest()[0:6]
-    return file_hash
+    return hash_object.hexdigest()[0:6]
 
 
 def generate_name(
@@ -22,8 +19,7 @@ def generate_name(
     statement_date: datetime,
 ) -> str:
     """
-    Generates a new file name, depending on: bank, account type, statement date,
-    and old file name.
+    Generate a new file name, depending on: bank, account type, statement date, and old file name.
 
     e.g. 20230720.pdf -> hsbc-credit-2023-06-b960bf1e.csv
 
@@ -49,4 +45,5 @@ def generate_name(
     if format_type in formats:
         return formats[format_type]
 
-    raise ValueError("Invalid format_type")
+    msg = "Invalid format_type"
+    raise ValueError(msg)

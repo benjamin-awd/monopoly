@@ -29,9 +29,7 @@ def test_credit_safety_check(credit_statement: CreditStatement):
 def test_debit_safety_check(debit_statement: DebitStatement):
     document = Document()
     page = document.new_page()
-    text = (
-        "Page 1\n3\nfoo\n02 May\n-2.5\n27 Apr\n2.67\ntotal credit 30.0 total debit 2.5"
-    )
+    text = "Page 1\n3\nfoo\n02 May\n-2.5\n27 Apr\n2.67\ntotal credit 30.0 total debit 2.5"
     page.lines = text.split("\n")
     page.insert_text(point=(0, 0), text=text)
     debit_statement.pages[0] = page
@@ -39,15 +37,9 @@ def test_debit_safety_check(debit_statement: DebitStatement):
     debit_statement.document = document
 
     debit_statement.transactions = [
-        Transaction(
-            transaction_date="23/01", description="foo", amount=10.0, polarity="CR"
-        ),
-        Transaction(
-            transaction_date="24/01", description="bar", amount=20.0, polarity="CR"
-        ),
-        Transaction(
-            transaction_date="25/01", description="baz", amount=-2.5, polarity="DR"
-        ),
+        Transaction(transaction_date="23/01", description="foo", amount=10.0, polarity="CR"),
+        Transaction(transaction_date="24/01", description="bar", amount=20.0, polarity="CR"),
+        Transaction(transaction_date="25/01", description="baz", amount=-2.5, polarity="DR"),
     ]
 
     # the safety check should return True, since the credit sum matches
@@ -65,15 +57,9 @@ def test_debit_safety_check_failure(debit_statement: DebitStatement):
 
     debit_statement.document = document
     debit_statement.transactions = [
-        Transaction(
-            transaction_date="23/01", description="foo", amount=10.0, polarity="CR"
-        ),
-        Transaction(
-            transaction_date="24/01", description="bar", amount=20.0, polarity="CR"
-        ),
-        Transaction(
-            transaction_date="25/01", description="baz", amount=-2.5, polarity="DR"
-        ),
+        Transaction(transaction_date="23/01", description="foo", amount=10.0, polarity="CR"),
+        Transaction(transaction_date="24/01", description="bar", amount=20.0, polarity="CR"),
+        Transaction(transaction_date="25/01", description="baz", amount=-2.5, polarity="DR"),
     ]
 
     # the safety check should fail, since the debit sum and credit sum

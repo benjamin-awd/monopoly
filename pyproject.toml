@@ -51,8 +51,8 @@ git-cliff = "^2.3.0"
 ocr = ["ocrmypdf"]
 
 [tool.taskipy.tasks]
-format = "isort . && black ."
-lint = "flake8 src && pylint src && ruff check src"
+format = "ruff format ."
+lint = "ruff check ."
 test = "pytest ."
 mypy = "mypy src"
 ci = "poetry run task format && poetry run task lint && poetry run task test"
@@ -103,3 +103,35 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 monopoly = "monopoly.cli:monopoly"
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["ALL"]
+fixable = ["ALL"]
+exclude = ["tests/*"]
+
+ignore = [
+    # modules
+    "ANN",
+
+    # specific rules
+    "COM812",
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D104",
+    "D105",
+    "D106",
+    "D107",
+    "D203",
+    "D212",
+    "ISC001",
+    "PTH123"
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/banks/**.py" = ["RUF012"]

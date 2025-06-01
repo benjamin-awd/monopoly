@@ -1,8 +1,9 @@
 import traceback
+from collections.abc import Collection, Iterable
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Collection, Iterable, Optional, TypedDict
+from typing import TypedDict
 
 import click
 from tabulate import tabulate
@@ -11,20 +12,19 @@ from tqdm import tqdm
 from monopoly.log import setup_logs
 
 
+# ruff: noqa: BLE001
 @dataclass
 class RunConfig:
-    output_dir: Optional[Path] = None
+    output_dir: Path | None = None
     pprint: bool = False
-    single_process: bool = False
     safety_check: bool = True
-    verbose: bool = False
+    single_process: bool = False
     use_ocr: bool = False
+    verbose: bool = False
 
 
 class TqdmSettings(TypedDict):
-    """
-    Stores settings for `tqdm`
-    """
+    """Stores settings for `tqdm`."""
 
     total: int
     desc: str
@@ -36,20 +36,16 @@ class TqdmSettings(TypedDict):
 
 @dataclass
 class Result:
-    """
-    Stores information about processed bank statement
-    """
+    """Stores information about processed bank statement."""
 
     source_file_name: str
-    target_file_name: Optional[str] = None
+    target_file_name: str | None = None
     error_info: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass
 class Report:
-    """
-    A helper class for parsing and displaying processed bank statements.
-    """
+    """A helper class for parsing and displaying processed bank statements."""
 
     results: list[Result]
 
@@ -62,9 +58,7 @@ class Report:
 
     @property
     def errored_results(self) -> list[Result]:
-        return sorted(
-            [r for r in self.results if r.error_info], key=lambda x: x.source_file_name
-        )
+        return sorted([r for r in self.results if r.error_info], key=lambda x: x.source_file_name)
 
     @property
     def number_processed(self) -> int:
@@ -74,18 +68,13 @@ class Report:
     def number_errored(self) -> int:
         return len(self.errored_results)
 
-    def display_report(self, verbose=False) -> None:
-        """
-        Parses all results, displaying the number of successfully
-        processed statements and any errors.
-        """
+    def display_report(self, *_, verbose=False) -> None:
+        """Parse all results, displaying the number of successfully processed statements and any errors."""
         for res in self.processed_results:
             click.echo(f"{res.source_file_name} -> {res.target_file_name}")
 
         if self.number_errored > 0:
-            error_msg = (
-                f"{self.number_errored} statement(s) had errors while processing"
-            )
+            error_msg = f"{self.number_errored} statement(s) had errors while processing"
             click.echo(click.style(error_msg, fg="red", bold=True))
         if self.number_processed > 0:
             changed_msg = f"{self.number_processed} statement(s) processed"
@@ -97,7 +86,7 @@ class Report:
                 error_msg = res.error_info["traceback"]
             click.echo(
                 click.style(
-                    f"{res.source_file_name} -- " f"{error_msg}",  # type: ignore
+                    f"{res.source_file_name} -- {error_msg}",
                     fg="red",
                 )
             )
@@ -105,27 +94,36 @@ class Report:
 
 def process_statement(
     file: Path,
-    output_directory: Optional[Path],
-    print_df: bool,
+    output_directory: Path | None,
+    *_,
+    pprint: bool = False,
     safety_check: bool = True,
     use_ocr: bool = False,
-) -> Optional[Result]:
+) -> Result | None:
     """
-    Extracts, transforms, and loads transactions from bank statements.
+    Extract, transform, and load transactions from bank statements.
 
-    Parameters:
-        file: The path to the bank statement file.
-        output_directory: The directory to save the processed statement.
-            Defaults to the parent directory of the input file if not provided.
-        print_df: If True, the transformed DataFrame is printed to the console
-            in a tabular format. No file is generated in this case.
-        safety_check: If False, validation checks on the extracted data are always skipped.
-        use_ocr: If True, applies OCR to the document to extract text.
+    Parameters
+    ----------
+    file : Path
+        The path to the bank statement file.
+    output_directory : Path | None
+        The directory to save the processed statement.
+        Defaults to the parent directory of the input file if not provided.
+    pprint : bool
+        If True, the transformed DataFrame is printed to the console
+        in a tabular format. No file is generated in this case.
+    safety_check : bool, default=True
+        If False, validation checks on the extracted data are always skipped.
+    use_ocr : bool, default=False
+        If True, applies OCR to the document to extract text.
 
-    Returns:
+    Returns
+    -------
         Optional[Result]: If print_df is False, returns a Result object containing
         information about the processed statement. If an error occurs during processing,
         returns a Result object with error information.
+
     """
     # pylint: disable=import-outside-toplevel, too-many-locals
     from monopoly.banks import BankDetector, banks
@@ -148,7 +146,7 @@ def process_statement(
         statement = pipeline.extract(safety_check=safety_check)
         transactions = pipeline.transform(statement)
 
-        if print_df:
+        if pprint:
             pprint_transactions(transactions, statement, file)
             # don't load to CSV if pprint
             return None
@@ -160,16 +158,16 @@ def process_statement(
         output_file = pipeline.load(transactions, statement, output_directory)
         return Result(file.name, output_file.name)
 
-    except Exception as err:  # pylint: disable=broad-exception-caught
+    except Exception as err:
         error_info = {
-            "message": f"{type(err).__name__}: {str(err)}",
+            "message": f"{type(err).__name__}: {err!s}",
             "traceback": traceback.format_exc(),
         }
         return Result(file.name, error_info=error_info)
 
 
 def pprint_transactions(transactions: list, statement, file: Path) -> None:
-    """Prints transactions in a markdown style tabular format"""
+    """Print transactions in a markdown style tabular format."""
     click.echo(f"{file.name}")
     transactions_as_dict = [transaction.as_raw_dict() for transaction in transactions]
     headers = {col: col for col in statement.columns}
@@ -186,13 +184,12 @@ def pprint_transactions(transactions: list, statement, file: Path) -> None:
 
 def run(input_files: Collection[Path], config: RunConfig):
     """
-    Process a collection of input files concurrently
+    Process a collection of input files concurrently.
 
     If any statements are processed successfully or encounter errors, a Report object
     is created and its display_report() method is called to provide a summary
     of the processing outcomes.
     """
-
     tqdm_settings: TqdmSettings = {
         "total": len(input_files),
         "desc": "Processing statements",
@@ -224,7 +221,7 @@ def run(input_files: Collection[Path], config: RunConfig):
             result = process_statement(
                 file,
                 output_directory=config.output_dir,
-                print_df=config.pprint,
+                pprint=config.pprint,
                 safety_check=config.safety_check,
                 use_ocr=config.use_ocr,
             )
@@ -238,9 +235,7 @@ def run(input_files: Collection[Path], config: RunConfig):
 
 
 def get_statement_paths(files: Iterable[Path]) -> set[Path]:
-    """
-    Recursively collects paths to PDF files from a given collection of paths.
-    """
+    """Recursively collects paths to PDF files from a given collection of paths."""
     matched_files = set()
     for path in files:
         if path.is_file() and str(path).endswith(".pdf"):
@@ -276,19 +271,13 @@ def get_statement_paths(files: Iterable[Path]) -> set[Path]:
     "-s",
     "--single-process",
     is_flag=True,
-    help=(
-        "Runs `monopoly` in single-threaded mode, even when processing "
-        "multiple files. Useful for debugging."
-    ),
+    help=("Runs `monopoly` in single-threaded mode, even when processing multiple files. Useful for debugging."),
 )
 @click.option(
     "--safe/--nosafe",
     "safety_check",
     default=True,
-    help=(
-        "Determines whether to run the safety check or not. "
-        "Runs the safety check by default."
-    ),
+    help=("Determines whether to run the safety check or not. Runs the safety check by default."),
 )
 @click.option(
     "-v",

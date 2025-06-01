@@ -1,8 +1,8 @@
 import logging
 from collections import Counter
+from collections.abc import Iterator
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Iterator
 
 from dateparser import parse
 
@@ -12,12 +12,17 @@ from monopoly.pdf import PdfPage
 
 logger = logging.getLogger(__name__)
 
+MAX_EXPECTED_DATE_SPANS = 2  # Max expected spans (e.g., transaction date + posting date)
+MIN_ADDITIONAL_SPAN_RATIO = 0.5  # Threshold to consider other spans
+
 
 @dataclass
 class DateMatch:
-    """Helper class that holds information about a match, including the span
-    (start pos and end pos), the parsed date, the raw date, the line and
-    page number, as well as the entire line that was matched
+    """
+    Helper class that holds information about a match.
+
+    Includes the span (start pos and end pos), the parsed date, the raw date, the line and
+    page number, as well as the entire line that was matched.
     """
 
     span: tuple[int, int]
@@ -52,24 +57,20 @@ class DatePattern:
 
     @property
     def span_occurrences(self) -> Counter:
-        """Counts the number of occurrences per span"""
-        spans = Counter(self.spans)
-        return spans
+        """Counts the number of occurrences per span."""
+        return Counter(self.spans)
 
     @property
     def matched_lines(self) -> list[str] | None:
-        """Shows lines that are possible transactions"""
-        lines_with_dates = []
-        for match in self.matches:
-            if match.span in self.unique_spans:
-                lines_with_dates.append(match.line)
+        """Shows lines that are possible transactions."""
+        lines_with_dates = [match.line for match in self.matches if match.span in self.unique_spans]
 
         return lines_with_dates or None
 
 
 # pylint: disable=too-many-instance-attributes
 class PatternMatcher:
-    """Holds date regex patterns used by the generic statement handler"""
+    """Holds date regex patterns used by the generic statement handler."""
 
     def __iter__(self) -> Iterator[DatePattern]:
         iso8601 = [e.lower() for e in ISO8601._member_names_]
@@ -95,8 +96,11 @@ class PatternMatcher:
         self.mmm_dd_yyyy = DatePattern(ISO8601.MMM_DD_YYYY)
 
     def get_matches(self):
-        """Iterates over all possible date patterns, and retrieves transactions lines
-        based on the assumption that a transaction line will always start with a date"""
+        """
+        Iterate over all possible date patterns and retrieves transactions lines.
+
+        This is based on the assumption that a transaction line will always start with a date.
+        """
         logger.debug("Iterating over patterns: %s", [p.name for p in self])
         for pattern in self:
             logger.debug("Searching for date matches for pattern %s", pattern.name)
@@ -105,9 +109,7 @@ class PatternMatcher:
                     if matches := self._extract_match(pattern, line, i, j):
                         pattern.add_occurrence(matches)
 
-    def _extract_match(
-        self, pattern: DatePattern, line: str, page_num: int, line_num: int
-    ) -> list[DateMatch]:
+    def _extract_match(self, pattern: DatePattern, line: str, page_num: int, line_num: int) -> list[DateMatch]:
         matches = []
         for date_match in pattern.regex.finditer(line):
             raw_date = date_match.group()
@@ -134,7 +136,8 @@ class PatternMatcher:
 
     def get_transaction_pattern(self) -> DatePattern:
         """
-        Finds the pattern that has the highest occurrence of spans over several lines.
+        Find the pattern that has the highest occurrence of spans over several lines.
+
         For example, a line like '01 Oct  <description>' has a span of (0, 6) - we then
         check for repeats of this span, and sum it over all lines.
 
@@ -162,13 +165,15 @@ class PatternMatcher:
             )
 
         if not most_common_pattern:
-            raise ValueError("Unable to detect most common pattern")
+            msg = "Unable to detect most common pattern"
+            raise ValueError(msg)
 
         return most_common_pattern
 
     def get_transaction_spans(self, pattern: DatePattern) -> set:
         """
-        Given a pattern, returns the most probable spans based on occurrences.
+        Return the most probable transactions spans based on occurrences.
+
         If there are two spans with the same number of occurrences e.g. (0, 6) has 17
         occurrences and (11, 17) has 17 occurrences, we return both
         spans since there is a strong likelihood that one is a transaction date,
@@ -187,23 +192,23 @@ class PatternMatcher:
         if len(most_common_spans) == 1:
             for span, num_occurrences in counter.items():
                 if span not in most_common_spans:
-                    if num_occurrences > max_span_occurrences * 0.5:
-                        most_common_spans.add(span)
-                        logger.debug("Adding additional span: %s", span)
-                        break
+                    break
+
+                if num_occurrences > max_span_occurrences * MIN_ADDITIONAL_SPAN_RATIO:
+                    most_common_spans.add(span)
+                    logger.debug("Adding additional span: %s", span)
+                    break
 
         logger.debug("Most common span(s): %s", most_common_spans)
 
-        if len(most_common_spans) > 2:
-            raise ValueError("More than two date spans found in statement")
+        if len(most_common_spans) > MAX_EXPECTED_DATE_SPANS:
+            msg = "More than two date spans found in statement"
+            raise ValueError(msg)
 
         return most_common_spans
 
     def get_statement_date_pattern(self) -> str:
-        """
-        Creates a regex pattern for the statement date based on the first statement
-        date.
-        """
+        """Create a regex pattern for the statement date based on the first statement date."""
         patterns_with_year = [p for p in self if p.name.endswith("yy")]
         yyyy_matches = {}
         for pattern in patterns_with_year:
@@ -211,21 +216,16 @@ class PatternMatcher:
                 yyyy_matches[pattern.name] = pattern.matches
 
         if not yyyy_matches:
-            raise RuntimeError(
-                "No lines with `yy` or `yyyy` dates "
-                "- unable to create statement date pattern"
-            )
+            msg = "No lines with `yy` or `yyyy` dates - unable to create statement date pattern"
+            raise RuntimeError(msg)
 
         # try yyyy patterns first before yy
-        sorted_patterns: list[str] = sorted(
-            yyyy_matches.keys(), key=lambda p: not p.endswith("yyyy")
-        )
-        unsorted_lines = []
+        sorted_patterns: list[str] = sorted(yyyy_matches.keys(), key=lambda p: not p.endswith("yyyy"))
+        unsorted_lines: list[tuple[str, DateMatch]] = []
 
         for pattern_name in sorted_patterns:
             lines = yyyy_matches[pattern_name]
-            for line in lines:
-                unsorted_lines.append((pattern_name, line))
+            unsorted_lines.extend((pattern_name, line) for line in lines)
 
         sorted_lines: list[tuple[str, DateMatch]] = sorted(
             unsorted_lines, key=lambda x: (x[1].page_number, x[1].line_number)

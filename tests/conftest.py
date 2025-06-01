@@ -71,9 +71,7 @@ def setup_statement_fixture(
     mock_page.raw_text = ["foo\nbar"]
     document = MagicMock(spec=Document)
     document.name = "mock_document.pdf"
-    statement = statement_cls(
-        pages=[mock_page], bank_name="example", config=statement_config, header="foo"
-    )
+    statement = statement_cls(pages=[mock_page], bank_name="example", config=statement_config, header="foo")
     yield statement
 
 

@@ -1,6 +1,7 @@
 import logging
 from re import compile as regex
 
+from monopoly.banks.base import BankBase
 from monopoly.config import MultilineConfig, PdfConfig, StatementConfig
 from monopoly.constants import (
     ISO8601,
@@ -11,8 +12,6 @@ from monopoly.constants import (
 )
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
-from ..base import BankBase
-
 logger = logging.getLogger(__name__)
 
 
@@ -21,9 +20,7 @@ class Hsbc(BankBase):
 
     credit = StatementConfig(
         statement_type=EntryType.CREDIT,
-        statement_date_pattern=regex(
-            rf"From \d{{2}} \w{{3}} \d{{4}} to {ISO8601.DD_MMM_YYYY}"
-        ),
+        statement_date_pattern=regex(rf"From \d{{2}} \w{{3}} \d{{4}} to {ISO8601.DD_MMM_YYYY}"),
         header_pattern=regex(r"(DATE.*DESCRIPTION.*AMOUNT)"),
         prev_balance_pattern=StatementBalancePatterns.HSBC,
         transaction_pattern=CreditTransactionPatterns.HSBC,
@@ -40,9 +37,7 @@ class Hsbc(BankBase):
     ]
 
     web_and_mobile_statement_identifier = [
-        MetadataIdentifier(
-            format="PDF 1.7", producer="OpenText Output Transformation Engine - 20.4"
-        ),
+        MetadataIdentifier(format="PDF 1.7", producer="OpenText Output Transformation Engine - 20.4"),
     ]
 
     pdf_config = PdfConfig(

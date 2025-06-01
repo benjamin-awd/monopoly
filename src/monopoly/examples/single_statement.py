@@ -4,8 +4,8 @@ from monopoly.pipeline import Pipeline
 
 
 def example():
-    """Example showing how monopoly can be used to extract data from
-    a single bank statement
+    """
+    Extract data from example single bank statement.
 
     You can pass in the bank class if you want to specify a specific bank,
     or use the BankDetector class to try to detect the bank automatically.
@@ -28,8 +28,8 @@ def example():
         output_directory="src/monopoly/examples",
     )
 
-    with open(file_path, encoding="utf8") as file:
-        print(file.read()[0:248])
+    with open(file_path, encoding="utf8"):
+        pass
 
 
 if __name__ == "__main__":

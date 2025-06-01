@@ -27,9 +27,7 @@ test_cases = [
     test_cases,
 )
 @pytest.mark.usefixtures("no_banks")
-def test_bank_credit_statements(
-    bank: BankBase, total_amount: float, statement_date: datetime
-):
+def test_bank_credit_statements(bank: BankBase, total_amount: float, statement_date: datetime):
     test_directory = Path(__file__).parent / bank.name / "credit"
 
     document = PdfDocument(test_directory / "input.pdf")
@@ -41,44 +39,24 @@ def test_bank_credit_statements(
     expected_raw_transactions = read_transactions_from_csv(test_directory, "raw.csv")
     raw_transactions_as_dict = get_transactions_as_dict(statement.transactions)
 
-    expected_transaction_total_amount = [
-        transaction.amount for transaction in statement.transactions
-    ]
+    expected_transaction_total_amount = [transaction.amount for transaction in statement.transactions]
 
     # allow descriptions to loosely match
     for i, transaction in enumerate(raw_transactions_as_dict):
         assert transaction[Columns.DATE] == expected_raw_transactions[i][Columns.DATE]
-        assert (
-            transaction[Columns.AMOUNT] == expected_raw_transactions[i][Columns.AMOUNT]
-        )
-        assert (
-            expected_raw_transactions[i][Columns.DESCRIPTION]
-            in transaction[Columns.DESCRIPTION]
-        )
+        assert transaction[Columns.AMOUNT] == expected_raw_transactions[i][Columns.AMOUNT]
+        assert expected_raw_transactions[i][Columns.DESCRIPTION] in transaction[Columns.DESCRIPTION]
 
     assert round(sum(expected_transaction_total_amount), 2) == total_amount
     assert statement.statement_date == statement_date
 
     # check transformed data
-    expected_transformed_transactions = read_transactions_from_csv(
-        test_directory, "transformed.csv"
-    )
+    expected_transformed_transactions = read_transactions_from_csv(test_directory, "transformed.csv")
     transformed_transactions = pipeline.transform(statement)
-    transformed_transactions_as_dict = get_transactions_as_dict(
-        transformed_transactions
-    )
+    transformed_transactions_as_dict = get_transactions_as_dict(transformed_transactions)
 
     # allow descriptions to loosely match
     for i, transaction in enumerate(transformed_transactions_as_dict):
-        assert (
-            transaction[Columns.DATE]
-            == expected_transformed_transactions[i][Columns.DATE]
-        )
-        assert (
-            transaction[Columns.AMOUNT]
-            == expected_transformed_transactions[i][Columns.AMOUNT]
-        )
-        assert (
-            expected_transformed_transactions[i][Columns.DESCRIPTION]
-            in transaction[Columns.DESCRIPTION]
-        )
+        assert transaction[Columns.DATE] == expected_transformed_transactions[i][Columns.DATE]
+        assert transaction[Columns.AMOUNT] == expected_transformed_transactions[i][Columns.AMOUNT]
+        assert expected_transformed_transactions[i][Columns.DESCRIPTION] in transaction[Columns.DESCRIPTION]

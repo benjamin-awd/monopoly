@@ -1,7 +1,7 @@
 import json
 import re
 from collections.abc import Mapping
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import ConfigDict, Field, field_validator, model_validator
 from pydantic.dataclasses import dataclass
@@ -10,10 +10,12 @@ from pydantic_core import ArgsKwargs
 from monopoly.constants import Columns
 
 
+# ruff: noqa: N805
 class TransactionGroupDict(Mapping):
     """
-    Helper class that holds the group dict from a match. This
-    class acts as a convenient wrapper to allow unpacking into the
+    Helper class that holds the group dict from a match.
+
+    This class acts as a convenient wrapper to allow unpacking into the
     `Transaction` class.
 
     A transaction should at minimum always have a description and amount
@@ -28,8 +30,8 @@ class TransactionGroupDict(Mapping):
         self,
         description: str,
         amount: str,
-        transaction_date: Optional[str] = None,
-        polarity: Optional[str] = None,
+        transaction_date: str | None = None,
+        polarity: str | None = None,
         **_,
     ):
         self.transaction_date = transaction_date
@@ -74,23 +76,21 @@ class TransactionMatch:
 @dataclass
 class Transaction:
     """
-    Holds transaction data, validates the data, and
-    performs various coercions like removing whitespaces
-    and commas.
+    Hold transaction data, validates the data, and performs various coercions.
 
-    Reassigns 'transaction_date' to 'date'
+    This includes removing whitespaces and commas, reassigning 'transaction_date' to 'date'
     """
 
     description: str
     amount: float
     date: str = Field(alias="transaction_date")
-    polarity: Optional[str] = None
+    polarity: str | None = None
     # avoid storing config logic, since the Transaction object is used to create
     # a single unique hash which should not change
     auto_polarity: bool = Field(default=True, init=True, repr=False)
 
-    def as_raw_dict(self, show_polarity=False):
-        """Returns stringified dictionary version of the transaction"""
+    def as_raw_dict(self, *_, show_polarity=False):
+        """Return stringified dictionary version of the transaction."""
         items = {
             Columns.DATE.value: self.date,
             Columns.DESCRIPTION.value: self.description,
@@ -107,36 +107,30 @@ class Transaction:
     @field_validator(Columns.AMOUNT, mode="before")
     def prepare_amount_for_float_coercion(cls, amount: str) -> str:
         """
-        Replaces commas, whitespaces, apostrophes and parentheses in string
-        representation of floats
-        e.g.
-            1'234.00 -> 1234.00
-            1,234.00 -> 1234.00
-            (-10.00) -> -10.00
-            (-1.56 ) -> -1.56
+        Replace commas, whitespaces, apostrophes and parentheses for string representation of floats.
+
+        1'234.00 -> 1234.00
+        1,234.00 -> 1234.00
+        (-10.00) -> -10.00
+        (-1.56 ) -> -1.56.
         """
         if isinstance(amount, str):
             return re.sub(r"[,)(\s']", "", amount)
         return amount
 
     # pylint: disable=bad-classmethod-argument
-    @model_validator(mode="before")  # type: ignore
+    @model_validator(mode="before")
     def treat_parenthesis_enclosure_as_credit(self: ArgsKwargs | Any) -> "ArgsKwargs":
-        """
-        Treat amounts enclosed by parentheses (e.g. cashback) as a credit entry
-        """
+        """Treat amounts enclosed by parentheses (e.g. cashback) as a credit entry."""
         if self.kwargs:
             amount: str = self.kwargs[Columns.AMOUNT]
-            if isinstance(amount, str):
-                if amount.startswith("(") and amount.endswith(")"):
-                    self.kwargs[Columns.POLARITY] = "CR"
+            if isinstance(amount, str) and amount.startswith("(") and amount.endswith(")"):
+                self.kwargs[Columns.POLARITY] = "CR"
         return self
 
     @model_validator(mode="after")
     def convert_credit_amount_to_negative(self: "Transaction") -> "Transaction":
-        """
-        Converts transactions with a polarity of "CR" or "+" to positive
-        """
+        """Convert transactions with a polarity of "CR" or "+" to positive."""
         # avoid negative zero
         if self.amount == 0:
             return self

@@ -16,9 +16,7 @@ def test_get_transactions(statement: BaseStatement):
     pattern = Ocbc.credit.transaction_pattern
     statement.config.transaction_pattern = pattern
 
-    statement.pages = [
-        PdfPage("19/06 YA KUN KAYA TOAST 3.20\n20/06 FAIRPRICE FINEST 9.90")
-    ]
+    statement.pages = [PdfPage("19/06 YA KUN KAYA TOAST 3.20\n20/06 FAIRPRICE FINEST 9.90")]
     transactions = statement.get_transactions()
     expected = [
         Transaction(
@@ -42,9 +40,7 @@ def test_check_bound(statement: BaseStatement):
     statement.config.transaction_pattern = pattern
     statement.config.transaction_bound = 30
 
-    statement.pages = [
-        PdfPage("19/06 YA KUN KAYA TOAST 3.20\n20/06 FAIRPRICE FINEST             9.90")
-    ]
+    statement.pages = [PdfPage("19/06 YA KUN KAYA TOAST 3.20\n20/06 FAIRPRICE FINEST             9.90")]
     transactions = statement.get_transactions()
     expected = [
         Transaction(
@@ -62,13 +58,7 @@ def test_get_multiline_transactions(statement: BaseStatement):
     pattern = Hsbc.credit.transaction_pattern
     statement.config.multiline_config = MultilineConfig(True)
     statement.config.transaction_pattern = pattern
-    statement.pages = [
-        PdfPage(
-            "04 Aug 02 Aug SHOPEE 3.20\n"
-            "              CCY FEE 1.25\n"
-            "              SINGAPORE SG"
-        )
-    ]
+    statement.pages = [PdfPage("04 Aug 02 Aug SHOPEE 3.20\n              CCY FEE 1.25\n              SINGAPORE SG")]
     transactions = statement.get_transactions()
     expected = [
         Transaction(

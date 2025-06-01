@@ -8,9 +8,7 @@ from monopoly.statements import CreditStatement, Transaction
 def test_prev_month_balance_found(credit_statement: CreditStatement):
     expected = "LAST MONTH'S BALANCE   84.89"
 
-    pattern = re.compile(
-        r"(?P<description>LAST MONTH'S BALANCE?)\s+(?P<amount>[\d.,]+)"
-    )
+    pattern = re.compile(r"(?P<description>LAST MONTH'S BALANCE?)\s+(?P<amount>[\d.,]+)")
     credit_statement.config.prev_balance_pattern = pattern
     credit_statement.pages[0].lines = ["LAST MONTH'S BALANCE   84.89"]
 
@@ -24,9 +22,7 @@ def test_multiple_prev_month_balance(credit_statement: CreditStatement):
         "LAST MONTH'S BALANCE  123.12",
     ]
 
-    pattern = re.compile(
-        r"(?P<description>LAST MONTH'S BALANCE?)\s+(?P<amount>[\d.,]+)"
-    )
+    pattern = re.compile(r"(?P<description>LAST MONTH'S BALANCE?)\s+(?P<amount>[\d.,]+)")
     credit_statement.config.prev_balance_pattern = pattern
     credit_statement.pages[0].lines = [
         "LAST MONTH'S BALANCE   84.89",

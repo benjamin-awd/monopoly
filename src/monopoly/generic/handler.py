@@ -1,7 +1,7 @@
 import logging
 from functools import cached_property
 from re import compile as regex
-from typing import Type
+from typing import ClassVar
 
 from monopoly.banks import BankBase
 from monopoly.config import MultilineConfig, StatementConfig
@@ -15,8 +15,8 @@ logger = logging.getLogger(__name__)
 
 
 class GenericBank(BankBase):
-    identifiers = []
-    statement_configs = None  # type: ignore
+    identifiers: ClassVar[list] = []
+    statement_configs: ClassVar[list[StatementConfig]] = []
     name = InternalBankNames.GENERIC
     """
     Empty bank class with variables that can be populated by
@@ -25,7 +25,7 @@ class GenericBank(BankBase):
 
 
 class GenericStatementHandler(StatementHandler):
-    def __init__(self, bank: Type[BankBase], pages: list[PdfPage]):
+    def __init__(self, bank: type[BankBase], pages: list[PdfPage]):
         self.analyzer = DatePatternAnalyzer(pages)
         bank.statement_configs = list(filter(None, [self.debit, self.credit]))
         super().__init__(bank, pages)
