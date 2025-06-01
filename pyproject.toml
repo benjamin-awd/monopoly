@@ -1,108 +1,69 @@
-[tool.poetry]
+[project]
+authors = [
+    {name = "benjamin-awd", email = "benjamindornel@gmail.com"},
+]
+license = {text = "AGPL-3.0"}
+requires-python = "<4.0,>=3.10"
+dependencies = [
+    "pydantic-settings>=2.9.1",
+    "pymupdf>=1.26.0",
+    "pdftotext>=3.0.0",
+    "click>=8.2.1",
+    "tqdm>=4.67.1",
+    "tabulate>=0.9.0",
+    "pydantic>=2.11.5",
+    "dateparser>=1.2.1",
+    "strenum>=0.4.15",
+]
 name = "monopoly-core"
 version = "0.15.0-rc2"
 description = "Monopoly is a Python library & CLI that converts bank statement PDFs to CSV"
-repository = "https://github.com/benjamin-awd/monopoly"
-authors = ["benjamin-awd <benjamindornel@gmail.com>"]
-packages = [
-    { include = "monopoly", from = "src" },
-    { include = "test_utils", from = "tests" },
-]
-license = "AGPL-3.0"
 readme = "README.md"
 classifiers = [
     "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13"
+    "Programming Language :: Python :: 3.13",
 ]
 
-[tool.poetry.dependencies]
-python = "^3.10"
-pydantic-settings = "^2.0.3"
-pymupdf = "^1.23.7"
-pdftotext = ">=2.2.2,<4.0.0"
-click = "^8.1.7"
-tqdm = "^4.66.1"
-tabulate = "^0.9.0"
-pydantic = "^2.5.2"
-dateparser = "^1.2.0"
-strenum = "^0.4.15"
-ocrmypdf = { version = "^16.5.0", optional = true }
+[project.urls]
+repository = "https://github.com/benjamin-awd/monopoly"
 
-[tool.poetry.group.dev.dependencies]
-black = ">=23.7,<26.0"
-pylint = ">=2.17.5,<4.0.0"
-isort = ">=5.12,<7.0"
-taskipy = "^1.12.0"
-pytest = ">=7.4.1,<9.0.0"
-pysnooper = "^1.2.0"
-pylint-pydantic = "^0.3.0"
-mypy = "^1.7.1"
-types-tqdm = "^4.66.0.5"
-types-dateparser = "^1.2.0.20240420"
-types-tabulate = "^0.9.0.20240106"
-pytest-xdist = "^3.6.1"
-flake8 = "^7.0.0"
-ruff = ">=0.4.7,<0.12.0"
-git-cliff = "^2.3.0"
-
-[tool.poetry.extras]
-ocr = ["ocrmypdf"]
-
-[tool.taskipy.tasks]
-format = "ruff format ."
-lint = "ruff check ."
-test = "pytest ."
-mypy = "mypy src"
-ci = "poetry run task format && poetry run task lint && poetry run task test"
-
-[tool.pylint]
-good-names = ["i", "j", "k", "ex", "Run", "_", "df"]
-disable = [
-    "missing-module-docstring",
-    "missing-function-docstring",
-    "missing-class-docstring",
-    "logging-fstring-interpolation",
-    "too-few-public-methods",
-    "no-member"
+[project.optional-dependencies]
+ocr = [
+    "ocrmypdf>=16.5.0,<17.0.0",
 ]
-ignore-paths = ["tests"]
-load-plugins = "pylint_pydantic"
-
-[tool.black]
-line-length = 88
-
-[tool.isort]
-profile = "black"
-
-[tool.pytest.ini_options]
-filterwarnings = [
-    "ignore:Deprecated call to `pkg_resources\\.declare_namespace\\('.*'\\):DeprecationWarning",
-    "ignore::DeprecationWarning:google.rpc",
-]
-
-[tool.mypy]
-disable_error_code = [
-    "annotation-unchecked",
-]
-
-[[tool.mypy.overrides]]
-module = [
-    "pymupdf",
-    "ocrmypdf",
-    "ocrmypdf.exceptions",
-    "pdftotext",
-    "pdf2john",
-]
-ignore_missing_imports = true
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
 
-[tool.poetry.scripts]
+[tool.pdm.build]
+includes = ["src/monopoly", "tests/test_utils"]
+
+[project.scripts]
 monopoly = "monopoly.cli:monopoly"
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+    "pylint>=3.3.7",
+    "isort>=6.0.1",
+    "taskipy>=1.14.1",
+    "pytest>=8.3.5",
+    "pysnooper>=1.2.3",
+    "pylint-pydantic>=0.3.5",
+    "mypy>=1.16.0",
+    "types-tqdm>=4.67.0.20250516",
+    "types-dateparser>=1.2.0.20250601",
+    "types-tabulate>=0.9.0.20241207",
+    "pytest-xdist>=3.7.0",
+    "flake8>=7.2.0",
+    "ruff>=0.11.12",
+    "git-cliff>=2.8.0",
+]
+
 
 [tool.ruff]
 line-length = 120
@@ -135,3 +96,25 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "**/banks/**.py" = ["RUF012"]
+
+[tool.taskipy.tasks]
+format = "ruff format ."
+lint = "ruff check ."
+test = "pytest ."
+mypy = "mypy src"
+
+
+[tool.mypy]
+disable_error_code = [
+    "annotation-unchecked",
+]
+
+[[tool.mypy.overrides]]
+module = [
+    "pymupdf",
+    "ocrmypdf",
+    "ocrmypdf.exceptions",
+    "pdftotext",
+    "pdf2john",
+]
+ignore_missing_imports = true

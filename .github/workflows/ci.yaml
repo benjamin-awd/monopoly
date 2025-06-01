@@ -3,7 +3,7 @@ name: ci
 on:
   pull_request:
   push:
-    branches: main
+    branches: [main]
 
 jobs:
   ci:
@@ -17,14 +17,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install build-essential libpoppler-cpp-dev pkg-config ocrmypdf
 
-      - name: Setup Python & Poetry
-        uses: ./.github/actions/setup-python-poetry
-        with:
-          python-version: "3.11"
-          poetry-version: "1.8.3"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        run: uv python install
+
+      - name: Install dependencies
+        run: |
+          uv venv
+          uv sync --all-extras
 
       - name: Run CI
         run: |
-          poetry run task format
-          poetry run task lint
-          poetry run task mypy
+          uv run task format
+          uv run task lint
+          uv run task mypy
