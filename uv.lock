@@ -490,7 +490,7 @@ wheels = [
 
 [[package]]
 name = "monopoly-core"
-version = "0.15.0rc2"
+version = "0.16.0"
 source = { editable = "." }
 dependencies = [
     { name = "click" },

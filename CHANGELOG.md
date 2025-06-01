@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.16.0] - 2025-06-01
+
+### 🚜 Refactor
+
+- *(ci)* Switch to ruff
+- *(build)* Switch to uv
+
+### ⚙️ Miscellaneous Tasks
+
+- *(ci)* Test across all python versions
+- *(ci)* Add regression test
+- *(ci)* Remove unnecessary install of bc and jq
+
 ## [0.15.0] - 2025-05-08
 
 ### ⛰️ Features
