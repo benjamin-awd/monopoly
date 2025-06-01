@@ -1,6 +1,5 @@
 import logging
 import re
-from functools import lru_cache
 
 from monopoly.constants import EntryType
 from monopoly.statements.transaction import TransactionMatch
@@ -11,28 +10,19 @@ logger = logging.getLogger(__name__)
 
 
 class DebitStatement(BaseStatement):
-    """
-    A dataclass representation of a debit statement
-    """
+    """A dataclass representation of a debit statement."""
 
     statement_type = EntryType.DEBIT
 
-    def pre_process_match(
-        self, transaction_match: TransactionMatch
-    ) -> TransactionMatch:
-        """
-        Pre-processes transactions by adding a debit or credit
-        polarity identifier to the group dict
-        """
+    def pre_process_match(self, transaction_match: TransactionMatch) -> TransactionMatch:
+        """Pre-process transactions by adding a debit or credit polarity identifier to the group dict."""
         if self.config.statement_type == EntryType.DEBIT:
-            transaction_match.groupdict.polarity = self.get_debit_polarity(
-                transaction_match
-            )
+            transaction_match.groupdict.polarity = self.get_debit_polarity(transaction_match)
         return transaction_match
 
     def get_debit_polarity(self, transaction_match: TransactionMatch) -> str | None:
         """
-        Gets the accounting polarity for debit card statements
+        Get the accounting polarity for debit card statements.
 
         Attempts to identify whether a transaction is a debit
         or credit entry based on the distance from the withdrawal
@@ -55,40 +45,31 @@ class DebitStatement(BaseStatement):
             return "DR"
         return transaction_match.groupdict.polarity
 
-    @lru_cache
     def get_withdrawal_pos(self, page_number: int) -> int | None:
         common_names = ["withdraw", "debit"]
         for name in common_names:
             if pos := self.get_column_pos(name, page_number=page_number):
                 return pos
-        logger.debug(
-            "%s column not found in header on page %s", common_names, page_number
-        )
+        logger.debug("%s column not found in header on page %s", common_names, page_number)
         return False
 
-    @lru_cache
     def get_deposit_pos(self, page_number: int) -> int | None:
         common_names = ["deposit", "credit"]
         for name in common_names:
             if pos := self.get_column_pos(name, page_number=page_number):
                 return pos
-        logger.debug(
-            "%s column not found in header on page %s", common_names, page_number
-        )
+        logger.debug("%s column not found in header on page %s", common_names, page_number)
         return False
 
-    @lru_cache
     def get_column_pos(self, column_type: str, page_number: int) -> int | None:
         pattern = re.compile(rf"{column_type}[\w()$]*", re.IGNORECASE)
         if match := pattern.search(self.header):
             return self.get_header_pos(match.group(), page_number)
         return None
 
-    @lru_cache
     def get_header_pos(self, column_name: str, page_number: int) -> int:
         """
-        Returns position of the 'WITHDRAWAL' or 'DEPOSIT' header on a bank statement
-        for a particular page.
+        Return position of the 'WITHDRAWAL' or 'DEPOSIT' header for a particular page.
 
         An assumption is made here that numbers are right aligned, meaning
         that if an amount matches with the end of the withdrawal string position,
@@ -111,17 +92,11 @@ class DebitStatement(BaseStatement):
                     continue
                 return header_start_pos + len(column_name)
 
-        logger.debug(
-            f"Debit header {column_name} cannot be found on page {page_number}"
-        )
+        logger.debug("Debit header %s cannot be found on page %s", column_name, page_number)
         return -1
 
-    @lru_cache
-    def perform_safety_check(self) -> bool:
-        """
-        Checks that debit and credit transaction sums
-        exist as a number within the statement
-        """
+    def perform_safety_check(self: BaseStatement) -> bool:
+        """Check that debit and credit transaction sums exist as a number within the statement."""
         transactions = self.transactions
 
         numbers = self.get_all_numbers_from_document()
@@ -130,12 +105,8 @@ class DebitStatement(BaseStatement):
         # either is completely debit or credit transactions
         numbers.update([0])
 
-        debit_amounts = [
-            transaction.amount for transaction in transactions if transaction.amount > 0
-        ]
-        credit_amounts = [
-            transaction.amount for transaction in transactions if transaction.amount < 0
-        ]
+        debit_amounts = [transaction.amount for transaction in transactions if transaction.amount > 0]
+        credit_amounts = [transaction.amount for transaction in transactions if transaction.amount < 0]
 
         debit_sum = round(abs(sum(debit_amounts)), 2)
         credit_sum = round(abs(sum(credit_amounts)), 2)

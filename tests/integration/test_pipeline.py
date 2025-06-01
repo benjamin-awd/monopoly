@@ -19,7 +19,7 @@ def test_pipeline_with_bank():
     document = PdfDocument(file_path)
     parser = PdfParser(ExampleBank, document)
     pipeline = Pipeline(parser)
-    pages = parser.get_pages()
+    pages = parser._get_pages()
     transactions = pipeline.extract(pages).transactions
     assert len(transactions) == 53
     assert transactions[0].description == "LAST MONTH'S BALANCE"
@@ -30,7 +30,7 @@ def test_pipeline_with_bad_bank():
     document = PdfDocument(file_path)
     parser = PdfParser(Dbs, document)
     pipeline = Pipeline(parser)
-    pages = parser.get_pages()
+    pages = parser._get_pages()
 
     with pytest.raises(ValueError, match="No transactions found"):
         pipeline.extract(pages)
@@ -42,7 +42,7 @@ def test_pipeline_initialization_with_file_path():
         document = PdfDocument(file_path)
         parser = PdfParser(ExampleBank, document)
         pipeline = Pipeline(parser)
-        pages = parser.get_pages()
+        pages = parser._get_pages()
         statement = pipeline.extract(pages)
         transactions = pipeline.transform(statement)
         assert len(transactions) == 53
@@ -55,7 +55,7 @@ def test_pipeline_bytes_etl(pdf_file_bytes):
     parser = PdfParser(ExampleBank, document)
     pipeline = Pipeline(parser)
 
-    pages = parser.get_pages()
+    pages = parser._get_pages()
     statement = pipeline.extract(pages)
     transactions = pipeline.transform(statement)
     assert len(transactions) == 53

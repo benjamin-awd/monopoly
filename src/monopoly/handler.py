@@ -1,6 +1,5 @@
 import logging
-from functools import lru_cache
-from typing import Type
+from functools import cached_property
 
 from monopoly.banks import BankBase
 from monopoly.config import StatementConfig
@@ -13,12 +12,12 @@ logger = logging.getLogger(__name__)
 
 class StatementHandler:
     """
-    Retrieves statement information like transactions from the PDF,
-    and identifies the statement as either a debit or credit statement
-    based on the debit and credit config.
+    Retrieve statement information like transactions from the PDF.
+
+    Identifies the statement as either a debit or credit statement based on the debit and credit config.
     """
 
-    def __init__(self, bank: Type[BankBase], pages: list[PdfPage]):
+    def __init__(self, bank: type[BankBase], pages: list[PdfPage]):
         self.bank = bank
         self.pages = pages
 
@@ -31,8 +30,11 @@ class StatementHandler:
                     return match.group().lower()
         return None
 
-    @lru_cache
-    def get_statement(self) -> BaseStatement:
+    @cached_property
+    def statement(self):
+        return self._get_statement()
+
+    def _get_statement(self) -> BaseStatement:
         pages = self.pages
         bank_name = self.bank.name
 
@@ -46,4 +48,5 @@ class StatementHandler:
                         logger.debug("Statement type detected: %s", EntryType.CREDIT)
                         return CreditStatement(pages, bank_name, config, header)
 
-        raise RuntimeError("Could not find header in statement")
+        msg = "Could not find header in statement"
+        raise RuntimeError(msg)

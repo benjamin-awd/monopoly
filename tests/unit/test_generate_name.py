@@ -39,10 +39,7 @@ def test_generate_name():
         statement_type=statement_type,
         statement_date=statement_date,
     )
-    assert (
-        filename
-        == f"bank_name=hsbc/account_type=credit/statement_date=2023-06-15/{expected_filename}"
-    )
+    assert filename == f"bank_name=hsbc/account_type=credit/statement_date=2023-06-15/{expected_filename}"
 
     # Test for invalid format_type
     with pytest.raises(ValueError, match="Invalid format_type"):

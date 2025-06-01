@@ -1,9 +1,9 @@
 import logging
 from dataclasses import dataclass
-from functools import cached_property, lru_cache
+from functools import cached_property
 from io import BytesIO
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional, Type
+from typing import TYPE_CHECKING
 
 import pdftotext
 from pydantic import SecretStr
@@ -17,18 +17,19 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+MIN_OCR_TEXT_LENGTH = 10
+
 
 class MissingOCRError(Exception):
-    """
-    Error that is raised when PDF does not contain any selectable text
-    """
+    """Error that is raised when PDF does not contain any selectable text."""
 
 
 class PdfPasswords(BaseSettings):
     """
-    Pydantic model that automatically populates variables from a .env file,
-    or an environment variable called `PDF_PASSWORDS`.
-    e.g. export PDF_PASSWORDS='["password123", "secretpass"]'
+    Pydantic model that automatically populates variables from a .env file.
+
+    Also populates using environment variable called `PDF_PASSWORDS`.
+    e.g. export PDF_PASSWORDS='["password123", "secretpass"]'.
     """
 
     pdf_passwords: list[SecretStr] = [SecretStr("")]
@@ -37,11 +38,7 @@ class PdfPasswords(BaseSettings):
 
 @dataclass
 class PdfPage:
-    """
-    Dataclass representation of a bank statement PDF page.
-    Contains the raw text of a PDF page, and allows access
-    to the raw text as a list via the `lines` property
-    """
+    """Contains the raw text of a PDF page, and allows access to the raw text."""
 
     raw_text: str
 
@@ -51,15 +48,15 @@ class PdfPage:
 
 
 class WrongPasswordError(Exception):
-    """Exception raised when an incorrect password is provided"""
+    """Exception raised when an incorrect password is provided."""
 
 
 class MissingPasswordError(Exception):
-    """Exception raised when the document is encrypted, but no password is provided"""
+    """Exception raised when the document is encrypted, but no password is provided."""
 
 
 class BadPasswordFormatError(Exception):
-    """Exception raised passwords are not provided in a proper format"""
+    """Exception raised passwords are not provided in a proper format."""
 
 
 class PdfDocument(Document):
@@ -67,21 +64,21 @@ class PdfDocument(Document):
 
     def __init__(
         self,
-        file_path: Optional[Path] = None,
-        file_bytes: Optional[bytes | BytesIO] = None,
-        passwords: Optional[list[SecretStr]] = None,
+        file_path: Path | None = None,
+        file_bytes: bytes | BytesIO | None = None,
+        passwords: list[SecretStr] | None = None,
     ):
         self.file_path = file_path
         self.file_bytes = file_bytes
         self.passwords = passwords or PdfPasswords().pdf_passwords
 
         if not any([self.file_path, self.file_bytes]):
-            raise RuntimeError("Either `file_path` or `file_bytes` must be passed")
+            msg = "Either `file_path` or `file_bytes` must be passed"
+            raise RuntimeError(msg)
 
         if self.file_path and self.file_bytes:
-            raise RuntimeError(
-                "Only one of `file_path` or `file_bytes` should be passed"
-            )
+            msg = "Only one of `file_path` or `file_bytes` should be passed"
+            raise RuntimeError(msg)
 
         args = {"filename": self.file_path, "stream": self.file_bytes}
         super().__init__(**args)
@@ -96,27 +93,32 @@ class PdfDocument(Document):
             return self
 
         if not self.passwords:
-            raise MissingPasswordError("No password found in PDF configuration")
+            msg = "No password found in PDF configuration"
+            raise MissingPasswordError(msg)
 
         if not any(str(password) for password in self.passwords):
-            raise MissingPasswordError("Password in PDF configuration is empty")
+            msg = "Password in PDF configuration is empty"
+            raise MissingPasswordError(msg)
 
         if not isinstance(self.passwords, list):
-            raise BadPasswordFormatError("Passwords should be stored in a list")
+            msg = "Passwords should be stored in a list"
+            raise BadPasswordFormatError(msg)
 
         if not all(isinstance(item, SecretStr) for item in self.passwords):
-            raise BadPasswordFormatError("Passwords should be stored as SecretStr")
+            msg = "Passwords should be stored as SecretStr"
+            raise BadPasswordFormatError(msg)
 
         for password in self.passwords:
             if self.authenticate(password.get_secret_value()):
                 logger.debug("Successfully authenticated with password")
                 return self
 
-        raise WrongPasswordError(f"Could not open document: {self.name}")
+        msg = f"Could not open document: {self.name}"
+        raise WrongPasswordError(msg)
 
     @cached_property
     def raw_text(self) -> str:
-        """Extracts and returns the text from the PDF"""
+        """Extracts and returns the text from the PDF."""
         raw_text = ""
         for page in self:
             raw_text += page.get_text()
@@ -126,11 +128,11 @@ class PdfDocument(Document):
 class PdfParser:
     def __init__(
         self,
-        bank: Type["BankBase"],
+        bank: type["BankBase"],
         document: PdfDocument,
     ):
         """
-        Class responsible for parsing PDFs and returning raw text
+        Class responsible for parsing PDFs and returning raw text.
 
         The page_range variable determines which pages are extracted.
         All pages are extracted by default.
@@ -159,8 +161,11 @@ class PdfParser:
                     return True
         return False
 
-    @lru_cache
-    def get_pages(self) -> list[PdfPage]:
+    @cached_property
+    def pages(self):
+        return self._get_pages()
+
+    def _get_pages(self) -> list[PdfPage]:
         logger.debug("Extracting text from PDF")
         document = self.document
 
@@ -168,13 +173,13 @@ class PdfParser:
         document.select(num_pages[self.page_range])
 
         if cropbox := self.page_bbox:
-            logger.debug(
-                "Will crop pages with crop box %s and remove vertical text", cropbox
-            )
+            logger.debug("Will crop pages with crop box %s and remove vertical text", cropbox)
+
+        pages = []
         for page in document:
             if self.page_bbox:
                 page.set_cropbox(cropbox)
-            page = self._remove_vertical_text(page)
+            pages.append(self._remove_vertical_text(page))
 
         # certain statements requsire garbage collection, so that duplicate objects
         # do not cause pdftotext to fail due to missing xrefs/null values
@@ -188,17 +193,20 @@ class PdfParser:
                 pdf = pdftotext.PDF(pdf_byte_stream, physical=True)
 
                 # assume PDF is missing OCR if text is less than 10 chars on every page
-                if all(len(page) < 10 for page in pdf):
-                    raise MissingOCRError("No selectable text found")
+                if all(len(page) < MIN_OCR_TEXT_LENGTH for page in pdf):
+                    msg = "No selectable text found"
+                    raise MissingOCRError(msg)
 
                 return [PdfPage(page) for page in pdf]
             except pdftotext.Error:
                 continue
-        raise RuntimeError("Unable to retrieve pages")
+        msg = "Unable to retrieve pages"
+        raise RuntimeError(msg)
 
     @staticmethod
     def _remove_vertical_text(page: Page):
-        """Helper function to remove vertical text, based on writing direction (wdir).
+        """
+        Remove vertical text, based on writing direction (wdir).
 
         This helps avoid situations where the PDF is oddly parsed, due to vertical text
         inside the PDF.
@@ -211,6 +219,7 @@ class PdfParser:
         ```
 
         Note:
+        ----
             The 'dir' key represents the tuple (cosine, sine) for the angle.
             If line["dir"] != (1, 0), the text of its spans is rotated.
 
@@ -235,7 +244,7 @@ class PdfParser:
 
         added_ocr = False
         try:
-            logger.debug(f"Attempting to apply OCR on {document.name}")
+            logger.debug("Attempting to apply OCR on %s", document.name)
             original_metadata = document.metadata
             output_bytes = BytesIO()
             configure_logging(Verbosity.quiet)
@@ -253,7 +262,7 @@ class PdfParser:
             output_bytes.seek(0)
             added_ocr = True
             if added_ocr:
-                logger.debug(f"OCR applied to {document.name}")
+                logger.debug("OCR applied to %s", {document.name})
 
         except (PriorOcrFoundError, TaggedPDFError) as err:
             logger.debug("OCR skipped: %s", str(err))

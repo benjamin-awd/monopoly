@@ -1,6 +1,7 @@
 import logging
 from re import compile as regex
 
+from monopoly.banks.base import BankBase
 from monopoly.config import StatementConfig
 from monopoly.constants import (
     ISO8601,
@@ -10,8 +11,6 @@ from monopoly.constants import (
     StatementBalancePatterns,
 )
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
-
-from ..base import BankBase
 
 logger = logging.getLogger(__name__)
 

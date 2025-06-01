@@ -11,9 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class CreditStatement(BaseStatement):
-    """
-    A dataclass representation of a credit statement
-    """
+    """A dataclass representation of a credit statement."""
 
     statement_type = EntryType.CREDIT
 
@@ -30,24 +28,21 @@ class CreditStatement(BaseStatement):
 
     def get_prev_month_balances(self) -> list[re.Match]:
         """
-        Returns the previous month's statement balance as a transaction,
-        if it exists in the statement.
+        Return the previous month's statement balance as a transaction, if it exists in the statement.
 
         The date is later replaced with a more accurate date by the statement handler.
         """
-        prev_balances = []
+        prev_balances: list[re.Match] = []
 
         if pattern := self.config.prev_balance_pattern:
             for page in self.pages:
-                for line in page.lines:
-                    if match := pattern.search(line):
-                        prev_balances.append(match)
+                prev_balances.extend(match for line in page.lines if (match := pattern.search(line)))
 
         return prev_balances
 
     def perform_safety_check(self) -> bool:
-        """Checks that the total sum of all transactions is present
-        somewhere within the document
+        """
+        Check that the total sum of all transactions is present somewhere within the document.
 
         Text is re-extracted from the page, as some bank-specific bounding-box
         configurations (e.g. HSBC) may preclude the total from being extracted
@@ -76,6 +71,5 @@ class CreditStatement(BaseStatement):
         if DebitStatement.perform_safety_check(self):
             return True
 
-        raise SafetyCheckError(
-            f"Total amount {total_amount} cannot be found in credit statement"
-        )
+        msg = f"Total amount {total_amount} cannot be found in credit statement"
+        raise SafetyCheckError(msg)

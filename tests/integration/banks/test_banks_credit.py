@@ -42,19 +42,13 @@ def test_bank_credit_statements(
     # check raw data
     expected_raw_transactions = read_transactions_from_csv(test_directory, "raw.csv")
     raw_transactions_as_dict = get_transactions_as_dict(statement.transactions)
-    expected_transaction_total_amount = [
-        transaction.amount for transaction in statement.transactions
-    ]
+    expected_transaction_total_amount = [transaction.amount for transaction in statement.transactions]
     assert expected_raw_transactions == raw_transactions_as_dict
     assert round(sum(expected_transaction_total_amount), 2) == total_amount
     assert statement.statement_date == statement_date
 
     # check transformed data
-    expected_transformed_transactions = read_transactions_from_csv(
-        test_directory, "transformed.csv"
-    )
+    expected_transformed_transactions = read_transactions_from_csv(test_directory, "transformed.csv")
     transformed_transactions = pipeline.transform(statement)
-    transformed_transactions_as_dict = get_transactions_as_dict(
-        transformed_transactions
-    )
+    transformed_transactions_as_dict = get_transactions_as_dict(transformed_transactions)
     assert expected_transformed_transactions == transformed_transactions_as_dict

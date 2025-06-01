@@ -18,9 +18,7 @@ from monopoly.statements.transaction import Transaction
 
 @pytest.fixture
 def mock_results():
-    result1 = Result(
-        source_file_name="statement1.pdf", target_file_name="processed1.csv"
-    )
+    result1 = Result(source_file_name="statement1.pdf", target_file_name="processed1.csv")
     result2 = Result(
         source_file_name="statement2.pdf",
         error_info={
@@ -87,9 +85,7 @@ def test_monopoly_output(cli_runner: CliRunner):
 
         result_dir = "results"
         os.mkdir(result_dir)
-        result = cli_runner.invoke(
-            monopoly, [".", "--output", f"{tmp_dir}/{result_dir}"]
-        )
+        result = cli_runner.invoke(monopoly, [".", "--output", f"{tmp_dir}/{result_dir}"])
 
         assert result.exit_code == 0
         assert "1 statement(s) processed" in result.output
@@ -131,12 +127,8 @@ def test_pprint_transactions(capsys, statement):
     file = Path("test_file.md")
 
     transactions = [
-        Transaction(
-            transaction_date="2023-01-01", description="Transaction 1", amount=100.00
-        ),
-        Transaction(
-            transaction_date="2023-01-01", description="Transaction 2", amount=123.12
-        ),
+        Transaction(transaction_date="2023-01-01", description="Transaction 1", amount=100.00),
+        Transaction(transaction_date="2023-01-01", description="Transaction 2", amount=123.12),
     ]
 
     pprint_transactions(transactions, statement, file)

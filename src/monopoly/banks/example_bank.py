@@ -8,7 +8,7 @@ from .base import BankBase
 
 
 class ExampleBank(BankBase):
-    """Dummy class to help with reading the example PDF statement"""
+    """Dummy class to help with reading the example PDF statement."""
 
     name = InternalBankNames.EXAMPLE
 
@@ -17,13 +17,10 @@ class ExampleBank(BankBase):
         statement_date_pattern=regex(r"(\d{2}\-\d{2}\-\d{4})"),
         header_pattern=regex(r"(DATE.*DESCRIPTION.*AMOUNT)"),
         prev_balance_pattern=regex(
-            r"(?P<description>LAST MONTH'S BALANCE?)\s+"
-            + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+            r"(?P<description>LAST MONTH'S BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
         ),
         transaction_pattern=regex(
-            r"(?P<transaction_date>\d+/\d+)\s*"
-            + SharedPatterns.DESCRIPTION
-            + SharedPatterns.AMOUNT_EXTENDED
+            r"(?P<transaction_date>\d+/\d+)\s*" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
         ),
     )
 

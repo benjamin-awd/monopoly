@@ -1,4 +1,4 @@
-"""This file stores date-related regex patterns and constants"""
+"""Store date-related regex patterns and constants."""
 
 import logging
 
@@ -9,10 +9,9 @@ from monopoly.enums import RegexEnum
 logger = logging.getLogger(__name__)
 
 
-# flake8: noqa
 # pylint: disable=line-too-long
 class DateFormats(StrEnum):
-    """Holds a case-insensitive list of common ISO 8601 date formats"""
+    """Case-insensitive list of common ISO 8601 date formats."""
 
     D = r"(1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31)"
     DD = r"(01|02|03|04|05|06|07|08|09|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31)"
@@ -27,21 +26,13 @@ class DateFormats(StrEnum):
 class ISO8601(RegexEnum):
     DD_MM = rf"\b({DateFormats.DD}[\/\-\s]{DateFormats.MM})"
     DD_MM_YY = rf"\b({DateFormats.DD}[\/\-\s]{DateFormats.MM}[\/\-\s]{DateFormats.YY})"
-    DD_MM_YYYY = (
-        rf"\b({DateFormats.DD}[\/\-\s.]{DateFormats.MM}[\/\-\s.]{DateFormats.YYYY})"
-    )
+    DD_MM_YYYY = rf"\b({DateFormats.DD}[\/\-\s.]{DateFormats.MM}[\/\-\s.]{DateFormats.YYYY})"
     DD_MMM = rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM})"
     DD_MMM_RELAXED = DD_MMM.replace(r"[-\s]", r"(?:[-\s]|)")
     DD_MMM_YY = rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM}[-\s]{DateFormats.YY})"
-    DD_MMM_YYYY = (
-        rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM}[,\s]{{1,2}}{DateFormats.YYYY})"
-    )
+    DD_MMM_YYYY = rf"\b({DateFormats.DD}[-\s]{DateFormats.MMM}[,\s]{{1,2}}{DateFormats.YYYY})"
     MM_DD = rf"\b({DateFormats.MM}[\/\-\s]{DateFormats.DD})"
     MM_DD_YY = rf"\b({DateFormats.MM}[\/\-\s]{DateFormats.DD}[\/\-\s]{DateFormats.YY})"
-    MMMM_DD_YYYY = (
-        rf"\b({DateFormats.MMMM}\s{DateFormats.DD}[,\s]{{1,2}}{DateFormats.YYYY})"
-    )
+    MMMM_DD_YYYY = rf"\b({DateFormats.MMMM}\s{DateFormats.DD}[,\s]{{1,2}}{DateFormats.YYYY})"
     MMM_DD = rf"\b({DateFormats.MMM}[-\s]{DateFormats.DD})"
-    MMM_DD_YYYY = (
-        rf"\b({DateFormats.MMM}[-\s]{DateFormats.DD}[,\s]{{1,2}}{DateFormats.YYYY})"
-    )
+    MMM_DD_YYYY = rf"\b({DateFormats.MMM}[-\s]{DateFormats.DD}[,\s]{{1,2}}{DateFormats.YYYY})"

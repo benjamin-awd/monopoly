@@ -18,10 +18,7 @@ def skip_if_encrypted(func=None):
                     raise ValueError("missing git-crypt unlock")
         except UnicodeDecodeError as err:
             logger.warning(err)
-            pytest.skip(
-                "Test requires decrypted files. "
-                "Please run 'git-crypt unlock <KEYFILE>'"
-            )
+            pytest.skip("Test requires decrypted files. Please run 'git-crypt unlock <KEYFILE>'")
         return func(*args, **kwargs)
 
     return wrapper if func else skip_if_encrypted

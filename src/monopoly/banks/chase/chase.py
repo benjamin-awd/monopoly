@@ -1,11 +1,10 @@
 import logging
 from re import compile as regex
 
+from monopoly.banks.base import BankBase
 from monopoly.config import DateOrder, MultilineConfig, StatementConfig
 from monopoly.constants import BankNames, CreditTransactionPatterns, EntryType
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
-
-from ..base import BankBase
 
 logger = logging.getLogger(__name__)
 

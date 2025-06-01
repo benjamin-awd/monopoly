@@ -2,7 +2,6 @@ import csv
 import logging
 import re
 from pathlib import Path
-from typing import Optional, Type
 
 from dateparser import parse
 from pydantic import SecretStr
@@ -18,40 +17,46 @@ from monopoly.write import generate_name
 
 logger = logging.getLogger(__name__)
 
+START_OF_YEAR_MONTHS = (1, 2)
+YEAR_CUTOFF_MONTH = 2
+
 
 class Pipeline:
-    """Handles extract, transform and load (ETL) logic for bank statements"""
+    """Handles extract, transform and load (ETL) logic for bank statements."""
 
     def __init__(
         self,
         parser: PdfParser,
-        passwords: Optional[list[SecretStr]] = None,
+        passwords: list[SecretStr] | None = None,
     ):
         self.passwords = passwords
-        pages = parser.get_pages()
-        self.handler = self.create_handler(parser.bank, pages)
+        self.handler = self.create_handler(parser.bank, parser.pages)
 
     @staticmethod
-    def create_handler(bank: Type[BankBase], pages: list[PdfPage]) -> StatementHandler:
+    def create_handler(bank: type[BankBase], pages: list[PdfPage]) -> StatementHandler:
         if issubclass(bank, GenericBank):
             logger.debug("Using generic statement handler")
             return GenericStatementHandler(bank, pages)
         logger.debug("Using statement handler with bank: %s", bank.__name__)
         return StatementHandler(bank, pages)
 
-    def extract(self, safety_check=True) -> BaseStatement:
-        """Extracts transactions from the statement, and performs
-        a safety check to make sure that total transactions add up"""
-        statement = self.handler.get_statement()
-        transactions = statement.get_transactions()
+    def extract(self, *_, safety_check=True) -> BaseStatement:
+        """
+        Extract transactions from the statement.
 
-        if not transactions:
-            raise ValueError("No transactions found - statement extraction failed")
+        Perform a safety check to make sure that total transactions add up.
+        """
+        statement = self.handler.statement
 
-        logger.debug("%s transactions found", len(transactions))
+        if not statement.transactions:
+            msg = "No transactions found - statement extraction failed"
+            raise ValueError(msg)
+
+        logger.debug("%s transactions found", len(statement.transactions))
 
         if not statement.statement_date:
-            raise ValueError("No statement date found")
+            msg = "No statement date found"
+            raise ValueError(msg)
 
         if safety_check and statement.config.safety_check:
             statement.perform_safety_check()
@@ -67,7 +72,7 @@ class Pipeline:
 
         def convert_date(transaction: Transaction, transaction_date_order: DateOrder):
             """
-            Converts each date to a ISO 8601 (YYYY-MM-DD) format.
+            Convert each date to a ISO 8601 (YYYY-MM-DD) format.
 
             Implements cross-year logic by attributing transactions from
             October, November, and December to the previous year if
@@ -81,18 +86,13 @@ class Pipeline:
             if not has_year:
                 transaction.date = f"{transaction.date} {statement_date.year}"
 
-            parsed_date = parse(
-                transaction.date, settings=transaction_date_order.settings
-            )
+            parsed_date = parse(transaction.date, settings=transaction_date_order.settings)
 
             if not parsed_date:
-                raise RuntimeError("Could not convert date")
+                msg = "Could not convert date"
+                raise RuntimeError(msg)
 
-            if (
-                statement_date.month in (1, 2)
-                and parsed_date.month > 2
-                and not has_year
-            ):
+            if statement_date.month in START_OF_YEAR_MONTHS and parsed_date.month > YEAR_CUTOFF_MONTH and not has_year:
                 parsed_date = parsed_date.replace(year=parsed_date.year - 1)
 
             return parsed_date.isoformat()[:10]
@@ -131,13 +131,11 @@ class Pipeline:
 
             for transaction in transactions:
                 writer.writerow(
-                    (
-                        [
-                            transaction.date,
-                            transaction.description,
-                            transaction.amount,
-                        ]
-                    )
+                    [
+                        transaction.date,
+                        transaction.description,
+                        transaction.amount,
+                    ]
                 )
 
         return output_path

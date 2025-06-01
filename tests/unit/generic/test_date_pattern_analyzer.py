@@ -223,17 +223,13 @@ def test_get_items_with_same_page_line(date_pattern_analyzer: DatePatternAnalyze
     assert date_pattern_analyzer.get_items_with_same_page_and_line() == expected
 
 
-def test_identify_transaction_date(
-    date_pattern_analyzer: DatePatternAnalyzer, matches_with_transaction_posting_dates
-):
+def test_identify_transaction_date(date_pattern_analyzer: DatePatternAnalyzer, matches_with_transaction_posting_dates):
     date_pattern_analyzer.matches = matches_with_transaction_posting_dates
     result = date_pattern_analyzer.is_transaction_date_first()
     assert result
 
 
-def test_identify_posting_date(
-    date_pattern_analyzer: DatePatternAnalyzer, matches_with_posting_transaction_dates
-):
+def test_identify_posting_date(date_pattern_analyzer: DatePatternAnalyzer, matches_with_posting_transaction_dates):
     """Check that in cases where date_1 > date_2, the first date is identified
     as the posting date"""
     date_pattern_analyzer.matches = matches_with_posting_transaction_dates
@@ -249,9 +245,7 @@ def test_create_transaction_pattern_with_transaction_first(
         f"(?P<transaction_date>\\b({DateFormats.DD}"
         f"[-\\s]{DateFormats.MMM}))\\s+"
         f"(?P<posting_date>\\b({DateFormats.DD}"
-        f"[-\\s]{DateFormats.MMM}))\\s+"
-        + SharedPatterns.DESCRIPTION
-        + SharedPatterns.AMOUNT_EXTENDED
+        f"[-\\s]{DateFormats.MMM}))\\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
     )
 
     date_pattern_analyzer.spans = {(10, 16): 2, (27, 33): 2}
@@ -272,9 +266,7 @@ def test_create_transaction_pattern_with_posting_first(
         f"(?P<posting_date>\\b({DateFormats.DD}"
         f"[-\\s]{DateFormats.MMM}))\\s+"
         f"(?P<transaction_date>\\b({DateFormats.DD}"
-        f"[-\\s]{DateFormats.MMM}))\\s+"
-        + SharedPatterns.DESCRIPTION
-        + SharedPatterns.AMOUNT_EXTENDED
+        f"[-\\s]{DateFormats.MMM}))\\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
     )
     result = date_pattern_analyzer.create_transaction_pattern()
     assert result == re.compile(expected, re.IGNORECASE)
@@ -311,9 +303,7 @@ def test_get_statement_type_mixed_debit(date_pattern_analyzer: DatePatternAnalyz
     assert date_pattern_analyzer.get_statement_type() == EntryType.DEBIT
 
 
-def test_get_debit_statement_header_line(
-    lines_before_first_transaction, date_pattern_analyzer: DatePatternAnalyzer
-):
+def test_get_debit_statement_header_line(lines_before_first_transaction, date_pattern_analyzer: DatePatternAnalyzer):
     class MockPdfPage:
         def __init__(self, lines):
             self.lines = lines
@@ -322,13 +312,10 @@ def test_get_debit_statement_header_line(
     date_pattern_analyzer.pages = pages
     date_pattern_analyzer.matches = [MockDateMatch(line_number=22, page_number=0)]
     expected_header = (
-        "\\ DATE\\s+DETAILS\\ OF\\ TRANSACTIONS\\s+WITHDRAWAL\\(\\$\\)"
-        + "\\s+DEPOSIT\\(\\$\\)\\s+BALANCE\\(\\$\\)"
+        "\\ DATE\\s+DETAILS\\ OF\\ TRANSACTIONS\\s+WITHDRAWAL\\(\\$\\)" + "\\s+DEPOSIT\\(\\$\\)\\s+BALANCE\\(\\$\\)"
     )
 
-    result = date_pattern_analyzer.get_debit_statement_header_line(
-        lines_before_first_transaction
-    )
+    result = date_pattern_analyzer.get_debit_statement_header_line(lines_before_first_transaction)
     assert result == expected_header
 
 
@@ -361,12 +348,8 @@ def test_check_if_not_multiline(date_pattern_analyzer: DatePatternAnalyzer):
     assert not date_pattern_analyzer.check_if_multiline()
 
 
-def test_create_previous_balance_regex(
-    lines_before_first_transaction, date_pattern_analyzer: DatePatternAnalyzer
-):
-    date_pattern_analyzer.lines_before_first_transaction = (
-        lines_before_first_transaction
-    )
+def test_create_previous_balance_regex(lines_before_first_transaction, date_pattern_analyzer: DatePatternAnalyzer):
+    date_pattern_analyzer.lines_before_first_transaction = lines_before_first_transaction
     expected = rf"(?P<description>Balance Brought Forward)\s+{SharedPatterns.AMOUNT}"
     result = date_pattern_analyzer.create_previous_balance_regex()
     expected == result

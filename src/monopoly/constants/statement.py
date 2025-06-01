@@ -1,4 +1,4 @@
-"""This file stores statement-related enums and constants"""
+"""Store statement-related enums and constants."""
 
 from enum import auto
 
@@ -43,8 +43,10 @@ class Columns(AutoEnum):
 
 class SharedPatterns(StrEnum):
     """
+    Attempt to keep patterns DRY.
+
     AMOUNT matches the following patterns:
-    1,123.12 | 123.12 | (123.12) | ( 123.12) | 123.12 CR | -1,123.12
+    1,123.12 | 123.12 | (123.12) | ( 123.12) | 123.12 CR | -1,123.12.
 
     AMOUNT_EXTENDED is generally used for credit statements and to
     find statement balances, while AMOUNT_EXTENDED_WITHOUT_EOL is used
@@ -64,45 +66,21 @@ class SharedPatterns(StrEnum):
     BALANCE = rf"(?P<balance>{COMMA_FORMAT})?$"
     DESCRIPTION = r"(?P<description>.*?)\s+"
     TRANSACTION_DATE_ABBREVIATED_ALL_CAPS = r"(?P<transaction_date>\d{2}\s[A-Z]{3})\s+"
-    TRANSACTION_DATE_ABBREVIATED_PROPER_CASE = (
-        r"(?P<transaction_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
-    )
+    TRANSACTION_DATE_ABBREVIATED_PROPER_CASE = r"(?P<transaction_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
     POSTING_DATE_ABBREVIATED_PROPER = r"(?P<posting_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
 
 
 class StatementBalancePatterns(RegexEnum):
-    DBS = (
-        r"(?P<description>PREVIOUS BALANCE?)\s+"
-        + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
-    )
-    CITIBANK = (
-        r"(?P<description>BALANCE PREVIOUS STATEMENT?)\s+"
-        + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
-    )
-    HSBC = (
-        r"(?P<description>Previous Statement Balance?)\s+"
-        + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
-    )
-    MAYBANK = (
-        r"(?P<description>YOUR PREVIOUS STATEMENT BALANCE?)\s+"
-        + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
-    )
-    OCBC = (
-        r"(?P<description>LAST MONTH'S BALANCE?)\s+"
-        + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
-    )
+    DBS = r"(?P<description>PREVIOUS BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+    CITIBANK = r"(?P<description>BALANCE PREVIOUS STATEMENT?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+    HSBC = r"(?P<description>Previous Statement Balance?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+    MAYBANK = r"(?P<description>YOUR PREVIOUS STATEMENT BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+    OCBC = r"(?P<description>LAST MONTH'S BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
     STANDARD_CHARTERED = (
-        r"(?P<description>BALANCE FROM PREVIOUS STATEMENT?)\s+"
-        + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+        r"(?P<description>BALANCE FROM PREVIOUS STATEMENT?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
     )
-    UOB = (
-        r"(?P<description>PREVIOUS BALANCE?)\s+"
-        + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
-    )
-    TRUST = (
-        r"(?P<description>Previous balance?)\s+"
-        + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
-    )
+    UOB = r"(?P<description>PREVIOUS BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+    TRUST = r"(?P<description>Previous balance?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
 
 
 class CreditTransactionPatterns(RegexEnum):
@@ -112,20 +90,10 @@ class CreditTransactionPatterns(RegexEnum):
         + r"(?P<polarity>\-)?"
         + SharedPatterns.AMOUNT
     )
-    DBS = (
-        rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
-        + SharedPatterns.DESCRIPTION
-        + SharedPatterns.AMOUNT_EXTENDED
-    )
-    CHASE = (
-        rf"(?P<transaction_date>{ISO8601.MM_DD})\s+"
-        + SharedPatterns.DESCRIPTION
-        + SharedPatterns.AMOUNT_EXTENDED
-    )
+    DBS = rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
+    CHASE = rf"(?P<transaction_date>{ISO8601.MM_DD})\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
     CITIBANK = (
-        rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
-        + SharedPatterns.DESCRIPTION
-        + SharedPatterns.AMOUNT_EXTENDED
+        rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
     )
     HSBC = (
         rf"(?P<posting_date>{ISO8601.DD_MMM_RELAXED})\s+"
@@ -135,15 +103,9 @@ class CreditTransactionPatterns(RegexEnum):
     )
     MAYBANK = (
         rf"(?P<posting_date>{ISO8601.DD_MM})\s+"
-        rf"(?P<transaction_date>{ISO8601.DD_MM})\s+"
-        + SharedPatterns.DESCRIPTION
-        + SharedPatterns.AMOUNT_EXTENDED
+        rf"(?P<transaction_date>{ISO8601.DD_MM})\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
     )
-    OCBC = (
-        r"(?P<transaction_date>\d+/\d+)\s+"
-        + SharedPatterns.DESCRIPTION
-        + SharedPatterns.AMOUNT_EXTENDED
-    )
+    OCBC = r"(?P<transaction_date>\d+/\d+)\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
     STANDARD_CHARTERED = (
         rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
         rf"(?P<posting_date>{ISO8601.DD_MMM})\s+"
@@ -153,16 +115,14 @@ class CreditTransactionPatterns(RegexEnum):
     )
     UOB = (
         rf"(?P<posting_date>{ISO8601.DD_MMM})\s+"
-        rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
-        + SharedPatterns.DESCRIPTION
-        + SharedPatterns.AMOUNT_EXTENDED
+        rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
     )
     TRUST = (
         rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
-        + r"(?P<description>(?:(?!Total outstanding balance).)*?)"
-        + r"(?P<polarity>\+)?"
-        + SharedPatterns.AMOUNT
-        + "$"  # necessary to ignore FCY
+        r"(?P<description>(?:(?!Total outstanding balance).)*?)"
+        r"(?P<polarity>\+)?"
+        f"{SharedPatterns.AMOUNT}"
+        r"$"  # necessary to ignore FCY
     )
 
 

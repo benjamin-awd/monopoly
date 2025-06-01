@@ -1,5 +1,5 @@
 import logging
-from typing import Any
+from typing import Any, ClassVar
 
 from monopoly.config import PdfConfig, StatementConfig
 
@@ -8,36 +8,30 @@ logger = logging.getLogger(__name__)
 
 class BankBase:
     """
-    Abstract class to handle initialization of common variables
-    that are shared between bank processor classes.
+    Handle initialization of common variables that are shared between bank processor classes.
 
     Ensures consistency between bank classes.
     """
 
-    name: str
-    statement_configs: list[StatementConfig]
+    name: ClassVar[str]
+    statement_configs: ClassVar[list[StatementConfig]]
     pdf_config: PdfConfig = PdfConfig()
-    identifiers: list[list[Any]]
+    identifiers: ClassVar[list[list[Any]]]
 
     def __init_subclass__(cls, **kwargs) -> None:
         if not hasattr(cls, "statement_configs"):
-            raise NotImplementedError(
-                f"{cls.__class__.__name__} "
-                "must implement `statement_configs` class variable"
-            )
+            msg = f"{cls.__class__.__name__} must implement `statement_configs` class variable"
+            raise NotImplementedError(msg)
         if not hasattr(cls, "identifiers"):
-            raise NotImplementedError(
-                f"{cls.__class__.__name__} "
-                "must implement `identifiers` class variable"
-            )
+            msg = f"{cls.__class__.__name__} must implement `identifiers` class variable"
+            raise NotImplementedError(msg)
         if not hasattr(cls, "name"):
-            raise NotImplementedError(
-                f"{cls.__class__.__name__} " "must implement `name` class variable"
-            )
+            msg = f"{cls.__class__.__name__} must implement `name` class variable"
+            raise NotImplementedError(msg)
 
         # validation logic only applies to regular banks
-        if cls.identifiers:
-            if not any(isinstance(item, list) for item in cls.identifiers):
-                raise TypeError("`identifiers` must be a list of lists")
+        if cls.identifiers and not any(isinstance(item, list) for item in cls.identifiers):
+            msg = "`identifiers` must be a list of lists"
+            raise TypeError(msg)
 
         return super().__init_subclass__(**kwargs)

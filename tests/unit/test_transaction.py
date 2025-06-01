@@ -2,9 +2,7 @@ from monopoly.statements import Transaction
 
 
 def test_transaction_handles_comma():
-    transaction = Transaction(
-        transaction_date="2099-09-10", description="foo", amount="123,123.12"
-    )
+    transaction = Transaction(transaction_date="2099-09-10", description="foo", amount="123,123.12")
     assert transaction.amount == -123123.12
 
 

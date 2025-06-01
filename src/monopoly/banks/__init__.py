@@ -1,5 +1,4 @@
 import logging
-from typing import Type
 
 from .bank_of_america import BankOfAmerica
 from .base import BankBase
@@ -16,7 +15,7 @@ from .trust import Trust
 from .uob import Uob
 from .zkb import ZurcherKantonalBank
 
-banks: list[Type["BankBase"]] = [
+banks: list[type["BankBase"]] = [
     BankOfAmerica,
     Chase,
     Citibank,
@@ -33,4 +32,4 @@ banks: list[Type["BankBase"]] = [
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["BankDetector", "BankBase", *[bank.__name__ for bank in banks]]
+__all__ = ["BankDetector", "BankBase"] + [bank.__name__ for bank in banks]

@@ -39,16 +39,8 @@ def test_bank_debit_statements(
     expected_raw_transactions = read_transactions_from_csv(test_directory, "raw.csv")
     raw_transactions_as_dict = get_transactions_as_dict(statement.transactions)
 
-    debit_amounts = [
-        transaction.amount
-        for transaction in statement.transactions
-        if transaction.amount > 0
-    ]
-    credit_amounts = [
-        transaction.amount
-        for transaction in statement.transactions
-        if transaction.amount < 0
-    ]
+    debit_amounts = [transaction.amount for transaction in statement.transactions if transaction.amount > 0]
+    credit_amounts = [transaction.amount for transaction in statement.transactions if transaction.amount < 0]
 
     debit_sum = round(abs(sum(debit_amounts)), 2)
     credit_sum = round(abs(sum(credit_amounts)), 2)
@@ -60,11 +52,7 @@ def test_bank_debit_statements(
     assert statement.perform_safety_check()
 
     # check transformed data
-    expected_transformed_transactions = read_transactions_from_csv(
-        test_directory, "transformed.csv"
-    )
+    expected_transformed_transactions = read_transactions_from_csv(test_directory, "transformed.csv")
     transformed_transactions = pipeline.transform(statement)
-    transformed_transactions_as_dict = get_transactions_as_dict(
-        transformed_transactions
-    )
+    transformed_transactions_as_dict = get_transactions_as_dict(transformed_transactions)
     assert expected_transformed_transactions == transformed_transactions_as_dict
