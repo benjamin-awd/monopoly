@@ -1,0 +1,160 @@
+name: regression
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  performance-test:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        target: [current, main]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ matrix.target == 'main' && 'main' || github.sha }}
+
+      - name: Install pdftotext dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libpoppler-cpp-dev pkg-config ocrmypdf
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install hyperfine and bc
+        run: |
+          wget https://github.com/sharkdp/hyperfine/releases/download/v1.19.0/hyperfine_1.19.0_amd64.deb
+          sudo dpkg -i hyperfine_1.19.0_amd64.deb
+          sudo apt-get install -y bc jq
+
+      - name: Install git-crypt
+        uses: Flydiverny/setup-git-crypt@v4
+
+      - name: Unlock files
+        continue-on-error: true
+        run: echo "${{ secrets.GIT_CRYPT_KEY }}" | base64 --decode | git-crypt unlock -
+
+      - name: Install dependencies
+        run: |
+          uv venv
+          source .venv/bin/activate
+          uv sync --all-extras
+
+      - name: Run performance tests
+        run: |
+          source .venv/bin/activate
+          hyperfine 'monopoly src/monopoly/examples/example_statement.pdf' --warmup 3 --runs 10 \
+            --export-json ${{ matrix.target }}-single-file-perf.json
+          hyperfine 'monopoly tests' --warmup 3 --runs 5 \
+            --export-json ${{ matrix.target }}-integration-perf.json
+
+      - name: Upload performance results
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-results-${{ matrix.target }}
+          path: |
+            ${{ matrix.target }}-single-file-perf.json
+            ${{ matrix.target }}-integration-perf.json
+
+  performance-comparison:
+    needs: performance-test
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Install bc and jq
+        run: sudo apt-get update && sudo apt-get install -y bc jq
+
+      - name: Download performance results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: performance-results-*
+          merge-multiple: true
+
+      - name: Performance comparison and regression check
+        run: |
+          # Extract performance metrics
+          CURRENT_SINGLE=$(jq -r '.results[0].mean' current-single-file-perf.json)
+          MAIN_SINGLE=$(jq -r '.results[0].mean' main-single-file-perf.json)
+          CURRENT_INTEGRATION=$(jq -r '.results[0].mean' current-integration-perf.json)
+          MAIN_INTEGRATION=$(jq -r '.results[0].mean' main-integration-perf.json)
+
+          # Calculate percentage change
+          SINGLE_CHANGE=$(echo "scale=2; (($CURRENT_SINGLE - $MAIN_SINGLE) / $MAIN_SINGLE) * 100" | bc -l)
+          INTEGRATION_CHANGE=$(echo "scale=2; (($CURRENT_INTEGRATION - $MAIN_INTEGRATION) / $MAIN_INTEGRATION) * 100" | bc -l)
+
+          echo "Performance Comparison Results:"
+          echo "================================"
+          echo "Single file processing:"
+          echo "  Main branch: ${MAIN_SINGLE}s"
+          echo "  Current branch: ${CURRENT_SINGLE}s"
+          echo "  Change: ${SINGLE_CHANGE}%"
+          echo ""
+          echo "Integration tests:"
+          echo "  Main branch: ${MAIN_INTEGRATION}s"
+          echo "  Current branch: ${CURRENT_INTEGRATION}s"
+          echo "  Change: ${INTEGRATION_CHANGE}%"
+
+          # Set environment variables for summary
+          echo "CURRENT_SINGLE=$CURRENT_SINGLE" >> $GITHUB_ENV
+          echo "MAIN_SINGLE=$MAIN_SINGLE" >> $GITHUB_ENV
+          echo "SINGLE_CHANGE=$SINGLE_CHANGE" >> $GITHUB_ENV
+          echo "CURRENT_INTEGRATION=$CURRENT_INTEGRATION" >> $GITHUB_ENV
+          echo "MAIN_INTEGRATION=$MAIN_INTEGRATION" >> $GITHUB_ENV
+          echo "INTEGRATION_CHANGE=$INTEGRATION_CHANGE" >> $GITHUB_ENV
+
+          # Regression check - fail if performance degrades by more than 20%
+          REGRESSION_THRESHOLD=20
+          if (( $(echo "$SINGLE_CHANGE > $REGRESSION_THRESHOLD" | bc -l) )); then
+            echo "❌ Performance regression detected in single file processing: ${SINGLE_CHANGE}% slower than main"
+            exit 1
+          fi
+
+          if (( $(echo "$INTEGRATION_CHANGE > $REGRESSION_THRESHOLD" | bc -l) )); then
+            echo "❌ Performance regression detected in integration tests: ${INTEGRATION_CHANGE}% slower than main"
+            exit 1
+          fi
+
+          # Absolute threshold check
+          if (( $(echo "$CURRENT_SINGLE > 10.0" | bc -l) )); then
+            echo "❌ Performance threshold exceeded: Single file processing took ${CURRENT_SINGLE}s (threshold: 10s)"
+            exit 1
+          fi
+
+          echo "✅ No performance regressions detected"
+
+      - name: Write performance results to summary
+        if: always()
+        run: |
+          echo "## 🚀 Performance Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Single File Processing" >> $GITHUB_STEP_SUMMARY
+          echo "| Branch | Time | Change |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Main | ${MAIN_SINGLE}s | baseline |" >> $GITHUB_STEP_SUMMARY
+          if (( $(echo "$SINGLE_CHANGE >= 0" | bc -l) )); then
+            echo "| Current | ${CURRENT_SINGLE}s | 🔴 +${SINGLE_CHANGE}% |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Current | ${CURRENT_SINGLE}s | 🟢 ${SINGLE_CHANGE}% |" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Integration Tests" >> $GITHUB_STEP_SUMMARY
+          echo "| Branch | Time | Change |" >> $GITHUB_STEP_summary
+          echo "|--------|------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Main | ${MAIN_INTEGRATION}s | baseline |" >> $GITHUB_STEP_SUMMARY
+          if (( $(echo "$INTEGRATION_CHANGE >= 0" | bc -l) )); then
+            echo "| Current | ${CURRENT_INTEGRATION}s | 🔴 +${INTEGRATION_CHANGE}% |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Current | ${CURRENT_INTEGRATION}s | 🟢 ${INTEGRATION_CHANGE}% |" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Thresholds:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Absolute: 10s for single file processing" >> $GITHUB_STEP_SUMMARY
+          echo "- Regression: 20% performance degradation" >> $GITHUB_STEP_SUMMARY

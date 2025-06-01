@@ -21,3 +21,5 @@ dist
 !tests/integration/banks/**/*.pdf
 !tests/unit/test_cli/**/*.pdf
 !**/examples/*.pdf
+
+.claude
