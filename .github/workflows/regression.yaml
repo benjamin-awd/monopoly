@@ -5,7 +5,7 @@ on:
     branches: [main]
 
 jobs:
-  performance-test:
+  perf-test:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
@@ -30,11 +30,10 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v5
 
-      - name: Install hyperfine and bc
+      - name: Install hyperfine
         run: |
           wget https://github.com/sharkdp/hyperfine/releases/download/v1.19.0/hyperfine_1.19.0_amd64.deb
           sudo dpkg -i hyperfine_1.19.0_amd64.deb
-          sudo apt-get install -y bc jq
 
       - name: Install git-crypt
         uses: Flydiverny/setup-git-crypt@v4
@@ -52,10 +51,23 @@ jobs:
       - name: Run performance tests
         run: |
           source .venv/bin/activate
+
           hyperfine 'monopoly src/monopoly/examples/example_statement.pdf' --warmup 3 --runs 10 \
             --export-json ${{ matrix.target }}-single-file-perf.json
-          hyperfine 'monopoly tests' --warmup 3 --runs 5 \
-            --export-json ${{ matrix.target }}-integration-perf.json
+
+          hyperfine --warmup 3 --runs 5 \
+          "monopoly \
+          tests/integration/banks/citibank/credit/input.pdf \
+          tests/integration/banks/dbs/credit/input.pdf \
+          tests/integration/banks/dbs/debit/input.pdf \
+          tests/integration/banks/hsbc/credit/input.pdf \
+          tests/integration/banks/maybank/credit/input.pdf \
+          tests/integration/banks/maybank/debit/input.pdf \
+          tests/integration/banks/ocbc/credit/input.pdf \
+          tests/integration/banks/ocbc/debit/input.pdf \
+          tests/integration/banks/standard_chartered/credit/input.pdf \
+          tests/integration/banks/trust/credit/input.pdf" \
+            --export-json ${{ matrix.target }}-multiple-file-perf.json
 
       - name: Upload performance results
         uses: actions/upload-artifact@v4
@@ -63,15 +75,12 @@ jobs:
           name: performance-results-${{ matrix.target }}
           path: |
             ${{ matrix.target }}-single-file-perf.json
-            ${{ matrix.target }}-integration-perf.json
+            ${{ matrix.target }}-multiple-file-perf.json
 
-  performance-comparison:
-    needs: performance-test
+  comparison:
+    needs: perf-test
     runs-on: ubuntu-22.04
     steps:
-      - name: Install bc and jq
-        run: sudo apt-get update && sudo apt-get install -y bc jq
-
       - name: Download performance results
         uses: actions/download-artifact@v4
         with:
@@ -81,10 +90,10 @@ jobs:
       - name: Performance comparison and regression check
         run: |
           # Extract performance metrics
-          CURRENT_SINGLE=$(jq -r '.results[0].mean' current-single-file-perf.json)
-          MAIN_SINGLE=$(jq -r '.results[0].mean' main-single-file-perf.json)
-          CURRENT_INTEGRATION=$(jq -r '.results[0].mean' current-integration-perf.json)
-          MAIN_INTEGRATION=$(jq -r '.results[0].mean' main-integration-perf.json)
+          CURRENT_SINGLE=$(printf "%.3f" "$(jq -r '.results[0].mean' current-single-file-perf.json)")
+          MAIN_SINGLE=$(printf "%.3f" "$(jq -r '.results[0].mean' main-single-file-perf.json)")
+          CURRENT_INTEGRATION=$(printf "%.3f" "$(jq -r '.results[0].mean' current-multiple-file-perf.json)")
+          MAIN_INTEGRATION=$(printf "%.3f" "$(jq -r '.results[0].mean' main-multiple-file-perf.json)")
 
           # Calculate percentage change
           SINGLE_CHANGE=$(echo "scale=2; (($CURRENT_SINGLE - $MAIN_SINGLE) / $MAIN_SINGLE) * 100" | bc -l)
