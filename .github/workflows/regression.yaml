@@ -1,8 +1,6 @@
 name: regression
 on:
   pull_request:
-  push:
-    branches: [main]
 
 jobs:
   perf-test:
