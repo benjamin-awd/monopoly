@@ -10,6 +10,7 @@ from tabulate import tabulate
 from tqdm import tqdm
 
 from monopoly.log import setup_logs
+import time
 
 
 # ruff: noqa: BLE001
@@ -198,7 +199,7 @@ def run(input_files: Collection[Path], config: RunConfig):
         "ncols": 80,
         "bar_format": "{l_bar}{bar}| {n_fmt}/{total_fmt}",
     }
-
+    time.sleep(1)
     if not config.single_process:
         with ProcessPoolExecutor() as executor:
             results = list(
