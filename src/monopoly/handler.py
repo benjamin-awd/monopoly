@@ -1,10 +1,9 @@
 import logging
 from functools import cached_property
 
-from monopoly.banks import BankBase
 from monopoly.config import StatementConfig
 from monopoly.constants import EntryType
-from monopoly.pdf import PdfPage
+from monopoly.pdf import PdfParser
 from monopoly.statements import BaseStatement, CreditStatement, DebitStatement
 
 logger = logging.getLogger(__name__)
@@ -17,9 +16,9 @@ class StatementHandler:
     Identifies the statement as either a debit or credit statement based on the debit and credit config.
     """
 
-    def __init__(self, bank: type[BankBase], pages: list[PdfPage]):
-        self.bank = bank
-        self.pages = pages
+    def __init__(self, parser: PdfParser):
+        self.bank = parser.bank
+        self.pages = parser.pages
 
     def get_header(self, config: StatementConfig) -> str | None:
         pattern = config.header_pattern
