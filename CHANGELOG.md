@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.16.1] - 2025-06-04
+
+### ⚙️ Miscellaneous Tasks
+
+- *(ci)* Give write permission for publish workflow
+- *(ci)* Don't run regression testing on main / main
+- *(ci)* Add missing contents permission
+- Exclude uv.lock
+- *(generic)* Add metadata to missing transaction message
+- *(ci)* Rename regression -> performance
+
+### Build
+
+- *(deps)* Bump astral-sh/setup-uv from 5 to 6
+
 ## [0.16.0] - 2025-06-01
 
 ### 🚜 Refactor
