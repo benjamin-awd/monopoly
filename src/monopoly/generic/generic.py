@@ -4,7 +4,7 @@ from collections import defaultdict
 from functools import cached_property
 
 from monopoly.constants import EntryType, SharedPatterns
-from monopoly.pdf import PdfPage
+from monopoly.pdf import MetadataIdentifier, PdfPage
 
 from .patterns import DateMatch, DatePattern, PatternMatcher
 
@@ -22,12 +22,13 @@ class GenericParserError(Exception):
 
 
 class DatePatternAnalyzer:
-    def __init__(self, pages: list[PdfPage]):
+    def __init__(self, pages: list[PdfPage], metadata: MetadataIdentifier):
         self.pages = pages
         self.matcher = PatternMatcher(pages)
         self.pattern: DatePattern = self.matcher.get_transaction_pattern()
         self.matches = self.pattern.matches
         self.spans = self.matcher.get_transaction_spans(self.pattern)
+        self.metadata = metadata
 
     @cached_property
     def lines_before_first_transaction(self) -> list[str]:
@@ -207,5 +208,5 @@ class DatePatternAnalyzer:
                 if match:
                     logger.debug("Found first transaction at page %s line %s", page_num, line_num)
                     return page_num, line_num
-        msg = "Could not find any transactions"
+        msg = f"Could not find any transactions. PDF metadata: {self.metadata})"
         raise GenericParserError(msg)

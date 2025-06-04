@@ -6,12 +6,11 @@ from pathlib import Path
 from dateparser import parse
 from pydantic import SecretStr
 
-from monopoly.banks import BankBase
 from monopoly.config import DateOrder
 from monopoly.constants.date import DateFormats
 from monopoly.generic import GenericBank, GenericStatementHandler
 from monopoly.handler import StatementHandler
-from monopoly.pdf import PdfPage, PdfParser
+from monopoly.pdf import PdfParser
 from monopoly.statements import BaseStatement, Transaction
 from monopoly.write import generate_name
 
@@ -30,15 +29,15 @@ class Pipeline:
         passwords: list[SecretStr] | None = None,
     ):
         self.passwords = passwords
-        self.handler = self.create_handler(parser.bank, parser.pages)
+        self.handler = self.create_handler(parser)
 
     @staticmethod
-    def create_handler(bank: type[BankBase], pages: list[PdfPage]) -> StatementHandler:
-        if issubclass(bank, GenericBank):
+    def create_handler(parser: PdfParser) -> StatementHandler:
+        if issubclass(parser.bank, GenericBank):
             logger.debug("Using generic statement handler")
-            return GenericStatementHandler(bank, pages)
-        logger.debug("Using statement handler with bank: %s", bank.__name__)
-        return StatementHandler(bank, pages)
+            return GenericStatementHandler(parser)
+        logger.debug("Using statement handler with bank: %s", parser.bank.__name__)
+        return StatementHandler(parser)
 
     def extract(self, *_, safety_check=True) -> BaseStatement:
         """
