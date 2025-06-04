@@ -1,4 +1,4 @@
-name: regression
+name: performance
 on:
   pull_request:
 
