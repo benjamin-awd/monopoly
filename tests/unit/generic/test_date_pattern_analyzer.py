@@ -7,7 +7,7 @@ import pytest
 from monopoly.constants import EntryType, SharedPatterns
 from monopoly.constants.date import DateFormats
 from monopoly.generic import DateMatch, DatePatternAnalyzer
-from monopoly.pdf import PdfPage
+from monopoly.pdf import PdfPage, MetadataIdentifier
 
 
 @pytest.fixture(scope="session")
@@ -20,9 +20,14 @@ def mock_pages():
     yield pages
 
 
+@pytest.fixture(scope="session")
+def mock_metadata():
+    yield MetadataIdentifier()
+
+
 @pytest.fixture(scope="function")
-def date_pattern_analyzer(mock_pages):
-    yield DatePatternAnalyzer(pages=mock_pages)
+def date_pattern_analyzer(mock_pages, mock_metadata):
+    yield DatePatternAnalyzer(pages=mock_pages, metadata=mock_metadata)
 
 
 @pytest.fixture(scope="session")

@@ -7,7 +7,7 @@ from monopoly.banks import BankBase
 from monopoly.config import MultilineConfig, StatementConfig
 from monopoly.constants import EntryType, InternalBankNames
 from monopoly.handler import StatementHandler
-from monopoly.pdf import PdfPage
+from monopoly.pdf import PdfParser
 
 from .generic import DatePatternAnalyzer
 
@@ -25,10 +25,14 @@ class GenericBank(BankBase):
 
 
 class GenericStatementHandler(StatementHandler):
-    def __init__(self, bank: type[BankBase], pages: list[PdfPage]):
-        self.analyzer = DatePatternAnalyzer(pages)
+    def __init__(self, parser: PdfParser):
+        bank = parser.bank
+        pages = parser.pages
+        metadata = parser.metadata_identifier
+
+        self.analyzer = DatePatternAnalyzer(pages, metadata)
         bank.statement_configs = list(filter(None, [self.debit, self.credit]))
-        super().__init__(bank, pages)
+        super().__init__(parser)
 
     # override get_header and ignore passed config, since
     # the header line has already been found
