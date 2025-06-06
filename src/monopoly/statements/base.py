@@ -227,10 +227,33 @@ class BaseStatement:
         if not context.multiline_config:
             return match
 
-        if context.idx < len(context.lines) - 1:
+        # early exit if end of page
+        if context.idx > len(context.lines) - 1:
+            return match
+
+        if context.multiline_config.multiline_polarity:
+            match.groupdict.polarity = self.get_multiline_polarity(context)
+
+        if context.multiline_config.multiline_transactions:
             multiline_description = self.get_multiline_description(context)
             match.groupdict.description = multiline_description
         return match
+
+    def get_multiline_polarity(self, context: MatchContext):
+        """
+        Pull polarity from the next line, if it can be found on the next line.
+
+        e.g.
+        Date                           Description                            Amount
+        ----------------------------------------------------------------------------
+        24.02.25                       PAYMENT RECEIVED - THANK YOU            79.99
+                                                                                  CR
+
+        In this case, the polarity will resolve to CR.
+        """
+        if re.match(SharedPatterns.POLARITY, context.lines[context.idx + 1]):
+            return context.lines[context.idx + 1].strip()
+        return None
 
     def get_multiline_description(
         self,

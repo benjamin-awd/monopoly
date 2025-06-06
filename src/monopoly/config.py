@@ -25,6 +25,7 @@ class DateOrder:
 @dataclass
 class MultilineConfig:
     multiline_transactions: bool
+    multiline_polarity: bool = False
     multiline_statement_date: bool = False
     include_prev_margin: int | None = None
 
