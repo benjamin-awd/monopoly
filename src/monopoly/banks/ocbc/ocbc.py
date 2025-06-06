@@ -32,7 +32,7 @@ class Ocbc(BankBase):
         statement_date_pattern=regex(rf"\s{ISO8601.DD_MMM_YYYY}$"),
         header_pattern=regex(r"(Withdrawal.*Deposit.*Balance)"),
         transaction_pattern=DebitTransactionPatterns.OCBC,
-        multiline_config=MultilineConfig(multiline_transactions=True),
+        multiline_config=MultilineConfig(multiline_descriptions=True),
         transaction_bound=170,
     )
 

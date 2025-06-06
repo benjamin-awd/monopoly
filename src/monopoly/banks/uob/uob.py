@@ -24,7 +24,7 @@ class Uob(BankBase):
         header_pattern=regex(r"(Description of Transaction.*Transaction Amount)"),
         prev_balance_pattern=StatementBalancePatterns.UOB,
         transaction_pattern=DebitTransactionPatterns.UOB,
-        multiline_config=MultilineConfig(multiline_transactions=True),
+        multiline_config=MultilineConfig(multiline_descriptions=True),
     )
 
     debit = StatementConfig(
@@ -33,7 +33,7 @@ class Uob(BankBase):
         header_pattern=regex(r"(Date.*Description.*Withdrawals.*Deposits.*Balance)"),
         transaction_pattern=DebitTransactionPatterns.UOB,
         transaction_bound=170,
-        multiline_config=MultilineConfig(multiline_transactions=True),
+        multiline_config=MultilineConfig(multiline_descriptions=True),
     )
 
     identifiers = [

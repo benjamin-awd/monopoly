@@ -30,7 +30,7 @@ class Dbs(BankBase):
     debit = StatementConfig(
         statement_type=EntryType.DEBIT,
         statement_date_pattern=ISO8601.DD_MMM_YYYY,
-        multiline_config=MultilineConfig(multiline_transactions=True),
+        multiline_config=MultilineConfig(multiline_descriptions=True),
         header_pattern=regex(r"(WITHDRAWAL.*DEPOSIT.*BALANCE)"),
         transaction_pattern=DebitTransactionPatterns.DBS,
         transaction_bound=170,
@@ -39,7 +39,7 @@ class Dbs(BankBase):
     consolidated = StatementConfig(
         statement_type=EntryType.DEBIT,
         statement_date_pattern=regex(rf"Details as at {ISO8601.DD_MMM_YYYY}"),
-        multiline_config=MultilineConfig(multiline_transactions=True),
+        multiline_config=MultilineConfig(multiline_descriptions=True),
         header_pattern=regex(r"(\s*Date\s+Description\s+Withdrawal \(-\).*)"),
         transaction_pattern=DebitTransactionPatterns.DBS_POSB_CONSOLIDATED,
         transaction_bound=114,
