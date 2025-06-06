@@ -1,11 +1,19 @@
 from dataclasses import fields
+from typing import TYPE_CHECKING
 
 from pydantic.dataclasses import dataclass
+
+if TYPE_CHECKING:
+    from monopoly.banks.detector import BankDetector
 
 
 @dataclass(frozen=True)
 class Identifier:
     """Parent class for identifiers, used for type hinting."""
+
+    def matches(self, detector: "BankDetector") -> bool:
+        """Check if this identifier is found in the parsed document context."""
+        raise NotImplementedError
 
 
 @dataclass(frozen=True)
@@ -19,18 +27,25 @@ class MetadataIdentifier(Identifier):
     creator: str = ""
     producer: str = ""
 
-    def matches(self, other: "MetadataIdentifier") -> bool:
-        """Check for partial matches on all string fields."""
+    def matches(self, detector: "BankDetector") -> bool:
+        """Check for partial matches against the document's metadata."""
+        document_metadata = detector.metadata_identifier
         for field in fields(self):
-            self_value = getattr(self, field.name)
-            other_value = getattr(other, field.name)
+            # The value from the bank config (e.g. format="PDF 1.6")
+            config_value = getattr(self, field.name)
+            # The value from the parsed document
+            document_value = getattr(document_metadata, field.name)
 
-            # Only perform partial matching if both fields are non-empty strings
-            if not (isinstance(self_value, str) and isinstance(other_value, str)):
+            # We only check fields that are actually defined in the config
+            if not config_value:
                 continue
-            if not other_value:
-                continue
-            if other_value not in self_value:
+
+            # The document must have a value to compare against
+            if not document_value:
+                return False
+
+            # The configured value must be a substring of the document's value
+            if config_value not in document_value:
                 return False
 
         return True
@@ -42,6 +57,9 @@ class TextIdentifier(Identifier):
 
     text: str = ""
 
-    def matches(self, raw_text: str) -> bool:
-        """Check for partial matches on all string fields."""
-        return self.text in raw_text
+    def matches(self, detector: "BankDetector") -> bool:
+        """Check if the identifier's text exists in the document's raw text."""
+        # Ensure the document has raw text before checking
+        if not detector.document.raw_text:
+            return False
+        return self.text in detector.document.raw_text

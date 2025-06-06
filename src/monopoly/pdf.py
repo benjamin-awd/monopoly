@@ -154,12 +154,12 @@ class PdfParser:
         return self.pdf_config.page_bbox
 
     @cached_property
-    def ocr_available(self):
-        if ids := self.pdf_config.ocr_identifiers:
-            for identifiers in ids:
-                if self.metadata_identifier.matches(identifiers):
-                    return True
-        return False
+    def ocr_available(self) -> bool:
+        """Check if the document matches any of the specified OCR identifier groups."""
+        if not (identifier_groups := self.pdf_config.ocr_identifiers):
+            return False
+
+        return any(all(identifier.matches(identifier) for identifier in group) for group in identifier_groups)
 
     @cached_property
     def pages(self):
