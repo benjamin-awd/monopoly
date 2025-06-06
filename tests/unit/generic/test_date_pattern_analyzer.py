@@ -247,10 +247,10 @@ def test_create_transaction_pattern_with_transaction_first(
     matches_with_transaction_posting_dates,
 ):
     expected = (
-        f"(?P<transaction_date>\\b({DateFormats.DD}"
-        f"[-\\s]{DateFormats.MMM}))\\s+"
-        f"(?P<posting_date>\\b({DateFormats.DD}"
-        f"[-\\s]{DateFormats.MMM}))\\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
+        rf"(?P<transaction_date>\b({DateFormats.DD}"
+        rf"[\/\-\s.]{DateFormats.MMM}))\s+"
+        rf"(?P<posting_date>\b({DateFormats.DD}"
+        rf"[\/\-\s.]{DateFormats.MMM}))\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
     )
 
     date_pattern_analyzer.spans = {(10, 16): 2, (27, 33): 2}
@@ -268,10 +268,10 @@ def test_create_transaction_pattern_with_posting_first(
     date_pattern_analyzer.matches = matches_with_posting_transaction_dates
 
     expected = (
-        f"(?P<posting_date>\\b({DateFormats.DD}"
-        f"[-\\s]{DateFormats.MMM}))\\s+"
-        f"(?P<transaction_date>\\b({DateFormats.DD}"
-        f"[-\\s]{DateFormats.MMM}))\\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
+        rf"(?P<posting_date>\b({DateFormats.DD}"
+        rf"[\/\-\s.]{DateFormats.MMM}))\s+"
+        rf"(?P<transaction_date>\b({DateFormats.DD}"
+        rf"[\/\-\s.]{DateFormats.MMM}))\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
     )
     result = date_pattern_analyzer.create_transaction_pattern()
     assert result == re.compile(expected, re.IGNORECASE)
