@@ -34,7 +34,7 @@ class MatchContext:
 
 
 class DescriptionExtractor:
-    """Handles extraction and combination of multiline transaction descriptions."""
+    """Handles extraction and combination of multiline descriptions."""
 
     def __init__(self, pattern: re.Pattern):
         self.pattern = pattern
@@ -234,7 +234,7 @@ class BaseStatement:
         if context.multiline_config.multiline_polarity:
             match.groupdict.polarity = self.get_multiline_polarity(context)
 
-        if context.multiline_config.multiline_transactions:
+        if context.multiline_config.multiline_descriptions:
             multiline_description = self.get_multiline_description(context)
             match.groupdict.description = multiline_description
         return match

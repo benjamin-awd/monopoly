@@ -19,7 +19,7 @@ class Chase(BankBase):
         transaction_date_order=DateOrder("MDY"),
         header_pattern=regex(r"(.*Transaction.*Merchant Name .*\$ Amount)"),
         transaction_pattern=CreditTransactionPatterns.CHASE,
-        multiline_config=MultilineConfig(multiline_transactions=True),
+        multiline_config=MultilineConfig(multiline_descriptions=True),
         transaction_auto_polarity=False,
     )
 

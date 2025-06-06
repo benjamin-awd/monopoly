@@ -24,7 +24,7 @@ class Hsbc(BankBase):
         header_pattern=regex(r"(DATE.*DESCRIPTION.*AMOUNT)"),
         prev_balance_pattern=StatementBalancePatterns.HSBC,
         transaction_pattern=CreditTransactionPatterns.HSBC,
-        multiline_config=MultilineConfig(multiline_transactions=True),
+        multiline_config=MultilineConfig(multiline_descriptions=True),
     )
 
     email_statement_identifier = [

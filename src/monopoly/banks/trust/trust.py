@@ -24,7 +24,7 @@ class Trust(BankBase):
         header_pattern=regex(r"(Posting date.*Description.*Amount in SGD)"),
         transaction_pattern=CreditTransactionPatterns.TRUST,
         multiline_config=MultilineConfig(
-            multiline_transactions=True,
+            multiline_descriptions=True,
             include_prev_margin=99,
             multiline_statement_date=True,
         ),

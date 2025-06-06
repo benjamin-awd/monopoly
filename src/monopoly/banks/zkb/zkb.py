@@ -17,7 +17,7 @@ class ZurcherKantonalBank(BankBase):
         statement_date_pattern=regex(rf"Balance as of: ({ISO8601.DD_MM_YYYY})"),
         header_pattern=regex(r"(Date.*Booking text.*Debit CHF.*Credit CHF)"),
         transaction_pattern=DebitTransactionPatterns.ZKB,
-        multiline_config=MultilineConfig(multiline_transactions=True),
+        multiline_config=MultilineConfig(multiline_descriptions=True),
         safety_check=False,
     )
 

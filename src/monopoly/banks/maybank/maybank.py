@@ -24,7 +24,7 @@ class Maybank(BankBase):
         statement_date_pattern=regex(rf"(?:結單日期)[:\s]+{ISO8601.DD_MM_YY}"),
         header_pattern=regex(r"(DATE.*DESCRIPTION.*AMOUNT.*BALANCE)"),
         transaction_pattern=DebitTransactionPatterns.MAYBANK,
-        multiline_config=MultilineConfig(multiline_transactions=True),
+        multiline_config=MultilineConfig(multiline_descriptions=True),
     )
 
     credit = StatementConfig(
@@ -33,7 +33,7 @@ class Maybank(BankBase):
         header_pattern=regex(r"(Date.*Description.*Amount)"),
         transaction_pattern=CreditTransactionPatterns.MAYBANK,
         prev_balance_pattern=StatementBalancePatterns.MAYBANK,
-        multiline_config=MultilineConfig(multiline_transactions=True),
+        multiline_config=MultilineConfig(multiline_descriptions=True),
     )
 
     identifiers = [

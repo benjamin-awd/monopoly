@@ -54,7 +54,7 @@ def test_check_bound(statement: BaseStatement):
     assert transactions == expected
 
 
-def test_get_multiline_transactions(statement: BaseStatement):
+def test_get_multiline_descriptions(statement: BaseStatement):
     pattern = Hsbc.credit.transaction_pattern
     statement.config.multiline_config = MultilineConfig(True)
     statement.config.transaction_pattern = pattern
