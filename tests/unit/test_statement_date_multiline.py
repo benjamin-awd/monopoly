@@ -19,5 +19,5 @@ def test_statement_date_multiline(statement: BaseStatement):
         r".*?"
         r"(?P<year>20\d{2}\b)"
     )
-    statement.config.multiline_config = MultilineConfig(multiline_statement_date=True, multiline_transactions=False)
+    statement.config.multiline_config = MultilineConfig(multiline_statement_date=True)
     assert statement.statement_date == datetime(2025, 5, 23)
