@@ -1,5 +1,6 @@
 import logging
 
+from .amex import Amex
 from .bank_of_america import BankOfAmerica
 from .base import BankBase
 from .chase import Chase
@@ -16,6 +17,7 @@ from .uob import Uob
 from .zkb import ZurcherKantonalBank
 
 banks: list[type["BankBase"]] = [
+    Amex,
     BankOfAmerica,
     Chase,
     Citibank,

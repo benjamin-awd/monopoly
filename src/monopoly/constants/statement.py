@@ -15,6 +15,7 @@ class EntryType(AutoEnum):
 
 
 class BankNames(AutoEnum):
+    AMEX = auto()
     BANK_OF_AMERICA = auto()
     CHASE = auto()
     CITIBANK = auto()
@@ -84,6 +85,9 @@ class StatementBalancePatterns(RegexEnum):
 
 
 class CreditTransactionPatterns(RegexEnum):
+    AMEX_PLATINUM = (
+        rf"(?P<transaction_date>{ISO8601.DD_MM_YY})\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
+    )
     BANK_OF_AMERICA = (
         rf"(?P<transaction_date>{ISO8601.MM_DD_YY})\s+"
         + SharedPatterns.DESCRIPTION
