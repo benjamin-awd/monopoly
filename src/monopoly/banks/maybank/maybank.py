@@ -2,7 +2,7 @@ import logging
 from re import compile as regex
 
 from monopoly.banks.base import BankBase
-from monopoly.config import MultilineConfig, StatementConfig
+from monopoly.config import MultilineConfig, PdfConfig, StatementConfig
 from monopoly.constants import (
     ISO8601,
     BankNames,
@@ -11,7 +11,7 @@ from monopoly.constants import (
     EntryType,
     StatementBalancePatterns,
 )
-from monopoly.identifiers import MetadataIdentifier
+from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
 logger = logging.getLogger(__name__)
 
@@ -19,26 +19,37 @@ logger = logging.getLogger(__name__)
 class Maybank(BankBase):
     name = BankNames.MAYBANK
 
-    debit = StatementConfig(
+    my_debit = StatementConfig(
         statement_type=EntryType.DEBIT,
         statement_date_pattern=regex(rf"(?:結單日期)[:\s]+{ISO8601.DD_MM_YY}"),
         header_pattern=regex(r"(DATE.*DESCRIPTION.*AMOUNT.*BALANCE)"),
-        transaction_pattern=DebitTransactionPatterns.MAYBANK,
         transaction_date_format="%d/%m/%y",
+        transaction_pattern=DebitTransactionPatterns.MAYBANK_MY,
         multiline_config=MultilineConfig(multiline_descriptions=True),
     )
 
-    credit = StatementConfig(
+    my_credit = StatementConfig(
         statement_type=EntryType.CREDIT,
         statement_date_pattern=ISO8601.DD_MMM_YY,
         header_pattern=regex(r"(Date.*Description.*Amount)"),
-        transaction_pattern=CreditTransactionPatterns.MAYBANK,
-        prev_balance_pattern=StatementBalancePatterns.MAYBANK,
         transaction_date_format="%d/%m",
+        transaction_pattern=CreditTransactionPatterns.MAYBANK_MY,
+        prev_balance_pattern=StatementBalancePatterns.MAYBANK_MY,
         multiline_config=MultilineConfig(multiline_descriptions=True),
     )
 
+    sg_credit = StatementConfig(
+        statement_type=EntryType.CREDIT,
+        statement_date_pattern=regex(f"AS AT {ISO8601.DD_MMM_YYYY}"),
+        header_pattern=regex(r"(.*DESCRIPTION OF TRANSACTION.*TRANSACTION AMOUNT)"),
+        transaction_pattern=CreditTransactionPatterns.MAYBANK_SG,
+        prev_balance_pattern=StatementBalancePatterns.MAYBANK_SG,
+    )
+
+    sg_credit_identifier = [[TextIdentifier("maybank2u.com.sg"), TextIdentifier("PAYMENT DUE")]]
+
     identifiers = [
+        *sg_credit_identifier,
         [
             MetadataIdentifier(
                 author="Maybank2U.com",
@@ -55,4 +66,8 @@ class Maybank(BankBase):
         ],
     ]
 
-    statement_configs = [credit, debit]
+    pdf_config = PdfConfig(
+        ocr_identifiers=sg_credit_identifier,
+    )
+
+    statement_configs = [my_credit, my_debit, sg_credit]

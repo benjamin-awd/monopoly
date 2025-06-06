@@ -75,7 +75,10 @@ class StatementBalancePatterns(RegexEnum):
     DBS = r"(?P<description>PREVIOUS BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
     CITIBANK = r"(?P<description>BALANCE PREVIOUS STATEMENT?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
     HSBC = r"(?P<description>Previous Statement Balance?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
-    MAYBANK = r"(?P<description>YOUR PREVIOUS STATEMENT BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+    MAYBANK_MY = r"(?P<description>YOUR PREVIOUS STATEMENT BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+    MAYBANK_SG = (
+        r"(?P<description>OUTSTANDING\s+BALANCE\s+BROUGHT\s+FORWARD?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+    )
     OCBC = r"(?P<description>LAST MONTH'S BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
     STANDARD_CHARTERED = (
         r"(?P<description>BALANCE FROM PREVIOUS STATEMENT?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
@@ -105,7 +108,13 @@ class CreditTransactionPatterns(RegexEnum):
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT_EXTENDED
     )
-    MAYBANK = (
+    MAYBANK_SG = (
+        r"(?P<posting_date>\b[A-Z]?\d{1,2}(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\b)\s+"
+        r"(?P<transaction_date>\b[A-Z]?\d{1,2}(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\b)\s+"
+        + SharedPatterns.DESCRIPTION
+        + SharedPatterns.AMOUNT_EXTENDED
+    )
+    MAYBANK_MY = (
         rf"(?P<posting_date>{ISO8601.DD_MM})\s+"
         rf"(?P<transaction_date>{ISO8601.DD_MM})\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
     )
@@ -141,7 +150,7 @@ class DebitTransactionPatterns(RegexEnum):
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
     )
-    MAYBANK = (
+    MAYBANK_MY = (
         rf"(?P<transaction_date>{ISO8601.DD_MM_YY})\s+"
         + SharedPatterns.DESCRIPTION
         # remove *\s

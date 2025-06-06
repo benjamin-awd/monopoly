@@ -43,7 +43,7 @@ class Hsbc(BankBase):
 
     pdf_config = PdfConfig(
         page_bbox=(0, 0, 379, 840),
-        ocr_identifiers=web_and_mobile_statement_identifier,
+        ocr_identifiers=[web_and_mobile_statement_identifier],
     )
 
     identifiers = [email_statement_identifier, web_and_mobile_statement_identifier]

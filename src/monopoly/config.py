@@ -1,9 +1,10 @@
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from re import Pattern
 
 from monopoly.constants import EntryType
 from monopoly.enums import RegexEnum
-from monopoly.identifiers import MetadataIdentifier
+from monopoly.identifiers import Identifier
 
 
 @dataclass
@@ -100,5 +101,5 @@ class PdfConfig:
 
     page_range: tuple[int | None, int | None] = (None, None)
     page_bbox: tuple[float, float, float, float] | None = None
-    ocr_identifiers: list[MetadataIdentifier] | None = None
+    ocr_identifiers: Sequence[Sequence[Identifier]] | None = None
     remove_vertical_text: bool = False
