@@ -20,7 +20,7 @@ class Amex(BankBase):
         transaction_date_order=DateOrder("MDY"),
         header_pattern=regex(r"(Details.*Foreign Spending.*Amount)"),
         transaction_pattern=CreditTransactionPatterns.AMEX_PLATINUM,
-        multiline_config=MultilineConfig(multiline_transactions=False, multiline_polarity=True),
+        multiline_config=MultilineConfig(multiline_polarity=True),
         safety_check=False,
     )
     identifiers = [
