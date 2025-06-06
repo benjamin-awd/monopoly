@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.17.0] - 2025-06-06
+
+### ⛰️ Features
+
+- *(banks)* Add amex platinum
+
+### 🚜 Refactor
+
+- Make multiline config transaction an optional variable
+- Rename multiline_transactions -> multiline_descriptions
+
+### ⚙️ Miscellaneous Tasks
+
+- *(generic)* Add metadata to missing transaction message
+- *(ci)* Rename regression -> performance
+- Add period to date patterns
+
 ## [0.16.1] - 2025-06-04
 
 ### ⚙️ Miscellaneous Tasks
