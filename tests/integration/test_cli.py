@@ -1,6 +1,5 @@
 import os
 import re
-import subprocess
 from pathlib import Path
 
 import pytest
@@ -30,7 +29,7 @@ def mock_results():
 
 @pytest.fixture
 def test_directory() -> Path:
-    return Path("tests/unit/test_cli").resolve()
+    return Path("tests/integration/test_cli").resolve()
 
 
 @pytest.fixture
