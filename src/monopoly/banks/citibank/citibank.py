@@ -2,7 +2,7 @@ import logging
 from re import compile as regex
 
 from monopoly.banks.base import BankBase
-from monopoly.config import StatementConfig
+from monopoly.config import PdfConfig, StatementConfig
 from monopoly.constants import (
     BankNames,
     CreditTransactionPatterns,
@@ -23,6 +23,10 @@ class Citibank(BankBase):
         header_pattern=regex(r"(DATE.*DESCRIPTION.*AMOUNT)"),
         prev_balance_pattern=StatementBalancePatterns.CITIBANK,
         transaction_pattern=CreditTransactionPatterns.CITIBANK,
+    )
+
+    pdf_config = PdfConfig(
+        remove_vertical_text=True,
     )
 
     identifiers = [

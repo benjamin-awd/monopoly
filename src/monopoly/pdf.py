@@ -179,7 +179,11 @@ class PdfParser:
         for page in document:
             if self.page_bbox:
                 page.set_cropbox(cropbox)
-            pages.append(self._remove_vertical_text(page))
+
+            if self.pdf_config.remove_vertical_text:
+                self._remove_vertical_text(page)
+
+            pages.append(page)
 
         # certain statements requsire garbage collection, so that duplicate objects
         # do not cause pdftotext to fail due to missing xrefs/null values

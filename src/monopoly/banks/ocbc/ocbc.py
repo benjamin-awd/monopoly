@@ -2,7 +2,7 @@ import logging
 from re import compile as regex
 
 from monopoly.banks.base import BankBase
-from monopoly.config import MultilineConfig, StatementConfig
+from monopoly.config import MultilineConfig, PdfConfig, StatementConfig
 from monopoly.constants import (
     ISO8601,
     BankNames,
@@ -34,6 +34,10 @@ class Ocbc(BankBase):
         transaction_pattern=DebitTransactionPatterns.OCBC,
         multiline_config=MultilineConfig(multiline_descriptions=True),
         transaction_bound=170,
+    )
+
+    pdf_config = PdfConfig(
+        remove_vertical_text=True,
     )
 
     identifiers = [

@@ -85,7 +85,6 @@ class PdfConfig:
     """
     Stores PDF configuration values for the `PdfParser` class.
 
-    - `password`: The password used to unlock the PDF (if it is locked)
     - `page_range`: A slice representing which pages to process. For
     example, a range of (1, -1) will mean that the first and last pages
     are skipped.
@@ -93,8 +92,12 @@ class PdfConfig:
     page. This is used to avoid weirdness like vertical text, and other
     PDF artifacts that may affect parsing.
     - `ocr_identifiers`: Applies OCR on PDFs with a specific metadata identifier.
+    - `remove_vertical_text`: Whether to remove vertical text from the PDF. This
+    helps to avoid issues with pdftotext's layout mode. For performance reasons,
+    this defaults to False.
     """
 
     page_range: tuple[int | None, int | None] = (None, None)
     page_bbox: tuple[float, float, float, float] | None = None
     ocr_identifiers: list[MetadataIdentifier] | None = None
+    remove_vertical_text: bool = False
