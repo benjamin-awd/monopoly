@@ -152,13 +152,12 @@ def pprint_transactions(transactions: list, statement, file: Path) -> None:
     click.echo()
 
 
-def run(input_files: Collection[Path], config: RunConfig):
+def get_results(input_files: Collection[Path], config: RunConfig):
     """
-    Process a collection of input files concurrently.
+    Process input files and return the results, displaying progress with tqdm.
 
-    If any statements are processed successfully or encounter errors, a Report object
-    is created and its display_report() method is called to provide a summary
-    of the processing outcomes.
+    Depending on the configuration, processing is done either sequentially
+    (single process) or concurrently using a ProcessPoolExecutor.
     """
     tqdm_settings: TqdmSettings = {
         "total": len(input_files),
@@ -169,23 +168,29 @@ def run(input_files: Collection[Path], config: RunConfig):
         "bar_format": "{l_bar}{bar}| {n_fmt}/{total_fmt}",
     }
 
-    if not config.single_process:
-        with ProcessPoolExecutor() as executor:
-            results = list(
-                tqdm(
-                    executor.map(
-                        partial(process_statement, config=config),
-                        input_files,
-                    ),
-                    **tqdm_settings,
-                )
-            )
+    processor = partial(process_statement, config=config)
 
-    else:
-        results = []
-        for file in tqdm(input_files, **tqdm_settings):
-            result = process_statement(file, config)
-            results.append(result)
+    if config.single_process:
+        return [processor(file) for file in tqdm(input_files, **tqdm_settings)]
+
+    with ProcessPoolExecutor() as executor:
+        return list(
+            tqdm(
+                executor.map(processor, input_files),
+                **tqdm_settings,
+            )
+        )
+
+
+def run(input_files: Collection[Path], config: RunConfig):
+    """
+    Process a collection of input files concurrently.
+
+    If any statements are processed successfully or encounter errors, a Report object
+    is created and its display_report() method is called to provide a summary
+    of the processing outcomes.
+    """
+    results = get_results(input_files, config)
 
     if any(results):
         # filter out null values, for cases where print_df is True
