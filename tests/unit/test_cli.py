@@ -38,17 +38,6 @@ def cli_runner():
     yield CliRunner()
 
 
-def run_cli_command(commands: list[str]) -> subprocess.CompletedProcess:
-    process = subprocess.run(
-        commands,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        universal_newlines=True,
-        shell=True,
-    )
-    return process
-
-
 def test_display_report(mock_results, capsys):
     report = Report(results=mock_results)
     report.display_report()
@@ -89,6 +78,74 @@ def test_monopoly_output(cli_runner: CliRunner):
         assert result.exit_code == 0
         assert "1 statement(s) processed" in result.output
         assert "input.pdf -> example-credit-2023-07-74498f.csv\n" in result.output
+
+
+def test_monopoly_pprint(cli_runner: CliRunner):
+    result = cli_runner.invoke(monopoly, ["src/monopoly/examples/example_statement.pdf", "--pprint"])
+
+    assert result.exit_code == 0
+    expected_output = (
+        "example_statement.pdf\n"
+        "+------------+-----------------------------------+----------+\n"
+        "| date       | description                       |   amount |\n"
+        "|------------+-----------------------------------+----------|\n"
+        "| 2023-07-02 | LAST MONTH'S BALANCE              |  -412.16 |\n"
+        "| 2023-07-02 | PAYMENT BY INTERNET               |   412.16 |\n"
+        "| 2023-07-03 | DELIGHTFUL BREAKFAST SINGAPORE SG |     -4.2 |\n"
+        "| 2023-07-06 | URBAN TRANSIT CO. SINGAPORE SG    |    -1.38 |\n"
+        "| 2023-07-07 | MORNING BITES CAFE SINGAPORE SG   |     -4.2 |\n"
+        "| 2023-07-13 | SUNRISE TOAST HAVEN SINGAPORE SG  |     -3.2 |\n"
+        "| 2023-07-15 | ARCTIC MARKET SINGAPORE SG        |       -7 |\n"
+        "| 2023-07-16 | SPEEDY DRIVE SHOP SINGAPORE SG    |    -11.9 |\n"
+        "| 2023-07-16 | TRAVELEATS EXPRESS SINGAPORE SG   |       -1 |\n"
+        "| 2023-07-17 | FROSTED PANTRY SINGAPORE SG       |    -2.51 |\n"
+        "| 2023-07-18 | COMMUTE & GO MART SINGAPORE SG    |     -9.9 |\n"
+        "| 2023-07-18 | CULINARY CONNECT SINGAPORE SG     |    -6.95 |\n"
+        "| 2023-07-18 | NATURE'S OVEN SINGAPORE SG        |    -1.29 |\n"
+        "| 2023-07-18 | CHILLED URBAN MART SINGAPORE SG   |    -2.64 |\n"
+        "| 2023-07-19 | GLOBAL FLAVORS SINGAPORE SG       |     -5.5 |\n"
+        "| 2023-07-19 | FITLIFE ACCESS SINGAPORE SG       |    -17.4 |\n"
+        "| 2023-07-20 | MORNING BITE CAFE SINGAPORE SG    |     -8.3 |\n"
+        "| 2023-07-20 | FOODIE EXPRESS SINGAPORE 239 SG   |   -36.25 |\n"
+        "| 2023-07-20 | GASTRONOMIC OASIS SINGAPORE SG    |    -2.28 |\n"
+        "| 2023-07-21 | TRANQUIL TRANSIT SINGAPORE SG     |    -11.9 |\n"
+        "| 2023-07-21 | URBAN HARVEST SINGAPORE SG        |     -7.3 |\n"
+        "| 2023-07-21 | ENCHANTED CAFE SINGAPORE SG       |    -11.9 |\n"
+        "| 2023-07-22 | FROZEN WONDERS SINGAPORE SG       |     -6.1 |\n"
+        "| 2023-07-22 | DRIVE-THRU DELIGHTS SINGAPORE SG  |  -238.79 |\n"
+        "| 2023-07-22 | FLAVORFUL MARKETPLAC SINGAPORE SG |    -2.71 |\n"
+        "| 2023-07-23 | GOURMET PANTRY SINGAPORE SG       |     -8.5 |\n"
+        "| 2023-07-23 | TRAVELER'S PROVISION SINGAPORE SG |      -59 |\n"
+        "| 2023-07-23 | EPICUREAN CONNECT SINGAPORE SG    |     -3.2 |\n"
+        "| 2023-07-23 | NATURAL BAZAAR SINGAPORE SG       |    -12.9 |\n"
+        "| 2023-07-24 | WHOLESOME LIFE SINGAPORE SG       |   -27.75 |\n"
+        "| 2023-07-24 | SAVORY MORNING SINGAPORE SG       |     -2.9 |\n"
+        "| 2023-07-25 | METRO TRANSIT SINGAPORE SG        |   -17.16 |\n"
+        "| 2023-07-25 | SUNNY CAFE SINGAPORE SG           |    -17.4 |\n"
+        "| 2023-07-25 | GOLDEN TOAST SINGAPORE SG         |   -13.45 |\n"
+        "| 2023-07-25 | -1234 SNOWY MART SINGAPORE SG     |    -1.45 |\n"
+        "| 2023-07-25 | DRIVE EXPRESS SINGAPORE SG        |    -3.43 |\n"
+        "| 2023-07-26 | GOURMET SHOP SINGAPORE SG         |     -7.3 |\n"
+        "| 2023-07-26 | URBAN EATS SINGAPORE SG           |    -11.9 |\n"
+        "| 2023-07-26 | FOOD HUB SINGAPORE SG             |     -6.5 |\n"
+        "| 2023-07-26 | FRESH FINDS SINGAPORE SG          |    -2.44 |\n"
+        "| 2023-07-26 | COZY CAFE SINGAPORE SG            |    -1.29 |\n"
+        "| 2023-07-27 | PANTRY PICKS SINGAPORE SG         |    -17.9 |\n"
+        "| 2023-07-27 | TRAVEL DELI SINGAPORE SG          |     -3.7 |\n"
+        "| 2023-07-28 | GLOBAL GRUB SINGAPORE SG          |      -12 |\n"
+        "| 2023-07-28 | FITNESS PASS SINGAPORE SG         |     -4.2 |\n"
+        "| 2023-07-28 | NATURE FARE SINGAPORE SG          |    -3.04 |\n"
+        "| 2023-07-29 | FAST FEAST SINGAPORE SG           |    -15.6 |\n"
+        "| 2023-07-30 | QUICK MART SINGAPORE SG           |   -13.52 |\n"
+        "| 2023-07-30 | CULINARY WAY SINGAPORE SG         |    -8.95 |\n"
+        "| 2023-07-30 | COLD STORAGE SINGAPORE SG         |     -4.2 |\n"
+        "| 2023-07-31 | BUS RIDE SINGAPORE SG             |    -11.9 |\n"
+        "| 2023-07-31 | EATERY STOP SINGAPORE SG          |     -7.3 |\n"
+        "| 2023-07-18 | CASH REBATE                       |     1.38 |\n"
+        "+------------+-----------------------------------+----------+\n"
+        "\n"
+    )
+    assert result.output == expected_output
 
 
 def test_monopoly_no_pdf(cli_runner: CliRunner):
