@@ -2,6 +2,7 @@ import traceback
 from collections.abc import Collection, Iterable
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass, field
+from functools import partial
 from pathlib import Path
 from typing import TypedDict
 
@@ -15,7 +16,7 @@ from monopoly.log import setup_logs
 # ruff: noqa: BLE001
 @dataclass
 class RunConfig:
-    output_dir: Path | None = None
+    output_directory: Path | None = None
     pprint: bool = False
     safety_check: bool = True
     single_process: bool = False
@@ -92,39 +93,8 @@ class Report:
             )
 
 
-def process_statement(
-    file: Path,
-    output_directory: Path | None,
-    *_,
-    pprint: bool = False,
-    safety_check: bool = True,
-    use_ocr: bool = False,
-) -> Result | None:
-    """
-    Extract, transform, and load transactions from bank statements.
-
-    Parameters
-    ----------
-    file : Path
-        The path to the bank statement file.
-    output_directory : Path | None
-        The directory to save the processed statement.
-        Defaults to the parent directory of the input file if not provided.
-    pprint : bool
-        If True, the transformed DataFrame is printed to the console
-        in a tabular format. No file is generated in this case.
-    safety_check : bool, default=True
-        If False, validation checks on the extracted data are always skipped.
-    use_ocr : bool, default=False
-        If True, applies OCR to the document to extract text.
-
-    Returns
-    -------
-        Optional[Result]: If print_df is False, returns a Result object containing
-        information about the processed statement. If an error occurs during processing,
-        returns a Result object with error information.
-
-    """
+def process_statement(file: Path, config: RunConfig) -> Result | None:
+    """Extract, transform, and load transactions from bank statements."""
     # pylint: disable=import-outside-toplevel, too-many-locals
     from monopoly.banks import BankDetector, banks
     from monopoly.generic import GenericBank
@@ -135,7 +105,7 @@ def process_statement(
         document = PdfDocument(file)
         document.unlock_document()
 
-        if use_ocr:
+        if config.use_ocr:
             document = PdfParser.apply_ocr(document)
 
         analyzer = BankDetector(document)
@@ -143,19 +113,19 @@ def process_statement(
         parser = PdfParser(bank, document)
         pipeline = Pipeline(parser)
 
-        statement = pipeline.extract(safety_check=safety_check)
+        statement = pipeline.extract(safety_check=config.safety_check)
         transactions = pipeline.transform(statement)
 
-        if pprint:
+        if config.pprint:
             pprint_transactions(transactions, statement, file)
             # don't load to CSV if pprint
             return None
 
         # saves processed statements to the same directory by default
-        if not output_directory:
-            output_directory = file.parent
+        if not config.output_directory:
+            config.output_directory = file.parent
 
-        output_file = pipeline.load(transactions, statement, output_directory)
+        output_file = pipeline.load(transactions, statement, config.output_directory)
         return Result(file.name, output_file.name)
 
     except Exception as err:
@@ -204,12 +174,8 @@ def run(input_files: Collection[Path], config: RunConfig):
             results = list(
                 tqdm(
                     executor.map(
-                        process_statement,
+                        partial(process_statement, config=config),
                         input_files,
-                        [config.output_dir] * len(input_files),
-                        [config.pprint] * len(input_files),
-                        [config.safety_check] * len(input_files),
-                        [config.use_ocr] * len(input_files),
                     ),
                     **tqdm_settings,
                 )
@@ -218,13 +184,7 @@ def run(input_files: Collection[Path], config: RunConfig):
     else:
         results = []
         for file in tqdm(input_files, **tqdm_settings):
-            result = process_statement(
-                file,
-                output_directory=config.output_dir,
-                pprint=config.pprint,
-                safety_check=config.safety_check,
-                use_ocr=config.use_ocr,
-            )
+            result = process_statement(file, config)
             results.append(result)
 
     if any(results):
@@ -257,7 +217,7 @@ def get_statement_paths(files: Iterable[Path]) -> set[Path]:
 @click.option(
     "-o",
     "--output",
-    "output_dir",
+    "output_directory",
     type=click.Path(exists=True, allow_dash=True, resolve_path=True, path_type=Path),
     help="Specify output folder.",
 )
