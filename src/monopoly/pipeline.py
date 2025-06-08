@@ -4,7 +4,6 @@ import re
 from datetime import datetime
 from pathlib import Path
 
-from dateparser import parse
 from pydantic import SecretStr
 
 from monopoly.constants.date import DateFormats
@@ -96,6 +95,8 @@ class Pipeline:
                 parsed_date = datetime.strptime(tx.date, fmt).astimezone()
             except ValueError:
                 logger.debug("strptime failed for %s with format %s", tx.date, fmt)
+                from dateparser import parse
+
                 parsed_date = parse(tx.date, settings=date_order.settings)
 
             if not parsed_date:
