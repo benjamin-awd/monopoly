@@ -21,6 +21,7 @@ class Citibank(BankBase):
         statement_type=EntryType.CREDIT,
         statement_date_pattern=regex(r"Statement\sDate\s+(.*)"),
         header_pattern=regex(r"(DATE.*DESCRIPTION.*AMOUNT)"),
+        transaction_date_format="%d %b",
         prev_balance_pattern=StatementBalancePatterns.CITIBANK,
         transaction_pattern=CreditTransactionPatterns.CITIBANK,
     )

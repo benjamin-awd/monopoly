@@ -22,6 +22,7 @@ class ExampleBank(BankBase):
         transaction_pattern=regex(
             r"(?P<transaction_date>\d+/\d+)\s*" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
         ),
+        transaction_date_format="%d/%m",
     )
 
     identifiers = [

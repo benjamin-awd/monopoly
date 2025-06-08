@@ -23,6 +23,7 @@ class Dbs(BankBase):
         statement_type=EntryType.CREDIT,
         statement_date_pattern=ISO8601.DD_MMM_YYYY,
         header_pattern=regex(r"(DATE.*DESCRIPTION.*AMOUNT)"),
+        transaction_date_format="%d %b",
         transaction_pattern=CreditTransactionPatterns.DBS,
         prev_balance_pattern=StatementBalancePatterns.DBS,
     )
@@ -32,6 +33,7 @@ class Dbs(BankBase):
         statement_date_pattern=ISO8601.DD_MMM_YYYY,
         multiline_config=MultilineConfig(multiline_descriptions=True),
         header_pattern=regex(r"(WITHDRAWAL.*DEPOSIT.*BALANCE)"),
+        transaction_date_format="%d %b",
         transaction_pattern=DebitTransactionPatterns.DBS,
         transaction_bound=170,
     )
@@ -41,6 +43,7 @@ class Dbs(BankBase):
         statement_date_pattern=regex(rf"Details as at {ISO8601.DD_MMM_YYYY}"),
         multiline_config=MultilineConfig(multiline_descriptions=True),
         header_pattern=regex(r"(\s*Date\s+Description\s+Withdrawal \(-\).*)"),
+        transaction_date_format="%d %b",
         transaction_pattern=DebitTransactionPatterns.DBS_POSB_CONSOLIDATED,
         transaction_bound=114,
     )
