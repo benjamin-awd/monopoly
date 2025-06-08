@@ -4,7 +4,7 @@ from re import compile as regex
 from typing import ClassVar
 
 from monopoly.banks import BankBase
-from monopoly.config import MultilineConfig, StatementConfig
+from monopoly.config import MultilineConfig, PdfConfig, StatementConfig
 from monopoly.constants import EntryType, InternalBankNames
 from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfParser
@@ -18,6 +18,7 @@ class GenericBank(BankBase):
     identifiers: ClassVar[list] = []
     statement_configs: ClassVar[list[StatementConfig]] = []
     name = InternalBankNames.GENERIC
+    pdf_config = PdfConfig(remove_vertical_text=True)
     """
     Empty bank class with variables that can be populated by
     the `GenericStatementHandler` class
