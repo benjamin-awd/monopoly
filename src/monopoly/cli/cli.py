@@ -77,7 +77,7 @@ def get_results(input_files: Collection[Path], config: RunConfig):
     tqdm_settings = asdict(TqdmSettings(len(input_files)))
     processor = partial(process_statement, config=config)
 
-    if config.single_process:
+    if config.single_process or len(input_files) == 1:
         return [processor(file) for file in tqdm(input_files, **tqdm_settings)]
 
     with ProcessPoolExecutor() as executor:
