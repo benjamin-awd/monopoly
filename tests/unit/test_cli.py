@@ -6,9 +6,8 @@ from pathlib import Path
 import pytest
 from click.testing import CliRunner
 
+from monopoly.cli.models import Report, Result
 from monopoly.cli import (
-    Report,
-    Result,
     get_statement_paths,
     monopoly,
     pprint_transactions,
