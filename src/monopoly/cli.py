@@ -1,10 +1,9 @@
 import traceback
 from collections.abc import Collection, Iterable
 from concurrent.futures import ProcessPoolExecutor
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from functools import partial
 from pathlib import Path
-from typing import TypedDict
 
 import click
 from tabulate import tabulate
@@ -24,15 +23,16 @@ class RunConfig:
     verbose: bool = False
 
 
-class TqdmSettings(TypedDict):
-    """Stores settings for `tqdm`."""
+@dataclass
+class TqdmSettings:
+    """Configuration for a tqdm progress bar."""
 
     total: int
-    desc: str
-    leave: bool
-    delay: float
-    ncols: int
-    bar_format: str
+    desc: str = "Processing statements"
+    leave: bool = False
+    delay: float = 0.2
+    ncols: int = 80
+    bar_format: str = "{l_bar}{bar}| {n_fmt}/{total_fmt}"
 
 
 @dataclass
@@ -153,21 +153,7 @@ def pprint_transactions(transactions: list, statement, file: Path) -> None:
 
 
 def get_results(input_files: Collection[Path], config: RunConfig):
-    """
-    Process input files and return the results, displaying progress with tqdm.
-
-    Depending on the configuration, processing is done either sequentially
-    (single process) or concurrently using a ProcessPoolExecutor.
-    """
-    tqdm_settings: TqdmSettings = {
-        "total": len(input_files),
-        "desc": "Processing statements",
-        "leave": False,
-        "delay": 0.2,
-        "ncols": 80,
-        "bar_format": "{l_bar}{bar}| {n_fmt}/{total_fmt}",
-    }
-
+    tqdm_settings = asdict(TqdmSettings(len(input_files)))
     processor = partial(process_statement, config=config)
 
     if config.single_process:
