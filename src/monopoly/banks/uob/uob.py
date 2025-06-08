@@ -25,6 +25,7 @@ class Uob(BankBase):
         prev_balance_pattern=StatementBalancePatterns.UOB,
         transaction_pattern=DebitTransactionPatterns.UOB,
         multiline_config=MultilineConfig(multiline_descriptions=True),
+        transaction_date_format="%d %b",
     )
 
     debit = StatementConfig(
@@ -34,6 +35,7 @@ class Uob(BankBase):
         transaction_pattern=DebitTransactionPatterns.UOB,
         transaction_bound=170,
         multiline_config=MultilineConfig(multiline_descriptions=True),
+        transaction_date_format="%d %b",
     )
 
     identifiers = [

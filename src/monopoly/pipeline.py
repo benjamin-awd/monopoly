@@ -1,12 +1,12 @@
 import csv
 import logging
 import re
+from datetime import datetime
 from pathlib import Path
 
 from dateparser import parse
 from pydantic import SecretStr
 
-from monopoly.config import DateOrder
 from monopoly.constants.date import DateFormats
 from monopoly.generic import GenericBank, GenericStatementHandler
 from monopoly.handler import StatementHandler
@@ -65,41 +65,56 @@ class Pipeline:
     @staticmethod
     def transform(statement: BaseStatement) -> list[Transaction]:
         logger.debug("Running transformation functions on DataFrame")
+
         transactions = statement.transactions
         statement_date = statement.statement_date
-        transaction_date_order = statement.config.transaction_date_order
+        date_order = statement.config.transaction_date_order
+        date_format = statement.config.transaction_date_format
 
-        def convert_date(transaction: Transaction, transaction_date_order: DateOrder):
+        def convert_date(tx: Transaction) -> str:
             """
-            Convert each date to a ISO 8601 (YYYY-MM-DD) format.
+            Convert date to ISO 8601 format with cross-year logic.
 
-            Implements cross-year logic by attributing transactions from
-            October, November, and December to the previous year if
-            the statement month is January.
-            e.g. if the statement month is Jan/Feb 2024, transactions from
-            Oct/Nov/Dec should be attributed to the previous year.
+            Applies the following logic:
+            - If the transaction date does not include a year, append the year from the statement date.
+            - Attempts to parse the date using a specified format (for performance).
+            - Falls back to a flexible date parser if format-based parsing fails.
+            - Applies cross-year adjustment: if the statement is from early in the year and
+            the transaction appears to be from a late-month (e.g., December), it may belong
+            to the previous year and is adjusted accordingly.
             """
-            # do not include year if transaction already includes date
-            has_year = bool(re.search(DateFormats.YYYY, transaction.date))
+            has_year = bool(re.search(DateFormats.YYYY, tx.date))
+            needs_year = not has_year and "y" not in date_format.lower()
+            fmt = date_format
+            parsed_date = None
 
-            if not has_year:
-                transaction.date = f"{transaction.date} {statement_date.year}"
+            if needs_year:
+                tx.date = f"{tx.date} {statement_date.year}"
+                fmt += " %Y"
 
-            parsed_date = parse(transaction.date, settings=transaction_date_order.settings)
+            try:
+                parsed_date = datetime.strptime(tx.date, fmt).astimezone()
+            except ValueError:
+                logger.debug("strptime failed for %s with format %s", tx.date, fmt)
+                parsed_date = parse(tx.date, settings=date_order.settings)
 
             if not parsed_date:
-                msg = "Could not convert date"
+                msg = f"Could not convert date: {tx.date}"
                 raise RuntimeError(msg)
 
-            if statement_date.month in START_OF_YEAR_MONTHS and parsed_date.month > YEAR_CUTOFF_MONTH and not has_year:
+            # Detect cross-year case: e.g., statement is from Jan/Feb, but tx is Dec
+            is_cross_year = statement_date.month in START_OF_YEAR_MONTHS and parsed_date.month > YEAR_CUTOFF_MONTH
+
+            if is_cross_year and needs_year:
                 parsed_date = parsed_date.replace(year=parsed_date.year - 1)
 
-            return parsed_date.isoformat()[:10]
+            return parsed_date.date().isoformat()
 
         logger.debug("Transforming dates to ISO 8601")
 
-        for transaction in transactions:
-            transaction.date = convert_date(transaction, transaction_date_order)
+        for tx in transactions:
+            tx.date = convert_date(tx)
+
         return transactions
 
     @staticmethod

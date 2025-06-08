@@ -29,6 +29,7 @@ class Trust(BankBase):
             multiline_statement_date=True,
         ),
         safety_check=True,
+        transaction_date_format="%d %b",
     )
 
     identifiers = [[TextIdentifier("Trust Bank Singapore Limited")]]

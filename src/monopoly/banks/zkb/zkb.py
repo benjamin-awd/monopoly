@@ -19,6 +19,7 @@ class ZurcherKantonalBank(BankBase):
         transaction_pattern=DebitTransactionPatterns.ZKB,
         multiline_config=MultilineConfig(multiline_descriptions=True),
         safety_check=False,
+        transaction_date_format="%d.%m.%Y",
     )
 
     identifiers = [

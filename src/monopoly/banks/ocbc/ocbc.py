@@ -25,6 +25,7 @@ class Ocbc(BankBase):
         header_pattern=regex(r"(TRANSACTION DATE.*DESCRIPTION.*AMOUNT)"),
         prev_balance_pattern=StatementBalancePatterns.OCBC,
         transaction_pattern=CreditTransactionPatterns.OCBC,
+        transaction_date_format="%d/%m",
     )
 
     debit = StatementConfig(
@@ -34,6 +35,7 @@ class Ocbc(BankBase):
         transaction_pattern=DebitTransactionPatterns.OCBC,
         multiline_config=MultilineConfig(multiline_descriptions=True),
         transaction_bound=170,
+        transaction_date_format="%d %b",
     )
 
     pdf_config = PdfConfig(

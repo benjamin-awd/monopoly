@@ -73,6 +73,7 @@ class StatementConfig:
     header_pattern: Pattern[str] | RegexEnum
     transaction_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
     statement_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
+    transaction_date_format: str = ""
     multiline_config: MultilineConfig | None = None
     transaction_bound: int | None = None
     prev_balance_pattern: Pattern[str] | RegexEnum | None = None

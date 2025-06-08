@@ -24,6 +24,7 @@ class StandardChartered(BankBase):
         header_pattern=regex(r"(Transaction.*Posting.*Amount)"),
         prev_balance_pattern=StatementBalancePatterns.STANDARD_CHARTERED,
         transaction_pattern=CreditTransactionPatterns.STANDARD_CHARTERED,
+        transaction_date_format="%d %b",
     )
 
     identifiers = [
