@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.17.1] - 2025-06-08
+
+### 🛠️ Bug Fixes
+
+- *(cli)* Pass entire config to process_statement
+
+### 🚜 Refactor
+
+- *(cli)* Use helper function to pass results back
+- *(cli)* Remove hardcoded instantiation of tqdm_settings
+- *(cli)* Move models to separate file
+
+### 🧪 Testing
+
+- *(cli)* Move files to integration directory
+- *(cli)* Use tmp_path instead of cli runner isolated filesystem
+
+### ⚙️ Miscellaneous Tasks
+
+- *(cli)* Do not create executor if only a single file is passed
+- *(cli)* Add e2e test for pprint
+
 ## [0.17.0] - 2025-06-06
 
 ### ⛰️ Features
