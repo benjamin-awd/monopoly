@@ -19,7 +19,7 @@ dist
 !tests/integration/banks/**/raw.csv
 !tests/integration/banks/**/transformed.csv
 !tests/integration/banks/**/*.pdf
-!tests/unit/test_cli/**/*.pdf
+!tests/integration/test_cli/**/*.pdf
 !**/examples/*.pdf
 
 .claude
