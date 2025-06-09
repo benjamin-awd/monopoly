@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.18.0] - 2025-06-09
+
+### ⛰️ Features
+
+- *(banks)* Add limited support for SG Maybank credit statements
+
+### 🛠️ Bug Fixes
+
+- *(cli)* Pass entire config to process_statement
+
+### 🚜 Refactor
+
+- *(cli)* Use helper function to pass results back
+- *(cli)* Remove hardcoded instantiation of tqdm_settings
+- *(cli)* Move models to separate file
+
+### ⚡ Performance
+
+- *(pdf)* Make removal of vertical text optional
+- *(banks)* Use transaction format if available
+- Lazily import parse from dateparser
+
+### 🧪 Testing
+
+- *(cli)* Move files to integration directory
+- *(cli)* Use tmp_path instead of cli runner isolated filesystem
+
+### ⚙️ Miscellaneous Tasks
+
+- *(cli)* Do not create executor if only a single file is passed
+- *(cli)* Add e2e test for pprint
+- *(banks/amex)* Enable safety check
+- Add tests for ocr_available
+
 ## [0.17.0] - 2025-06-06
 
 ### ⛰️ Features
