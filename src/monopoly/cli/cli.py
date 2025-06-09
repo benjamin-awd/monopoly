@@ -10,12 +10,17 @@ from tabulate import tabulate
 from tqdm import tqdm
 
 from monopoly.cli.models import Report, Result, RunConfig, TqdmSettings
-from monopoly.log import setup_logs, worker_log_setup
+from monopoly.log import file_context, setup_logs, worker_log_setup
 
 
 def process_statement(file: Path, config: RunConfig) -> Result | None:
     """Extract, transform, and load transactions from bank statements."""
-    # lazily importing here prevents from CLI from having a "slow" start
+    # The file_context should only be set and displayed when the verbose formatter is active,
+    # but setting an additional gate here to adopt a slightly stricter security posture.
+    if config.verbose:
+        file_context.set(file.name)
+
+    # Lazily importing here prevents from CLI from having a "slow" start
     from monopoly.banks import BankDetector, banks
     from monopoly.generic import GenericBank
     from monopoly.pdf import PdfDocument, PdfParser
@@ -102,8 +107,8 @@ def run(input_files: Collection[Path], config: RunConfig):
     results = get_results(input_files, config)
 
     if any(results):
-        # filter out null values, for cases where print_df is True
-        # and processing errors occur to avoid pydantic validation errors
+        # filter out null values to avoid pydantic validation errors,
+        # for cases where print_df is True and processing errors occur
         report = Report([res for res in results if res])
         report.display_report(config.verbose)
 
