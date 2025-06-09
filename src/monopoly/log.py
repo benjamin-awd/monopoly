@@ -4,7 +4,7 @@ import sys
 
 
 def get_logger() -> logging.Logger:
-    logger = logging.getLogger("root")
+    logger = logging.getLogger("monopoly")
     handler = logging.StreamHandler(sys.stdout)
     formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
@@ -19,11 +19,18 @@ def get_logger() -> logging.Logger:
     return logger
 
 
+def worker_log_setup(*, verbose: bool):
+    """Set logs for workers."""
+    if verbose:
+        logger = logging.getLogger("monopoly")
+        logger.setLevel(logging.DEBUG)
+
+
 def setup_logs(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         if kwargs["verbose"]:
-            logger = logging.getLogger("root")
+            logger = logging.getLogger("monopoly")
             logger.setLevel(logging.DEBUG)
         return func(*args, **kwargs)
 
