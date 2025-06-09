@@ -159,7 +159,7 @@ class PdfParser:
         if not (identifier_groups := self.pdf_config.ocr_identifiers):
             return False
 
-        return any(all(identifier.matches(identifier) for identifier in group) for group in identifier_groups)
+        return any(all(identifier.matches(self) for identifier in group) for group in identifier_groups)
 
     @cached_property
     def pages(self):
