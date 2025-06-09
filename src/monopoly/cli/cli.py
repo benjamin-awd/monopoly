@@ -10,7 +10,7 @@ from tabulate import tabulate
 from tqdm import tqdm
 
 from monopoly.cli.models import Report, Result, RunConfig, TqdmSettings
-from monopoly.log import setup_logs
+from monopoly.log import setup_logs, worker_log_setup
 
 
 def process_statement(file: Path, config: RunConfig) -> Result | None:
@@ -80,7 +80,9 @@ def get_results(input_files: Collection[Path], config: RunConfig):
     if config.single_process or len(input_files) == 1:
         return [processor(file) for file in tqdm(input_files, **tqdm_settings)]
 
-    with ProcessPoolExecutor() as executor:
+    initializer = partial(worker_log_setup, verbose=config.verbose)
+
+    with ProcessPoolExecutor(initializer=initializer) as executor:
         return list(
             tqdm(
                 executor.map(processor, input_files),
