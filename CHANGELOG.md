@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.18.1] - 2025-06-11
+
+### 🚜 Refactor
+
+- *(logs)* Allow pdf name in logs during verbose mode
+
+### ⚙️ Miscellaneous Tasks
+
+- Allow verbose logs during multi-threaded mode
+
 ## [0.18.0] - 2025-06-09
 
 ### ⛰️ Features
