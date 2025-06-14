@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.18.2] - 2025-06-14
+
+### ⚙️ Miscellaneous Tasks
+
+- Push missing amex safety check
+
 ## [0.18.1] - 2025-06-11
 
 ### 🚜 Refactor
