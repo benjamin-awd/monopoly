@@ -16,7 +16,7 @@ dependencies = [
     "strenum>=0.4.15",
 ]
 name = "monopoly-core"
-version = "0.18.2"
+version = "0.18.3"
 description = "Monopoly is a Python library & CLI that converts bank statement PDFs to CSV"
 readme = "README.md"
 classifiers = [
