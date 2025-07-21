@@ -45,7 +45,7 @@ class Dbs(BankBase):
         header_pattern=regex(r"(\s*Date\s+Description\s+Withdrawal \(-\).*)"),
         transaction_date_format="%d %b",
         transaction_pattern=DebitTransactionPatterns.DBS_POSB_CONSOLIDATED,
-        transaction_bound=114,
+        transaction_bound=220,
     )
 
     identifiers = [
