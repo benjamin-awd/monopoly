@@ -49,9 +49,20 @@ class Dbs(BankBase):
     )
 
     identifiers = [
+        # 2023-present
         [
             TextIdentifier("DBS"),
             MetadataIdentifier(creator="Quadient CXM AG"),
+        ],
+        # 2021-2022
+        [
+            TextIdentifier("DBS"),
+            MetadataIdentifier(creator="Quadient Group AG"),
+        ],
+        # 2018-2020
+        [
+            TextIdentifier("DBS"),
+            MetadataIdentifier(producer="StreamServe Communication Server"),
         ],
     ]
 
