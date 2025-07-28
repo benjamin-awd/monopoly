@@ -35,7 +35,6 @@ class Dbs(BankBase):
         header_pattern=regex(r"(WITHDRAWAL.*DEPOSIT.*BALANCE)"),
         transaction_date_format="%d %b",
         transaction_pattern=DebitTransactionPatterns.DBS,
-        transaction_bound=220,
     )
 
     consolidated = StatementConfig(
