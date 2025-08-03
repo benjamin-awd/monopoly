@@ -64,9 +64,9 @@ class TDCanadaTrustCredit(BankBase):
     )
     identifiers = [
         [
-            # TextIdentifier(
-            #     text="TD CANADA TRUST"
-            # ),
+            TextIdentifier(
+                text="TDSTM"
+            ),
             MetadataIdentifier(
                 producer='OpenText Output Transformation Engine - 23.4.00'
             ),
