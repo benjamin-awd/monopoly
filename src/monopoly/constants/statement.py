@@ -6,7 +6,7 @@ from strenum import StrEnum
 
 from monopoly.enums import AutoEnum, RegexEnum
 
-from .date import ISO8601
+from .date import ISO8601, DateFormats
 
 
 class EntryType(AutoEnum):
@@ -27,6 +27,7 @@ class BankNames(AutoEnum):
     UOB = auto()
     ZKB = auto()
     TRUST = auto()
+    TDCT = auto()
 
 
 class InternalBankNames(AutoEnum):
@@ -85,6 +86,7 @@ class StatementBalancePatterns(RegexEnum):
     )
     UOB = r"(?P<description>PREVIOUS BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
     TRUST = r"(?P<description>Previous balance?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+    TDCT = r"(?P<description>PREVIOUS STATEMENT BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
 
 
 class CreditTransactionPatterns(RegexEnum):
@@ -137,6 +139,13 @@ class CreditTransactionPatterns(RegexEnum):
         f"{SharedPatterns.AMOUNT}"
         r"$"  # necessary to ignore FCY
     )
+    TDCT = (
+        rf"(?P<transaction_date>\b({DateFormats.MMM}[-\s]{DateFormats.D}))\s+"
+        rf"(?P<posting_date>\b({DateFormats.MMM}[-\s]{DateFormats.D}))\s+"
+        + SharedPatterns.DESCRIPTION
+        # transaction dr/cr with format -$999,000.00
+        + rf"(?P<amount>{SharedPatterns.OPTIONAL_NEGATIVE_SYMBOL}\$?{SharedPatterns.COMMA_FORMAT}|{SharedPatterns.ENCLOSED_COMMA_FORMAT}\s*"
+    )
 
 
 class DebitTransactionPatterns(RegexEnum):
@@ -177,4 +186,10 @@ class DebitTransactionPatterns(RegexEnum):
         + r"(?P<amount>\d{1,3}(\'\d{3})*(\.\d+)?)\s+"
         + rf"(?P<value_date>{ISO8601.DD_MM_YYYY})\s+"
         + r"(?P<balance>\d{1,3}(\'\d{3})*(\.\d+)?)$"
+    )
+    TDCT = (
+        SharedPatterns.DESCRIPTION
+        + rf"(?P<amount>{SharedPatterns.COMMA_FORMAT})"
+        + rf"[-\s]+(?P<transaction_date>\b({DateFormats.MMM}{DateFormats.DD}))" # i.e MAY1 and MAY27
+        + rf"([-\s]+(?P<balance>{SharedPatterns.COMMA_FORMAT}))?" # balance is shown at end of each day
     )
