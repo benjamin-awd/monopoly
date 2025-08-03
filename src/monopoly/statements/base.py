@@ -189,6 +189,8 @@ class BaseStatement:
                         continue
 
                     groupdict = TransactionGroupDict(**match.groupdict())
+                    groupdict = self.pre_process_transaction_groupdict(groupdict)
+
                     transaction_match = TransactionMatch(groupdict, match, page_number=page_num)
                     match = self.pre_process_match(transaction_match)
                     context = MatchContext(
@@ -216,6 +218,15 @@ class BaseStatement:
             return True
         return False
 
+    def pre_process_transaction_groupdict(self, groupdict: TransactionGroupDict) -> TransactionGroupDict:
+        if self.config.multiline_config.multiline_transaction_date:
+            if groupdict.transaction_date:
+                self.previous_transaction_date = groupdict.transaction_date
+            else:
+                groupdict.transaction_date = self.previous_transaction_date
+
+        return groupdict
+    
     def pre_process_match(self, transaction_match: TransactionMatch) -> TransactionMatch:
         return transaction_match
 
