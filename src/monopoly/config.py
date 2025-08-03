@@ -28,6 +28,7 @@ class MultilineConfig:
     multiline_descriptions: bool = False
     multiline_polarity: bool = False
     multiline_statement_date: bool = False
+    multiline_transaction_date: bool = False
     include_prev_margin: int | None = None
 
 
@@ -75,7 +76,7 @@ class StatementConfig:
     transaction_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
     statement_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
     transaction_date_format: str = ""
-    multiline_config: MultilineConfig | None = None
+    multiline_config: MultilineConfig = field(default_factory=MultilineConfig)
     transaction_bound: int | None = None
     prev_balance_pattern: Pattern[str] | RegexEnum | None = None
     safety_check: bool = True
