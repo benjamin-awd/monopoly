@@ -16,11 +16,13 @@ from .trust import Trust
 from .uob import Uob
 from .zkb import ZurcherKantonalBank
 from .td_canada_trust import TDCanadaTrust, TDCanadaTrustBusiness, TDCanadaTrustCredit
+from .cibc import CIBC
 
 banks: list[type["BankBase"]] = [
     Amex,
     BankOfAmerica,
     Chase,
+    CIBC,
     Citibank,
     Dbs,
     ExampleBank,
