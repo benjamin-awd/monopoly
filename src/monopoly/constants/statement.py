@@ -18,6 +18,7 @@ class BankNames(AutoEnum):
     AMEX = auto()
     BANK_OF_AMERICA = auto()
     CHASE = auto()
+    CIBC = auto()
     CITIBANK = auto()
     DBS = auto()
     HSBC = auto()
@@ -87,6 +88,10 @@ class StatementBalancePatterns(RegexEnum):
     UOB = r"(?P<description>PREVIOUS BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
     TRUST = r"(?P<description>Previous balance?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
     TDCT = r"(?P<description>PREVIOUS STATEMENT BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+    CIBC = (
+        r"(?P<description>Previous balance?)\s+"
+        + rf"(?P<amount>{SharedPatterns.OPTIONAL_NEGATIVE_SYMBOL}\$?{SharedPatterns.COMMA_FORMAT})"
+    )
 
 
 class CreditTransactionPatterns(RegexEnum):
@@ -101,6 +106,14 @@ class CreditTransactionPatterns(RegexEnum):
     )
     DBS = rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
     CHASE = rf"(?P<transaction_date>{ISO8601.MM_DD})\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
+    CIBC = (
+        rf"(?P<transaction_date>\b({DateFormats.MMM}[-\s]{DateFormats.DD}))\s+"
+        rf"(?P<posting_date>\b({DateFormats.MMM}[-\s]{DateFormats.DD}))\s+"
+        r"(?:Ý\s*)?(?P<description>.+?)\s{2,}"
+        r"(?P<catagory>.*?)\s+"
+        # transaction dr/cr with format -$999,000.00
+        + rf"(?P<amount>{SharedPatterns.OPTIONAL_NEGATIVE_SYMBOL}\$?{SharedPatterns.COMMA_FORMAT}|{SharedPatterns.ENCLOSED_COMMA_FORMAT}\s*"
+    )
     CITIBANK = (
         rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
     )
@@ -147,8 +160,13 @@ class CreditTransactionPatterns(RegexEnum):
         + rf"(?P<amount>{SharedPatterns.OPTIONAL_NEGATIVE_SYMBOL}\$?{SharedPatterns.COMMA_FORMAT}|{SharedPatterns.ENCLOSED_COMMA_FORMAT}\s*"
     )
 
-
 class DebitTransactionPatterns(RegexEnum):
+    CIBC = (
+        rf"\s*(?:(?P<transaction_date>{DateFormats.MMM}\s+{DateFormats.D})[-\s]+)?"
+        r"(?P<description>(?!(Deposits)).+?)\s{2,}"
+        rf"(?P<amount>{SharedPatterns.COMMA_FORMAT})"
+        rf"[-\s]+(?P<balance>{SharedPatterns.OPTIONAL_NEGATIVE_SYMBOL}\$?{SharedPatterns.COMMA_FORMAT})"
+    )
     DBS = (
         rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
         + SharedPatterns.DESCRIPTION
