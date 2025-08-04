@@ -24,6 +24,7 @@ class BankNames(AutoEnum):
     HSBC = auto()
     MAYBANK = auto()
     OCBC = auto()
+    SCOTIABANK = auto()
     STANDARD_CHARTERED = auto()
     UOB = auto()
     ZKB = auto()
@@ -190,6 +191,13 @@ class DebitTransactionPatterns(RegexEnum):
         rf"(?P<posting_date>{ISO8601.DD_MMM})\s+"
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+        + SharedPatterns.BALANCE
+    )
+    SCOTIABANK = (
+        r"^(?!.*(?:Opening Balance)).*?" # avoid matching opening balance as a "transaction"
+        + rf"(?P<transaction_date>{ISO8601.MMM_DD})\s+"
+        + SharedPatterns.DESCRIPTION
+        + SharedPatterns.AMOUNT
         + SharedPatterns.BALANCE
     )
     UOB = (
