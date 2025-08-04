@@ -53,7 +53,6 @@ class CIBC(BankBase):
         prev_balance_pattern=StatementBalancePatterns.CIBC,
         transaction_pattern=CreditTransactionPatterns.CIBC,
         transaction_date_format="%b %d",
-        safety_check=False,
         transaction_auto_polarity=False
     )
 
