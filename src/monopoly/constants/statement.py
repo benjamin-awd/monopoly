@@ -24,6 +24,7 @@ class BankNames(AutoEnum):
     HSBC = auto()
     MAYBANK = auto()
     OCBC = auto()
+    RBC = auto()
     SCOTIABANK = auto()
     STANDARD_CHARTERED = auto()
     UOB = auto()
@@ -89,11 +90,11 @@ class StatementBalancePatterns(RegexEnum):
     UOB = r"(?P<description>PREVIOUS BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
     TRUST = r"(?P<description>Previous balance?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
     TDCT = r"(?P<description>PREVIOUS STATEMENT BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+    RBC = r"(?P<description>PREVIOUS STATEMENT BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
     CIBC = (
         r"(?P<description>Previous balance?)\s+"
         + rf"(?P<amount>{SharedPatterns.OPTIONAL_NEGATIVE_SYMBOL}\$?{SharedPatterns.COMMA_FORMAT})"
     )
-
 
 class CreditTransactionPatterns(RegexEnum):
     AMEX_PLATINUM = (
@@ -166,6 +167,14 @@ class CreditTransactionPatterns(RegexEnum):
         # transaction dr/cr with format -$999,000.00
         + rf"(?P<amount>{SharedPatterns.OPTIONAL_NEGATIVE_SYMBOL}\$?{SharedPatterns.COMMA_FORMAT}|{SharedPatterns.ENCLOSED_COMMA_FORMAT}\s*"
     )
+    RBC = (
+        rf"(?P<transaction_date>\b({DateFormats.MMM}[-\s]{DateFormats.DD}))\s+"
+        rf"(?P<posting_date>\b({DateFormats.MMM}[-\s]{DateFormats.DD}))\s+"
+        + SharedPatterns.DESCRIPTION
+        # transaction dr/cr with format -$999,000.00
+        + r"(?P<polarity>\-)?"
+        + rf"(?P<amount>\$?{SharedPatterns.COMMA_FORMAT}|{SharedPatterns.ENCLOSED_COMMA_FORMAT}\s*"
+    )
 
 class DebitTransactionPatterns(RegexEnum):
     CIBC = (
@@ -224,4 +233,13 @@ class DebitTransactionPatterns(RegexEnum):
         + rf"(?P<amount>{SharedPatterns.COMMA_FORMAT})"
         + rf"[-\s]+(?P<transaction_date>\b({DateFormats.MMM}{DateFormats.DD}))" # i.e MAY1 and MAY27
         + rf"([-\s]+(?P<balance>{SharedPatterns.COMMA_FORMAT}))?" # balance is shown at end of each day
+    )
+    RBC = (
+        r"^(?!.*(?:Opening Balance|Closing Balance))"
+        r"(\s*)?"
+        rf"(?P<transaction_date>{DateFormats.D}\s+{DateFormats.MMM})?\s+" # i.e 7 May
+        r"(?P<description>.+?)\s{2,}"
+        + rf"(?P<amount>{SharedPatterns.COMMA_FORMAT})"
+        + r"(?:\s{2,}(?P<balance>-?\s?\d{1,3}(?:,\d{3})*(?:\.\d{1,2})))?" # edge case for literally "- 100.00"
+        + r"\s*$"
     )
