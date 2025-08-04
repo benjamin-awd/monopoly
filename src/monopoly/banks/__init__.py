@@ -18,6 +18,7 @@ from .zkb import ZurcherKantonalBank
 from .td_canada_trust import TDCanadaTrust
 from .cibc import CIBC
 from .scotiabank import Scotiabank
+from .rbc import RoyalBankOfCanada
 
 banks: list[type["BankBase"]] = [
     Amex,
@@ -36,6 +37,7 @@ banks: list[type["BankBase"]] = [
     ZurcherKantonalBank,
     Trust,
     TDCanadaTrust,
+    RoyalBankOfCanada
 ]
 
 logger = logging.getLogger(__name__)
