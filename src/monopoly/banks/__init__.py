@@ -15,7 +15,7 @@ from .standard_chartered import StandardChartered
 from .trust import Trust
 from .uob import Uob
 from .zkb import ZurcherKantonalBank
-from .td_canada_trust import TDCanadaTrust, TDCanadaTrustBusiness, TDCanadaTrustCredit
+from .td_canada_trust import TDCanadaTrust
 from .cibc import CIBC
 from .scotiabank import Scotiabank
 
@@ -35,9 +35,7 @@ banks: list[type["BankBase"]] = [
     Uob,
     ZurcherKantonalBank,
     Trust,
-    TDCanadaTrustBusiness,
     TDCanadaTrust,
-    TDCanadaTrustCredit,
 ]
 
 logger = logging.getLogger(__name__)

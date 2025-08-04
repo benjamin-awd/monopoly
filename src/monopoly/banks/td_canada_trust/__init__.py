@@ -1,3 +1,3 @@
-from .tdct import TDCanadaTrust, TDCanadaTrustBusiness, TDCanadaTrustCredit
+from .tdct import TDCanadaTrust
 
-__all__ = ["TDCanadaTrust", "TDCanadaTrustCredit", "TDCanadaTrustBusiness"]
+__all__ = ["TDCanadaTrust"]
