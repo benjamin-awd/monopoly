@@ -4,6 +4,7 @@ from .amex import Amex
 from .bank_of_america import BankOfAmerica
 from .base import BankBase
 from .bmo import BankOfMontreal
+from .canadian_tire import CanadianTire
 from .chase import Chase
 from .cibc import CIBC
 from .citibank import Citibank
@@ -25,6 +26,7 @@ banks: list[type["BankBase"]] = [
     Amex,
     BankOfAmerica,
     BankOfMontreal,
+    CanadianTire,
     Chase,
     CIBC,
     Citibank,

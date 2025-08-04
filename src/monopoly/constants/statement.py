@@ -17,6 +17,7 @@ class EntryType(AutoEnum):
 class BankNames(AutoEnum):
     AMEX = auto()
     BANK_OF_AMERICA = auto()
+    CANADIAN_TIRE = auto()
     CHASE = auto()
     CIBC = auto()
     CITIBANK = auto()
