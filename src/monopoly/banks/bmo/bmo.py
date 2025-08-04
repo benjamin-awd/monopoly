@@ -12,7 +12,7 @@ from monopoly.constants.statement import CreditTransactionPatterns
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
 MMM_DOT_DD = r"[A-Z][a-z]{2,3}\.\s+\d{1,2}"
-MMM_DOT_DD_YYYY = r"[A-Z][a-z]{2,3}\.\s+\d{1,2},\s+\d{4})"
+MMM_DOT_DD_YYYY = r"[A-Z][a-z]{2,3}\.\s+\d{1,2},\s+\d{4}"
 
 
 class BankOfMontreal(BankBase):
@@ -30,7 +30,7 @@ class BankOfMontreal(BankBase):
     )
     credit = StatementConfig(
         statement_type=EntryType.CREDIT,
-        statement_date_pattern=re.compile(rf"Statement\s+date\s+(?P<statement_date>{MMM_DOT_DD_YYYY}"),
+        statement_date_pattern=re.compile(rf"Statement\s+date\s+(?P<statement_date>{MMM_DOT_DD_YYYY})"),
         header_pattern=re.compile(r"DATE\s+DATE\s+DESCRIPTION\s+AMOUNT\ \(\$\)"),
         transaction_pattern=CreditTransactionPatterns.BMO,
         transaction_date_format="%b. %d",

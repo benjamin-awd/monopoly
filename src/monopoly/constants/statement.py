@@ -110,8 +110,8 @@ class CreditTransactionPatterns(RegexEnum):
         + SharedPatterns.AMOUNT
     )
     BMO = (
-        rf"(?P<transaction_date>[A-Z][a-z]{2, 3}\.\s+\d{1, 2})\s+"
-        rf"(?P<posting_date>[A-Z][a-z]{2, 3}\.\s+\d{1, 2}\s+"
+        r"(?P<transaction_date>[A-Z][a-z]{2,3}\.\s+\d{1,2})\s+"
+        r"(?P<posting_date>[A-Z][a-z]{2,3}\.\s+\d{1,2})\s+"
         r"(?P<description>.+?)\s+"
         r"(?P<amount>\d{1,3}(?:,\d{3})*\.\d{2})(\s+)?"
         r"(?P<polarity>CR)?$"
