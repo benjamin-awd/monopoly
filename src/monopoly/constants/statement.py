@@ -127,6 +127,14 @@ class CreditTransactionPatterns(RegexEnum):
         r"(?P<polarity>-)"
         r"?(?P<amount>\d{1,3}(?:,\d{3})*\.\d{2})"
     )
+    CAPITAL_ONE = (
+        r"^\s*"
+        rf"(?P<transaction_date>\b({DateFormats.MMM}\s+{DateFormats.D}))\s+"
+        rf"(?P<posting_date>\b({DateFormats.MMM}\s+{DateFormats.D}))\s+"
+        f"{SharedPatterns.DESCRIPTION}"
+        rf"(?P<polarity>-)?\s*\$"
+        rf"(?P<amount>{SharedPatterns.COMMA_FORMAT})\s*$"
+    )
     CHASE = rf"(?P<transaction_date>{ISO8601.MM_DD})\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
     CIBC = (
         rf"(?P<transaction_date>\b({DateFormats.MMM}[-\s]{DateFormats.DD}))\s+"

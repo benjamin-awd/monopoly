@@ -7,7 +7,7 @@ from monopoly.constants import (
     BankNames,
     EntryType,
 )
-from monopoly.constants.statement import SharedPatterns
+from monopoly.constants.statement import CreditTransactionPatterns
 from monopoly.identifiers import MetadataIdentifier
 
 
@@ -17,14 +17,7 @@ class CapitalOneCanada(BankBase):
         statement_type=EntryType.CREDIT,
         header_pattern=re.compile(r"(\s+)?Transaction Date\s+Posting Date\s+Description\s+Amount"),
         statement_date_pattern=re.compile(rf" - (?P<statement_date>{ISO8601.MMM_DD_YYYY})"),
-        transaction_pattern=re.compile(
-            r"^\s*"
-            rf"(?P<transaction_date>{ISO8601.MMM_DD})\s+"
-            rf"(?P<posting_date>{ISO8601.MMM_DD})\s+"
-            f"{SharedPatterns.DESCRIPTION}"
-            rf"(?P<polarity>-)?\s*\$"
-            rf"(?P<amount>{SharedPatterns.COMMA_FORMAT})\s*$"
-        ),
+        transaction_pattern=CreditTransactionPatterns.CAPITAL_ONE,
     )
     identifiers = [
         [
