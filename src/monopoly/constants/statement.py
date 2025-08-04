@@ -135,6 +135,12 @@ class CreditTransactionPatterns(RegexEnum):
         rf"(?P<transaction_date>{ISO8601.DD_MM})\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
     )
     OCBC = r"(?P<transaction_date>\d+/\d+)\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
+    SCOTIABANK = (
+        rf"(?P<transaction_date>\b({DateFormats.MMM}[\/\-\s.]{DateFormats.D}))\s+"
+        rf"(?P<posting_date>\b({DateFormats.MMM}[\/\-\s.]{DateFormats.D}))\s+"
+        + SharedPatterns.DESCRIPTION
+        + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL # "credits" are denoted at the end of the amount, i.e PMYT 155.96-
+    )
     STANDARD_CHARTERED = (
         rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
         rf"(?P<posting_date>{ISO8601.DD_MMM})\s+"

@@ -4,7 +4,7 @@ import re
 from monopoly.banks.base import BankBase
 from monopoly.config import StatementConfig, MultilineConfig
 from monopoly.constants.date import ISO8601, DateFormats
-from monopoly.constants.statement import BankNames, DebitTransactionPatterns, EntryType, SharedPatterns
+from monopoly.constants.statement import BankNames, CreditTransactionPatterns, DebitTransactionPatterns, EntryType, SharedPatterns
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
 
@@ -32,7 +32,7 @@ class Scotiabank(BankBase):
             r"^(?!.*(?:BALANCE FORWARD)).*?"
             rf"(?P<transaction_date>{DateFormats.MM}\/{DateFormats.DD}\/{DateFormats.YYYY})\s+"
             + SharedPatterns.DESCRIPTION
-            # cents (float) are optional in bank statement. "\.\d*" -> "(?:\.\d{1,2})??"
+            # cents (float) are optional in bank statement. "\.\d*" -> "(?:\.\d{1,2})?"
             + r"(?P<amount>\(?\d{1,3}(?:,\d{3})*(?:\.\d{1,2})??\)?)\s+"
             + r"(?P<balance>\d{1,3}(?:,\d{3})*(?:\.\d{1,2})?)"
         ),
@@ -54,12 +54,7 @@ class Scotiabank(BankBase):
             rf"- {ISO8601.MMM_DD_YYYY}"
         ),
         transaction_date_format="%b %d",
-        transaction_pattern=re.compile(
-            rf"(?P<transaction_date>\b({DateFormats.MMM}[\/\-\s.]{DateFormats.D}))\s+"
-            rf"(?P<posting_date>\b({DateFormats.MMM}[\/\-\s.]{DateFormats.D}))\s+"
-            + SharedPatterns.DESCRIPTION
-            + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL # "credits" are denoted at the end of the amount, i.e PMYT 155.96-
-        ),
+        transaction_pattern=CreditTransactionPatterns.SCOTIABANK,
         multiline_config=MultilineConfig(
             multiline_descriptions=True
         ),
