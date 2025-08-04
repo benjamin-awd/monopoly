@@ -3,7 +3,7 @@ import re
 
 from monopoly.constants import EntryType
 from monopoly.statements.debit_statement import DebitStatement
-from monopoly.statements.transaction import Transaction, TransactionGroupDict
+from monopoly.statements.transaction import Transaction, TransactionGroupDict, TransactionMatch
 
 from .base import BaseStatement, SafetyCheckError
 
@@ -25,6 +25,17 @@ class CreditStatement(BaseStatement):
                 prev_month_transaction = Transaction(**groupdict)
                 transactions.insert(0, prev_month_transaction)
         return transactions
+
+    def pre_process_match(self, transaction_match: TransactionMatch) -> TransactionMatch:
+        """Pre-process transactions by adding a debit or credit polarity identifier to the group dict."""
+        if (
+            self.config.statement_type == EntryType.CREDIT
+            and transaction_match.groupdict.polarity
+            and transaction_match.groupdict.polarity in ("-")
+        ):
+            transaction_match.groupdict.polarity = "CR"
+        return transaction_match
+
 
     def get_prev_month_balances(self) -> list[re.Match]:
         """
