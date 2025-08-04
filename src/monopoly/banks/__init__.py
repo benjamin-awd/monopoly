@@ -17,6 +17,7 @@ from .uob import Uob
 from .zkb import ZurcherKantonalBank
 from .td_canada_trust import TDCanadaTrust, TDCanadaTrustBusiness, TDCanadaTrustCredit
 from .cibc import CIBC
+from .scotiabank import Scotiabank
 
 banks: list[type["BankBase"]] = [
     Amex,
@@ -29,6 +30,7 @@ banks: list[type["BankBase"]] = [
     Hsbc,
     Maybank,
     Ocbc,
+    Scotiabank,
     StandardChartered,
     Uob,
     ZurcherKantonalBank,
