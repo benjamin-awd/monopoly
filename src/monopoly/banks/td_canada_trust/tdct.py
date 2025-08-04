@@ -21,7 +21,7 @@ from ..base import BankBase
 class TDCanadaTrust(BankBase):
     name = BankNames.TDCT
 
-    debit = StatementConfig(
+    debit_personal = StatementConfig(
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"- {ISO8601.MMM_DD}\/{DateFormats.YY}"),
         header_pattern=re.compile(r"Description.*Withdrawals.*Deposits.*Date.*Balance"),
@@ -31,23 +31,16 @@ class TDCanadaTrust(BankBase):
         transaction_auto_polarity=True
     )
 
-    identifiers = [
-        [
-            # "ACCOUNT ISSUED BY: THE TORONTO\-DOMINION BANK"
-            TextIdentifier(
-                text="A CC\nOU\nNT\nI\nSS\nU\nED\nBY :\nTH\nE\nT\nOR\nO\nNT O-\nD\nOM\nI\nNI\nO\nN\nB\nAN\nK"
-            ),
-            MetadataIdentifier(
-                producer='OpenText Output Transformation Engine - 23.4.00'
-            ),
-        ]
-    ]
+    debit_business = StatementConfig(
+        statement_type=EntryType.DEBIT,
+        statement_date_pattern=re.compile(rf"- {ISO8601.MMM_DD}\/{DateFormats.YY}"),
+        header_pattern=re.compile(r"DESCRIPTION.*CHEQUE/DEBIT.*DEPOSIT/CREDIT.*DATE.*BALANCE"),
+        transaction_pattern=DebitTransactionPatterns.TDCT,
+        transaction_date_format="%b%d",
+        safety_check=False, # total amounts are *per page*, not overall
+        transaction_auto_polarity=True
+    )
 
-    statement_configs = [debit]
-
-class TDCanadaTrustCredit(BankBase):
-    name = BankNames.TDCT
-    
     credit = StatementConfig(
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(rf"STATEMENT PERIOD.*{ISO8601.MMMM_DD_YYYY}"),
@@ -62,7 +55,28 @@ class TDCanadaTrustCredit(BankBase):
         safety_check=True,
         transaction_auto_polarity=False
     )
+
+    
+
     identifiers = [
+        # DR personal
+        [
+            # "ACCOUNT ISSUED BY: THE TORONTO\-DOMINION BANK"
+            TextIdentifier(
+                text="A CC\nOU\nNT\nI\nSS\nU\nED\nBY :\nTH\nE\nT\nOR\nO\nNT O-\nD\nOM\nI\nNI\nO\nN\nB\nAN\nK"
+            ),
+            MetadataIdentifier(
+                producer='OpenText Output Transformation Engine - 23.4.00'
+            ),
+        ],
+        # DR business
+        [
+            MetadataIdentifier(
+                producer='OpenText Output Transformation Engine - 23.4.00'
+            ),
+            TextIdentifier(text="Accounts issued by: THE TORONTO-DOMINION BANK"),
+        ],
+        # CR
         [
             TextIdentifier(
                 text="TDSTM"
@@ -73,28 +87,4 @@ class TDCanadaTrustCredit(BankBase):
         ]
     ]
 
-    statement_configs = [credit]
-
-class TDCanadaTrustBusiness(BankBase):
-    name = BankNames.TDCT
-
-    debit = StatementConfig(
-        statement_type=EntryType.DEBIT,
-        statement_date_pattern=re.compile(rf"- {ISO8601.MMM_DD}\/{DateFormats.YY}"),
-        header_pattern=re.compile(r"DESCRIPTION.*CHEQUE/DEBIT.*DEPOSIT/CREDIT.*DATE.*BALANCE"),
-        transaction_pattern=DebitTransactionPatterns.TDCT,
-        transaction_date_format="%b%d",
-        safety_check=False, # total amounts are *per page*, not overall
-        transaction_auto_polarity=True
-    )
-
-    identifiers = [
-        [
-            MetadataIdentifier(
-                producer='OpenText Output Transformation Engine - 23.4.00'
-            ),
-            TextIdentifier(text="Accounts issued by: THE TORONTO-DOMINION BANK"),
-        ]
-    ]
-
-    statement_configs = [debit]
+    statement_configs = [debit_personal, debit_business, credit]
