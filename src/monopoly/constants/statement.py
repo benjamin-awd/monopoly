@@ -186,7 +186,7 @@ class CreditTransactionPatterns(RegexEnum):
         rf"(?P<posting_date>\b({DateFormats.MMM}[-\s]{DateFormats.D}))\s+"
         + SharedPatterns.DESCRIPTION
         # transaction dr/cr with format -$999,000.00
-        + rf"(?P<amount>{SharedPatterns.OPTIONAL_NEGATIVE_SYMBOL}\$?{SharedPatterns.COMMA_FORMAT}\s*"
+        + rf"(?P<amount>{SharedPatterns.OPTIONAL_NEGATIVE_SYMBOL}\$?{SharedPatterns.COMMA_FORMAT})\s*"
     )
     TRUST = (
         rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
