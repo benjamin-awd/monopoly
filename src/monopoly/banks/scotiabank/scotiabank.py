@@ -1,10 +1,15 @@
-
-
 import re
+
 from monopoly.banks.base import BankBase
-from monopoly.config import StatementConfig, MultilineConfig
+from monopoly.config import MultilineConfig, StatementConfig
 from monopoly.constants.date import ISO8601, DateFormats
-from monopoly.constants.statement import BankNames, CreditTransactionPatterns, DebitTransactionPatterns, EntryType, SharedPatterns
+from monopoly.constants.statement import (
+    BankNames,
+    CreditTransactionPatterns,
+    DebitTransactionPatterns,
+    EntryType,
+    SharedPatterns,
+)
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
 
@@ -14,18 +19,20 @@ class Scotiabank(BankBase):
     debit_personal = StatementConfig(
         statement_type=EntryType.DEBIT,
         header_pattern=re.compile(r"\s+Date\s+Transactions\s+withdrawn\ \(\$\)\s+deposited\ \(\$\)\s+Balance\ \(\$\)"),
-        statement_date_pattern=re.compile(rf"Closing Balance on (?P<date>{DateFormats.MMMM}\s+{DateFormats.DD},\s+{DateFormats.YYYY})"),
+        statement_date_pattern=re.compile(
+            rf"Closing Balance on (?P<date>{DateFormats.MMMM}\s+{DateFormats.DD},\s+{DateFormats.YYYY})"
+        ),
         transaction_date_format="%b %d",
         transaction_pattern=DebitTransactionPatterns.SCOTIABANK,
-        multiline_config=MultilineConfig(
-            multiline_descriptions=True
-        )
+        multiline_config=MultilineConfig(multiline_descriptions=True),
     )
     debit_business = StatementConfig(
         statement_type=EntryType.DEBIT,
-        header_pattern=re.compile(r"(\s+)?Date\s+Description\s+Withdrawals/Debits \(\$\)\s+Deposits/Credits \(\$\)\s+Balance \(\$\)"),
+        header_pattern=re.compile(
+            r"(\s+)?Date\s+Description\s+Withdrawals/Debits \(\$\)\s+Deposits/Credits \(\$\)\s+Balance \(\$\)"
+        ),
         statement_date_pattern=re.compile(
-            r'(?P<last_date>\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2}\s+\d{4}\b)(?!.*\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2}\s+\d{4}\b)'
+            r"(?P<last_date>\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2}\s+\d{4}\b)(?!.*\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2}\s+\d{4}\b)"
         ),
         transaction_date_format="%m/%d/%Y",
         transaction_pattern=re.compile(
@@ -36,9 +43,7 @@ class Scotiabank(BankBase):
             + r"(?P<amount>\(?\d{1,3}(?:,\d{3})*(?:\.\d{1,2})??\)?)\s+"
             + r"(?P<balance>\d{1,3}(?:,\d{3})*(?:\.\d{1,2})?)"
         ),
-        multiline_config=MultilineConfig(
-            multiline_descriptions=True
-        ),
+        multiline_config=MultilineConfig(multiline_descriptions=True),
     )
 
     credit_variant_1 = StatementConfig(
@@ -55,26 +60,25 @@ class Scotiabank(BankBase):
         ),
         transaction_date_format="%b %d",
         transaction_pattern=CreditTransactionPatterns.SCOTIABANK,
-        multiline_config=MultilineConfig(
-            multiline_descriptions=True
-        ),
+        multiline_config=MultilineConfig(multiline_descriptions=True),
     )
 
-    identifiers=[
+    identifiers = [
         # DR personal
         [
             MetadataIdentifier(
                 producer="CrawfordTech PDF Driver Version 5.1 64 Bit Build ID 7361 on March 09, 2022 at 20:00:30"
             ),
-            TextIdentifier(
-                text="www.scotiabank.com"
-            )
+            TextIdentifier(text="www.scotiabank.com"),
         ],
         # DR business
         [
             MetadataIdentifier(
                 creator="BIRT Report Engine 2.5.1 using iText 1.5.4.",
-                producer="iText 1.5.2 (release for Eclipse/BIRT by lowagie.com); modified using iText® 5.5.13.1 ©2000-2019 iText Group NV (AGPL-version)"
+                producer=(
+                    "iText 1.5.2 (release for Eclipse/BIRT by lowagie.com); "
+                    "modified using iText® 5.5.13.1 ©2000-2019 iText Group NV (AGPL-version)"
+                ),
             ),
         ],
         # CR
@@ -82,12 +86,8 @@ class Scotiabank(BankBase):
             MetadataIdentifier(
                 producer="CrawfordTech PDF Driver Version 5.1 64 Bit Build ID 7361 on March 09, 2022 at 20:00:30"
             ),
-            TextIdentifier(
-                text="\nScotiabank"
-            ),
-            TextIdentifier(
-                text="Scotia\nCredit\nCard"
-            )
-        ]
+            TextIdentifier(text="\nScotiabank"),
+            TextIdentifier(text="Scotia\nCredit\nCard"),
+        ],
     ]
     statement_configs = [debit_personal, debit_business, credit_variant_1]

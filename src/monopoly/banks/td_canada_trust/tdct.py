@@ -1,21 +1,17 @@
 import re
 
-from monopoly.config import DateOrder, MultilineConfig, StatementConfig 
+from monopoly.banks.base import BankBase
+from monopoly.config import MultilineConfig, StatementConfig
 from monopoly.constants import (
     ISO8601,
     BankNames,
-    DebitTransactionPatterns,
     CreditTransactionPatterns,
+    DebitTransactionPatterns,
     EntryType,
     StatementBalancePatterns,
-    EntryType,
-    InternalBankNames,
-    SharedPatterns
 )
 from monopoly.constants.date import DateFormats
-from monopoly.identifiers import TextIdentifier, MetadataIdentifier
-
-from ..base import BankBase
+from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
 
 class TDCanadaTrust(BankBase):
@@ -27,8 +23,8 @@ class TDCanadaTrust(BankBase):
         header_pattern=re.compile(r"Description.*Withdrawals.*Deposits.*Date.*Balance"),
         transaction_pattern=DebitTransactionPatterns.TDCT,
         transaction_date_format="%b%d",
-        safety_check=False, # total amounts are *per page*, not overall
-        transaction_auto_polarity=True
+        safety_check=False,  # total amounts are *per page*, not overall
+        transaction_auto_polarity=True,
     )
 
     debit_business = StatementConfig(
@@ -37,8 +33,8 @@ class TDCanadaTrust(BankBase):
         header_pattern=re.compile(r"DESCRIPTION.*CHEQUE/DEBIT.*DEPOSIT/CREDIT.*DATE.*BALANCE"),
         transaction_pattern=DebitTransactionPatterns.TDCT,
         transaction_date_format="%b%d",
-        safety_check=False, # total amounts are *per page*, not overall
-        transaction_auto_polarity=True
+        safety_check=False,  # total amounts are *per page*, not overall
+        transaction_auto_polarity=True,
     )
 
     credit = StatementConfig(
@@ -48,43 +44,29 @@ class TDCanadaTrust(BankBase):
         prev_balance_pattern=StatementBalancePatterns.TDCT,
         transaction_pattern=CreditTransactionPatterns.TDCT,
         transaction_date_format="%b %d",
-        multiline_config=MultilineConfig(
-            multiline_descriptions=True,
-            multiline_polarity=True
-        ),
-        safety_check=True,
-        transaction_auto_polarity=False
+        multiline_config=MultilineConfig(multiline_descriptions=True, multiline_polarity=True),
+        transaction_auto_polarity=False,
     )
-
-    
 
     identifiers = [
         # DR personal
         [
-            # "ACCOUNT ISSUED BY: THE TORONTO\-DOMINION BANK"
+            # ACCOUNT ISSUED BY: THE TORONTO\-DOMINION BANK
             TextIdentifier(
                 text="A CC\nOU\nNT\nI\nSS\nU\nED\nBY :\nTH\nE\nT\nOR\nO\nNT O-\nD\nOM\nI\nNI\nO\nN\nB\nAN\nK"
             ),
-            MetadataIdentifier(
-                producer='OpenText Output Transformation Engine - 23.4.00'
-            ),
+            MetadataIdentifier(producer="OpenText Output Transformation Engine - 23.4.00"),
         ],
         # DR business
         [
-            MetadataIdentifier(
-                producer='OpenText Output Transformation Engine - 23.4.00'
-            ),
+            MetadataIdentifier(producer="OpenText Output Transformation Engine - 23.4.00"),
             TextIdentifier(text="Accounts issued by: THE TORONTO-DOMINION BANK"),
         ],
         # CR
         [
-            TextIdentifier(
-                text="TDSTM"
-            ),
-            MetadataIdentifier(
-                producer='OpenText Output Transformation Engine - 23.4.00'
-            ),
-        ]
+            TextIdentifier(text="TDSTM"),
+            MetadataIdentifier(producer="OpenText Output Transformation Engine - 23.4.00"),
+        ],
     ]
 
     statement_configs = [debit_personal, debit_business, credit]

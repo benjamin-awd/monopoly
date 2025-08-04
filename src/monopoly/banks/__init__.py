@@ -4,6 +4,7 @@ from .amex import Amex
 from .bank_of_america import BankOfAmerica
 from .base import BankBase
 from .chase import Chase
+from .cibc import CIBC
 from .citibank import Citibank
 from .dbs import Dbs
 from .detector import BankDetector
@@ -11,14 +12,13 @@ from .example_bank import ExampleBank
 from .hsbc import Hsbc
 from .maybank import Maybank
 from .ocbc import Ocbc
+from .rbc import RoyalBankOfCanada
+from .scotiabank import Scotiabank
 from .standard_chartered import StandardChartered
+from .td_canada_trust import TDCanadaTrust
 from .trust import Trust
 from .uob import Uob
 from .zkb import ZurcherKantonalBank
-from .td_canada_trust import TDCanadaTrust
-from .cibc import CIBC
-from .scotiabank import Scotiabank
-from .rbc import RoyalBankOfCanada
 
 banks: list[type["BankBase"]] = [
     Amex,
@@ -37,7 +37,7 @@ banks: list[type["BankBase"]] = [
     ZurcherKantonalBank,
     Trust,
     TDCanadaTrust,
-    RoyalBankOfCanada
+    RoyalBankOfCanada,
 ]
 
 logger = logging.getLogger(__name__)

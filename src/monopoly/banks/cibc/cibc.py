@@ -1,21 +1,16 @@
 import re
 
-from monopoly.config import StatementConfig, DateOrder, MultilineConfig
+from monopoly.banks.base import BankBase
+from monopoly.config import DateOrder, MultilineConfig, StatementConfig
 from monopoly.constants import (
-    ISO8601,
     BankNames,
-    DebitTransactionPatterns,
     CreditTransactionPatterns,
+    DebitTransactionPatterns,
     EntryType,
     StatementBalancePatterns,
-    EntryType,
-    InternalBankNames,
-    SharedPatterns,
 )
 from monopoly.constants.date import DateFormats
-from monopoly.identifiers import TextIdentifier, MetadataIdentifier
-
-from ..base import BankBase
+from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
 
 class CIBC(BankBase):
@@ -26,22 +21,19 @@ class CIBC(BankBase):
         header_pattern=re.compile(
             r"(\s+)?Date\s+Description\s+Withdrawals\ \(\$\)\s+Deposits\ \(\$\)\s+Balance\ \(\$\)"
         ),
-
         statement_date_pattern=re.compile(
             rf"(?:to\s+)?(?P<date>{DateFormats.MMM}\s+{DateFormats.DD},\s+{DateFormats.YYYY})"
         ),
-
         transaction_pattern=DebitTransactionPatterns.CIBC,
         transaction_date_format="%b %d",
         transaction_date_order=DateOrder("DMY"),
         statement_date_order=DateOrder("DMY"),
-
         multiline_config=MultilineConfig(
             multiline_transaction_date=True,
             multiline_descriptions=True,
         ),
         safety_check=True,
-        transaction_auto_polarity=True
+        transaction_auto_polarity=True,
     )
 
     credit = StatementConfig(
@@ -53,24 +45,19 @@ class CIBC(BankBase):
         prev_balance_pattern=StatementBalancePatterns.CIBC,
         transaction_pattern=CreditTransactionPatterns.CIBC,
         transaction_date_format="%b %d",
-        transaction_auto_polarity=False
+        transaction_auto_polarity=False,
     )
 
     identifiers = [
         [
-            TextIdentifier(
-                text="CIBC Account Statement"
-            ),
-            MetadataIdentifier(
-                producer="iText® 5.5.13.2 ©2000-2020 iText Group NV (AGPL-version)"
-            )
+            TextIdentifier(text="CIBC Account Statement"),
+            MetadataIdentifier(producer="iText® 5.5.13.2 ©2000-2020 iText Group NV (AGPL-version)"),
         ],
         [
             MetadataIdentifier(
-                author="CIBC",
-                producer="Ricoh Americas Corporation, AFP2PDF Plus Version: 1.300.71, Linux"
+                author="CIBC", producer="Ricoh Americas Corporation, AFP2PDF Plus Version: 1.300.71, Linux"
             )
-        ]
+        ],
     ]
 
     statement_configs = [debit, credit]
