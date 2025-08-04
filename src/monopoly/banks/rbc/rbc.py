@@ -32,17 +32,15 @@ class RoyalBankOfCanada(BankBase):
             r"Date\s+Description\s+Cheques\ \&\ Debits\ \(\$\)\s+Deposits\ \&\ Credits\ \(\$\)\s+Balance\ \(\$\)"
         ),
         transaction_pattern=re.compile(
-
-                r"^(?!.*(?:Opening balance|Closing balance))"
-                r"(\s+)?"
-                rf"(?P<transaction_date>{DateFormats.DD}\s+{DateFormats.MMM})?"  # i.e 08 May
-                r"\s+"
-                r"(?P<description>.+?)"
-                r"\s{2,}"
-                r"(?P<amount>\d{1,3}(?:,\d{3})*(?:\.\d{1,2}))"
-                r"(?:\s{2,}(?P<balance>-?\s?\d{1,3}(?:,\d{3})*(?:\.\d{1,2})))?"
-                r"\s*$"
-
+            r"^(?!.*(?:Opening balance|Closing balance))"
+            r"(\s+)?"
+            rf"(?P<transaction_date>{DateFormats.DD}\s+{DateFormats.MMM})?"  # i.e 08 May
+            r"\s+"
+            r"(?P<description>.+?)"
+            r"\s{2,}"
+            r"(?P<amount>\d{1,3}(?:,\d{3})*(?:\.\d{1,2}))"
+            r"(?:\s{2,}(?P<balance>-?\s?\d{1,3}(?:,\d{3})*(?:\.\d{1,2})))?"
+            r"\s*$"
         ),
         transaction_date_format="%d %b",
         multiline_config=MultilineConfig(multiline_descriptions=True, multiline_transaction_date=True),
