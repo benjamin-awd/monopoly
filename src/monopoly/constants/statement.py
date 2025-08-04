@@ -17,6 +17,7 @@ class EntryType(AutoEnum):
 class BankNames(AutoEnum):
     AMEX = auto()
     BANK_OF_AMERICA = auto()
+    CAPITAL_ONE = auto()
     CANADIAN_TIRE = auto()
     CHASE = auto()
     CIBC = auto()
@@ -117,6 +118,15 @@ class CreditTransactionPatterns(RegexEnum):
         r"(?P<polarity>CR)?$"
     )
     DBS = rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
+    CANADIAN_TIRE = (
+        r"^\s*"
+        r"(?P<transaction_date>[A-Z][a-z]{2}\s\d{2})\s+"
+        r"(?P<posting_date>[A-Z][a-z]{2}\s\d{2})\s+"
+        r"(?!\s*\d+\b)"
+        r"(?P<description>.+?)\s{2,}"  # NOTE: no way to not parse trailing text in line as description?
+        r"(?P<polarity>-)"
+        r"?(?P<amount>\d{1,3}(?:,\d{3})*\.\d{2})"
+    )
     CHASE = rf"(?P<transaction_date>{ISO8601.MM_DD})\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
     CIBC = (
         rf"(?P<transaction_date>\b({DateFormats.MMM}[-\s]{DateFormats.DD}))\s+"
