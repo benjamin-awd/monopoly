@@ -226,7 +226,7 @@ class BaseStatement:
                 groupdict.transaction_date = self.previous_transaction_date
 
         return groupdict
-    
+
     def pre_process_match(self, transaction_match: TransactionMatch) -> TransactionMatch:
         return transaction_match
 

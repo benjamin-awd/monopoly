@@ -93,8 +93,9 @@ class StatementBalancePatterns(RegexEnum):
     RBC = r"(?P<description>PREVIOUS STATEMENT BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
     CIBC = (
         r"(?P<description>Previous balance?)\s+"
-        + rf"(?P<amount>{SharedPatterns.OPTIONAL_NEGATIVE_SYMBOL}\$?{SharedPatterns.COMMA_FORMAT})"
+         rf"(?P<amount>{SharedPatterns.OPTIONAL_NEGATIVE_SYMBOL}\$?{SharedPatterns.COMMA_FORMAT})"
     )
+
 
 class CreditTransactionPatterns(RegexEnum):
     AMEX_PLATINUM = (
@@ -114,7 +115,7 @@ class CreditTransactionPatterns(RegexEnum):
         r"(?:Ý\s*)?(?P<description>.+?)\s{2,}"
         r"(?P<catagory>.*?)\s+"
         # transaction dr/cr with format -$999,000.00
-        + rf"(?P<amount>{SharedPatterns.OPTIONAL_NEGATIVE_SYMBOL}\$?{SharedPatterns.COMMA_FORMAT}|{SharedPatterns.ENCLOSED_COMMA_FORMAT}\s*"
+         rf"(?P<amount>{SharedPatterns.OPTIONAL_NEGATIVE_SYMBOL}\$?{SharedPatterns.COMMA_FORMAT}|{SharedPatterns.ENCLOSED_COMMA_FORMAT}\s*"
     )
     CITIBANK = (
         rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
@@ -140,7 +141,7 @@ class CreditTransactionPatterns(RegexEnum):
         rf"(?P<transaction_date>\b({DateFormats.MMM}[\/\-\s.]{DateFormats.D}))\s+"
         rf"(?P<posting_date>\b({DateFormats.MMM}[\/\-\s.]{DateFormats.D}))\s+"
         + SharedPatterns.DESCRIPTION
-        + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL # "credits" are denoted at the end of the amount, i.e PMYT 155.96-
+        + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL  # "credits" are denoted at the end of the amount, i.e PMYT 155.96-
     )
     STANDARD_CHARTERED = (
         rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
@@ -165,7 +166,7 @@ class CreditTransactionPatterns(RegexEnum):
         rf"(?P<posting_date>\b({DateFormats.MMM}[-\s]{DateFormats.D}))\s+"
         + SharedPatterns.DESCRIPTION
         # transaction dr/cr with format -$999,000.00
-        + rf"(?P<amount>{SharedPatterns.OPTIONAL_NEGATIVE_SYMBOL}\$?{SharedPatterns.COMMA_FORMAT}|{SharedPatterns.ENCLOSED_COMMA_FORMAT}\s*"
+        + rf"(?P<amount>{SharedPatterns.OPTIONAL_NEGATIVE_SYMBOL}\$?{SharedPatterns.COMMA_FORMAT}\s*"
     )
     RBC = (
         rf"(?P<transaction_date>\b({DateFormats.MMM}[-\s]{DateFormats.DD}))\s+"
@@ -175,6 +176,7 @@ class CreditTransactionPatterns(RegexEnum):
         + r"(?P<polarity>\-)?"
         + rf"(?P<amount>\$?{SharedPatterns.COMMA_FORMAT}|{SharedPatterns.ENCLOSED_COMMA_FORMAT}\s*"
     )
+
 
 class DebitTransactionPatterns(RegexEnum):
     CIBC = (
@@ -209,8 +211,8 @@ class DebitTransactionPatterns(RegexEnum):
         + SharedPatterns.BALANCE
     )
     SCOTIABANK = (
-        r"^(?!.*(?:Opening Balance)).*?" # avoid matching opening balance as a "transaction"
-        + rf"(?P<transaction_date>{ISO8601.MMM_DD})\s+"
+        r"^(?!.*(?:Opening Balance)).*?"  # avoid matching opening balance as a "transaction"
+         rf"(?P<transaction_date>{ISO8601.MMM_DD})\s+"
         + SharedPatterns.DESCRIPTION
         + SharedPatterns.AMOUNT
         + SharedPatterns.BALANCE
@@ -231,15 +233,15 @@ class DebitTransactionPatterns(RegexEnum):
     TDCT = (
         SharedPatterns.DESCRIPTION
         + rf"(?P<amount>{SharedPatterns.COMMA_FORMAT})"
-        + rf"[-\s]+(?P<transaction_date>\b({DateFormats.MMM}{DateFormats.DD}))" # i.e MAY1 and MAY27
-        + rf"([-\s]+(?P<balance>{SharedPatterns.COMMA_FORMAT}))?" # balance is shown at end of each day
+        + rf"[-\s]+(?P<transaction_date>\b({DateFormats.MMM}{DateFormats.DD}))"  # i.e MAY1 and MAY27
+        + rf"([-\s]+(?P<balance>{SharedPatterns.COMMA_FORMAT}))?"  # balance is shown at end of each day
     )
     RBC = (
         r"^(?!.*(?:Opening Balance|Closing Balance))"
         r"(\s*)?"
-        rf"(?P<transaction_date>{DateFormats.D}\s+{DateFormats.MMM})?\s+" # i.e 7 May
+        rf"(?P<transaction_date>{DateFormats.D}\s+{DateFormats.MMM})?\s+"  # i.e 7 May
         r"(?P<description>.+?)\s{2,}"
-        + rf"(?P<amount>{SharedPatterns.COMMA_FORMAT})"
-        + r"(?:\s{2,}(?P<balance>-?\s?\d{1,3}(?:,\d{3})*(?:\.\d{1,2})))?" # edge case for literally "- 100.00"
-        + r"\s*$"
+         rf"(?P<amount>{SharedPatterns.COMMA_FORMAT})"
+         r"(?:\s{2,}(?P<balance>-?\s?\d{1,3}(?:,\d{3})*(?:\.\d{1,2})))?"  # edge case for literally "- 100.00"
+         r"\s*$"
     )

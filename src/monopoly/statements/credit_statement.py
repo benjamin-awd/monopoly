@@ -36,7 +36,6 @@ class CreditStatement(BaseStatement):
             transaction_match.groupdict.polarity = "CR"
         return transaction_match
 
-
     def get_prev_month_balances(self) -> list[re.Match]:
         """
         Return the previous month's statement balance as a transaction, if it exists in the statement.
