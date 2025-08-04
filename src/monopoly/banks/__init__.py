@@ -3,6 +3,7 @@ import logging
 from .amex import Amex
 from .bank_of_america import BankOfAmerica
 from .base import BankBase
+from .bmo import BankOfMontreal
 from .chase import Chase
 from .cibc import CIBC
 from .citibank import Citibank
@@ -23,6 +24,7 @@ from .zkb import ZurcherKantonalBank
 banks: list[type["BankBase"]] = [
     Amex,
     BankOfAmerica,
+    BankOfMontreal,
     Chase,
     CIBC,
     Citibank,

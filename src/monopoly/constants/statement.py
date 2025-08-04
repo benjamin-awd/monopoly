@@ -31,6 +31,7 @@ class BankNames(AutoEnum):
     ZKB = auto()
     TRUST = auto()
     TDCT = auto()
+    BMO = auto()
 
 
 class InternalBankNames(AutoEnum):
@@ -176,6 +177,13 @@ class CreditTransactionPatterns(RegexEnum):
         + r"(?P<polarity>\-)?"
         + rf"(?P<amount>\$?{SharedPatterns.COMMA_FORMAT}|{SharedPatterns.ENCLOSED_COMMA_FORMAT}\s*"
     )
+    BMO = (
+        rf"(?P<transaction_date>[A-Z][a-z]{2,3}\.\s+\d{1,2})\s+"
+        rf"(?P<posting_date>[A-Z][a-z]{2,3}\.\s+\d{1,2}\s+"
+        r"(?P<description>.+?)\s+"
+        r"(?P<amount>\d{1,3}(?:,\d{3})*\.\d{2})(\s+)?"
+        r"(?P<polarity>CR)?$"
+    )
 
 
 class DebitTransactionPatterns(RegexEnum):
@@ -244,4 +252,11 @@ class DebitTransactionPatterns(RegexEnum):
          rf"(?P<amount>{SharedPatterns.COMMA_FORMAT})"
          r"(?:\s{2,}(?P<balance>-?\s?\d{1,3}(?:,\d{3})*(?:\.\d{1,2})))?"  # edge case for literally "- 100.00"
          r"\s*$"
+    )
+    BMO = (
+        rf"^(?!.*(?:Closing totals)).*?"
+        rf"(?P<transaction_date>{ISO8601.MMM_DD})\s+"
+        rf"{SharedPatterns.DESCRIPTION}\s+"
+        rf"(?P<amount>{SharedPatterns.COMMA_FORMAT})\s+"
+        rf"(?P<balance>{SharedPatterns.COMMA_FORMAT})$"
     )

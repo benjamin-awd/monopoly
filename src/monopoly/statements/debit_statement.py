@@ -46,7 +46,7 @@ class DebitStatement(BaseStatement):
         return transaction_match.groupdict.polarity
 
     def get_withdrawal_pos(self, page_number: int) -> int | None:
-        common_names = ["withdraw", "debit"]
+        common_names = ["withdraw", "debit", r"from\ your\ account"]
         for name in common_names:
             if pos := self.get_column_pos(name, page_number=page_number):
                 return pos
@@ -54,7 +54,7 @@ class DebitStatement(BaseStatement):
         return False
 
     def get_deposit_pos(self, page_number: int) -> int | None:
-        common_names = ["deposit", "credit"]
+        common_names = ["deposit", "credit", r"to\ your\ account"]
         for name in common_names:
             if pos := self.get_column_pos(name, page_number=page_number):
                 return pos
