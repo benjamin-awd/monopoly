@@ -1,4 +1,4 @@
-from re import compile as regex
+import re
 
 from monopoly.config import StatementConfig
 from monopoly.constants import EntryType, InternalBankNames, SharedPatterns
@@ -14,12 +14,12 @@ class ExampleBank(BankBase):
 
     credit = StatementConfig(
         statement_type=EntryType.CREDIT,
-        statement_date_pattern=regex(r"(\d{2}\-\d{2}\-\d{4})"),
-        header_pattern=regex(r"(DATE.*DESCRIPTION.*AMOUNT)"),
-        prev_balance_pattern=regex(
+        statement_date_pattern=re.compile(r"(\d{2}\-\d{2}\-\d{4})"),
+        header_pattern=re.compile(r"(DATE.*DESCRIPTION.*AMOUNT)"),
+        prev_balance_pattern=re.compile(
             r"(?P<description>LAST MONTH'S BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
         ),
-        transaction_pattern=regex(
+        transaction_pattern=re.compile(
             r"(?P<transaction_date>\d+/\d+)\s*" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
         ),
         transaction_date_format="%d/%m",

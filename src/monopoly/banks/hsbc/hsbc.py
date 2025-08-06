@@ -1,5 +1,5 @@
 import logging
-from re import compile as regex
+import re
 
 from monopoly.banks.base import BankBase
 from monopoly.config import MultilineConfig, PdfConfig, StatementConfig
@@ -20,8 +20,8 @@ class Hsbc(BankBase):
 
     credit = StatementConfig(
         statement_type=EntryType.CREDIT,
-        statement_date_pattern=regex(rf"From \d{{2}} \w{{3}} \d{{4}} to {ISO8601.DD_MMM_YYYY}"),
-        header_pattern=regex(r"(DATE.*DESCRIPTION.*AMOUNT)"),
+        statement_date_pattern=re.compile(rf"From \d{{2}} \w{{3}} \d{{4}} to {ISO8601.DD_MMM_YYYY}"),
+        header_pattern=re.compile(r"(DATE.*DESCRIPTION.*AMOUNT)"),
         prev_balance_pattern=StatementBalancePatterns.HSBC,
         transaction_pattern=CreditTransactionPatterns.HSBC,
         transaction_date_format="%d %b",

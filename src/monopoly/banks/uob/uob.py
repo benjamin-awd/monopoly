@@ -1,5 +1,5 @@
 import logging
-from re import compile as regex
+import re
 
 from monopoly.banks.base import BankBase
 from monopoly.config import MultilineConfig, StatementConfig
@@ -21,8 +21,8 @@ class Uob(BankBase):
 
     credit = StatementConfig(
         statement_type=EntryType.CREDIT,
-        statement_date_pattern=regex(rf"Statement Date.*{ISO8601.DD_MMM_YYYY}"),
-        header_pattern=regex(r"(Description of Transaction.*Transaction Amount)"),
+        statement_date_pattern=re.compile(rf"Statement Date.*{ISO8601.DD_MMM_YYYY}"),
+        header_pattern=re.compile(r"(Description of Transaction.*Transaction Amount)"),
         prev_balance_pattern=StatementBalancePatterns.UOB,
         transaction_pattern=CreditTransactionPatterns.UOB,
         multiline_config=MultilineConfig(multiline_descriptions=True),
@@ -31,8 +31,8 @@ class Uob(BankBase):
 
     debit = StatementConfig(
         statement_type=EntryType.DEBIT,
-        statement_date_pattern=regex(rf"Period: .* to {ISO8601.DD_MMM_YYYY}"),
-        header_pattern=regex(r"(Date.*Description.*Withdrawals.*Deposits.*Balance)"),
+        statement_date_pattern=re.compile(rf"Period: .* to {ISO8601.DD_MMM_YYYY}"),
+        header_pattern=re.compile(r"(Date.*Description.*Withdrawals.*Deposits.*Balance)"),
         transaction_pattern=DebitTransactionPatterns.UOB,
         transaction_bound=170,
         multiline_config=MultilineConfig(multiline_descriptions=True),

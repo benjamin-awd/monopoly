@@ -1,5 +1,5 @@
 import logging
-from re import compile as regex
+import re
 
 from monopoly.banks.base import BankBase
 from monopoly.config import MultilineConfig, StatementConfig
@@ -14,8 +14,8 @@ class ZurcherKantonalBank(BankBase):
 
     debit = StatementConfig(
         statement_type=EntryType.DEBIT,
-        statement_date_pattern=regex(rf"Balance as of: ({ISO8601.DD_MM_YYYY})"),
-        header_pattern=regex(r"(Date.*Booking text.*Debit CHF.*Credit CHF)"),
+        statement_date_pattern=re.compile(rf"Balance as of: ({ISO8601.DD_MM_YYYY})"),
+        header_pattern=re.compile(r"(Date.*Booking text.*Debit CHF.*Credit CHF)"),
         transaction_pattern=DebitTransactionPatterns.ZKB,
         multiline_config=MultilineConfig(multiline_descriptions=True),
         safety_check=False,
