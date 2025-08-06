@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.19.0] - 2025-08-06
+
+### ⛰️ Features
+
+- *(banks)* Add td canada trust
+- *(multiline)* Multiline_transaction_date option
+- *(banks)* Add CIBC
+- *(banks)* Add Scotiabank
+- *(credit)* Pre process transaction match
+- *(banks)* Add Royal Bank of Canada ("RBC")
+- *(banks)* Add Bank of Montreal ("BMO")
+- *(banks)* Add Canadian Tire (credit only)
+- *(banks)* Add Capital One Canada (credit only)
+
+### 🛠️ Bug Fixes
+
+- *(tdct)* Identifier for credit statement
+- *(cibc)* Safety check can be performed
+- *(bmo)* Statement date pattern
+- *(tdct)* Credit transaction pattern
+
+### 🚜 Refactor
+
+- *(scotiabank)* Move credit transaction pattern
+- *(tdct)* Merge "psuedo banks" into one
+- *(canadian tire)* Move credit transaction pattern
+- *(capital one canada)* Credit transaction pattern
+- Standardize re.compile calls
+
+### ⚙️ Miscellaneous Tasks
+
+- Run linter to fix formatting
+- Run linter & formatter
+
 ## [0.18.2] - 2025-06-14
 
 ### ⚙️ Miscellaneous Tasks
