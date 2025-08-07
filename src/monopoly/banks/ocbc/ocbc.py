@@ -1,5 +1,5 @@
 import logging
-from re import compile as regex
+import re
 
 from monopoly.banks.base import BankBase
 from monopoly.config import MultilineConfig, PdfConfig, StatementConfig
@@ -22,7 +22,7 @@ class Ocbc(BankBase):
     credit = StatementConfig(
         statement_type=EntryType.CREDIT,
         statement_date_pattern=ISO8601.DD_MM_YYYY,
-        header_pattern=regex(r"(TRANSACTION DATE.*DESCRIPTION.*AMOUNT)"),
+        header_pattern=re.compile(r"(TRANSACTION DATE.*DESCRIPTION.*AMOUNT)"),
         prev_balance_pattern=StatementBalancePatterns.OCBC,
         transaction_pattern=CreditTransactionPatterns.OCBC,
         transaction_date_format="%d/%m",
@@ -30,8 +30,8 @@ class Ocbc(BankBase):
 
     debit = StatementConfig(
         statement_type=EntryType.DEBIT,
-        statement_date_pattern=regex(rf"\s{ISO8601.DD_MMM_YYYY}$"),
-        header_pattern=regex(r"(Withdrawal.*Deposit.*Balance)"),
+        statement_date_pattern=re.compile(rf"\s{ISO8601.DD_MMM_YYYY}$"),
+        header_pattern=re.compile(r"(Withdrawal.*Deposit.*Balance)"),
         transaction_pattern=DebitTransactionPatterns.OCBC,
         multiline_config=MultilineConfig(multiline_descriptions=True),
         transaction_bound=170,

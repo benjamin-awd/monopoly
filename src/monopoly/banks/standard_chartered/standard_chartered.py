@@ -1,5 +1,5 @@
 import logging
-from re import compile as regex
+import re
 
 from monopoly.banks.base import BankBase
 from monopoly.config import StatementConfig
@@ -20,8 +20,8 @@ class StandardChartered(BankBase):
 
     credit = StatementConfig(
         statement_type=EntryType.CREDIT,
-        statement_date_pattern=regex(rf": {ISO8601.DD_MMM_YYYY}$"),
-        header_pattern=regex(r"(Transaction.*Posting.*Amount)"),
+        statement_date_pattern=re.compile(rf": {ISO8601.DD_MMM_YYYY}$"),
+        header_pattern=re.compile(r"(Transaction.*Posting.*Amount)"),
         prev_balance_pattern=StatementBalancePatterns.STANDARD_CHARTERED,
         transaction_pattern=CreditTransactionPatterns.STANDARD_CHARTERED,
         transaction_date_format="%d %b",

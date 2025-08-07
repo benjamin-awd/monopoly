@@ -1,5 +1,5 @@
 import logging
-from re import compile as regex
+import re
 
 from monopoly.banks.base import BankBase
 from monopoly.config import DateOrder, MultilineConfig, StatementConfig
@@ -15,10 +15,10 @@ class BankOfAmerica(BankBase):
 
     credit = StatementConfig(
         statement_type=EntryType.CREDIT,
-        statement_date_pattern=regex(rf"for .* to {ISO8601.MMMM_DD_YYYY}"),
+        statement_date_pattern=re.compile(rf"for .* to {ISO8601.MMMM_DD_YYYY}"),
         statement_date_order=DateOrder("MDY"),
         transaction_date_order=DateOrder("MDY"),
-        header_pattern=regex(r"(Date.*Description.*Amount)"),
+        header_pattern=re.compile(r"(Date.*Description.*Amount)"),
         transaction_pattern=CreditTransactionPatterns.BANK_OF_AMERICA,
         transaction_date_format="%m/%d/%y",
         multiline_config=MultilineConfig(multiline_descriptions=True),

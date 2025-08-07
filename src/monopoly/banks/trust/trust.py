@@ -1,5 +1,5 @@
 import logging
-from re import compile as regex
+import re
 
 from monopoly.banks.base import BankBase
 from monopoly.config import MultilineConfig, StatementConfig
@@ -14,14 +14,14 @@ class Trust(BankBase):
 
     credit = StatementConfig(
         statement_type=EntryType.CREDIT,
-        statement_date_pattern=regex(
+        statement_date_pattern=re.compile(
             r"-\s*"
             r"(?P<day>\d{2})\s+"
             r"(?P<month>Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+"
             r".*?"
             r"(?P<year>20\d{2}\b)"
         ),
-        header_pattern=regex(r"(Posting date.*Description.*Amount in SGD)"),
+        header_pattern=re.compile(r"(Posting date.*Description.*Amount in SGD)"),
         transaction_pattern=CreditTransactionPatterns.TRUST,
         multiline_config=MultilineConfig(
             multiline_descriptions=True,

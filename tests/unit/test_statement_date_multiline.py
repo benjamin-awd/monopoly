@@ -1,5 +1,5 @@
 from datetime import datetime
-from re import compile as regex
+import re
 
 from monopoly.config import MultilineConfig
 from monopoly.statements import BaseStatement
@@ -12,7 +12,7 @@ def test_statement_date_multiline(statement: BaseStatement):
         "   02-123                                                                            2025",
     ]
 
-    statement.config.statement_date_pattern = regex(
+    statement.config.statement_date_pattern = re.compile(
         r"-\s*"
         r"(?P<day>\d{2})\s+"
         r"(?P<month>Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+"

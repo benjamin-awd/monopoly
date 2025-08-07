@@ -1,5 +1,5 @@
 import logging
-from re import compile as regex
+import re
 
 from monopoly.banks.base import BankBase
 from monopoly.config import MultilineConfig, StatementConfig
@@ -15,9 +15,9 @@ class Amex(BankBase):
 
     platinum = StatementConfig(
         statement_type=EntryType.CREDIT,
-        statement_date_pattern=regex(rf"From .* to {ISO8601.DD_MM_YYYY}"),
+        statement_date_pattern=re.compile(rf"From .* to {ISO8601.DD_MM_YYYY}"),
         transaction_date_format="%d.%m.%y",
-        header_pattern=regex(r"(Details.*Foreign Spending.*Amount)"),
+        header_pattern=re.compile(r"(Details.*Foreign Spending.*Amount)"),
         transaction_pattern=CreditTransactionPatterns.AMEX_PLATINUM,
         multiline_config=MultilineConfig(multiline_polarity=True),
     )

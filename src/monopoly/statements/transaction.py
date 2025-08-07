@@ -115,7 +115,7 @@ class Transaction:
         (-1.56 ) -> -1.56.
         """
         if isinstance(amount, str):
-            return re.sub(r"[,)(\s']", "", amount)
+            return re.sub(r"[^\d\.\-]", "", amount)
         return amount
 
     # pylint: disable=bad-classmethod-argument

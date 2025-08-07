@@ -1,5 +1,5 @@
 import logging
-from re import compile as regex
+import re
 
 from monopoly.banks.base import BankBase
 from monopoly.config import MultilineConfig, PdfConfig, StatementConfig
@@ -21,8 +21,8 @@ class Maybank(BankBase):
 
     my_debit = StatementConfig(
         statement_type=EntryType.DEBIT,
-        statement_date_pattern=regex(rf"(?:結單日期)[:\s]+{ISO8601.DD_MM_YY}"),
-        header_pattern=regex(r"(DATE.*DESCRIPTION.*AMOUNT.*BALANCE)"),
+        statement_date_pattern=re.compile(rf"(?:結單日期)[:\s]+{ISO8601.DD_MM_YY}"),
+        header_pattern=re.compile(r"(DATE.*DESCRIPTION.*AMOUNT.*BALANCE)"),
         transaction_date_format="%d/%m/%y",
         transaction_pattern=DebitTransactionPatterns.MAYBANK_MY,
         multiline_config=MultilineConfig(multiline_descriptions=True),
@@ -31,7 +31,7 @@ class Maybank(BankBase):
     my_credit = StatementConfig(
         statement_type=EntryType.CREDIT,
         statement_date_pattern=ISO8601.DD_MMM_YY,
-        header_pattern=regex(r"(Date.*Description.*Amount)"),
+        header_pattern=re.compile(r"(Date.*Description.*Amount)"),
         transaction_date_format="%d/%m",
         transaction_pattern=CreditTransactionPatterns.MAYBANK_MY,
         prev_balance_pattern=StatementBalancePatterns.MAYBANK_MY,
@@ -40,8 +40,8 @@ class Maybank(BankBase):
 
     sg_credit = StatementConfig(
         statement_type=EntryType.CREDIT,
-        statement_date_pattern=regex(f"AS AT {ISO8601.DD_MMM_YYYY}"),
-        header_pattern=regex(r"(.*DESCRIPTION OF TRANSACTION.*TRANSACTION AMOUNT)"),
+        statement_date_pattern=re.compile(f"AS AT {ISO8601.DD_MMM_YYYY}"),
+        header_pattern=re.compile(r"(.*DESCRIPTION OF TRANSACTION.*TRANSACTION AMOUNT)"),
         transaction_pattern=CreditTransactionPatterns.MAYBANK_SG,
         prev_balance_pattern=StatementBalancePatterns.MAYBANK_SG,
     )
