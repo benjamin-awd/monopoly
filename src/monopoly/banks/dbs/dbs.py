@@ -53,6 +53,10 @@ class Dbs(BankBase):
             TextIdentifier("DBS"),
             MetadataIdentifier(creator="Quadient CXM AG"),
         ],
+        [
+            TextIdentifier("DBS"),
+            MetadataIdentifier(creator="Quadient CXM AG~Inspire~15.0.681.5"),
+        ],
     ]
 
     statement_configs = [credit, consolidated, debit]
