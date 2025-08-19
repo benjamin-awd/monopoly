@@ -42,8 +42,8 @@ class Dbs(BankBase):
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"Details as at {ISO8601.DD_MMM_YYYY}"),
         multiline_config=MultilineConfig(multiline_descriptions=True),
-        header_pattern=re.compile(r"(\s*Date\s+Description\s+Withdrawal \(-\).*)"),
-        transaction_date_format="%d %b",
+        header_pattern=re.compile(r"(\s*Date\s+Description\s+Withdrawal.*)"),
+        transaction_date_format="%d/%m/%Y",
         transaction_pattern=DebitTransactionPatterns.DBS_POSB_CONSOLIDATED,
         transaction_bound=220,
     )
@@ -52,10 +52,6 @@ class Dbs(BankBase):
         [
             TextIdentifier("DBS"),
             MetadataIdentifier(creator="Quadient CXM AG"),
-        ],
-        [
-            TextIdentifier("DBS"),
-            MetadataIdentifier(creator="Quadient CXM AG~Inspire~15.0.681.5"),
         ],
     ]
 
