@@ -11,19 +11,26 @@ Monopoly is a Python library & CLI that converts bank statement PDFs to CSV.
 ![](https://raw.githubusercontent.com/benjamin-awd/monopoly/main/docs/monopoly.gif)
 
 Supported banks:
-| Bank                 | Credit Statement   | Debit Statement       |
-|----------------------|--------------------|-----------------------|
-| Bank of America      | ✅                 | ❌                   |
-| Chase                | ✅                 | ❌                   |
-| Citibank             | ✅                 | ❌                   |
-| DBS/POSB             | ✅                 | ✅                   |
-| HSBC                 | ✅                 | ❌                   |
-| Maybank              | ✅                 | ✅                   |
-| OCBC                 | ✅                 | ✅                   |
-| Standard Chartered   | ✅                 | ❌                   |
-| Trust                | ✅                 | ❌                   |
-| UOB                  | ✅                 | ✅                   |
-| Zürcher Kantonalbank | ❌                 | ✅                   |
+| Bank                                   | Credit Statement   | Debit Statement       |
+|----------------------------------------|--------------------|-----------------------|
+| Bank of America                        | ✅                 | ❌                   |
+| Chase                                  | ✅                 | ❌                   |
+| Citibank                               | ✅                 | ❌                   |
+| DBS/POSB                               | ✅                 | ✅                   |
+| HSBC                                   | ✅                 | ❌                   |
+| Maybank                                | ✅                 | ✅                   |
+| OCBC                                   | ✅                 | ✅                   |
+| Standard Chartered                     | ✅                 | ❌                   |
+| Trust                                  | ✅                 | ❌                   |
+| UOB                                    | ✅                 | ✅                   |
+| Zürcher Kantonalbank                   | ❌                 | ✅                   |
+| Canadian Imperial Bank of Commerce (CIBC) | ✅                 | ✅                   |
+| Bank of Montreal (BMO)                 | ✅                 | ✅                   |
+| Scotiabank                             | ✅                 | ✅                   |
+| TD Canada Trust                        | ✅                 | ✅                   |
+| Royal Bank of Canada (RBC)             | ✅                 | ✅                   |
+| Canadian Tire Bank                     | ✅                 | ❌                   |
+| Capital One Canada                     | ✅                 | ❌                   |
 
 ## Install
 Monopoly is a pip-installable Python package on [PyPI](https://pypi.org/project/monopoly-core) under the name `monopoly-core`.
