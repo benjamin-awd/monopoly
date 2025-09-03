@@ -14,23 +14,23 @@ Supported banks:
 | Bank                                   | Credit Statement   | Debit Statement       |
 |----------------------------------------|--------------------|-----------------------|
 | Bank of America                        | ✅                 | ❌                   |
+| Bank of Montreal (BMO)                 | ✅                 | ✅                   |
+| Canadian Imperial Bank of Commerce (CIBC) | ✅                 | ✅                   |
+| Canadian Tire Bank                     | ✅                 | ❌                   |
+| Capital One Canada                     | ✅                 | ❌                   |
 | Chase                                  | ✅                 | ❌                   |
 | Citibank                               | ✅                 | ❌                   |
 | DBS/POSB                               | ✅                 | ✅                   |
 | HSBC                                   | ✅                 | ❌                   |
 | Maybank                                | ✅                 | ✅                   |
 | OCBC                                   | ✅                 | ✅                   |
+| Royal Bank of Canada (RBC)             | ✅                 | ✅                   |
+| Scotiabank                             | ✅                 | ✅                   |
 | Standard Chartered                     | ✅                 | ❌                   |
+| TD Canada Trust                        | ✅                 | ✅                   |
 | Trust                                  | ✅                 | ❌                   |
 | UOB                                    | ✅                 | ✅                   |
 | Zürcher Kantonalbank                   | ❌                 | ✅                   |
-| Canadian Imperial Bank of Commerce (CIBC) | ✅                 | ✅                   |
-| Bank of Montreal (BMO)                 | ✅                 | ✅                   |
-| Scotiabank                             | ✅                 | ✅                   |
-| TD Canada Trust                        | ✅                 | ✅                   |
-| Royal Bank of Canada (RBC)             | ✅                 | ✅                   |
-| Canadian Tire Bank                     | ✅                 | ❌                   |
-| Capital One Canada                     | ✅                 | ❌                   |
 
 ## Install
 Monopoly is a pip-installable Python package on [PyPI](https://pypi.org/project/monopoly-core) under the name `monopoly-core`.
