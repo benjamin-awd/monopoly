@@ -30,6 +30,8 @@ class MultilineConfig:
     multiline_statement_date: bool = False
     multiline_transaction_date: bool = False
     include_prev_margin: int | None = None
+    # Description alignment margin for subsequent lines (defaults to 3 if not specified)
+    description_margin: int | None = None
 
 
 # pylint: disable=too-many-instance-attributes
