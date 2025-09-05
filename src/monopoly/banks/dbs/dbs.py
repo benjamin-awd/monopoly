@@ -41,7 +41,10 @@ class Dbs(BankBase):
     consolidated = StatementConfig(
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"Details as at {ISO8601.DD_MMM_YYYY}"),
-        multiline_config=MultilineConfig(multiline_descriptions=True),
+        multiline_config=MultilineConfig(
+            multiline_descriptions=True,
+            description_margin=10,  # Allow for indented PayNow/transaction details
+        ),
         header_pattern=re.compile(r"(\s*Date\s+Description\s+Withdrawal.*)"),
         transaction_date_format="%d/%m/%Y",
         transaction_pattern=DebitTransactionPatterns.DBS_POSB_CONSOLIDATED,
