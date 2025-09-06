@@ -48,9 +48,7 @@ class DescriptionExtractor:
             initial_description=context.description,
             description_pos=context.line.find(context.description),
             pattern=self.pattern,
-            description_margin=getattr(
-                context.multiline_config, "description_margin", None
-            ),
+            description_margin=context.multiline_config.description_margin,
         )
 
         # Handle previous line if within margin
@@ -75,14 +73,14 @@ class DescriptionBuilder:
         initial_description: str,
         description_pos: int,
         pattern: re.Pattern,
-        description_margin: int | None = None,
+        description_margin: int,
     ):
         self.description = initial_description
         self.description_pos = description_pos
         self.pattern = pattern
         self.words_pattern = re.compile(r"\s[A-Za-z]+")
         self.numbers_pattern = re.compile(SharedPatterns.AMOUNT)
-        self.description_margin = description_margin or DESCRIPTION_MARGIN
+        self.description_margin = description_margin
 
     @staticmethod
     def get_start_pos(line: str) -> int:
@@ -106,7 +104,7 @@ class DescriptionBuilder:
             return True
 
         next_pos = self.get_start_pos(line)
-        if next_pos >= 0 and not self.is_within_margin(
+        if next_pos and not self.is_within_margin(
             self.description_pos, next_pos, self.description_margin
         ):
             return True
