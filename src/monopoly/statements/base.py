@@ -20,7 +20,6 @@ from monopoly.statements.transaction import (
 # pylint: disable=bad-classmethod-argument
 logger = logging.getLogger(__name__)
 
-DESCRIPTION_MARGIN = 3  # Allowed margin for description position difference
 MIN_BREAK_GAP = 20  # Minimum gap between words and numbers to trigger break
 
 
@@ -104,9 +103,7 @@ class DescriptionBuilder:
             return True
 
         next_pos = self.get_start_pos(line)
-        if next_pos and not self.is_within_margin(
-            self.description_pos, next_pos, self.description_margin
-        ):
+        if next_pos and not self.is_within_margin(self.description_pos, next_pos, self.description_margin):
             return True
 
         words_match = self.words_pattern.search(line)
