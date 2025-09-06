@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.19.1] - 2025-09-06
+
+### 🛠️ Bug Fixes
+
+- *(dbs)* Update consolidated statement to use description margin, add description margin to MultilineConfig
+
+### 🚜 Refactor
+
+- *(config)* Multiline configuration with description margin for better alignment
+
+### ⚙️ Miscellaneous Tasks
+
+- Remove redundant global margin variable
+
 ## [0.19.0] - 2025-08-06
 
 ### ⛰️ Features
