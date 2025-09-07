@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.19.1] - 2025-09-06
+## [0.19.2] - 2025-09-07
 
 ### 🛠️ Bug Fixes
 
@@ -13,6 +13,25 @@
 ### ⚙️ Miscellaneous Tasks
 
 - Remove redundant global margin variable
+
+## [0.19.1] - 2025-09-06
+
+### 🛠️ Bug Fixes
+
+- *(banks/dbs)* Add metadata for new statement
+
+### 📚 Documentation
+
+- *(readme)* Update supported banks in README
+- Sort supported banks alphabetically
+
+### ⚙️ Miscellaneous Tasks
+
+- *(banks/dbs)* Fix consolidated transaction pattern
+
+### Build
+
+- *(deps-dev)* Update pre-commit version
 
 ## [0.19.0] - 2025-08-06
 
