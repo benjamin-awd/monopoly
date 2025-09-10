@@ -13,8 +13,8 @@ logger = logging.getLogger(__name__)
 class BankOfAmerica(BankBase):
     name = BankNames.BANK_OF_AMERICA
 
-    credit = StatementConfig(
-        statement_type=EntryType.CREDIT,
+    debit = StatementConfig(
+        statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"for .* to {ISO8601.MMMM_DD_YYYY}"),
         statement_date_order=DateOrder("MDY"),
         transaction_date_order=DateOrder("MDY"),
@@ -36,4 +36,4 @@ class BankOfAmerica(BankBase):
         ]
     ]
 
-    statement_configs = [credit]
+    statement_configs = [debit]
