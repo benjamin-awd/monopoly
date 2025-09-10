@@ -13,7 +13,7 @@ Monopoly is a Python library & CLI that converts bank statement PDFs to CSV.
 Supported banks:
 | Bank                                   | Credit Statement   | Debit Statement       |
 |----------------------------------------|--------------------|-----------------------|
-| Bank of America                        | ✅                 | ❌                   |
+| Bank of America                        | ❌                 | ✅                   |
 | Bank of Montreal (BMO)                 | ✅                 | ✅                   |
 | Canadian Imperial Bank of Commerce (CIBC) | ✅                 | ✅                   |
 | Canadian Tire Bank                     | ✅                 | ❌                   |
