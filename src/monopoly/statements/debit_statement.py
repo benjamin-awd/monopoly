@@ -16,11 +16,30 @@ class DebitStatement(BaseStatement):
 
     def pre_process_match(self, transaction_match: TransactionMatch) -> TransactionMatch:
         """Pre-process transactions by adding a debit or credit polarity identifier to the group dict."""
-        if self.config.statement_type == EntryType.DEBIT:
-            transaction_match.groupdict.polarity = self.get_debit_polarity(transaction_match)
+        page_number = transaction_match.page_number
+        withdrawal_pos = self.get_withdrawal_pos(page_number)
+        deposit_pos = self.get_deposit_pos(page_number)
+        polarity = transaction_match.groupdict.polarity
+
+        # If the transaction doesn't have an explicit polarity, attempt to infer from column positions
+        if not polarity and withdrawal_pos and deposit_pos:
+            polarity = self.get_debit_polarity(transaction_match, withdrawal_pos, deposit_pos)
+
+        match polarity:
+            case "-" | "DR":
+                polarity = "DR"
+            case "+" | "CR":
+                polarity = "CR"
+            case None:
+                polarity = "CR"  # default to credit
+            case _:
+                error = f"Unsupported polarity type {polarity}"
+                raise RuntimeError(error)
+
+        transaction_match.groupdict.polarity = polarity
         return transaction_match
 
-    def get_debit_polarity(self, transaction_match: TransactionMatch) -> str | None:
+    def get_debit_polarity(self, transaction_match: TransactionMatch, withdrawal_pos: int, deposit_pos: int) -> str:
         """
         Get the accounting polarity for debit card statements.
 
@@ -28,22 +47,14 @@ class DebitStatement(BaseStatement):
         or credit entry based on the distance from the withdrawal
         or deposit columns.
         """
-        page_number = transaction_match.page_number
-        withdrawal_pos = self.get_withdrawal_pos(page_number)
-        deposit_pos = self.get_deposit_pos(page_number)
-
-        if deposit_pos and withdrawal_pos:
-            amount = transaction_match.groupdict.amount
-            line: str = transaction_match.match.string
-            start_pos = line.find(amount)
-            # assume that numbers are right aligned
-            end_pos = start_pos + len(amount) - 1
-            withdrawal_diff = abs(end_pos - withdrawal_pos)
-            deposit_diff = abs(end_pos - deposit_pos)
-            if withdrawal_diff > deposit_diff:
-                return "CR"
-            return "DR"
-        return transaction_match.groupdict.polarity
+        amount = transaction_match.groupdict.amount
+        line: str = transaction_match.match.string
+        start_pos = line.find(amount)
+        # assume that numbers are right aligned
+        end_pos = start_pos + len(amount) - 1
+        withdrawal_diff = abs(end_pos - withdrawal_pos)
+        deposit_diff = abs(end_pos - deposit_pos)
+        return "CR" if withdrawal_diff > deposit_diff else "DR"
 
     def get_withdrawal_pos(self, page_number: int) -> int | None:
         common_names = ["withdraw", "debit", r"from\ your\ account"]
