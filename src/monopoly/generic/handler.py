@@ -92,4 +92,4 @@ class GenericStatementHandler(StatementHandler):
 
     @cached_property
     def prev_balance_pattern(self):
-        return self.analyzer.create_previous_balance_re.compile()
+        return self.analyzer.create_previous_balance_regex()
