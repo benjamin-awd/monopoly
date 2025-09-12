@@ -44,7 +44,6 @@ class BankOfAmerica(BankBase):
         transaction_date_format="%m/%d",
         multiline_config=MultilineConfig(multiline_descriptions=True),
         safety_check=False,
-        transaction_auto_polarity=True,
     )
 
     identifiers = [
