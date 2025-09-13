@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+git pull
+
 if [ -z "$1" ]; then
 	echo "Please provide a tag."
 	echo "Usage: ./release.sh v[X.Y.Z]"
