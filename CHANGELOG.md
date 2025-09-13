@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.19.3] - 2025-09-13
+
+### ⛰️ Features
+
+- *(banks/boa)* Add credit processing (#230)
+
+### 🛠️ Bug Fixes
+
+- *(banks/boa)* Use correct statement type for debit statements
+- *(statement)* Properly assign polarity for debit statements
+- Use correct attribute for DatePatternAnalyzer
+
+### ⚙️ Miscellaneous Tasks
+
+- *(release)* Add initial git pull
+
 ## [0.19.2] - 2025-09-07
 
 ### 🛠️ Bug Fixes
