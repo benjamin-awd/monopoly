@@ -104,6 +104,15 @@ class CreditTransactionPatterns(RegexEnum):
     AMEX_PLATINUM = (
         rf"(?P<transaction_date>{ISO8601.DD_MM_YY})\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
     )
+    BANK_OF_AMERICA = (
+        rf"(?P<transaction_date>{ISO8601.MM_DD})\s+"
+        rf"(?P<posting_date>{ISO8601.MM_DD})\s+"
+        + SharedPatterns.DESCRIPTION
+        + r"(?P<reference_number>\d{4})?\s+"
+        + r"(?P<account_number>\d{4})?\s+"
+        + r"(?P<polarity>\-)?"
+        + SharedPatterns.AMOUNT
+    )
     BMO = (
         r"(?P<transaction_date>[A-Z][a-z]{2,3}\.\s+\d{1,2})\s+"
         r"(?P<posting_date>[A-Z][a-z]{2,3}\.\s+\d{1,2})\s+"
