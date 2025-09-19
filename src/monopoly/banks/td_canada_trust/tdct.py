@@ -40,7 +40,7 @@ class TDCanadaTrust(BankBase):
     credit = StatementConfig(
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(rf"STATEMENT PERIOD.*{ISO8601.MMMM_DD_YYYY}"),
-        header_pattern=re.compile(r"(TRANSACTION POSTING)"),
+        header_pattern=re.compile(r"(TRANSACTION\s+POSTING)"),
         prev_balance_pattern=StatementBalancePatterns.TDCT,
         transaction_pattern=CreditTransactionPatterns.TDCT,
         transaction_date_format="%b %d",
@@ -51,21 +51,21 @@ class TDCanadaTrust(BankBase):
     identifiers = [
         # DR personal
         [
+            MetadataIdentifier(producer="OpenText Output Transformation Engine -"),
             # ACCOUNT ISSUED BY: THE TORONTO\-DOMINION BANK
             TextIdentifier(
                 text="A CC\nOU\nNT\nI\nSS\nU\nED\nBY :\nTH\nE\nT\nOR\nO\nNT O-\nD\nOM\nI\nNI\nO\nN\nB\nAN\nK"
             ),
-            MetadataIdentifier(producer="OpenText Output Transformation Engine - 23.4.00"),
         ],
         # DR business
         [
-            MetadataIdentifier(producer="OpenText Output Transformation Engine - 23.4.00"),
+            MetadataIdentifier(producer="OpenText Output Transformation Engine -"),
             TextIdentifier(text="Accounts issued by: THE TORONTO-DOMINION BANK"),
         ],
         # CR
         [
+            MetadataIdentifier(producer="OpenText Output Transformation Engine -"),
             TextIdentifier(text="TDSTM"),
-            MetadataIdentifier(producer="OpenText Output Transformation Engine - 23.4.00"),
         ],
     ]
 
