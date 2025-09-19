@@ -27,7 +27,10 @@ class RoyalBankOfCanada(BankBase):
 
     debit_business = StatementConfig(
         statement_type=EntryType.DEBIT,
-        statement_date_pattern=re.compile(rf"{ISO8601.MMMM_DD_YYYY} to (?P<date>{ISO8601.MMMM_DD_YYYY})"),
+        statement_date_pattern=re.compile(
+            rf"\b({DateFormats.MMMM}\s{DateFormats.D}[,\s]{{1,2}}{DateFormats.YYYY}) to "
+            rf"(?P<date>\b({DateFormats.MMMM}\s{DateFormats.D}[,\s]{{1,2}}{DateFormats.YYYY}))"
+        ),
         header_pattern=re.compile(
             r"Date\s+Description\s+Cheques\ \&\ Debits\ \(\$\)\s+Deposits\ \&\ Credits\ \(\$\)\s+Balance\ \(\$\)"
         ),
@@ -49,9 +52,10 @@ class RoyalBankOfCanada(BankBase):
     credit = StatementConfig(
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(
-            rf"STATEMENT FROM ({ISO8601.MMM_DD}|{ISO8601.MMM_DD_YYYY}) TO {ISO8601.MMM_DD_YYYY}"
+            rf"STATEMENT FROM ({ISO8601.MMM_DD}|{ISO8601.MMM_DD_YYYY}) TO "
+            rf"(({DateFormats.MMM}\s{DateFormats.D}[,\s]{{1,2}}{DateFormats.YYYY})|{ISO8601.MMM_DD_YYYY})"
         ),
-        header_pattern=re.compile(r"(TRANSACTION POSTING)"),
+        header_pattern=re.compile(r"(TRANSACTION\s+POSTING)"),
         prev_balance_pattern=StatementBalancePatterns.RBC,
         transaction_pattern=CreditTransactionPatterns.RBC,
         transaction_date_format="%b %d",
@@ -60,17 +64,25 @@ class RoyalBankOfCanada(BankBase):
     identifiers = [
         # DR personal
         [
-            MetadataIdentifier(creator="Symcor Inc.", producer="PDFlib+PDI 9.2.0 (JDK 1.8/Linux-x86_64)"),
+            MetadataIdentifier(creator="Symcor Inc.", producer="PDFlib+PDI"),
+            TextIdentifier(text="Royal Bank of Canada"),
+        ],
+        [
+            MetadataIdentifier(creator="Symcor Inc.", producer="PDFlib+PDI", title="Statement"),
             TextIdentifier(text="Royal Bank of Canada"),
         ],
         # DR business
         [
-            MetadataIdentifier(creator="Symcor Inc.", producer="PDFlib+PDI 9.2.0 (JDK 1.8/Linux-x86_64)"),
+            MetadataIdentifier(creator="Symcor Inc.", producer="PDFlib+PDI"),
+            TextIdentifier(text="ROYAL BANK OF CANADA"),
+        ],
+        [
+            MetadataIdentifier(creator="Symcor Inc.", producer="PDFlib+PDI", title="Statement"),
             TextIdentifier(text="ROYAL BANK OF CANADA"),
         ],
         # CR
         [
-            MetadataIdentifier(creator="Symcor Inc.", producer="PDFlib+PDI 9.2.0 (JDK 1.8/Linux-x86_64)"),
+            MetadataIdentifier(creator="Symcor Inc.", producer="PDFlib+PDI"),
             TextIdentifier(text="RBC ROYAL BANK"),
         ],
     ]
