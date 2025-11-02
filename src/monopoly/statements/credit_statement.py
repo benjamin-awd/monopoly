@@ -62,17 +62,12 @@ class CreditStatement(BaseStatement):
         numbers = self.get_all_numbers_from_document()
         transactions = self.transactions
 
-        amounts = [transaction.amount for transaction in transactions]
-        total_amount = abs(round(sum(amounts), 2))
-
+        total_amount = round(sum(t.amount for t in transactions), 2)
         total_amount_found = total_amount in numbers
 
         # if sum of debit and credit is the same as the total amount
         # then the statement is safe
-        if round(sum(amounts), 2) == total_amount:
-            return True
-
-        if total_amount_found:
+        if abs(total_amount) in numbers or total_amount_found:
             return True
 
         # attempt a debit-statement style safety for banks that have
