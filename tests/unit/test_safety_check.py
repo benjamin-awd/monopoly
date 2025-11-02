@@ -66,3 +66,30 @@ def test_debit_safety_check_failure(debit_statement: DebitStatement):
     # are not present as a number
     with pytest.raises(SafetyCheckError):
         debit_statement.perform_safety_check()
+
+
+def test_safety_check_does_not_pass_when_total_not_in_document(credit_statement: CreditStatement):
+    """
+    This test guards against the old logic flaw where perform_safety_check()
+    would incorrectly pass as long as the sum of transactions was positive,
+    even if the total was not actually in the statement text.
+    """
+
+    # Create a dummy document with NO total value mentioned
+    document = Document()
+    page = document.new_page()
+    text = "Statement Page 1\nTransaction A 10.00\nTransaction B 20.00\nNo totals listed here"
+    page.lines = text.split("\n")
+    page.insert_text(point=(0, 0), text=text)
+    credit_statement.pages[0] = page
+    credit_statement.document = document
+
+    # Transactions sum to 30.00, but 30.00 is NOT in the document text.
+    credit_statement.transactions = [
+        Transaction(transaction_date="01/01", description="A", amount=10.0, polarity="CR"),
+        Transaction(transaction_date="02/01", description="B", amount=20.0, polarity="CR"),
+    ]
+
+    # Old logic would wrongly return True — corrected logic should raise an error.
+    with pytest.raises(SafetyCheckError):
+        credit_statement.perform_safety_check()
