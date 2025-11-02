@@ -32,14 +32,10 @@ class BankOfAmerica(BankBase):
 
     credit = StatementConfig(
         statement_type=EntryType.CREDIT,
-        statement_date_pattern=re.compile(
-            rf"Statement Closing Date\s+{ISO8601.MM_DD_YYYY}"
-        ),
+        statement_date_pattern=re.compile(rf"Statement Closing Date\s+{ISO8601.MM_DD_YYYY}"),
         statement_date_order=DateOrder("MDY"),
         transaction_date_order=DateOrder("MDY"),
-        header_pattern=re.compile(
-            r"(Date\s+Date\s+Description\s+Number\s+Number\s+Amount\s+Total)"
-        ),
+        header_pattern=re.compile(r"(Date\s+Date\s+Description\s+Number\s+Number\s+Amount\s+Total)"),
         transaction_pattern=CreditTransactionPatterns.BANK_OF_AMERICA,
         transaction_date_format="%m/%d",
         multiline_config=MultilineConfig(multiline_descriptions=True),
