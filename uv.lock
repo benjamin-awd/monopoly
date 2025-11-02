@@ -1,6 +1,6 @@
 version = 1
 revision = 2
-requires-python = ">=3.10, <4.0"
+requires-python = ">=3.10, <3.14"
 resolution-markers = [
     "python_full_version >= '3.12'",
     "python_full_version == '3.11.*'",
@@ -490,7 +490,7 @@ wheels = [
 
 [[package]]
 name = "monopoly-core"
-version = "0.19.3"
+version = "0.19.4"
 source = { editable = "." }
 dependencies = [
     { name = "click" },
@@ -532,7 +532,7 @@ dev = [
 requires-dist = [
     { name = "click", specifier = ">=8.2.1" },
     { name = "dateparser", specifier = ">=1.2.1" },
-    { name = "ocrmypdf", marker = "extra == 'ocr'", specifier = "==16.10.4" },
+    { name = "ocrmypdf", marker = "extra == 'ocr'", specifier = ">=16.5.0,<17.0.0" },
     { name = "pdftotext", specifier = ">=3.0.0" },
     { name = "pydantic", specifier = ">=2.11.5" },
     { name = "pydantic-settings", specifier = ">=2.9.1" },

@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.19.4] - 2025-11-02
+
+### 🛠️ Bug Fixes
+
+- *(rbc)* Credit statement parser & identifiers
+- *(tdct)* Update identifier to include all versions
+
+### ⚙️ Miscellaneous Tasks
+
+- Fix flawed safety check logic for credit card statements
+- *(banks/chase)* Handle no digit before decimal for credit card
+- Fix polarity handling for chase
+- Fix formatting for boa
+
+### Build
+
+- *(deps)* Bump actions/setup-python from 5 to 6
+- *(deps)* Bump actions/checkout from 4 to 5
+- *(deps)* Bump actions/download-artifact from 4 to 5
+- *(deps)* Pin python to <=3.13 due to build issues with libheif
+
 ## [0.19.3] - 2025-09-13
 
 ### ⛰️ Features
