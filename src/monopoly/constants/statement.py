@@ -138,11 +138,11 @@ class CreditTransactionPatterns(RegexEnum):
         rf"(?P<polarity>-)?\s*\$"
         rf"(?P<amount>{SharedPatterns.COMMA_FORMAT})\s*$"
     )
-    # Chase has transaction values like .75 instead of 0.75
     CHASE = (
         rf"(?P<transaction_date>{ISO8601.MM_DD})\s+"
         + SharedPatterns.DESCRIPTION
-        + SharedPatterns.AMOUNT_EXTENDED.replace(SharedPatterns.COMMA_FORMAT, rf"(\d{1, 3}(,\d{3})*|\d*)\.\d+")
+        + r"(?P<polarity>\-)?"
+        + r"(?P<amount>(\d{1,3}(,\d{3})*|\d*)\.\d+)$"
     )
     CIBC = (
         rf"(?P<transaction_date>\b({DateFormats.MMM}[-\s]{DateFormats.DD}))\s+"
