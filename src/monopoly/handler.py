@@ -19,6 +19,7 @@ class StatementHandler:
     def __init__(self, parser: PdfParser):
         self.bank = parser.bank
         self.pages = parser.pages
+        self.file_path = parser.document.file_path
 
     def get_header(self, config: StatementConfig) -> str | None:
         pattern = config.header_pattern
@@ -42,10 +43,10 @@ class StatementHandler:
                 match config.statement_type:
                     case EntryType.DEBIT:
                         logger.debug("Statement type detected: %s", EntryType.DEBIT)
-                        return DebitStatement(pages, bank_name, config, header)
+                        return DebitStatement(pages, bank_name, config, header, self.file_path)
                     case EntryType.CREDIT:
                         logger.debug("Statement type detected: %s", EntryType.CREDIT)
-                        return CreditStatement(pages, bank_name, config, header)
+                        return CreditStatement(pages, bank_name, config, header, self.file_path)
 
         msg = "Could not find header in statement"
         raise RuntimeError(msg)

@@ -3,6 +3,7 @@ import re
 from dataclasses import dataclass
 from datetime import datetime
 from functools import cached_property
+from pathlib import Path
 from typing import ClassVar
 
 from dateparser import parse
@@ -156,11 +157,13 @@ class BaseStatement:
         bank_name: str,
         config: StatementConfig,
         header: str,
+        file_path: Path | None = None,
     ):
         self.config = config
         self.bank_name = bank_name
         self.pages = pages
         self.header = header
+        self.file_path = file_path
 
     @cached_property
     def number_pattern(self) -> re.Pattern:
@@ -308,6 +311,12 @@ class BaseStatement:
                     if statement_date:
                         return statement_date
                     logger.info("Unable to parse statement date %s", date_string)
+
+        # Fallback: Try extracting date from filename
+        if filename_date := self._extract_date_from_filename():
+            logger.info("Statement date extracted from filename: %s", filename_date)
+            return filename_date
+
         msg = "Statement date not found"
         raise ValueError(msg)
 
@@ -321,6 +330,39 @@ class BaseStatement:
 
             return f"{day}-{month}-{year}"
         return match.group(1)
+
+    def _extract_date_from_filename(self) -> datetime | None:
+        """
+        Extract statement month and year from the filename.
+
+        Supports patterns like:
+        - eStatement_Nov2025_2025-11-07T14_50_26.pdf
+        - CardStatement_Oct2025.pdf
+
+        Returns datetime object with day set to 1, or None if pattern not found.
+        """
+        if not self.file_path:
+            return None
+
+        filename = self.file_path.name
+        # Pattern to match month abbreviation followed by year (e.g., Nov2025, Oct2025)
+        pattern = re.compile(r"_([A-Za-z]{3})(\d{4})")
+
+        if match := pattern.search(filename):
+            month_abbr = match.group(1)
+            year = match.group(2)
+            date_string = f"1 {month_abbr} {year}"
+
+            try:
+                return parse(
+                    date_string=date_string,
+                    settings=self.config.statement_date_order.settings,
+                )
+            except (ValueError, TypeError) as e:
+                logger.warning("Failed to parse date from filename '%s': %s", filename, e)
+                return None
+
+        return None
 
     def _get_search_text(self, lines, i, line):
         """Get text to search, optionally combining multiple lines and removing whitespace."""
