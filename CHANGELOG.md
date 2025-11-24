@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.19.5] - 2025-11-24
+
+### ⛰️ Features
+
+- *(credit/citi)* Fall back to filename for month/year inference
+
+### 🚜 Refactor
+
+- Gate filename fallback behind config
+
+### Build
+
+- *(deps)* Bump astral-sh/setup-uv from 6 to 7
+
 ## [0.19.4] - 2025-11-02
 
 ### 🛠️ Bug Fixes
