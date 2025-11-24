@@ -335,20 +335,20 @@ class BaseStatement:
         """
         Extract statement month and year from the filename.
 
+        Only enabled if the bank config has a filename_fallback_pattern set.
+
         Supports patterns like:
         - eStatement_Nov2025_2025-11-07T14_50_26.pdf
         - CardStatement_Oct2025.pdf
 
         Returns datetime object with day set to 1, or None if pattern not found.
         """
-        if not self.file_path:
+        if not self.file_path or not self.config.filename_fallback_pattern:
             return None
 
         filename = self.file_path.name
-        # Pattern to match month abbreviation followed by year (e.g., Nov2025, Oct2025)
-        pattern = re.compile(r"_([A-Za-z]{3})(\d{4})")
 
-        if match := pattern.search(filename):
+        if match := self.config.filename_fallback_pattern.search(filename):
             month_abbr = match.group(1)
             year = match.group(2)
             date_string = f"1 {month_abbr} {year}"

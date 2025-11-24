@@ -68,6 +68,10 @@ class StatementConfig:
     - `safety_check` controls whether the safety check for banks. Use
     for banks that don't provide total amount (or total debit/credit)
     in the statement. Enabled by default.
+    - `filename_fallback_pattern` is an optional regex pattern that extracts the statement
+    date from the filename when it cannot be found in the PDF content. The pattern should
+    have two capture groups: (1) month abbreviation and (2) year (e.g., r"_([A-Za-z]{3})(\d{4})")
+    to match filenames like "eStatement_Nov2025_*.pdf". Disabled by default (None).
     """
 
     statement_type: EntryType
@@ -82,6 +86,7 @@ class StatementConfig:
     prev_balance_pattern: Pattern[str] | RegexEnum | None = None
     safety_check: bool = True
     transaction_auto_polarity: bool = True
+    filename_fallback_pattern: Pattern[str] | None = None
 
 
 @dataclass
