@@ -24,6 +24,7 @@ class Citibank(BankBase):
         transaction_date_format="%d %b",
         prev_balance_pattern=StatementBalancePatterns.CITIBANK,
         transaction_pattern=CreditTransactionPatterns.CITIBANK,
+        filename_fallback_pattern=re.compile(r"_([A-Za-z]{3})(\d{4})"),
     )
 
     pdf_config = PdfConfig(
