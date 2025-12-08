@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.19.6] - 2025-12-08
+
+### ⛰️ Features
+
+- *(cli)* Add preserve filenames option
+
+### ⚙️ Miscellaneous Tasks
+
+- *(banks/dbs)* Add metadata for recent statements
+- Remove redundant gate for output_directory coercion
+
+### Build
+
+- *(deps)* Bump actions/checkout from 5 to 6
+
 ## [0.19.5] - 2025-11-24
 
 ### ⛰️ Features
