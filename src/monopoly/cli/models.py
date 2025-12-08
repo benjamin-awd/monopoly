@@ -12,6 +12,7 @@ class RunConfig:
     single_process: bool = False
     use_ocr: bool = False
     verbose: bool = False
+    preserve_filename: bool = False
 
 
 @dataclass

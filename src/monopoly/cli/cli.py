@@ -50,7 +50,12 @@ def process_statement(file: Path, config: RunConfig) -> Result | None:
         if not config.output_directory:
             config.output_directory = file.parent
 
-        output_file = pipeline.load(transactions, statement, config.output_directory)
+        output_file = pipeline.load(
+            transactions,
+            statement,
+            config.output_directory,
+            preserve_filename=config.preserve_filename,
+        )
         return Result(file.name, output_file.name)
 
     # ruff: noqa: BLE001
@@ -139,6 +144,11 @@ def get_statement_paths(files: Iterable[Path]) -> set[Path]:
     "output_directory",
     type=click.Path(exists=True, allow_dash=True, resolve_path=True, path_type=Path),
     help="Specify output folder.",
+)
+@click.option(
+    "--preserve-filename",
+    is_flag=True,
+    help="Keep the input filename (with .csv extension) instead of generating a new one.",
 )
 @click.option(
     "-p",
