@@ -41,6 +41,7 @@ def test_load(
         transactions=transactions,
         statement=credit_statement,
         output_directory=Path("/output_directory"),
+        preserve_filename=False,
     )
 
     expected = Path("/output_directory/test_file.csv")
