@@ -75,6 +75,11 @@ or multiple statements
 monopoly ./statements
 ```
 
+To keep the output filename the same as the input (with a `.csv` extension), pass:
+```sh
+monopoly path/to/file.pdf --output ./out --preserve-filename
+```
+
 If you need to run monopoly on a password protected file, ensure that passwords are set in the .env file:
 ```sh
 cp .env.template .env

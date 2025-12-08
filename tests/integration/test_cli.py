@@ -74,6 +74,48 @@ def test_monopoly_output(cli_runner: CliRunner, tmp_path: Path):
     assert str(expected_csv_path.name) in result.output
 
 
+def test_monopoly_output_preserve_filename(cli_runner: CliRunner, tmp_path: Path):
+    output_dir = tmp_path / "results"
+    output_dir.mkdir()
+
+    result = cli_runner.invoke(
+        monopoly,
+        [
+            "src/monopoly/examples/example_statement.pdf",
+            "--output",
+            str(output_dir),
+            "--preserve-filename",
+        ],
+    )
+
+    assert result.exit_code == 0
+    assert "1 statement(s) processed" in result.output
+
+    expected_csv_path = output_dir / "example_statement.csv"
+    assert expected_csv_path.exists()
+    assert str(expected_csv_path.name) in result.output
+
+
+def test_monopoly_preserve_filename_without_output(cli_runner: CliRunner):
+    with cli_runner.isolated_filesystem():
+        repo_root = Path(__file__).resolve().parents[2]
+        src_pdf = repo_root / "src/monopoly/examples/example_statement.pdf"
+        Path("example_statement.pdf").write_bytes(src_pdf.read_bytes())
+
+        result = cli_runner.invoke(
+            monopoly,
+            [
+                "example_statement.pdf",
+                "--preserve-filename",
+            ],
+        )
+
+        assert result.exit_code == 0
+        expected_csv_path = Path("example_statement.csv")
+        assert expected_csv_path.exists()
+        assert str(expected_csv_path.name) in result.output
+
+
 def test_monopoly_pprint(cli_runner: CliRunner):
     result = cli_runner.invoke(
         monopoly, ["src/monopoly/examples/example_statement.pdf", "--pprint", "--single-process"]
