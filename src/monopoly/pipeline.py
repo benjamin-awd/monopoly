@@ -122,12 +122,11 @@ class Pipeline:
     def load(
         transactions: list[Transaction],
         statement: BaseStatement,
-        output_directory: Path,
+        output_directory: Path | str,
         *,
         preserve_filename: bool,
     ):
-        if isinstance(output_directory, str):
-            output_directory = Path(output_directory)
+        output_directory = Path(output_directory)
 
         if preserve_filename and statement.file_path:
             filename = f"{Path(statement.file_path).stem}.csv"
