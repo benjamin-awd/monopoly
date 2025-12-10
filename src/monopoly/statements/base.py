@@ -46,9 +46,10 @@ class DescriptionBuilder:
     def __init__(self, context: MatchContext, pattern: re.Pattern):
         self.ctx = context
         self.pattern = pattern
-        self.cfg = context.multiline_config  # Alias config early
+        self.cfg = context.multiline_config
         self.description = context.description
         self.desc_pos = context.line.find(context.description)
+        self.previous_transaction_date = None
 
     def build(self) -> str:
         """Build the final description string by iterating forward through lines."""
