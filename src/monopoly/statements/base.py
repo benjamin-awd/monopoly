@@ -43,12 +43,12 @@ class DescriptionBuilder:
     WORDS_PATTERN: ClassVar[re.Pattern] = re.compile(r"\s[A-Za-z]+")
     NUMBERS_PATTERN: ClassVar[re.Pattern] = re.compile(SharedPatterns.AMOUNT)
 
-    def __init__(self, context: MatchContext, pattern: re.Pattern):
-        self.ctx = context
+    def __init__(self, ctx: MatchContext, pattern: re.Pattern):
         self.pattern = pattern
-        self.cfg = context.multiline_config
-        self.description = context.description
-        self.desc_pos = context.line.find(context.description)
+        self.ctx = ctx
+        self.cfg = ctx.multiline_config
+        self.description = ctx.description
+        self.desc_pos = ctx.line.find(ctx.description)
         self.previous_transaction_date = None
 
     def build(self) -> str:
@@ -61,7 +61,6 @@ class DescriptionBuilder:
             self._include_previous_line()
 
         # Handle subsequent lines
-        # Iterate from the next line onwards
         for next_line in self.ctx.lines[self.ctx.idx + 1 :]:
             if self._should_break(next_line):
                 break
@@ -161,7 +160,8 @@ class BaseStatement:
         transactions: list[Transaction] = []
 
         for page_num, page in enumerate(self.pages):
-            for line_num, line in enumerate(page.lines):
+            lines = page.lines
+            for line_num, line in enumerate(lines):
                 raw_match = self.pattern.search(line)
                 if not raw_match:
                     continue
@@ -174,14 +174,7 @@ class BaseStatement:
 
                 transaction_match = TransactionMatch(groupdict, raw_match, page_number=page_num)
                 transaction_match = self.pre_process_match(transaction_match)
-                context = MatchContext(
-                    line=line,
-                    lines=page.lines,
-                    idx=line_num,
-                    description=transaction_match.groupdict.description,
-                    multiline_config=self.config.multiline_config,
-                )
-                processed_match = self.process_match(transaction_match, context)
+                processed_match = self.process_match(transaction_match, lines, line_num)
                 transaction = Transaction(
                     **processed_match.groupdict,
                     auto_polarity=self.config.transaction_auto_polarity,
@@ -215,24 +208,32 @@ class BaseStatement:
     def post_process_transactions(self, transactions: list[Transaction]) -> list[Transaction]:
         return transactions
 
-    def process_match(self, match: TransactionMatch, context: MatchContext) -> TransactionMatch:
+    def process_match(self, match: TransactionMatch, lines: list[str], line_num: int):
+        ctx = MatchContext(
+            line=lines[line_num],
+            lines=lines,
+            idx=line_num,
+            description=match.groupdict.description,
+            multiline_config=self.config.multiline_config,
+        )
+
         # early exit if no multiline config
-        if not (cfg := context.multiline_config):
+        if not (cfg := ctx.multiline_config):
             return match
 
         # Early exit if end of page
-        if context.idx >= len(context.lines) - 1:
+        if ctx.idx >= len(ctx.lines) - 1:
             return match
 
         if cfg.multiline_polarity:
-            match.groupdict.polarity = self.get_multiline_polarity(context)
+            match.groupdict.polarity = self.get_multiline_polarity(ctx)
 
         if cfg.multiline_descriptions:
-            match.groupdict.description = DescriptionBuilder(context, self.pattern).build()
+            match.groupdict.description = DescriptionBuilder(ctx, self.pattern).build()
 
         return match
 
-    def get_multiline_polarity(self, context: MatchContext):
+    def get_multiline_polarity(self, ctx: MatchContext):
         """
         Pull polarity from the next line, if it can be found on the next line.
 
@@ -244,7 +245,7 @@ class BaseStatement:
 
         In this case, the polarity will resolve to CR.
         """
-        next_line = context.lines[context.idx + 1]
+        next_line = ctx.lines[ctx.idx + 1]
         if re.match(SharedPatterns.POLARITY, next_line):
             return next_line.strip()
         return None

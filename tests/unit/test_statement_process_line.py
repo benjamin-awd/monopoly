@@ -97,8 +97,8 @@ def test_process_match_multiline_description(statement: BaseStatement):
         "description": "SHOPEE",
         "polarity": None,
     }
-    context = MatchContext(line=line, lines=lines, idx=0, description="SHOPEE")
-    match = statement.process_match(match, context)
+    line_num = 0
+    match = statement.process_match(match, lines, line_num)
     assert match.groupdict.asdict() == expected_groupdict
 
     # case 2: description across next line is more than three spaces apart
