@@ -162,28 +162,31 @@ class BaseStatement:
 
         for page_num, page in enumerate(self.pages):
             for line_num, line in enumerate(page.lines):
-                if match := self.pattern.search(line):
-                    if self._check_bound(match):
-                        continue
+                raw_match = self.pattern.search(line)
+                if not raw_match:
+                    continue
 
-                    groupdict = TransactionGroupDict(**match.groupdict())
-                    groupdict = self.pre_process_transaction_groupdict(groupdict)
+                if self._check_bound(raw_match):
+                    continue
 
-                    transaction_match = TransactionMatch(groupdict, match, page_number=page_num)
-                    match = self.pre_process_match(transaction_match)
-                    context = MatchContext(
-                        line=line,
-                        lines=page.lines,
-                        idx=line_num,
-                        description=match.groupdict.description,
-                        multiline_config=self.config.multiline_config,
-                    )
-                    processed_match = self.process_match(match, context)
-                    transaction = Transaction(
-                        **processed_match.groupdict,
-                        auto_polarity=self.config.transaction_auto_polarity,
-                    )
-                    transactions.append(transaction)
+                groupdict = TransactionGroupDict(**raw_match.groupdict())
+                groupdict = self.pre_process_transaction_groupdict(groupdict)
+
+                transaction_match = TransactionMatch(groupdict, raw_match, page_number=page_num)
+                transaction_match = self.pre_process_match(transaction_match)
+                context = MatchContext(
+                    line=line,
+                    lines=page.lines,
+                    idx=line_num,
+                    description=transaction_match.groupdict.description,
+                    multiline_config=self.config.multiline_config,
+                )
+                processed_match = self.process_match(transaction_match, context)
+                transaction = Transaction(
+                    **processed_match.groupdict,
+                    auto_polarity=self.config.transaction_auto_polarity,
+                )
+                transactions.append(transaction)
 
         if not transactions:
             return None
