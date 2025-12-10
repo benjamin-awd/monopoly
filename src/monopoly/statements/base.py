@@ -384,8 +384,7 @@ class BaseStatement:
         for line in lines:
             numbers.update(self.number_pattern.findall(line))
             numbers = {number.replace(",", "") for number in numbers}
-            decimal_numbers = {float(number) for number in numbers if self.decimal_pattern.match(number)}
-        return decimal_numbers
+        return {float(number) for number in numbers if self.decimal_pattern.match(number)}
 
     def perform_safety_check(self) -> bool:
         """Mandate the perform_safety_check method, which should exist in any child class of Statement."""
