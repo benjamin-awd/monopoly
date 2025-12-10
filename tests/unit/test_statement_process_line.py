@@ -7,7 +7,6 @@ from monopoly.statements import BaseStatement
 from monopoly.statements.base import MatchContext
 from monopoly.statements.transaction import (
     Transaction,
-    TransactionGroupDict,
     TransactionMatch,
 )
 
@@ -76,15 +75,12 @@ def test_process_match_multiline_description(statement: BaseStatement):
     statement.config.multiline_config = MultilineConfig(True)
     statement.config.transaction_pattern = pattern
 
-    groupdict = {
-        "transaction_date": "04 Aug",
-        "description": "SHOPEE",
-        "amount": "3.20",
-        "polarity": None,
-    }
     match = TransactionMatch(
+        transaction_date="04 Aug",
+        description="SHOPEE",
+        amount="3.20",
+        polarity=None,
         match=re.search("foo", "foo"),
-        groupdict=TransactionGroupDict(**groupdict),
         page_number=0,
     )
 
@@ -99,10 +95,16 @@ def test_process_match_multiline_description(statement: BaseStatement):
     }
     line_num = 0
     match = statement.process_match(match, lines, line_num)
-    assert match.groupdict.asdict() == expected_groupdict
+    assert match.groupdict() == expected_groupdict
 
     # case 2: description across next line is more than three spaces apart
     line = "04 Aug 02 Aug SHOPEE 3.20"
     lines = ["04 Aug 02 Aug SHOPEE 3.20", "foo", "bar"]
     context = MatchContext(line=line, lines=lines, idx=0, description="SHOPEE")
-    assert match.groupdict.asdict() == groupdict
+    groupdict = {
+        "transaction_date": "04 Aug",
+        "description": "SHOPEE",
+        "amount": "3.20",
+        "polarity": None,
+    }
+    assert match.groupdict() == groupdict

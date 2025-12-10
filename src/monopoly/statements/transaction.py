@@ -1,6 +1,5 @@
 import json
 import re
-from collections.abc import Mapping
 from typing import Any
 
 from pydantic import ConfigDict, Field, field_validator, model_validator
@@ -11,14 +10,12 @@ from monopoly.constants import Columns
 
 
 # ruff: noqa: N805
-class TransactionGroupDict(Mapping):
+@dataclass(config=ConfigDict(arbitrary_types_allowed=True))
+class TransactionMatch:
     """
-    Helper class that holds the group dict from a match.
+    Holds transaction data extracted from a regex match.
 
-    This class acts as a convenient wrapper to allow unpacking into the
-    `Transaction` class.
-
-    A transaction should at minimum always have a description and amount
+    A transaction should at minimum always have a description and amount.
 
     In cases where we parse a previous balance line, the date might not exist
     e.g.
@@ -26,51 +23,32 @@ class TransactionGroupDict(Mapping):
     `01 OCT    ValueVille                  123.12`
     """
 
-    def __init__(
-        self,
-        description: str,
-        amount: str,
-        transaction_date: str | None = None,
-        polarity: str | None = None,
-        **_,
-    ):
-        self.transaction_date = transaction_date
-        self.amount = amount
-        self.description = description
-        self.polarity = polarity
+    transaction_date: str | None
+    amount: str
+    description: str
+    polarity: str | None
+    match: re.Match
+    page_number: int
 
-    def __getitem__(self, x):
-        return self.__dict__[x]
+    def groupdict(self) -> dict[str, str | None]:
+        """Return dict of transaction fields for unpacking into Transaction."""
+        return {
+            "transaction_date": self.transaction_date,
+            "amount": self.amount,
+            "description": self.description,
+            "polarity": self.polarity,
+        }
 
-    def __iter__(self):
-        return iter(self.__dict__)
-
-    def __len__(self):
-        return len(self.__dict__)
-
-    def asdict(self):
-        return self.__dict__
-
-    def __str__(self):
-        return str(self.__dict__)
+    def span(self):
+        return self.match.span()
 
     def __repr__(self):
         return (
-            "<TransactionGroupDict object; "
+            "<TransactionMatch object; "
             f"{Columns.TRANSACTION_DATE}={self.transaction_date}, "
             f"{Columns.AMOUNT}={self.amount}, "
             f"{Columns.DESCRIPTION}={self.description}>"
         )
-
-
-@dataclass(config=ConfigDict(arbitrary_types_allowed=True))
-class TransactionMatch:
-    groupdict: TransactionGroupDict
-    match: re.Match
-    page_number: int
-
-    def span(self):
-        return self.match.span()
 
 
 @dataclass

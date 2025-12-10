@@ -15,11 +15,19 @@ class DebitStatement(BaseStatement):
     statement_type = EntryType.DEBIT
 
     def pre_process_match(self, transaction_match: TransactionMatch) -> TransactionMatch:
-        """Pre-process transactions by adding a debit or credit polarity identifier to the group dict."""
+        """
+        Pre-process transactions by adding a debit or credit polarity identifier.
+
+        Inherits multiline date logic from BaseStatement.pre_process_match.
+        """
+        # Call parent to handle multiline date logic
+        transaction_match = super().pre_process_match(transaction_match)
+
+        # Handle debit-specific polarity logic
         page_number = transaction_match.page_number
         withdrawal_pos = self.get_withdrawal_pos(page_number)
         deposit_pos = self.get_deposit_pos(page_number)
-        polarity = transaction_match.groupdict.polarity
+        polarity = transaction_match.polarity
 
         # If the transaction doesn't have an explicit polarity, attempt to infer from column positions
         if not polarity and withdrawal_pos and deposit_pos:
@@ -36,7 +44,7 @@ class DebitStatement(BaseStatement):
                 error = f"Unsupported polarity type {polarity}"
                 raise RuntimeError(error)
 
-        transaction_match.groupdict.polarity = polarity
+        transaction_match.polarity = polarity
         return transaction_match
 
     def get_debit_polarity(self, transaction_match: TransactionMatch, withdrawal_pos: int, deposit_pos: int) -> str:
@@ -47,7 +55,7 @@ class DebitStatement(BaseStatement):
         or credit entry based on the distance from the withdrawal
         or deposit columns.
         """
-        amount = transaction_match.groupdict.amount
+        amount = transaction_match.amount
         line: str = transaction_match.match.string
         start_pos = line.find(amount)
         # assume that numbers are right aligned
