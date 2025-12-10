@@ -14,7 +14,6 @@ from monopoly.constants.date import ISO8601
 from monopoly.pdf import PdfPage
 from monopoly.statements.transaction import (
     Transaction,
-    TransactionGroupDict,
     TransactionMatch,
 )
 
@@ -169,14 +168,21 @@ class BaseStatement:
                 if self._check_bound(raw_match):
                     continue
 
-                groupdict = TransactionGroupDict(**raw_match.groupdict())
-                groupdict = self.pre_process_transaction_groupdict(groupdict)
+                # Create TransactionMatch directly from regex groupdict
+                groupdict = raw_match.groupdict()
+                transaction_match = TransactionMatch(
+                    transaction_date=groupdict.get("transaction_date"),
+                    amount=groupdict["amount"],
+                    description=groupdict["description"],
+                    polarity=groupdict.get("polarity"),
+                    match=raw_match,
+                    page_number=page_num,
+                )
 
-                transaction_match = TransactionMatch(groupdict, raw_match, page_number=page_num)
                 transaction_match = self.pre_process_match(transaction_match)
                 processed_match = self.process_match(transaction_match, lines, line_num)
                 transaction = Transaction(
-                    **processed_match.groupdict,
+                    **processed_match.groupdict(),
                     auto_polarity=self.config.transaction_auto_polarity,
                 )
                 transactions.append(transaction)
@@ -192,17 +198,20 @@ class BaseStatement:
             return True
         return False
 
-    def pre_process_transaction_groupdict(self, groupdict: TransactionGroupDict) -> TransactionGroupDict:
+    def pre_process_match(self, transaction_match: TransactionMatch) -> TransactionMatch:
+        """
+        Pre-process transaction match before further processing.
+
+        Handles multiline transaction date carry-forward logic: when enabled,
+        transactions without a date will inherit the most recent date seen.
+        """
         multiline_config = self.config.multiline_config
         if multiline_config.multiline_transaction_date:
-            if groupdict.transaction_date:
-                self.previous_transaction_date = groupdict.transaction_date
+            if transaction_match.transaction_date:
+                self.previous_transaction_date = transaction_match.transaction_date
             else:
-                groupdict.transaction_date = self.previous_transaction_date
+                transaction_match.transaction_date = self.previous_transaction_date
 
-        return groupdict
-
-    def pre_process_match(self, transaction_match: TransactionMatch) -> TransactionMatch:
         return transaction_match
 
     def post_process_transactions(self, transactions: list[Transaction]) -> list[Transaction]:
@@ -213,7 +222,7 @@ class BaseStatement:
             line=lines[line_num],
             lines=lines,
             idx=line_num,
-            description=match.groupdict.description,
+            description=match.description,
             multiline_config=self.config.multiline_config,
         )
 
@@ -226,10 +235,10 @@ class BaseStatement:
             return match
 
         if cfg.multiline_polarity:
-            match.groupdict.polarity = self.get_multiline_polarity(ctx)
+            match.polarity = self.get_multiline_polarity(ctx)
 
         if cfg.multiline_descriptions:
-            match.groupdict.description = DescriptionBuilder(ctx, self.pattern).build()
+            match.description = DescriptionBuilder(ctx, self.pattern).build()
 
         return match
 

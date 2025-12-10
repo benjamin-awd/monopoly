@@ -3,7 +3,7 @@ import re
 
 from monopoly.constants import EntryType
 from monopoly.statements.debit_statement import DebitStatement
-from monopoly.statements.transaction import Transaction, TransactionGroupDict, TransactionMatch
+from monopoly.statements.transaction import Transaction, TransactionMatch
 
 from .base import BaseStatement, SafetyCheckError
 
@@ -20,20 +20,28 @@ class CreditStatement(BaseStatement):
         if previous_month_balances:
             first_transaction_date = next(iter(transactions)).date
             for prev_month_balance in previous_month_balances:
-                groupdict = TransactionGroupDict(**prev_month_balance.groupdict())
-                groupdict.transaction_date = first_transaction_date
+                groupdict = prev_month_balance.groupdict()
+                groupdict["transaction_date"] = first_transaction_date
                 prev_month_transaction = Transaction(**groupdict)
                 transactions.insert(0, prev_month_transaction)
         return transactions
 
     def pre_process_match(self, transaction_match: TransactionMatch) -> TransactionMatch:
-        """Pre-process transactions by adding a debit or credit polarity identifier to the group dict."""
+        """
+        Pre-process transactions by adding a debit or credit polarity identifier.
+
+        Inherits multiline date logic from BaseStatement.pre_process_match.
+        """
+        # Call parent to handle multiline date logic
+        transaction_match = super().pre_process_match(transaction_match)
+
+        # Handle credit-specific polarity conversion
         if (
             self.config.statement_type == EntryType.CREDIT
-            and transaction_match.groupdict.polarity
-            and transaction_match.groupdict.polarity in ("-")
+            and transaction_match.polarity
+            and transaction_match.polarity in ("-")
         ):
-            transaction_match.groupdict.polarity = "CR"
+            transaction_match.polarity = "CR"
         return transaction_match
 
     def get_prev_month_balances(self) -> list[re.Match]:
