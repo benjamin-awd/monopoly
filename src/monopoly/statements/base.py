@@ -69,6 +69,10 @@ class DescriptionBuilder:
 
     def _should_break(self, line: str) -> bool:
         """Determine if processing should stop at the current line."""
+        # cfg is guaranteed to be not None here because build() returns early if cfg is None
+        if self.cfg is None:
+            return True
+
         if not line.strip() or self.pattern.search(line):
             return True
 
@@ -90,6 +94,10 @@ class DescriptionBuilder:
 
     def _include_previous_line(self) -> None:
         """Attempt to prepend the previous line."""
+        # cfg is guaranteed to be not None here because build() returns early if cfg is None
+        if self.cfg is None:
+            return
+
         prev_line = self.ctx.lines[self.ctx.idx - 1].strip()
         if not prev_line or self.pattern.search(prev_line):
             return
@@ -104,7 +112,9 @@ class DescriptionBuilder:
         return line.find(stripped.split(" ")[0]) if stripped else -1
 
     @staticmethod
-    def _is_within_margin(pos1: int, pos2: int, margin: int) -> bool:
+    def _is_within_margin(pos1: int, pos2: int, margin: int | None) -> bool:
+        if not margin:
+            margin = 0
         return abs(pos1 - pos2) <= margin
 
 
