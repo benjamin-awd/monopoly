@@ -33,115 +33,87 @@ class MatchContext:
     multiline_config: MultilineConfig | None = None
 
 
-class DescriptionExtractor:
-    """Handles extraction and combination of multiline descriptions."""
-
-    def __init__(self, pattern: re.Pattern):
-        self.pattern = pattern
-
-    def get_multiline_description(self, context: MatchContext) -> str | None:
-        """Combine a transaction description spanning multiple lines into a single string."""
-        if not context.multiline_config:
-            return None
-
-        builder = DescriptionBuilder(
-            initial_description=context.description,
-            description_pos=context.line.find(context.description),
-            pattern=self.pattern,
-            description_margin=context.multiline_config.description_margin,
-        )
-
-        # Handle previous line if within margin
-        margin = context.multiline_config.include_prev_margin
-        if margin and context.idx > 0:
-            builder.include_previous_line(context.lines[context.idx - 1], margin)
-
-        # Include subsequent lines until a break condition is met
-        for next_line in context.lines[context.idx + 1 :]:
-            if builder.should_break_at_line(next_line):
-                break
-            builder.append_line(next_line)
-
-        return builder.get_result()
-
-
 class DescriptionBuilder:
-    """Handles the building and validation of multiline descriptions."""
+    """
+    Handles extraction and building of multiline descriptions.
 
-    def __init__(
-        self,
-        initial_description: str,
-        description_pos: int,
-        pattern: re.Pattern,
-        description_margin: int,
-    ):
-        self.description = initial_description
-        self.description_pos = description_pos
+    Regex patterns are pre-compiled as class attributes to avoid re-compilation loop overhead.
+    """
+
+    WORDS_PATTERN: ClassVar[re.Pattern] = re.compile(r"\s[A-Za-z]+")
+    NUMBERS_PATTERN: ClassVar[re.Pattern] = re.compile(SharedPatterns.AMOUNT)
+
+    def __init__(self, context: MatchContext, pattern: re.Pattern):
+        self.ctx = context
         self.pattern = pattern
-        self.words_pattern = re.compile(r"\s[A-Za-z]+")
-        self.numbers_pattern = re.compile(SharedPatterns.AMOUNT)
-        self.description_margin = description_margin
+        self.cfg = context.multiline_config  # Alias config early
+        self.description = context.description
+        self.desc_pos = context.line.find(context.description)
+
+    def build(self) -> str:
+        """Build the final description string by iterating forward through lines."""
+        if not self.cfg:
+            return self.description
+
+        # Handle previous line
+        if self.cfg.include_prev_margin and self.ctx.idx > 0:
+            self._include_previous_line()
+
+        # Handle subsequent lines
+        # Iterate from the next line onwards
+        for next_line in self.ctx.lines[self.ctx.idx + 1 :]:
+            if self._should_break(next_line):
+                break
+            self.description += f" {next_line.strip()}"
+
+        return self.description
+
+    def _should_break(self, line: str) -> bool:
+        """Determine if processing should stop at the current line."""
+        if not line.strip() or self.pattern.search(line):
+            return True
+
+        next_pos = self._get_start_pos(line)
+        if next_pos != -1 and not self._is_within_margin(self.desc_pos, next_pos, self.cfg.description_margin):
+            return True
+
+        words_match = self.WORDS_PATTERN.search(line)
+        nums_match = self.NUMBERS_PATTERN.search(line)
+
+        # Heuristic: Exclude footer lines containing detached numbers/words
+        if words_match and nums_match:
+            words_end = words_match.end()
+            nums_start = nums_match.start()
+            if nums_start > words_end and (nums_start - words_end) > MIN_BREAK_GAP:
+                return True
+
+        return False
+
+    def _include_previous_line(self) -> None:
+        """Attempt to prepend the previous line."""
+        prev_line = self.ctx.lines[self.ctx.idx - 1].strip()
+        if not prev_line or self.pattern.search(prev_line):
+            return
+
+        prev_pos = self._get_start_pos(prev_line)
+        if self._is_within_margin(self.desc_pos, prev_pos, self.cfg.include_prev_margin):
+            self.description = f"{prev_line} {self.description}"
 
     @staticmethod
-    def get_start_pos(line: str) -> int:
-        """Return the starting position of the first word in a line."""
+    def _get_start_pos(line: str) -> int:
         stripped = line.strip()
         return line.find(stripped.split(" ")[0]) if stripped else -1
 
     @staticmethod
-    def is_within_margin(pos1: int, pos2: int, margin: int) -> bool:
-        """Check if two positions are within a specified margin."""
+    def _is_within_margin(pos1: int, pos2: int, margin: int) -> bool:
         return abs(pos1 - pos2) <= margin
-
-    def should_break_at_line(self, line: str) -> bool:
-        """Determine if processing should stop at the current line."""
-        # Blank line
-        if not line.strip():
-            return True
-
-        # Transaction line
-        if self.pattern.search(line):
-            return True
-
-        next_pos = self.get_start_pos(line)
-        if next_pos and not self.is_within_margin(self.description_pos, next_pos, self.description_margin):
-            return True
-
-        words_match = self.words_pattern.search(line)
-        numbers_match = self.numbers_pattern.search(line)
-
-        # Exclude footer lines
-        if words_match and numbers_match:
-            words_end = words_match.span()[1]
-            numbers_start = numbers_match.span()[0]
-            return numbers_start > words_end and numbers_start - words_end > MIN_BREAK_GAP
-
-        return False
-
-    def include_previous_line(self, prev_line: str, margin: int) -> None:
-        """Attempt to include the previous line in the description."""
-        prev_line = prev_line.strip()
-        if not prev_line or self.pattern.search(prev_line):
-            return
-
-        prev_pos = self.get_start_pos(prev_line)
-        if self.is_within_margin(self.description_pos, prev_pos, margin):
-            self.description = f"{prev_line} {self.description}"
-
-    def append_line(self, line: str) -> None:
-        """Append a new line to the current description."""
-        self.description += f" {line.strip()}"
-
-    def get_result(self) -> str:
-        """Return the final combined description."""
-        return self.description
 
 
 class BaseStatement:
     """
     A dataclass representation of a bank statement.
 
-    Contains PDF pages (their raw text representation in a `list`), and specific bank config.
+    Contains PDF pages (their raw text representation in a list), and specific bank config.
     """
 
     statement_type = "base"
@@ -224,7 +196,8 @@ class BaseStatement:
         return False
 
     def pre_process_transaction_groupdict(self, groupdict: TransactionGroupDict) -> TransactionGroupDict:
-        if self.config.multiline_config.multiline_transaction_date:
+        multiline_config = self.config.multiline_config
+        if multiline_config.multiline_transaction_date:
             if groupdict.transaction_date:
                 self.previous_transaction_date = groupdict.transaction_date
             else:
@@ -240,19 +213,19 @@ class BaseStatement:
 
     def process_match(self, match: TransactionMatch, context: MatchContext) -> TransactionMatch:
         # early exit if no multiline config
-        if not context.multiline_config:
+        if not (cfg := context.multiline_config):
             return match
 
-        # early exit if end of page
-        if context.idx > len(context.lines) - 1:
+        # Early exit if end of page
+        if context.idx >= len(context.lines) - 1:
             return match
 
-        if context.multiline_config.multiline_polarity:
+        if cfg.multiline_polarity:
             match.groupdict.polarity = self.get_multiline_polarity(context)
 
-        if context.multiline_config.multiline_descriptions:
-            multiline_description = self.get_multiline_description(context)
-            match.groupdict.description = multiline_description
+        if cfg.multiline_descriptions:
+            match.groupdict.description = DescriptionBuilder(context, self.pattern).build()
+
         return match
 
     def get_multiline_polarity(self, context: MatchContext):
@@ -267,17 +240,10 @@ class BaseStatement:
 
         In this case, the polarity will resolve to CR.
         """
-        if re.match(SharedPatterns.POLARITY, context.lines[context.idx + 1]):
-            return context.lines[context.idx + 1].strip()
+        next_line = context.lines[context.idx + 1]
+        if re.match(SharedPatterns.POLARITY, next_line):
+            return next_line.strip()
         return None
-
-    def get_multiline_description(
-        self,
-        context: MatchContext,
-    ) -> str:
-        """Combine a transaction description spanning multiple lines into a single string."""
-        extractor = DescriptionExtractor(self.pattern)
-        return extractor.get_multiline_description(context) or ""
 
     @property
     def failed_safety_message(self) -> str:
@@ -343,12 +309,15 @@ class BaseStatement:
 
         Returns datetime object with day set to 1, or None if pattern not found.
         """
-        if not self.file_path or not self.config.filename_fallback_pattern:
+        file_path = self.file_path
+        fallback_pattern = self.config.filename_fallback_pattern
+
+        if not file_path or not fallback_pattern:
             return None
 
-        filename = self.file_path.name
+        filename = file_path.name
 
-        if match := self.config.filename_fallback_pattern.search(filename):
+        if match := fallback_pattern.search(filename):
             month_abbr = match.group(1)
             year = match.group(2)
             date_string = f"1 {month_abbr} {year}"
@@ -366,10 +335,11 @@ class BaseStatement:
 
     def _get_search_text(self, lines, i, line):
         """Get text to search, optionally combining multiple lines and removing whitespace."""
-        if not self.config.multiline_config:
+        multiline_config = self.config.multiline_config
+        if not multiline_config:
             return line
 
-        if self.config.multiline_config.multiline_statement_date:
+        if multiline_config.multiline_statement_date:
             return " ".join(" ".join(lines[i : i + 3]).split())
 
         return line
