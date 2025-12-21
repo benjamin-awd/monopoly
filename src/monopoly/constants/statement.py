@@ -206,6 +206,7 @@ class CreditTransactionPatterns(RegexEnum):
     )
     TRUST = (
         rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
+        rf"(?:{ISO8601.DD_MMM}\s+)?"  # Optional posting date
         r"(?P<description>(?:(?!Total outstanding balance).)*?)"
         r"(?P<polarity>\+)?"
         f"{SharedPatterns.AMOUNT}"
