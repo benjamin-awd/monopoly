@@ -68,7 +68,7 @@ jobs:
             --export-json ${{ matrix.target }}-multiple-file-perf.json
 
       - name: Upload performance results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: performance-results-${{ matrix.target }}
           path: |
