@@ -63,11 +63,12 @@ class Transaction:
     amount: float
     date: str = Field(alias="transaction_date")
     polarity: str | None = None
+    balance: float | None = Field(default=None, init=False)
     # avoid storing config logic, since the Transaction object is used to create
     # a single unique hash which should not change
     auto_polarity: bool = Field(default=True, init=True, repr=False)
 
-    def as_raw_dict(self, *_, show_polarity=False):
+    def as_raw_dict(self, *_, show_polarity=False, show_balance=False):
         """Return stringified dictionary version of the transaction."""
         items = {
             Columns.DATE.value: self.date,
@@ -76,6 +77,8 @@ class Transaction:
         }
         if show_polarity:
             items[Columns.POLARITY] = self.polarity
+        if show_balance and self.balance is not None:
+            items[Columns.BALANCE.value] = str(self.balance)
         return items
 
     @field_validator("description", mode="after")
