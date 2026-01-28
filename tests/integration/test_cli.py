@@ -69,7 +69,15 @@ def test_monopoly_output(cli_runner: CliRunner, tmp_path: Path):
     assert "1 statement(s) processed" in result.output
 
     # Check that the output file was created with the correct name
-    expected_csv_path = output_dir / "example-credit-2023-07-74498f.csv"
+    # The filename includes a hash which changes when balance column is added
+    # Look for any CSV file that starts with "example-credit-2023-07-"
+    import os
+
+    csv_files = [f for f in os.listdir(output_dir) if f.startswith("example-credit-2023-07-")]
+    assert len(csv_files) == 1, (
+        f"Expected exactly one CSV file starting with example-credit-2023-07-, found {len(csv_files)}"
+    )
+    expected_csv_path = output_dir / csv_files[0]
     assert expected_csv_path.exists()
     assert str(expected_csv_path.name) in result.output
 

@@ -43,6 +43,7 @@ class InternalBankNames(AutoEnum):
 
 class Columns(AutoEnum):
     AMOUNT = auto()
+    BALANCE = auto()
     DATE = auto()
     DESCRIPTION = auto()
     POLARITY = auto()
