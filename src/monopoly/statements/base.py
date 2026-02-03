@@ -214,18 +214,17 @@ class BaseStatement:
         return transactions
 
     def process_match(self, match: RawTransaction, context: MatchContext) -> RawTransaction:
-        # early exit if no multiline config
-        if not (cfg := context.multiline_config):
+        if not (config := context.multiline_config):
             return match
 
         # Early exit if end of page
         if context.idx >= len(context.lines) - 1:
             return match
 
-        if cfg.multiline_polarity:
+        if config.multiline_polarity:
             match.polarity = self.get_multiline_polarity(context)
 
-        if cfg.multiline_descriptions:
+        if config.multiline_descriptions:
             match.description = DescriptionBuilder(context, self.pattern).build()
 
         return match

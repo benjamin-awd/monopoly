@@ -25,6 +25,7 @@ class DateResolver:
     ):
         self.pages = pages
         self.config = config
+        self.multiline_config = config.multiline_config
         self.file_path = file_path
 
     def resolve(self) -> datetime:
@@ -62,10 +63,10 @@ class DateResolver:
 
     def _get_search_text(self, lines: list[str], i: int, line: str) -> str:
         """Get text to search, optionally combining multiple lines and removing whitespace."""
-        if not self.config.multiline_config:
+        if not self.multiline_config:
             return line
 
-        if self.config.multiline_config.multiline_statement_date:
+        if self.multiline_config.multiline_statement_date:
             return " ".join(" ".join(lines[i : i + 3]).split())
 
         return line
