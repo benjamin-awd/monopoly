@@ -47,7 +47,7 @@ def mock_get_prev_month_balances(transactions):
     class MockRegexMatch:
         transaction_date: str
         description: str
-        amount: int
+        amount: str
 
         def groupdict(self):
             return {
@@ -57,8 +57,8 @@ def mock_get_prev_month_balances(transactions):
             }
 
     return [
-        MockRegexMatch(transaction_date="1900-01-01", description="foo", amount=99.99),
-        MockRegexMatch(transaction_date="1900-01-01", description="bar", amount=123.12),
+        MockRegexMatch(transaction_date="1900-01-01", description="foo", amount="99.99"),
+        MockRegexMatch(transaction_date="1900-01-01", description="bar", amount="123.12"),
     ]
 
 

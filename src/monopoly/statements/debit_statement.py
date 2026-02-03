@@ -2,7 +2,7 @@ import logging
 import re
 
 from monopoly.constants import EntryType
-from monopoly.statements.transaction import TransactionMatch
+from monopoly.statements.transaction import RawTransaction
 
 from .base import BaseStatement, SafetyCheckError
 
@@ -14,24 +14,17 @@ class DebitStatement(BaseStatement):
 
     statement_type = EntryType.DEBIT
 
-    def pre_process_match(self, transaction_match: TransactionMatch) -> TransactionMatch:
-        """
-        Pre-process transactions by adding a debit or credit polarity identifier.
-
-        Inherits multiline date logic from BaseStatement.pre_process_match.
-        """
-        # Call parent to handle multiline date logic
-        transaction_match = super().pre_process_match(transaction_match)
-
-        # Handle debit-specific polarity logic
-        page_number = transaction_match.page_number
+    def pre_process_match(self, raw_transaction: RawTransaction) -> RawTransaction:
+        """Pre-process transactions by adding a debit or credit polarity identifier to the group dict."""
+        raw_transaction = super().pre_process_match(raw_transaction)
+        page_number = raw_transaction.page_number
         withdrawal_pos = self.get_withdrawal_pos(page_number)
         deposit_pos = self.get_deposit_pos(page_number)
-        polarity = transaction_match.polarity
+        polarity = raw_transaction.polarity
 
         # If the transaction doesn't have an explicit polarity, attempt to infer from column positions
         if not polarity and withdrawal_pos and deposit_pos:
-            polarity = self.get_debit_polarity(transaction_match, withdrawal_pos, deposit_pos)
+            polarity = self.get_debit_polarity(raw_transaction, withdrawal_pos, deposit_pos)
 
         match polarity:
             case "-" | "DR":
@@ -44,10 +37,10 @@ class DebitStatement(BaseStatement):
                 error = f"Unsupported polarity type {polarity}"
                 raise RuntimeError(error)
 
-        transaction_match.polarity = polarity
-        return transaction_match
+        raw_transaction.polarity = polarity
+        return raw_transaction
 
-    def get_debit_polarity(self, transaction_match: TransactionMatch, withdrawal_pos: int, deposit_pos: int) -> str:
+    def get_debit_polarity(self, raw_transaction: RawTransaction, withdrawal_pos: int, deposit_pos: int) -> str:
         """
         Get the accounting polarity for debit card statements.
 
@@ -55,8 +48,11 @@ class DebitStatement(BaseStatement):
         or credit entry based on the distance from the withdrawal
         or deposit columns.
         """
-        amount = transaction_match.amount
-        line: str = transaction_match.match.string
+        if raw_transaction.match is None:
+            msg = "RawTransaction.match is required for polarity detection"
+            raise ValueError(msg)
+        amount = raw_transaction.amount
+        line = raw_transaction.match.string
         start_pos = line.find(amount)
         # assume that numbers are right aligned
         end_pos = start_pos + len(amount) - 1

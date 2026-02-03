@@ -12,8 +12,8 @@ from monopoly.pdf import PdfPage
 from monopoly.statements.date_resolver import DateResolver
 from monopoly.statements.number_extractor import NumberExtractor
 from monopoly.statements.transaction import (
+    RawTransaction,
     Transaction,
-    TransactionMatch,
 )
 
 # pylint: disable=bad-classmethod-argument
@@ -166,23 +166,27 @@ class BaseStatement:
                 if self._check_bound(raw_match):
                     continue
 
-                # Create TransactionMatch directly from regex groupdict
                 groupdict = raw_match.groupdict()
-                transaction_match = TransactionMatch(
-                    transaction_date=groupdict["transaction_date"],
-                    amount=groupdict["amount"],
-                    description=groupdict["description"],
-                    polarity=groupdict.get("polarity"),
-                    balance=groupdict.get("balance"),
+                raw_transaction = RawTransaction(
                     match=raw_match,
                     page_number=page_num,
+                    description=groupdict["description"],
+                    amount=groupdict["amount"],
+                    transaction_date=groupdict.get("transaction_date"),
+                    polarity=groupdict.get("polarity"),
+                    balance=groupdict.get("balance"),
                 )
-
-                transaction_match = self.pre_process_match(transaction_match)
-                processed_match = self.process_match(transaction_match, lines, line_num)
-
+                raw_transaction = self.pre_process_match(raw_transaction)
+                context = MatchContext(
+                    line=line,
+                    lines=page.lines,
+                    idx=line_num,
+                    description=raw_transaction.description,
+                    multiline_config=self.config.multiline_config,
+                )
+                processed_match = self.process_match(raw_transaction, context)
                 transaction = Transaction(
-                    **processed_match.groupdict(),
+                    **processed_match.as_dict(),
                     auto_polarity=self.config.transaction_auto_polarity,
                 )
                 transactions.append(transaction)
@@ -198,47 +202,31 @@ class BaseStatement:
             return True
         return False
 
-    def pre_process_match(self, transaction_match: TransactionMatch) -> TransactionMatch:
-        """
-        Pre-process transaction match before further processing.
-
-        Handles multiline transaction date carry-forward logic: when enabled,
-        transactions without a date will inherit the most recent date seen.
-        """
-        multiline_config = self.config.multiline_config
-        if multiline_config.multiline_transaction_date:
-            if transaction_match.transaction_date:
-                self.previous_transaction_date = transaction_match.transaction_date
+    def pre_process_match(self, raw_transaction: RawTransaction) -> RawTransaction:
+        if self.config.multiline_config.multiline_transaction_date:
+            if raw_transaction.transaction_date:
+                self.previous_transaction_date = raw_transaction.transaction_date
             else:
-                transaction_match.transaction_date = self.previous_transaction_date
-
-        return transaction_match
+                raw_transaction.transaction_date = self.previous_transaction_date
+        return raw_transaction
 
     def post_process_transactions(self, transactions: list[Transaction]) -> list[Transaction]:
         return transactions
 
-    def process_match(self, match: TransactionMatch, lines: list[str], line_num: int):
-        ctx = MatchContext(
-            line=lines[line_num],
-            lines=lines,
-            idx=line_num,
-            description=match.description,
-            multiline_config=self.config.multiline_config,
-        )
-
+    def process_match(self, match: RawTransaction, context: MatchContext) -> RawTransaction:
         # early exit if no multiline config
-        if not (cfg := ctx.multiline_config):
+        if not (cfg := context.multiline_config):
             return match
 
         # Early exit if end of page
-        if ctx.idx >= len(ctx.lines) - 1:
+        if context.idx >= len(context.lines) - 1:
             return match
 
         if cfg.multiline_polarity:
-            match.polarity = self.get_multiline_polarity(ctx)
+            match.polarity = self.get_multiline_polarity(context)
 
         if cfg.multiline_descriptions:
-            match.description = DescriptionBuilder(ctx, self.pattern).build()
+            match.description = DescriptionBuilder(context, self.pattern).build()
 
         return match
 
