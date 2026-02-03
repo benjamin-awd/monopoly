@@ -6,12 +6,11 @@ from functools import cached_property
 from pathlib import Path
 from typing import ClassVar
 
-from dateparser import parse
-
 from monopoly.config import MultilineConfig, StatementConfig
 from monopoly.constants import Columns, SharedPatterns
-from monopoly.constants.date import ISO8601
 from monopoly.pdf import PdfPage
+from monopoly.statements.date_resolver import DateResolver
+from monopoly.statements.number_extractor import NumberExtractor
 from monopoly.statements.transaction import (
     Transaction,
     TransactionMatch,
@@ -147,18 +146,6 @@ class BaseStatement:
         self.header = header
         self.file_path = file_path
 
-    @cached_property
-    def number_pattern(self) -> re.Pattern:
-        return re.compile(r"[\d.,]+")
-
-    @cached_property
-    def decimal_pattern(self) -> re.Pattern:
-        return re.compile(r"\d+\.\d+$")
-
-    @cached_property
-    def subtotal_pattern(self) -> re.Pattern:
-        return re.compile(rf"(?:sub\stotal.*?)\s+{SharedPatterns.AMOUNT}", re.IGNORECASE)
-
     @property
     def pattern(self):
         pattern = self.config.transaction_pattern
@@ -282,142 +269,22 @@ class BaseStatement:
 
     @cached_property
     def statement_date(self) -> datetime:
-        pattern = self.config.statement_date_pattern
-        allowed_patterns = (re.Pattern, ISO8601)
-
-        if not isinstance(pattern, allowed_patterns):
-            msg = f"Pattern must be one of {allowed_patterns}, not {type(pattern)}"
-            raise TypeError(msg)
-
-        for page in self.pages:
-            lines = page.lines
-
-            for i, line in enumerate(lines):
-                text = self._get_search_text(lines, i, line)
-
-                if match := pattern.search(text):
-                    date_string = self._construct_date_string(match)
-                    statement_date = parse(
-                        date_string=date_string,
-                        settings=self.config.statement_date_order.settings,
-                    )
-                    if statement_date:
-                        return statement_date
-                    logger.info("Unable to parse statement date %s", date_string)
-
-        # Fallback: Try extracting date from filename
-        if filename_date := self._extract_date_from_filename():
-            logger.info("Statement date extracted from filename: %s", filename_date)
-            return filename_date
-
-        msg = "Statement date not found"
-        raise ValueError(msg)
-
-    @staticmethod
-    def _construct_date_string(match: re.Match):
-        """Construct date with named groups 'day', 'month', and 'year' if they exist, otherwise use group 1."""
-        if {"day", "month", "year"}.issubset(match.groupdict()):
-            day = match.group("day")
-            month = match.group("month")
-            year = match.group("year")
-
-            return f"{day}-{month}-{year}"
-        return match.group(1)
-
-    def _extract_date_from_filename(self) -> datetime | None:
-        """
-        Extract statement month and year from the filename.
-
-        Only enabled if the bank config has a filename_fallback_pattern set.
-
-        Supports patterns like:
-        - eStatement_Nov2025_2025-11-07T14_50_26.pdf
-        - CardStatement_Oct2025.pdf
-
-        Returns datetime object with day set to 1, or None if pattern not found.
-        """
-        file_path = self.file_path
-        fallback_pattern = self.config.filename_fallback_pattern
-
-        if not file_path or not fallback_pattern:
-            return None
-
-        filename = file_path.name
-
-        if match := fallback_pattern.search(filename):
-            month_abbr = match.group(1)
-            year = match.group(2)
-            date_string = f"1 {month_abbr} {year}"
-
-            try:
-                return parse(
-                    date_string=date_string,
-                    settings=self.config.statement_date_order.settings,
-                )
-            except (ValueError, TypeError) as e:
-                logger.warning("Failed to parse date from filename '%s': %s", filename, e)
-                return None
-
-        return None
-
-    def _get_search_text(self, lines, i, line):
-        """Get text to search, optionally combining multiple lines and removing whitespace."""
-        multiline_config = self.config.multiline_config
-        if not multiline_config:
-            return line
-
-        if multiline_config.multiline_statement_date:
-            return " ".join(" ".join(lines[i : i + 3]).split())
-
-        return line
-
-    def get_decimal_numbers(self, lines: list[str]) -> set[float]:
-        """
-        Return all decimal numbers in a statement.
-
-        This is used to perform a safety check, to make sure no transactions have been missed.
-        """
-        numbers: set[str] = set()
-        for line in lines:
-            numbers.update(self.number_pattern.findall(line))
-            numbers = {number.replace(",", "") for number in numbers}
-        return {float(number) for number in numbers if self.decimal_pattern.match(number)}
+        resolver = DateResolver(self.pages, self.config, self.file_path)
+        return resolver.resolve()
 
     def perform_safety_check(self) -> bool:
         """Mandate the perform_safety_check method, which should exist in any child class of Statement."""
         msg = "Subclasses must implement perform_safety_check method"
         raise NotImplementedError(msg)
 
-    def get_all_numbers_from_document(self) -> set:
+    def get_all_numbers_from_document(self) -> set[float]:
         """
         Iterate over each page in a statement, and retrieves all decimal numbers in each page.
 
         This is used by child classes with implementations of perform_safety_check().
         """
-        numbers = set()
-
-        for page in self.pages:
-            lines = page.lines
-            numbers.update(self.get_decimal_numbers(lines))
-        numbers.add(self.get_subtotal_sum())
-        return numbers
-
-    def get_subtotal_sum(self):
-        """
-        Retrieve the subtotals from a document, and calculates the total.
-
-        Useful for statements that don't give a total figure over
-        several cards/months in a single statement.
-        """
-        subtotals: list[str] = []
-        for page in self.pages:
-            subtotals.extend(
-                match.groupdict()[Columns.AMOUNT]
-                for line in page.lines
-                if (match := self.subtotal_pattern.search(line))
-            )
-        cleaned_subtotals = [float(amount.replace(",", "")) for amount in subtotals]
-        return sum(cleaned_subtotals)
+        extractor = NumberExtractor(self.pages)
+        return extractor.get_all_numbers()
 
 
 class SafetyCheckError(Exception):
