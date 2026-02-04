@@ -27,6 +27,7 @@ class TransactionMatch:
     amount: str
     description: str
     polarity: str | None
+    balance: str | None
     match: re.Match
     page_number: int
 
@@ -37,6 +38,7 @@ class TransactionMatch:
             "amount": self.amount,
             "description": self.description,
             "polarity": self.polarity,
+            "balance": self.balance,
         }
 
     def span(self):
@@ -63,7 +65,7 @@ class Transaction:
     amount: float
     date: str = Field(alias="transaction_date")
     polarity: str | None = None
-    balance: float | None = Field(default=None, init=False)
+    balance: float = Field(default=0)
     # avoid storing config logic, since the Transaction object is used to create
     # a single unique hash which should not change
     auto_polarity: bool = Field(default=True, init=True, repr=False)
@@ -75,9 +77,9 @@ class Transaction:
             Columns.DESCRIPTION.value: self.description,
             Columns.AMOUNT.value: str(self.amount),
         }
-        if show_polarity:
-            items[Columns.POLARITY] = self.polarity
-        if show_balance and self.balance is not None:
+        if show_polarity and self.polarity is not None:
+            items[Columns.POLARITY.value] = self.polarity
+        if show_balance:
             items[Columns.BALANCE.value] = str(self.balance)
         return items
 
@@ -85,8 +87,8 @@ class Transaction:
     def remove_extra_whitespace(cls, value: str) -> str:
         return " ".join(value.split())
 
-    @field_validator(Columns.AMOUNT, mode="before")
-    def prepare_amount_for_float_coercion(cls, amount: str) -> str:
+    @field_validator(Columns.AMOUNT, Columns.BALANCE, mode="before")
+    def prepare_for_float_coercion(cls, value: str | None) -> str:
         """
         Replace commas, whitespaces, apostrophes and parentheses for string representation of floats.
 
@@ -95,9 +97,11 @@ class Transaction:
         (-10.00) -> -10.00
         (-1.56 ) -> -1.56.
         """
-        if isinstance(amount, str):
-            return re.sub(r"[^\d\.\-]", "", amount)
-        return amount
+        if value is None:
+            return "0"
+        if isinstance(value, str):
+            return re.sub(r"[^\d\.\-]", "", value)
+        return str(value)
 
     # pylint: disable=bad-classmethod-argument
     @model_validator(mode="before")

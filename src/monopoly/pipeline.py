@@ -154,7 +154,7 @@ class Pipeline:
                         transaction.date,
                         transaction.description,
                         transaction.amount,
-                        transaction.balance if transaction.balance is not None else "",
+                        transaction.balance or 0,
                     ]
                 )
 

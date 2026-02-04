@@ -182,10 +182,11 @@ class BaseStatement:
                 # Create TransactionMatch directly from regex groupdict
                 groupdict = raw_match.groupdict()
                 transaction_match = TransactionMatch(
-                    transaction_date=groupdict.get("transaction_date"),
+                    transaction_date=groupdict["transaction_date"],
                     amount=groupdict["amount"],
                     description=groupdict["description"],
                     polarity=groupdict.get("polarity"),
+                    balance=groupdict.get("balance"),
                     match=raw_match,
                     page_number=page_num,
                 )
@@ -193,21 +194,10 @@ class BaseStatement:
                 transaction_match = self.pre_process_match(transaction_match)
                 processed_match = self.process_match(transaction_match, lines, line_num)
 
-                balance_str = raw_match.groupdict().get("balance")
-                balance = None
-                if balance_str:
-                    balance_clean = re.sub(r"[^\d\.\-]", "", balance_str)
-                    try:
-                        balance = float(balance_clean)
-                    except ValueError:
-                        logger.warning("Could not parse balance: %s", balance_str)
-                        balance = None
-
                 transaction = Transaction(
                     **processed_match.groupdict(),
                     auto_polarity=self.config.transaction_auto_polarity,
                 )
-                transaction.balance = balance
                 transactions.append(transaction)
 
         if not transactions:
