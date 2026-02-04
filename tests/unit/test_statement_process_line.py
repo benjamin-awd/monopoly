@@ -80,6 +80,7 @@ def test_process_match_multiline_description(statement: BaseStatement):
         description="SHOPEE",
         amount="3.20",
         polarity=None,
+        balance=None,
         match=re.search("foo", "foo"),
         page_number=0,
     )
@@ -92,6 +93,7 @@ def test_process_match_multiline_description(statement: BaseStatement):
         "amount": "3.20",
         "description": "SHOPEE",
         "polarity": None,
+        "balance": None,
     }
     line_num = 0
     match = statement.process_match(match, lines, line_num)
@@ -106,5 +108,6 @@ def test_process_match_multiline_description(statement: BaseStatement):
         "description": "SHOPEE",
         "amount": "3.20",
         "polarity": None,
+        "balance": None,
     }
     assert match.groupdict() == groupdict

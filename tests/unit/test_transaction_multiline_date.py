@@ -33,6 +33,7 @@ def test_carry_forward_date_when_multiline_is_enabled():
         amount="150.00",
         transaction_date=first_date,
         polarity=None,
+        balance=None,
         match=dummy_match,
         page_number=0,
     )
@@ -46,6 +47,7 @@ def test_carry_forward_date_when_multiline_is_enabled():
         amount="200.00",
         transaction_date=None,
         polarity=None,
+        balance=None,
         match=dummy_match,
         page_number=0,
     )
@@ -59,6 +61,7 @@ def test_carry_forward_date_when_multiline_is_enabled():
         amount="150.00",
         transaction_date=second_date,
         polarity=None,
+        balance=None,
         match=dummy_match,
         page_number=0,
     )
@@ -72,6 +75,7 @@ def test_carry_forward_date_when_multiline_is_enabled():
         amount="120.00",
         transaction_date=None,
         polarity=None,
+        balance=None,
         match=dummy_match,
         page_number=0,
     )
@@ -104,6 +108,7 @@ def test_date_is_not_carried_forward_when_multiline_is_disabled():
             amount="100.00",
             transaction_date="24 FEB 2025",
             polarity=None,
+            balance=None,
             match=dummy_match,
             page_number=0,
         )
@@ -115,6 +120,7 @@ def test_date_is_not_carried_forward_when_multiline_is_disabled():
         amount="50.00",
         transaction_date=None,
         polarity=None,
+        balance=None,
         match=dummy_match,
         page_number=0,
     )
