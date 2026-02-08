@@ -14,6 +14,10 @@ class DebitStatement(BaseStatement):
 
     statement_type = EntryType.DEBIT
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._column_pos_cache: dict[tuple[str, int], int | None] = {}
+
     def pre_process_match(self, raw_transaction: RawTransaction) -> RawTransaction:
         """Pre-process transactions by adding a debit or credit polarity identifier to the group dict."""
         raw_transaction = super().pre_process_match(raw_transaction)
@@ -77,10 +81,17 @@ class DebitStatement(BaseStatement):
         return False
 
     def get_column_pos(self, column_type: str, page_number: int) -> int | None:
+        cache_key = (column_type, page_number)
+        if cache_key in self._column_pos_cache:
+            return self._column_pos_cache[cache_key]
+
         pattern = re.compile(rf"{column_type}[\w()$]*", re.IGNORECASE)
+        result = None
         if match := pattern.search(self.header):
-            return self.get_header_pos(match.group(), page_number)
-        return None
+            result = self.get_header_pos(match.group(), page_number)
+
+        self._column_pos_cache[cache_key] = result
+        return result
 
     def get_header_pos(self, column_name: str, page_number: int) -> int:
         """
