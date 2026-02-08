@@ -146,7 +146,7 @@ class BaseStatement:
         self.header = header
         self.file_path = file_path
 
-    @property
+    @cached_property
     def pattern(self):
         pattern = self.config.transaction_pattern
         if isinstance(pattern, str):
