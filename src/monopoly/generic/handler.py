@@ -8,6 +8,7 @@ from monopoly.config import DateOrder, MultilineConfig, PdfConfig, StatementConf
 from monopoly.constants import EntryType
 from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfParser
+from monopoly.statements import BaseStatement, CreditStatement, DebitStatement
 
 from .generic import DatePatternAnalyzer
 
@@ -19,21 +20,29 @@ class GenericBank(BankBase):
     statement_configs: ClassVar[list[StatementConfig]] = []
     name = "generic"
     pdf_config = PdfConfig(remove_vertical_text=True)
-    """
-    Empty bank class with variables that can be populated by
-    the `GenericStatementHandler` class
-    """
+    """Empty bank class used by GenericStatementHandler."""
 
 
 class GenericStatementHandler(StatementHandler):
     def __init__(self, parser: PdfParser):
-        bank = parser.bank
         pages = parser.pages
         metadata = parser.metadata_identifier
 
         self.analyzer = DatePatternAnalyzer(pages, metadata)
-        bank.statement_configs = list(filter(None, [self.debit, self.credit]))
+        self.statement_configs = list(filter(None, [self.debit, self.credit]))
         super().__init__(parser)
+
+    def _get_statement(self) -> BaseStatement:
+        for config in self.statement_configs:
+            if header := self.get_header(config):
+                match config.statement_type:
+                    case EntryType.DEBIT:
+                        return DebitStatement(self.pages, self.bank.name, config, header, self.file_path)
+                    case EntryType.CREDIT:
+                        return CreditStatement(self.pages, self.bank.name, config, header, self.file_path)
+
+        msg = "Could not find header in statement"
+        raise RuntimeError(msg)
 
     # override get_header and ignore passed config, since
     # the header line has already been found
