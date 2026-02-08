@@ -1,4 +1,3 @@
-import logging
 import re
 
 from monopoly.banks.base import BankBase
@@ -6,8 +5,6 @@ from monopoly.config import MultilineConfig, StatementConfig
 from monopoly.constants import EntryType, SharedPatterns
 from monopoly.constants.date import ISO8601
 from monopoly.identifiers import TextIdentifier
-
-logger = logging.getLogger(__name__)
 
 
 class Trust(BankBase):
