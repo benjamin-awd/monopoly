@@ -2,7 +2,7 @@ import logging
 from typing import ClassVar
 
 from monopoly.config import PdfConfig, StatementConfig
-from monopoly.identifiers import Identifier
+from monopoly.identifiers import Identifier, IdentifierGroup
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ class BankBase:
     name: ClassVar[str]
     statement_configs: ClassVar[list[StatementConfig]]
     pdf_config: PdfConfig = PdfConfig()
-    identifiers: ClassVar[list[list["Identifier"]]]
+    identifiers: ClassVar[list["IdentifierGroup"]]
 
     def __init_subclass__(cls, **kwargs) -> None:
         required_attrs = ("statement_configs", "identifiers", "name")

@@ -4,7 +4,7 @@ from monopoly.banks.base import BankBase
 from monopoly.config import MultilineConfig, PdfConfig, StatementConfig
 from monopoly.constants import EntryType, SharedPatterns
 from monopoly.constants.date import ISO8601
-from monopoly.identifiers import Identifier, MetadataIdentifier, TextIdentifier
+from monopoly.identifiers import IdentifierGroup, MetadataIdentifier, TextIdentifier
 
 
 class Maybank(BankBase):
@@ -57,7 +57,7 @@ class Maybank(BankBase):
         ),
     )
 
-    sg_credit_identifier: list[list[Identifier]] = [[TextIdentifier("maybank2u.com.sg"), TextIdentifier("PAYMENT DUE")]]
+    sg_credit_identifier: list[IdentifierGroup] = [[TextIdentifier("maybank2u.com.sg"), TextIdentifier("PAYMENT DUE")]]
 
     identifiers = [
         *sg_credit_identifier,
