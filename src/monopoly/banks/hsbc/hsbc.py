@@ -4,7 +4,7 @@ from monopoly.banks.base import BankBase
 from monopoly.config import MultilineConfig, PdfConfig, StatementConfig
 from monopoly.constants import EntryType, SharedPatterns
 from monopoly.constants.date import ISO8601
-from monopoly.identifiers import MetadataIdentifier, TextIdentifier
+from monopoly.identifiers import Identifier, MetadataIdentifier, TextIdentifier
 
 
 class Hsbc(BankBase):
@@ -27,7 +27,7 @@ class Hsbc(BankBase):
         multiline_config=MultilineConfig(multiline_descriptions=True),
     )
 
-    email_statement_identifier = [
+    email_statement_identifier: list[Identifier] = [
         MetadataIdentifier(
             title="PRJ_BEAGLE_ST_CNS_SGH_APP_Orchid",
             author="Registered to:",
@@ -36,7 +36,7 @@ class Hsbc(BankBase):
         TextIdentifier("HSBC"),
     ]
 
-    web_and_mobile_statement_identifier = [
+    web_and_mobile_statement_identifier: list[Identifier] = [
         MetadataIdentifier(format="PDF 1.7", producer="OpenText Output Transformation Engine - 20.4"),
     ]
 

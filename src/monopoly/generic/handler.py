@@ -29,7 +29,7 @@ class GenericStatementHandler(StatementHandler):
         metadata = parser.metadata_identifier
 
         self.analyzer = DatePatternAnalyzer(pages, metadata)
-        self.statement_configs = list(filter(None, [self.debit, self.credit]))
+        self.statement_configs: list[StatementConfig] = list(filter(None, [self.debit, self.credit]))
         super().__init__(parser)
 
     def _get_statement(self) -> BaseStatement:
