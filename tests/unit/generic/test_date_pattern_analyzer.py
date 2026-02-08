@@ -357,8 +357,18 @@ def test_check_if_not_multiline(date_pattern_analyzer: DatePatternAnalyzer):
     assert not date_pattern_analyzer.check_if_multiline()
 
 
-def test_create_previous_balance_regex(lines_before_first_transaction, date_pattern_analyzer: DatePatternAnalyzer):
-    date_pattern_analyzer.lines_before_first_transaction = lines_before_first_transaction
-    expected = rf"(?P<description>Balance Brought Forward)\s+{SharedPatterns.AMOUNT}"
+def test_create_previous_balance_regex(date_pattern_analyzer: DatePatternAnalyzer):
+    page = PdfPage(
+        "header\n"
+        "\n"
+        "\n"
+        "                          Balance Brought Forward                        222.13\n"
+        "\n"
+        "01 Oct   ValueVille    123.12     2,000.00"
+    )
+    date_pattern_analyzer.pages = [page]
+    date_pattern_analyzer.get_first_transaction_location = lambda: (0, 5)
+
+    expected = re.compile(rf"(?P<description>Balance Brought Forward)\s+{SharedPatterns.AMOUNT}")
     result = date_pattern_analyzer.create_previous_balance_regex()
-    expected == result
+    assert result == expected
