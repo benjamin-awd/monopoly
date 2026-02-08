@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 MAX_EXPECTED_DATE_SPANS = 2  # Max expected spans (e.g., transaction date + posting date)
 MIN_ADDITIONAL_SPAN_RATIO = 0.5  # Threshold to consider other spans
+MIN_SPAN_DISTANCE = 5  # Minimum character distance between spans to be considered distinct columns
 
 
 @dataclass
@@ -202,14 +203,17 @@ class PatternMatcher:
 
         # Check for additional spans with occurrences >= 50% of the max span occurrences
         if len(most_common_spans) == 1:
-            for span, num_occurrences in counter.items():
-                if span not in most_common_spans:
-                    break
-
+            primary_span = next(iter(most_common_spans))
+            for span, num_occurrences in counter.most_common():
+                if span in most_common_spans:
+                    continue
+                # Skip spans that overlap with the primary span (same column, slight position variance)
+                if abs(span[0] - primary_span[0]) < MIN_SPAN_DISTANCE:
+                    continue
                 if num_occurrences > max_span_occurrences * MIN_ADDITIONAL_SPAN_RATIO:
                     most_common_spans.add(span)
                     logger.debug("Adding additional span: %s", span)
-                    break
+                break
 
         logger.debug("Most common span(s): %s", most_common_spans)
 
