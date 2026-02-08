@@ -3,7 +3,7 @@
 import logging
 from typing import TYPE_CHECKING
 
-from monopoly.identifiers import Identifier  # Import base class
+from monopoly.identifiers import IdentifierGroup
 from monopoly.pdf import PdfDocument
 
 if TYPE_CHECKING:
@@ -27,7 +27,7 @@ class BankDetector:
                 return bank
         return None
 
-    def identifiers_match(self, identifiers: list[Identifier]) -> bool:
+    def identifiers_match(self, identifiers: IdentifierGroup) -> bool:
         """
         Check if ALL identifiers in a given group match the document.
 

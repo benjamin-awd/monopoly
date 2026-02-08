@@ -4,7 +4,7 @@ from re import Pattern
 
 from monopoly.constants import EntryType
 from monopoly.enums import RegexEnum
-from monopoly.identifiers import Identifier
+from monopoly.identifiers import IdentifierGroup
 
 
 @dataclass
@@ -108,5 +108,5 @@ class PdfConfig:
 
     page_range: tuple[int | None, int | None] = (None, None)
     page_bbox: tuple[float, float, float, float] | None = None
-    ocr_identifiers: Sequence[Sequence[Identifier]] | None = None
+    ocr_identifiers: Sequence[IdentifierGroup] | None = None
     remove_vertical_text: bool = False

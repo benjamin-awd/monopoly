@@ -1,16 +1,15 @@
 import re
 
+from monopoly.banks.base import BankBase
 from monopoly.config import StatementConfig
-from monopoly.constants import EntryType, InternalBankNames, SharedPatterns
+from monopoly.constants import EntryType, SharedPatterns
 from monopoly.identifiers import TextIdentifier
-
-from .base import BankBase
 
 
 class ExampleBank(BankBase):
     """Dummy class to help with reading the example PDF statement."""
 
-    name = InternalBankNames.EXAMPLE
+    name = "example"
 
     credit = StatementConfig(
         statement_type=EntryType.CREDIT,

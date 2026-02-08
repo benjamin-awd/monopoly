@@ -4,10 +4,11 @@ from functools import cached_property
 from typing import ClassVar
 
 from monopoly.banks import BankBase
-from monopoly.config import MultilineConfig, PdfConfig, StatementConfig
-from monopoly.constants import EntryType, InternalBankNames
+from monopoly.config import DateOrder, MultilineConfig, PdfConfig, StatementConfig
+from monopoly.constants import EntryType
 from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfParser
+from monopoly.statements import BaseStatement, CreditStatement, DebitStatement
 
 from .generic import DatePatternAnalyzer
 
@@ -17,28 +18,43 @@ logger = logging.getLogger(__name__)
 class GenericBank(BankBase):
     identifiers: ClassVar[list] = []
     statement_configs: ClassVar[list[StatementConfig]] = []
-    name = InternalBankNames.GENERIC
+    name = "generic"
     pdf_config = PdfConfig(remove_vertical_text=True)
-    """
-    Empty bank class with variables that can be populated by
-    the `GenericStatementHandler` class
-    """
+    """Empty bank class used by GenericStatementHandler."""
 
 
 class GenericStatementHandler(StatementHandler):
     def __init__(self, parser: PdfParser):
-        bank = parser.bank
         pages = parser.pages
         metadata = parser.metadata_identifier
 
         self.analyzer = DatePatternAnalyzer(pages, metadata)
-        bank.statement_configs = list(filter(None, [self.debit, self.credit]))
+        self.statement_configs: list[StatementConfig] = list(filter(None, [self.debit, self.credit]))
         super().__init__(parser)
+
+    def _get_statement(self) -> BaseStatement:
+        for config in self.statement_configs:
+            if header := self.get_header(config):
+                match config.statement_type:
+                    case EntryType.DEBIT:
+                        return DebitStatement(self.pages, self.bank.name, config, header, self.file_path)
+                    case EntryType.CREDIT:
+                        return CreditStatement(self.pages, self.bank.name, config, header, self.file_path)
+
+        msg = "Could not find header in statement"
+        raise RuntimeError(msg)
 
     # override get_header and ignore passed config, since
     # the header line has already been found
     def get_header(self, _: StatementConfig):
-        return self.header_pattern
+        return self._raw_header
+
+    @cached_property
+    def _date_order(self):
+        pattern_name = self.analyzer.pattern.name
+        if pattern_name.startswith(("mm_", "mmm_")):
+            return DateOrder("MDY")
+        return DateOrder("DMY")
 
     @cached_property
     def debit(self):
@@ -50,7 +66,8 @@ class GenericStatementHandler(StatementHandler):
                 transaction_pattern=self.transaction_pattern,
                 statement_date_pattern=self.statement_date_pattern,
                 multiline_config=MultilineConfig(self.multiline_descriptions),
-                header_pattern=re.compile(self.header_pattern),
+                header_pattern=re.compile(self._header_regex),
+                transaction_date_order=self._date_order,
             )
         return None
 
@@ -64,8 +81,9 @@ class GenericStatementHandler(StatementHandler):
                 prev_balance_pattern=self.prev_balance_pattern,
                 transaction_pattern=self.transaction_pattern,
                 statement_date_pattern=self.statement_date_pattern,
-                header_pattern=re.compile(self.header_pattern),
+                header_pattern=re.compile(self._header_regex),
                 multiline_config=MultilineConfig(self.multiline_descriptions),
+                transaction_date_order=self._date_order,
             )
         return None
 
@@ -86,9 +104,22 @@ class GenericStatementHandler(StatementHandler):
         return self.analyzer.check_if_multiline()
 
     @cached_property
-    def header_pattern(self):
+    def _header_result(self):
         lines = self.analyzer.lines_before_first_transaction
         return self.analyzer.get_debit_statement_header_line(lines)
+
+    @cached_property
+    def _raw_header(self):
+        if self._header_result:
+            return self._header_result[0].lower()
+        return ""
+
+    @cached_property
+    def _header_regex(self):
+        if self._header_result:
+            return self._header_result[1]
+        # fallback: match the first line of any page (will always match something)
+        return ".*"
 
     @cached_property
     def prev_balance_pattern(self):

@@ -3,7 +3,7 @@ import re
 
 from monopoly.constants import EntryType
 from monopoly.statements.debit_statement import DebitStatement
-from monopoly.statements.transaction import Transaction, TransactionMatch
+from monopoly.statements.transaction import RawTransaction, Transaction
 
 from .base import BaseStatement, SafetyCheckError
 
@@ -22,27 +22,17 @@ class CreditStatement(BaseStatement):
             for prev_month_balance in previous_month_balances:
                 groupdict = prev_month_balance.groupdict()
                 groupdict["transaction_date"] = first_transaction_date
-                prev_month_transaction = Transaction(**groupdict)
+                raw_transaction = RawTransaction(**groupdict)
+                prev_month_transaction = Transaction(**raw_transaction.as_dict())
                 transactions.insert(0, prev_month_transaction)
         return transactions
 
-    def pre_process_match(self, transaction_match: TransactionMatch) -> TransactionMatch:
-        """
-        Pre-process transactions by adding a debit or credit polarity identifier.
-
-        Inherits multiline date logic from BaseStatement.pre_process_match.
-        """
-        # Call parent to handle multiline date logic
-        transaction_match = super().pre_process_match(transaction_match)
-
-        # Handle credit-specific polarity conversion
-        if (
-            self.config.statement_type == EntryType.CREDIT
-            and transaction_match.polarity
-            and transaction_match.polarity in ("-")
-        ):
-            transaction_match.polarity = "CR"
-        return transaction_match
+    def pre_process_match(self, raw_transaction: RawTransaction) -> RawTransaction:
+        """Pre-process transactions by adding a debit or credit polarity identifier to the group dict."""
+        raw_transaction = super().pre_process_match(raw_transaction)
+        if raw_transaction.polarity == "-":
+            raw_transaction.polarity = "CR"
+        return raw_transaction
 
     def get_prev_month_balances(self) -> list[re.Match]:
         """

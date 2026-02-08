@@ -113,8 +113,8 @@ class DatePatternAnalyzer:
         where the first number is either a deposit/withdrawal,
         and the next number is a balance.
         """
-        # match up to amounts like `123.12     2,000.00` while ignoring words between
-        amount_pattern = re.compile(r"(?P<amount>\d{1,3}(,\d{3})*(\.\d+)\d{1,3}(,\d{3})*(\.\d+)?)")
+        # match individual amounts like `123.12` or `2,000.00`
+        amount_pattern = re.compile(r"\d{1,3}(?:,\d{3})*\.\d+")
 
         def get_num_amounts_per_line(lines: list[DateMatch]) -> float:
             matches = [result for line in lines for result in amount_pattern.finditer(line.line)]
@@ -132,22 +132,22 @@ class DatePatternAnalyzer:
 
         return EntryType.CREDIT
 
-    def get_debit_statement_header_line(self, lines_before_first_transaction) -> str:
-        header_pattern = re.compile(r"\b(date.*$)", re.IGNORECASE)
+    def get_debit_statement_header_line(self, lines_before_first_transaction) -> tuple[str, str] | None:
+        header_pattern = re.compile(r"\b((?:date|transaction|posting|description).*$)", re.IGNORECASE)
 
         for line in lines_before_first_transaction:
             if line:
-                # assume that the header always starts with `date` or `DATE`
                 result = header_pattern.search(line)
                 if result:
+                    raw_header = result.group()
                     generalized_result = re.sub(r"\s{3,}", r"\\s+", result.string)
                     escaped_result = re.escape(generalized_result)
                     escaped_result = escaped_result.replace("\\\\s\\+", r"\s+")
                     logger.debug("Found header statement: %s", escaped_result)
-                    return escaped_result
+                    return raw_header, escaped_result
 
-        msg = "Could not find debit statement header line"
-        raise RuntimeError(msg)
+        logger.warning("Could not find header line before first transaction")
+        return None
 
     def check_if_multiline(self) -> bool:
         """Check if the statement should be treated as a multiline statement."""
@@ -179,7 +179,11 @@ class DatePatternAnalyzer:
         05 OCT PAYMENT - DBS INTERNET/WIRELESS 6,492.54 CR
         ```
         """
-        page_num, line_num = self.get_first_transaction_location()
+        try:
+            page_num, line_num = self.get_first_transaction_location()
+        except GenericParserError:
+            logger.warning("Could not find first transaction for previous balance detection")
+            return None
 
         # grab the first five lines before the first transaction
         page = self.pages[page_num]

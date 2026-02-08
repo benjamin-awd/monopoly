@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 START_OF_YEAR_MONTHS = (1, 2)
 YEAR_CUTOFF_MONTH = 2
+_YYYY_RE = re.compile(DateFormats.YYYY)
 
 
 class Pipeline:
@@ -82,7 +83,7 @@ class Pipeline:
             the transaction appears to be from a late-month (e.g., December), it may belong
             to the previous year and is adjusted accordingly.
             """
-            has_year = bool(re.search(DateFormats.YYYY, tx.date))
+            has_year = bool(_YYYY_RE.search(tx.date))
             needs_year = not has_year and "y" not in date_format.lower()
             fmt = date_format
             parsed_date = None

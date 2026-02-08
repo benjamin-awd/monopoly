@@ -1,10 +1,9 @@
 import logging
+import re
 from collections import Counter
 from collections.abc import Iterator
 from dataclasses import dataclass, field
 from datetime import datetime
-
-from dateparser import parse
 
 from monopoly.constants.date import ISO8601
 from monopoly.enums import RegexEnum
@@ -12,8 +11,30 @@ from monopoly.pdf import PdfPage
 
 logger = logging.getLogger(__name__)
 
+# Mapping from ISO8601 pattern names to strptime format strings.
+# Separators in the raw date are normalized to spaces before parsing.
+STRPTIME_FORMATS: dict[str, str] = {
+    "d_mmm": "%d %b",
+    "dd_mm": "%d %m",
+    "dd_mm_yy": "%d %m %y",
+    "dd_mm_yyyy": "%d %m %Y",
+    "dd_mmm": "%d %b",
+    "dd_mmm_yy": "%d %b %y",
+    "dd_mmm_yyyy": "%d %b %Y",
+    "mm_dd": "%m %d",
+    "mm_dd_yy": "%m %d %y",
+    "mm_dd_yyyy": "%m %d %Y",
+    "mmmm_dd_yyyy": "%B %d %Y",
+    "mmm_dd": "%b %d",
+    "mmm_dd_yyyy": "%b %d %Y",
+}
+
+_SEPARATOR_RE = re.compile(r"[\/\-.,]")
+_MULTI_SPACE_RE = re.compile(r"\s+")
+
 MAX_EXPECTED_DATE_SPANS = 2  # Max expected spans (e.g., transaction date + posting date)
 MIN_ADDITIONAL_SPAN_RATIO = 0.5  # Threshold to consider other spans
+MIN_SPAN_DISTANCE = 5  # Minimum character distance between spans to be considered distinct columns
 
 
 @dataclass
@@ -68,32 +89,18 @@ class DatePattern:
         return lines_with_dates or None
 
 
-# pylint: disable=too-many-instance-attributes
 class PatternMatcher:
     """Holds date regex patterns used by the generic statement handler."""
 
     def __iter__(self) -> Iterator[DatePattern]:
-        iso8601 = [e.lower() for e in ISO8601._member_names_]
-        attr_names = [name for name in dir(self) if name in iso8601]
-        for attr_name in attr_names:
-            attr = getattr(self, attr_name)
-            if isinstance(attr, DatePattern):
-                yield attr
+        yield from self.patterns.values()
 
     def __init__(self, pages: list[PdfPage]):
         self.pages = pages
-        self.set_date_patterns()
+        self.patterns: dict[str, DatePattern] = {
+            member.name.lower(): DatePattern(member) for member in ISO8601 if "relaxed" not in member.name.lower()
+        }
         self.get_matches()
-
-    def set_date_patterns(self):
-        self.dd_mm = DatePattern(ISO8601.DD_MM)
-        self.dd_mm_yy = DatePattern(ISO8601.DD_MM_YY)
-        self.dd_mmm = DatePattern(ISO8601.DD_MMM)
-        self.dd_mmm_yy = DatePattern(ISO8601.DD_MMM_YY)
-        self.dd_mmm_yyyy = DatePattern(ISO8601.DD_MMM_YYYY)
-        self.mmmm_dd_yyyy = DatePattern(ISO8601.MMMM_DD_YYYY)
-        self.mmm_dd = DatePattern(ISO8601.MMM_DD)
-        self.mmm_dd_yyyy = DatePattern(ISO8601.MMM_DD_YYYY)
 
     def get_matches(self):
         """
@@ -111,9 +118,10 @@ class PatternMatcher:
 
     def _extract_match(self, pattern: DatePattern, line: str, page_num: int, line_num: int) -> list[DateMatch]:
         matches = []
+        fmt = STRPTIME_FORMATS.get(pattern.name)
         for date_match in pattern.regex.finditer(line):
             raw_date = date_match.group()
-            parsed_date = parse(raw_date)
+            parsed_date = self._parse_date(raw_date, fmt)
             if parsed_date:
                 matches.append(
                     DateMatch(
@@ -134,6 +142,27 @@ class PatternMatcher:
                 )
         return matches
 
+    @staticmethod
+    def _parse_date(raw_date: str, fmt: str | None) -> datetime | None:
+        """Parse a date string, using strptime with normalized separators for speed."""
+        if fmt:
+            normalized = _SEPARATOR_RE.sub(" ", raw_date)
+            normalized = _MULTI_SPACE_RE.sub(" ", normalized).strip()
+            try:
+                parsed = datetime.strptime(normalized, fmt)  # noqa: DTZ007
+            except ValueError:
+                pass
+            else:
+                # strptime defaults to year 1900 when no year in format;
+                # use current year for consistent date comparisons
+                if "%y" not in fmt.lower():
+                    parsed = parsed.replace(year=datetime.now().year)  # noqa: DTZ005
+                return parsed
+
+        from dateparser import parse
+
+        return parse(raw_date)
+
     def get_transaction_pattern(self) -> DatePattern:
         """
         Find the pattern that has the highest occurrence of spans over several lines.
@@ -145,17 +174,23 @@ class PatternMatcher:
         a tiebreaker with dd_mm and dd_mm_yy variants.
         """
         max_span_occurrences = 0
+        best_leftmost_position = float("inf")
         most_common_pattern = None
 
-        # Sort patterns so that those ending with "yy" come last
+        # Sort patterns so that those ending with "yy" come last,
+        # giving year-bearing patterns priority on equal count and position
         sorted_patterns = sorted(self, key=lambda p: p.name.endswith("yy"))
 
         for pattern in sorted_patterns:
             if counter := pattern.span_occurrences:
-                for _, num_occurrences in counter.most_common(2):
-                    if num_occurrences >= max_span_occurrences:
-                        most_common_pattern = pattern
-                        max_span_occurrences = num_occurrences
+                top_count = counter.most_common(1)[0][1]
+                leftmost = min(span[0] for span in counter)
+                if top_count > max_span_occurrences or (
+                    top_count == max_span_occurrences and leftmost <= best_leftmost_position
+                ):
+                    most_common_pattern = pattern
+                    max_span_occurrences = top_count
+                    best_leftmost_position = leftmost
 
         if most_common_pattern:
             logger.debug(
@@ -190,14 +225,17 @@ class PatternMatcher:
 
         # Check for additional spans with occurrences >= 50% of the max span occurrences
         if len(most_common_spans) == 1:
-            for span, num_occurrences in counter.items():
-                if span not in most_common_spans:
-                    break
-
+            primary_span = next(iter(most_common_spans))
+            for span, num_occurrences in counter.most_common():
+                if span in most_common_spans:
+                    continue
+                # Skip spans that overlap with the primary span (same column, slight position variance)
+                if abs(span[0] - primary_span[0]) < MIN_SPAN_DISTANCE:
+                    continue
                 if num_occurrences > max_span_occurrences * MIN_ADDITIONAL_SPAN_RATIO:
                     most_common_spans.add(span)
                     logger.debug("Adding additional span: %s", span)
-                    break
+                break
 
         logger.debug("Most common span(s): %s", most_common_spans)
 
@@ -216,6 +254,16 @@ class PatternMatcher:
                 yyyy_matches[pattern.name] = pattern.matches
 
         if not yyyy_matches:
+            # Fallback: look for "Month YYYY" in raw text (e.g., "February 2019")
+            month_year = re.compile(
+                r"((?:January|February|March|April|May|June|July|August|September"
+                r"|October|November|December)\s+20\d{2})"
+            )
+            for page in self.pages:
+                for line in page.lines:
+                    if match := month_year.search(line):
+                        logger.debug("Found month-year fallback: %s", match.group())
+                        return re.escape(match.group())
             msg = "No lines with `yy` or `yyyy` dates - unable to create statement date pattern"
             raise RuntimeError(msg)
 

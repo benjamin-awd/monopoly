@@ -1,22 +1,14 @@
-import logging
 import re
 
 from monopoly.banks.base import BankBase
 from monopoly.config import DateOrder, MultilineConfig, StatementConfig
-from monopoly.constants import (
-    BankNames,
-    CreditTransactionPatterns,
-    DebitTransactionPatterns,
-    EntryType,
-)
+from monopoly.constants import EntryType, SharedPatterns
 from monopoly.constants.date import ISO8601
 from monopoly.identifiers import MetadataIdentifier
 
-logger = logging.getLogger(__name__)
-
 
 class BankOfAmerica(BankBase):
-    name = BankNames.BANK_OF_AMERICA
+    name = "bank_of_america"
 
     debit = StatementConfig(
         statement_type=EntryType.DEBIT,
@@ -24,7 +16,12 @@ class BankOfAmerica(BankBase):
         statement_date_order=DateOrder("MDY"),
         transaction_date_order=DateOrder("MDY"),
         header_pattern=re.compile(r"(Date\s+Description\s+Amount)"),
-        transaction_pattern=DebitTransactionPatterns.BANK_OF_AMERICA,
+        transaction_pattern=re.compile(
+            rf"(?P<transaction_date>{ISO8601.MM_DD_YY})\s+"
+            + SharedPatterns.DESCRIPTION
+            + r"(?P<polarity>\-)?"
+            + SharedPatterns.AMOUNT
+        ),
         transaction_date_format="%m/%d/%y",
         multiline_config=MultilineConfig(multiline_descriptions=True),
         safety_check=False,
@@ -36,7 +33,15 @@ class BankOfAmerica(BankBase):
         statement_date_order=DateOrder("MDY"),
         transaction_date_order=DateOrder("MDY"),
         header_pattern=re.compile(r"(Date\s+Date\s+Description\s+Number\s+Number\s+Amount\s+Total)"),
-        transaction_pattern=CreditTransactionPatterns.BANK_OF_AMERICA,
+        transaction_pattern=re.compile(
+            rf"(?P<transaction_date>{ISO8601.MM_DD})\s+"
+            rf"(?P<posting_date>{ISO8601.MM_DD})\s+"
+            + SharedPatterns.DESCRIPTION
+            + r"(?P<reference_number>\d{4})?\s+"
+            + r"(?P<account_number>\d{4})?\s+"
+            + r"(?P<polarity>\-)?"
+            + SharedPatterns.AMOUNT
+        ),
         transaction_date_format="%m/%d",
         multiline_config=MultilineConfig(multiline_descriptions=True),
         safety_check=False,

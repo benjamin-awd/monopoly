@@ -96,6 +96,7 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "**/banks/**.py" = ["RUF012"]
+"**/examples/example_bank.py" = ["RUF012"]
 
 [tool.taskipy.tasks]
 format = "ruff format ."

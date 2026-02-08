@@ -1,30 +1,28 @@
-import logging
 import re
 
 from monopoly.banks.base import BankBase
 from monopoly.config import MultilineConfig, PdfConfig, StatementConfig
-from monopoly.constants import (
-    ISO8601,
-    BankNames,
-    CreditTransactionPatterns,
-    DebitTransactionPatterns,
-    EntryType,
-    StatementBalancePatterns,
-)
-from monopoly.identifiers import MetadataIdentifier, TextIdentifier
-
-logger = logging.getLogger(__name__)
+from monopoly.constants import EntryType, SharedPatterns
+from monopoly.constants.date import ISO8601
+from monopoly.identifiers import IdentifierGroup, MetadataIdentifier, TextIdentifier
 
 
 class Maybank(BankBase):
-    name = BankNames.MAYBANK
+    name = "maybank"
 
     my_debit = StatementConfig(
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"(?:結單日期)[:\s]+{ISO8601.DD_MM_YY}"),
         header_pattern=re.compile(r"(DATE.*DESCRIPTION.*AMOUNT.*BALANCE)"),
         transaction_date_format="%d/%m/%y",
-        transaction_pattern=DebitTransactionPatterns.MAYBANK_MY,
+        transaction_pattern=re.compile(
+            rf"(?P<transaction_date>{ISO8601.DD_MM_YY})\s+"
+            + SharedPatterns.DESCRIPTION
+            # remove *\s
+            + SharedPatterns.AMOUNT[:-3]
+            + r"(?P<polarity>\-|\+)\s+"
+            + SharedPatterns.BALANCE
+        ),
         multiline_config=MultilineConfig(multiline_descriptions=True),
     )
 
@@ -33,8 +31,13 @@ class Maybank(BankBase):
         statement_date_pattern=ISO8601.DD_MMM_YY,
         header_pattern=re.compile(r"(Date.*Description.*Amount)"),
         transaction_date_format="%d/%m",
-        transaction_pattern=CreditTransactionPatterns.MAYBANK_MY,
-        prev_balance_pattern=StatementBalancePatterns.MAYBANK_MY,
+        transaction_pattern=re.compile(
+            rf"(?P<posting_date>{ISO8601.DD_MM})\s+"
+            rf"(?P<transaction_date>{ISO8601.DD_MM})\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
+        ),
+        prev_balance_pattern=re.compile(
+            r"(?P<description>YOUR PREVIOUS STATEMENT BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+        ),
         multiline_config=MultilineConfig(multiline_descriptions=True),
     )
 
@@ -42,11 +45,19 @@ class Maybank(BankBase):
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(f"AS AT {ISO8601.DD_MMM_YYYY}"),
         header_pattern=re.compile(r"(.*DESCRIPTION OF TRANSACTION.*TRANSACTION AMOUNT)"),
-        transaction_pattern=CreditTransactionPatterns.MAYBANK_SG,
-        prev_balance_pattern=StatementBalancePatterns.MAYBANK_SG,
+        transaction_pattern=re.compile(
+            r"(?P<posting_date>\b[A-Z]?\d{1,2}(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\b)\s+"
+            r"(?P<transaction_date>\b[A-Z]?\d{1,2}(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\b)\s+"
+            + SharedPatterns.DESCRIPTION
+            + SharedPatterns.AMOUNT_EXTENDED
+        ),
+        prev_balance_pattern=re.compile(
+            r"(?P<description>OUTSTANDING\s+BALANCE\s+BROUGHT\s+FORWARD?)\s+"
+            + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+        ),
     )
 
-    sg_credit_identifier = [[TextIdentifier("maybank2u.com.sg"), TextIdentifier("PAYMENT DUE")]]
+    sg_credit_identifier: list[IdentifierGroup] = [[TextIdentifier("maybank2u.com.sg"), TextIdentifier("PAYMENT DUE")]]
 
     identifiers = [
         *sg_credit_identifier,

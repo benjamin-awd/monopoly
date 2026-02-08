@@ -129,7 +129,7 @@ def test_pattern_matcher(pattern_matcher: PatternMatcher):
     spans = pattern_matcher.get_transaction_spans(pattern)
 
     assert spans == {(0, 6)}
-    assert len([pattern for pattern in pattern_matcher]) == 8
+    assert len([pattern for pattern in pattern_matcher]) == 13
     assert pattern.name == "dd_mmm"
     assert pattern.span_occurrences == Counter({(0, 6): 3, (33, 39): 1, (19, 25): 1})
     assert pattern.unique_spans == {(19, 25), (0, 6), (33, 39)}
@@ -155,12 +155,13 @@ def test_get_transaction_pattern():
     pattern3.name = "mmm_dd"
     pattern3.span_occurrences = Counter({(0, 5): 2})
 
-    with patch.object(PatternMatcher, "set_date_patterns", return_value=None):
+    with patch.object(PatternMatcher, "__init__", lambda self, pages: None):
         pattern_matcher = PatternMatcher(pages=[])
-
-        pattern_matcher.dd_mmm = pattern1
-        pattern_matcher.dd_mmm_yy = pattern2
-        pattern_matcher.mmm_dd = pattern3
+        pattern_matcher.patterns = {
+            "dd_mmm": pattern1,
+            "dd_mmm_yy": pattern2,
+            "mmm_dd": pattern3,
+        }
         pattern = pattern_matcher.get_transaction_pattern()
         spans = pattern_matcher.get_transaction_spans(pattern)
         assert pattern.name == "dd_mm"

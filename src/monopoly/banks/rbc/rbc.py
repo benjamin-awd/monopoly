@@ -2,25 +2,27 @@ import re
 
 from monopoly.banks.base import BankBase
 from monopoly.config import MultilineConfig, StatementConfig
+from monopoly.constants import EntryType, SharedPatterns
 from monopoly.constants.date import ISO8601, DateFormats
-from monopoly.constants.statement import (
-    BankNames,
-    CreditTransactionPatterns,
-    DebitTransactionPatterns,
-    EntryType,
-    StatementBalancePatterns,
-)
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
 
 class RoyalBankOfCanada(BankBase):
-    name = BankNames.RBC
+    name = "rbc"
 
     debit_personal = StatementConfig(
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"From {ISO8601.MMMM_DD_YYYY} to (?P<date>{ISO8601.MMMM_DD_YYYY})"),
         header_pattern=re.compile(r"Date\s+Description\s+Withdrawals \(\$\)\s+Deposits \(\$\)\s+Balance\ \(\$\)"),
-        transaction_pattern=DebitTransactionPatterns.RBC,
+        transaction_pattern=re.compile(
+            r"^(?!.*(?:Opening Balance|Closing Balance))"
+            r"(\s*)?"
+            rf"(?P<transaction_date>{DateFormats.D}\s+{DateFormats.MMM})?\s+"  # i.e 7 May
+            r"(?P<description>.+?)\s{2,}"
+            rf"(?P<amount>{SharedPatterns.COMMA_FORMAT})"
+            r"(?:\s{2,}(?P<balance>-?\s?\d{1,3}(?:,\d{3})*(?:\.\d{1,2})))?"  # edge case for literally "- 100.00"
+            r"\s*$"
+        ),
         transaction_date_format="%d %b",
         multiline_config=MultilineConfig(multiline_descriptions=True, multiline_transaction_date=True),
     )
@@ -56,8 +58,17 @@ class RoyalBankOfCanada(BankBase):
             rf"(({DateFormats.MMM}\s{DateFormats.D}[,\s]{{1,2}}{DateFormats.YYYY})|{ISO8601.MMM_DD_YYYY})"
         ),
         header_pattern=re.compile(r"(TRANSACTION\s+POSTING)"),
-        prev_balance_pattern=StatementBalancePatterns.RBC,
-        transaction_pattern=CreditTransactionPatterns.RBC,
+        prev_balance_pattern=re.compile(
+            r"(?P<description>PREVIOUS STATEMENT BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+        ),
+        transaction_pattern=re.compile(
+            rf"(?P<transaction_date>\b({DateFormats.MMM}[-\s]{DateFormats.DD}))\s+"
+            rf"(?P<posting_date>\b({DateFormats.MMM}[-\s]{DateFormats.DD}))\s+"
+            + SharedPatterns.DESCRIPTION
+            # transaction dr/cr with format -$999,000.00
+            + r"(?P<polarity>\-)?"
+            + rf"(?P<amount>\$?{SharedPatterns.COMMA_FORMAT}|{SharedPatterns.ENCLOSED_COMMA_FORMAT}\s*"
+        ),
         transaction_date_format="%b %d",
     )
 

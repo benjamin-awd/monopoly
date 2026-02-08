@@ -1,51 +1,25 @@
+import importlib
 import logging
+from pathlib import Path
 
-from .amex import Amex
-from .bank_of_america import BankOfAmerica
 from .base import BankBase
-from .bmo import BankOfMontreal
-from .canadian_tire import CanadianTire
-from .capitalone import CapitalOneCanada
-from .chase import Chase
-from .cibc import CIBC
-from .citibank import Citibank
-from .dbs import Dbs
 from .detector import BankDetector
-from .example_bank import ExampleBank
-from .hsbc import Hsbc
-from .maybank import Maybank
-from .ocbc import Ocbc
-from .rbc import RoyalBankOfCanada
-from .scotiabank import Scotiabank
-from .standard_chartered import StandardChartered
-from .td_canada_trust import TDCanadaTrust
-from .trust import Trust
-from .uob import Uob
-from .zkb import ZurcherKantonalBank
 
-banks: list[type["BankBase"]] = [
-    Amex,
-    BankOfAmerica,
-    BankOfMontreal,
-    CanadianTire,
-    CapitalOneCanada,
-    Chase,
-    CIBC,
-    Citibank,
-    Dbs,
-    ExampleBank,
-    Hsbc,
-    Maybank,
-    Ocbc,
-    Scotiabank,
-    StandardChartered,
-    Uob,
-    ZurcherKantonalBank,
-    Trust,
-    TDCanadaTrust,
-    RoyalBankOfCanada,
-]
+# Auto-discover all bank modules in this package
+_banks_dir = Path(__file__).parent
+for _path in sorted(_banks_dir.rglob("*.py")):
+    _name = _path.stem
+    if _name.startswith("_") or _name in ("base", "detector"):
+        continue
+    _rel_parts = _path.relative_to(_banks_dir).with_suffix("").parts
+    importlib.import_module("." + ".".join(_rel_parts), package=__name__)
+
+banks: list[type[BankBase]] = list(BankBase.registry)
+
+# Make bank classes importable directly from monopoly.banks
+for _cls in banks:
+    globals()[_cls.__name__] = _cls
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["BankDetector", "BankBase"] + [bank.__name__ for bank in banks]
+__all__ = ["BankDetector", "BankBase"] + [_cls.__name__ for _cls in banks]

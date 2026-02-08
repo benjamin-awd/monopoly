@@ -8,7 +8,7 @@ import pytest
 
 from monopoly.banks import Citibank
 from monopoly.config import StatementConfig
-from monopoly.constants import CreditTransactionPatterns, EntryType, StatementBalancePatterns
+from monopoly.constants import EntryType
 from monopoly.pdf import PdfPage
 from monopoly.statements import CreditStatement
 
@@ -72,8 +72,8 @@ def test_filename_fallback_disabled_by_default():
         statement_date_pattern=re.compile(r"Statement\sDate\s+(.*)"),
         header_pattern=re.compile(r"(DATE.*DESCRIPTION.*AMOUNT)"),
         transaction_date_format="%d %b",
-        prev_balance_pattern=StatementBalancePatterns.CITIBANK,
-        transaction_pattern=CreditTransactionPatterns.CITIBANK,
+        prev_balance_pattern=Citibank.credit.prev_balance_pattern,
+        transaction_pattern=Citibank.credit.transaction_pattern,
         # Note: no filename_fallback_pattern set
     )
 

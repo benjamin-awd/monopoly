@@ -1,59 +1,52 @@
 import json
 import re
+from dataclasses import dataclass, field
 from typing import Any
 
-from pydantic import ConfigDict, Field, field_validator, model_validator
-from pydantic.dataclasses import dataclass
+from pydantic import Field, field_validator, model_validator
+from pydantic.dataclasses import dataclass as pydantic_dataclass
 from pydantic_core import ArgsKwargs
 
 from monopoly.constants import Columns
 
 
 # ruff: noqa: N805
-@dataclass(config=ConfigDict(arbitrary_types_allowed=True))
-class TransactionMatch:
+@dataclass
+class RawTransaction:
     """
-    Holds transaction data extracted from a regex match.
+    Intermediate transaction data during the parsing pipeline.
 
-    A transaction should at minimum always have a description and amount.
-
-    In cases where we parse a previous balance line, the date might not exist
-    e.g.
-    `          LAST MONTH'S BALANCE         6,321`
-    `01 OCT    ValueVille                  123.12`
+    Holds both the extracted transaction fields and parse context
+    (regex match object, page number) needed for processing.
     """
 
-    transaction_date: str | None
-    amount: str
+    # Transaction fields
     description: str
-    polarity: str | None
-    balance: str | None
-    match: re.Match
-    page_number: int
+    amount: str
+    transaction_date: str | None = None
+    polarity: str | None = None
+    balance: str | None = None
 
-    def groupdict(self) -> dict[str, str | None]:
-        """Return dict of transaction fields for unpacking into Transaction."""
+    # Parse context
+    match: re.Match | None = field(default=None)
+    page_number: int = 0
+
+    def as_dict(self) -> dict[str, Any]:
+        """Return transaction fields as dict for unpacking into Transaction."""
         return {
-            "transaction_date": self.transaction_date,
-            "amount": self.amount,
             "description": self.description,
+            "amount": self.amount,
+            "transaction_date": self.transaction_date,
             "polarity": self.polarity,
             "balance": self.balance,
         }
 
     def span(self):
+        """Return the span of the regex match."""
         return self.match.span()
 
-    def __repr__(self):
-        return (
-            "<TransactionMatch object; "
-            f"{Columns.TRANSACTION_DATE}={self.transaction_date}, "
-            f"{Columns.AMOUNT}={self.amount}, "
-            f"{Columns.DESCRIPTION}={self.description}>"
-        )
 
-
-@dataclass
+@pydantic_dataclass
 class Transaction:
     """
     Hold transaction data, validates the data, and performs various coercions.

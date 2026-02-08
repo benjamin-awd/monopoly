@@ -63,3 +63,6 @@ class TextIdentifier(Identifier):
         if not detector.document.raw_text:
             return False
         return self.text in detector.document.raw_text
+
+
+IdentifierGroup = list[Identifier]

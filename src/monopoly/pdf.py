@@ -119,10 +119,7 @@ class PdfDocument(Document):
     @cached_property
     def raw_text(self) -> str:
         """Extracts and returns the text from the PDF."""
-        raw_text = ""
-        for page in self:
-            raw_text += page.get_text()
-        return raw_text
+        return "".join(page.get_text() for page in self)
 
 
 class PdfParser:

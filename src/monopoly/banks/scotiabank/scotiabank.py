@@ -2,19 +2,13 @@ import re
 
 from monopoly.banks.base import BankBase
 from monopoly.config import MultilineConfig, StatementConfig
+from monopoly.constants import EntryType, SharedPatterns
 from monopoly.constants.date import ISO8601, DateFormats
-from monopoly.constants.statement import (
-    BankNames,
-    CreditTransactionPatterns,
-    DebitTransactionPatterns,
-    EntryType,
-    SharedPatterns,
-)
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
 
 class Scotiabank(BankBase):
-    name = BankNames.SCOTIABANK
+    name = "scotiabank"
 
     debit_personal = StatementConfig(
         statement_type=EntryType.DEBIT,
@@ -23,7 +17,13 @@ class Scotiabank(BankBase):
             rf"Closing Balance on (?P<date>{DateFormats.MMMM}\s+{DateFormats.DD},\s+{DateFormats.YYYY})"
         ),
         transaction_date_format="%b %d",
-        transaction_pattern=DebitTransactionPatterns.SCOTIABANK,
+        transaction_pattern=re.compile(
+            rf"^(?!.*(?:Opening Balance)).*?"  # avoid matching opening balance as a "transaction"
+            rf"(?P<transaction_date>{ISO8601.MMM_DD})\s+"
+            + SharedPatterns.DESCRIPTION
+            + SharedPatterns.AMOUNT
+            + SharedPatterns.BALANCE
+        ),
         multiline_config=MultilineConfig(multiline_descriptions=True),
     )
     debit_business = StatementConfig(
@@ -59,7 +59,13 @@ class Scotiabank(BankBase):
             rf"- {ISO8601.MMM_DD_YYYY}"
         ),
         transaction_date_format="%b %d",
-        transaction_pattern=CreditTransactionPatterns.SCOTIABANK,
+        transaction_pattern=re.compile(
+            rf"(?P<transaction_date>\b({DateFormats.MMM}[\/\-\s.]{DateFormats.D}))\s+"
+            rf"(?P<posting_date>\b({DateFormats.MMM}[\/\-\s.]{DateFormats.D}))\s+"
+            + SharedPatterns.DESCRIPTION
+            # "credits" are denoted at the end of the amount, i.e PMYT 155.96-
+            + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+        ),
         multiline_config=MultilineConfig(multiline_descriptions=True),
     )
 

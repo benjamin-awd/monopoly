@@ -2,7 +2,8 @@ from pathlib import Path
 
 import pytest
 
-from monopoly.banks import Dbs, ExampleBank
+from monopoly.banks import Dbs
+from monopoly.examples.example_bank import ExampleBank
 from monopoly.pdf import PdfDocument, PdfParser
 from monopoly.pipeline import Pipeline
 
