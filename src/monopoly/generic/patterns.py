@@ -70,37 +70,18 @@ class DatePattern:
         return lines_with_dates or None
 
 
-# pylint: disable=too-many-instance-attributes
 class PatternMatcher:
     """Holds date regex patterns used by the generic statement handler."""
 
     def __iter__(self) -> Iterator[DatePattern]:
-        iso8601 = [e.lower() for e in ISO8601._member_names_]
-        attr_names = [name for name in dir(self) if name in iso8601]
-        for attr_name in attr_names:
-            attr = getattr(self, attr_name)
-            if isinstance(attr, DatePattern):
-                yield attr
+        yield from self.patterns.values()
 
     def __init__(self, pages: list[PdfPage]):
         self.pages = pages
-        self.set_date_patterns()
+        self.patterns: dict[str, DatePattern] = {
+            member.name.lower(): DatePattern(member) for member in ISO8601 if "relaxed" not in member.name.lower()
+        }
         self.get_matches()
-
-    def set_date_patterns(self):
-        self.d_mmm = DatePattern(ISO8601.D_MMM)
-        self.dd_mm = DatePattern(ISO8601.DD_MM)
-        self.dd_mm_yy = DatePattern(ISO8601.DD_MM_YY)
-        self.dd_mm_yyyy = DatePattern(ISO8601.DD_MM_YYYY)
-        self.dd_mmm = DatePattern(ISO8601.DD_MMM)
-        self.dd_mmm_yy = DatePattern(ISO8601.DD_MMM_YY)
-        self.dd_mmm_yyyy = DatePattern(ISO8601.DD_MMM_YYYY)
-        self.mm_dd = DatePattern(ISO8601.MM_DD)
-        self.mm_dd_yy = DatePattern(ISO8601.MM_DD_YY)
-        self.mm_dd_yyyy = DatePattern(ISO8601.MM_DD_YYYY)
-        self.mmmm_dd_yyyy = DatePattern(ISO8601.MMMM_DD_YYYY)
-        self.mmm_dd = DatePattern(ISO8601.MMM_DD)
-        self.mmm_dd_yyyy = DatePattern(ISO8601.MMM_DD_YYYY)
 
     def get_matches(self):
         """
