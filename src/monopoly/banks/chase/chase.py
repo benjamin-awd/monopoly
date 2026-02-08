@@ -3,14 +3,15 @@ import re
 
 from monopoly.banks.base import BankBase
 from monopoly.config import DateOrder, MultilineConfig, StatementConfig
-from monopoly.constants import BankNames, CreditTransactionPatterns, EntryType
+from monopoly.constants import EntryType, SharedPatterns
+from monopoly.constants.date import ISO8601
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
 logger = logging.getLogger(__name__)
 
 
 class Chase(BankBase):
-    name = BankNames.CHASE
+    name = "chase"
 
     credit = StatementConfig(
         statement_type=EntryType.CREDIT,
@@ -19,7 +20,12 @@ class Chase(BankBase):
         transaction_date_order=DateOrder("MDY"),
         header_pattern=re.compile(r"(.*Transaction.*Merchant Name .*\$ Amount)"),
         transaction_date_format="%m/%d",
-        transaction_pattern=CreditTransactionPatterns.CHASE,
+        transaction_pattern=re.compile(
+            rf"(?P<transaction_date>{ISO8601.MM_DD})\s+"
+            + SharedPatterns.DESCRIPTION
+            + r"(?P<polarity>\-)?"
+            + r"(?P<amount>(\d{1,3}(,\d{3})*|\d*)\.\d+)$"
+        ),
         multiline_config=MultilineConfig(multiline_descriptions=True),
     )
 

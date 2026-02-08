@@ -5,7 +5,7 @@ from typing import ClassVar
 
 from monopoly.banks import BankBase
 from monopoly.config import MultilineConfig, PdfConfig, StatementConfig
-from monopoly.constants import EntryType, InternalBankNames
+from monopoly.constants import EntryType
 from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfParser
 
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 class GenericBank(BankBase):
     identifiers: ClassVar[list] = []
     statement_configs: ClassVar[list[StatementConfig]] = []
-    name = InternalBankNames.GENERIC
+    name = "generic"
     pdf_config = PdfConfig(remove_vertical_text=True)
     """
     Empty bank class with variables that can be populated by

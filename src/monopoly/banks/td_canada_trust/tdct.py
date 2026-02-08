@@ -2,26 +2,24 @@ import re
 
 from monopoly.banks.base import BankBase
 from monopoly.config import MultilineConfig, StatementConfig
-from monopoly.constants import (
-    ISO8601,
-    BankNames,
-    CreditTransactionPatterns,
-    DebitTransactionPatterns,
-    EntryType,
-    StatementBalancePatterns,
-)
-from monopoly.constants.date import DateFormats
+from monopoly.constants import EntryType, SharedPatterns
+from monopoly.constants.date import ISO8601, DateFormats
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
 
 class TDCanadaTrust(BankBase):
-    name = BankNames.TDCT
+    name = "tdct"
 
     debit_personal = StatementConfig(
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"- {ISO8601.MMM_DD}\/{DateFormats.YY}"),
         header_pattern=re.compile(r"Description.*Withdrawals.*Deposits.*Date.*Balance"),
-        transaction_pattern=DebitTransactionPatterns.TDCT,
+        transaction_pattern=re.compile(
+            SharedPatterns.DESCRIPTION
+            + rf"(?P<amount>{SharedPatterns.COMMA_FORMAT})"
+            + rf"[-\s]+(?P<transaction_date>\b({DateFormats.MMM}{DateFormats.DD}))"  # i.e MAY1 and MAY27
+            + rf"([-\s]+(?P<balance>{SharedPatterns.COMMA_FORMAT}))?"  # balance is shown at end of each day
+        ),
         transaction_date_format="%b%d",
         safety_check=False,  # total amounts are *per page*, not overall
         transaction_auto_polarity=True,
@@ -31,7 +29,12 @@ class TDCanadaTrust(BankBase):
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"- {ISO8601.MMM_DD}\/{DateFormats.YY}"),
         header_pattern=re.compile(r"DESCRIPTION.*CHEQUE/DEBIT.*DEPOSIT/CREDIT.*DATE.*BALANCE"),
-        transaction_pattern=DebitTransactionPatterns.TDCT,
+        transaction_pattern=re.compile(
+            SharedPatterns.DESCRIPTION
+            + rf"(?P<amount>{SharedPatterns.COMMA_FORMAT})"
+            + rf"[-\s]+(?P<transaction_date>\b({DateFormats.MMM}{DateFormats.DD}))"  # i.e MAY1 and MAY27
+            + rf"([-\s]+(?P<balance>{SharedPatterns.COMMA_FORMAT}))?"  # balance is shown at end of each day
+        ),
         transaction_date_format="%b%d",
         safety_check=False,  # total amounts are *per page*, not overall
         transaction_auto_polarity=True,
@@ -41,8 +44,16 @@ class TDCanadaTrust(BankBase):
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(rf"STATEMENT PERIOD.*{ISO8601.MMMM_DD_YYYY}"),
         header_pattern=re.compile(r"(TRANSACTION\s+POSTING)"),
-        prev_balance_pattern=StatementBalancePatterns.TDCT,
-        transaction_pattern=CreditTransactionPatterns.TDCT,
+        prev_balance_pattern=re.compile(
+            r"(?P<description>PREVIOUS STATEMENT BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+        ),
+        transaction_pattern=re.compile(
+            rf"(?P<transaction_date>\b({DateFormats.MMM}[-\s]{DateFormats.D}))\s+"
+            rf"(?P<posting_date>\b({DateFormats.MMM}[-\s]{DateFormats.D}))\s+"
+            + SharedPatterns.DESCRIPTION
+            # transaction dr/cr with format -$999,000.00
+            + rf"(?P<amount>{SharedPatterns.OPTIONAL_NEGATIVE_SYMBOL}\$?{SharedPatterns.COMMA_FORMAT})\s*"
+        ),
         transaction_date_format="%b %d",
         multiline_config=MultilineConfig(multiline_descriptions=True, multiline_polarity=True),
         transaction_auto_polarity=False,

@@ -2,19 +2,13 @@ import re
 
 from monopoly.banks.base import BankBase
 from monopoly.config import DateOrder, MultilineConfig, StatementConfig
-from monopoly.constants import (
-    BankNames,
-    CreditTransactionPatterns,
-    DebitTransactionPatterns,
-    EntryType,
-    StatementBalancePatterns,
-)
+from monopoly.constants import EntryType, SharedPatterns
 from monopoly.constants.date import DateFormats
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
 
 class CIBC(BankBase):
-    name = BankNames.CIBC
+    name = "cibc"
 
     debit = StatementConfig(
         statement_type=EntryType.DEBIT,
@@ -24,7 +18,12 @@ class CIBC(BankBase):
         statement_date_pattern=re.compile(
             rf"(?:to\s+)?(?P<date>{DateFormats.MMM}\s+{DateFormats.DD},\s+{DateFormats.YYYY})"
         ),
-        transaction_pattern=DebitTransactionPatterns.CIBC,
+        transaction_pattern=re.compile(
+            rf"\s*(?:(?P<transaction_date>{DateFormats.MMM}\s+{DateFormats.D})[-\s]+)?"
+            r"(?P<description>(?!(Deposits)).+?)\s{2,}"
+            rf"(?P<amount>{SharedPatterns.COMMA_FORMAT})"
+            rf"[-\s]+(?P<balance>{SharedPatterns.OPTIONAL_NEGATIVE_SYMBOL}\$?{SharedPatterns.COMMA_FORMAT})"
+        ),
         transaction_date_format="%b %d",
         transaction_date_order=DateOrder("DMY"),
         statement_date_order=DateOrder("DMY"),
@@ -42,8 +41,18 @@ class CIBC(BankBase):
             rf"(?:to\s+)?(?P<date>{DateFormats.MMM}\s+{DateFormats.DD},\s+{DateFormats.YYYY})"
         ),
         header_pattern=re.compile(r"\s+date\s+date\s+Description\s+Spend Categories\s+Amount\(\$\)"),
-        prev_balance_pattern=StatementBalancePatterns.CIBC,
-        transaction_pattern=CreditTransactionPatterns.CIBC,
+        prev_balance_pattern=re.compile(
+            r"(?P<description>Previous balance?)\s+"
+            rf"(?P<amount>{SharedPatterns.OPTIONAL_NEGATIVE_SYMBOL}\$?{SharedPatterns.COMMA_FORMAT})"
+        ),
+        transaction_pattern=re.compile(
+            rf"(?P<transaction_date>\b({DateFormats.MMM}[-\s]{DateFormats.DD}))\s+"
+            rf"(?P<posting_date>\b({DateFormats.MMM}[-\s]{DateFormats.DD}))\s+"
+            r"(?:Ý\s*)?(?P<description>.+?)\s{2,}"
+            r"(?P<catagory>.*?)\s+"
+            # transaction dr/cr with format -$999,000.00
+            rf"(?P<amount>{SharedPatterns.OPTIONAL_NEGATIVE_SYMBOL}\$?{SharedPatterns.COMMA_FORMAT}|{SharedPatterns.ENCLOSED_COMMA_FORMAT}\s*"
+        ),
         transaction_date_format="%b %d",
         transaction_auto_polarity=False,
     )

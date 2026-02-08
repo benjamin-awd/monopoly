@@ -13,6 +13,8 @@ class BankBase:
     Ensures consistency between bank classes.
     """
 
+    registry: ClassVar[list[type["BankBase"]]] = []
+
     name: ClassVar[str]
     statement_configs: ClassVar[list[StatementConfig]]
     pdf_config: PdfConfig = PdfConfig()
@@ -33,5 +35,8 @@ class BankBase:
         if cls.identifiers and not any(isinstance(item, list) for item in cls.identifiers):
             msg = "`identifiers` must be a list of lists"
             raise TypeError(msg)
+
+        if cls.identifiers:
+            cls.registry.append(cls)
 
         return super().__init_subclass__(**kwargs)

@@ -3,14 +3,15 @@ import re
 
 from monopoly.banks.base import BankBase
 from monopoly.config import MultilineConfig, StatementConfig
-from monopoly.constants import BankNames, CreditTransactionPatterns, EntryType
+from monopoly.constants import EntryType, SharedPatterns
+from monopoly.constants.date import ISO8601
 from monopoly.identifiers import TextIdentifier
 
 logger = logging.getLogger(__name__)
 
 
 class Trust(BankBase):
-    name = BankNames.TRUST
+    name = "trust"
 
     credit = StatementConfig(
         statement_type=EntryType.CREDIT,
@@ -22,7 +23,14 @@ class Trust(BankBase):
             r"(?P<year>20\d{2}\b)"
         ),
         header_pattern=re.compile(r"(Posting date.*Description.*Amount in SGD)"),
-        transaction_pattern=CreditTransactionPatterns.TRUST,
+        transaction_pattern=re.compile(
+            rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
+            rf"(?:{ISO8601.DD_MMM}\s+)?"  # Optional posting date
+            r"(?P<description>(?:(?!Total outstanding balance).)*?)"
+            r"(?P<polarity>\+)?"
+            f"{SharedPatterns.AMOUNT}"
+            r"$"  # necessary to ignore FCY
+        ),
         multiline_config=MultilineConfig(
             multiline_descriptions=True,
             include_prev_margin=99,

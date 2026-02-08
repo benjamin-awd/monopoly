@@ -1,4 +1,4 @@
-from monopoly.constants import CreditTransactionPatterns
+from monopoly.banks import Citibank
 from monopoly.pdf import PdfPage
 from monopoly.statements import BaseStatement, Transaction
 
@@ -6,7 +6,7 @@ from monopoly.statements import BaseStatement, Transaction
 def test_statement_process_refund(statement: BaseStatement):
     page_content = "08 SEP  AIRBNB * FOO123  456 GB  (343.01)\n14 AUG  AIRBNB * FOO123  456 GB  343.01\n"
     page = PdfPage(raw_text=page_content)
-    pattern = CreditTransactionPatterns.CITIBANK
+    pattern = Citibank.credit.transaction_pattern
     statement.config.transaction_pattern = pattern
     statement.pages = [page]
     expected_transactions = [

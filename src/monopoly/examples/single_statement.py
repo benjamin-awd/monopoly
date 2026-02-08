@@ -1,4 +1,4 @@
-from monopoly.banks import ExampleBank
+from monopoly.banks.example_bank import ExampleBank
 from monopoly.pdf import PdfDocument, PdfParser
 from monopoly.pipeline import Pipeline
 
