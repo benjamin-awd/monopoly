@@ -1,10 +1,9 @@
 import re
 
+from monopoly.banks.base import BankBase
 from monopoly.config import StatementConfig
 from monopoly.constants import EntryType, SharedPatterns
 from monopoly.identifiers import TextIdentifier
-
-from .base import BankBase
 
 
 class ExampleBank(BankBase):
