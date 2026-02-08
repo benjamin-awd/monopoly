@@ -129,7 +129,7 @@ def test_pattern_matcher(pattern_matcher: PatternMatcher):
     spans = pattern_matcher.get_transaction_spans(pattern)
 
     assert spans == {(0, 6)}
-    assert len([pattern for pattern in pattern_matcher]) == 8
+    assert len([pattern for pattern in pattern_matcher]) == 13
     assert pattern.name == "dd_mmm"
     assert pattern.span_occurrences == Counter({(0, 6): 3, (33, 39): 1, (19, 25): 1})
     assert pattern.unique_spans == {(19, 25), (0, 6), (33, 39)}

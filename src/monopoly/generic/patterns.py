@@ -1,4 +1,5 @@
 import logging
+import re
 from collections import Counter
 from collections.abc import Iterator
 from dataclasses import dataclass, field
@@ -86,11 +87,16 @@ class PatternMatcher:
         self.get_matches()
 
     def set_date_patterns(self):
+        self.d_mmm = DatePattern(ISO8601.D_MMM)
         self.dd_mm = DatePattern(ISO8601.DD_MM)
         self.dd_mm_yy = DatePattern(ISO8601.DD_MM_YY)
+        self.dd_mm_yyyy = DatePattern(ISO8601.DD_MM_YYYY)
         self.dd_mmm = DatePattern(ISO8601.DD_MMM)
         self.dd_mmm_yy = DatePattern(ISO8601.DD_MMM_YY)
         self.dd_mmm_yyyy = DatePattern(ISO8601.DD_MMM_YYYY)
+        self.mm_dd = DatePattern(ISO8601.MM_DD)
+        self.mm_dd_yy = DatePattern(ISO8601.MM_DD_YY)
+        self.mm_dd_yyyy = DatePattern(ISO8601.MM_DD_YYYY)
         self.mmmm_dd_yyyy = DatePattern(ISO8601.MMMM_DD_YYYY)
         self.mmm_dd = DatePattern(ISO8601.MMM_DD)
         self.mmm_dd_yyyy = DatePattern(ISO8601.MMM_DD_YYYY)
@@ -145,17 +151,23 @@ class PatternMatcher:
         a tiebreaker with dd_mm and dd_mm_yy variants.
         """
         max_span_occurrences = 0
+        best_leftmost_position = float("inf")
         most_common_pattern = None
 
-        # Sort patterns so that those ending with "yy" come last
+        # Sort patterns so that those ending with "yy" come last,
+        # giving year-bearing patterns priority on equal count and position
         sorted_patterns = sorted(self, key=lambda p: p.name.endswith("yy"))
 
         for pattern in sorted_patterns:
             if counter := pattern.span_occurrences:
-                for _, num_occurrences in counter.most_common(2):
-                    if num_occurrences >= max_span_occurrences:
-                        most_common_pattern = pattern
-                        max_span_occurrences = num_occurrences
+                top_count = counter.most_common(1)[0][1]
+                leftmost = min(span[0] for span in counter)
+                if top_count > max_span_occurrences or (
+                    top_count == max_span_occurrences and leftmost <= best_leftmost_position
+                ):
+                    most_common_pattern = pattern
+                    max_span_occurrences = top_count
+                    best_leftmost_position = leftmost
 
         if most_common_pattern:
             logger.debug(
@@ -216,6 +228,16 @@ class PatternMatcher:
                 yyyy_matches[pattern.name] = pattern.matches
 
         if not yyyy_matches:
+            # Fallback: look for "Month YYYY" in raw text (e.g., "February 2019")
+            month_year = re.compile(
+                r"((?:January|February|March|April|May|June|July|August|September"
+                r"|October|November|December)\s+20\d{2})"
+            )
+            for page in self.pages:
+                for line in page.lines:
+                    if match := month_year.search(line):
+                        logger.debug("Found month-year fallback: %s", match.group())
+                        return re.escape(match.group())
             msg = "No lines with `yy` or `yyyy` dates - unable to create statement date pattern"
             raise RuntimeError(msg)
 
