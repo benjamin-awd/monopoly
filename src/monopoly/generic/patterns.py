@@ -5,13 +5,32 @@ from collections.abc import Iterator
 from dataclasses import dataclass, field
 from datetime import datetime
 
-from dateparser import parse
-
 from monopoly.constants.date import ISO8601
 from monopoly.enums import RegexEnum
 from monopoly.pdf import PdfPage
 
 logger = logging.getLogger(__name__)
+
+# Mapping from ISO8601 pattern names to strptime format strings.
+# Separators in the raw date are normalized to spaces before parsing.
+STRPTIME_FORMATS: dict[str, str] = {
+    "d_mmm": "%d %b",
+    "dd_mm": "%d %m",
+    "dd_mm_yy": "%d %m %y",
+    "dd_mm_yyyy": "%d %m %Y",
+    "dd_mmm": "%d %b",
+    "dd_mmm_yy": "%d %b %y",
+    "dd_mmm_yyyy": "%d %b %Y",
+    "mm_dd": "%m %d",
+    "mm_dd_yy": "%m %d %y",
+    "mm_dd_yyyy": "%m %d %Y",
+    "mmmm_dd_yyyy": "%B %d %Y",
+    "mmm_dd": "%b %d",
+    "mmm_dd_yyyy": "%b %d %Y",
+}
+
+_SEPARATOR_RE = re.compile(r"[\/\-.,]")
+_MULTI_SPACE_RE = re.compile(r"\s+")
 
 MAX_EXPECTED_DATE_SPANS = 2  # Max expected spans (e.g., transaction date + posting date)
 MIN_ADDITIONAL_SPAN_RATIO = 0.5  # Threshold to consider other spans
@@ -99,9 +118,10 @@ class PatternMatcher:
 
     def _extract_match(self, pattern: DatePattern, line: str, page_num: int, line_num: int) -> list[DateMatch]:
         matches = []
+        fmt = STRPTIME_FORMATS.get(pattern.name)
         for date_match in pattern.regex.finditer(line):
             raw_date = date_match.group()
-            parsed_date = parse(raw_date)
+            parsed_date = self._parse_date(raw_date, fmt)
             if parsed_date:
                 matches.append(
                     DateMatch(
@@ -121,6 +141,27 @@ class PatternMatcher:
                     parsed_date,
                 )
         return matches
+
+    @staticmethod
+    def _parse_date(raw_date: str, fmt: str | None) -> datetime | None:
+        """Parse a date string, using strptime with normalized separators for speed."""
+        if fmt:
+            normalized = _SEPARATOR_RE.sub(" ", raw_date)
+            normalized = _MULTI_SPACE_RE.sub(" ", normalized).strip()
+            try:
+                parsed = datetime.strptime(normalized, fmt)  # noqa: DTZ007
+            except ValueError:
+                pass
+            else:
+                # strptime defaults to year 1900 when no year in format;
+                # use current year for consistent date comparisons
+                if "%y" not in fmt.lower():
+                    parsed = parsed.replace(year=datetime.now().year)  # noqa: DTZ005
+                return parsed
+
+        from dateparser import parse
+
+        return parse(raw_date)
 
     def get_transaction_pattern(self) -> DatePattern:
         """
