@@ -1,6 +1,10 @@
+import re
+
 import pytest
 from pymupdf import Document
 
+from monopoly.config import DateOrder, StatementConfig
+from monopoly.constants import EntryType, SharedPatterns
 from monopoly.statements import CreditStatement, DebitStatement
 from monopoly.statements.base import SafetyCheckError
 from monopoly.statements.transaction import Transaction
@@ -93,3 +97,51 @@ def test_safety_check_does_not_pass_when_total_not_in_document(credit_statement:
     # Old logic would wrongly return True — corrected logic should raise an error.
     with pytest.raises(SafetyCheckError):
         credit_statement.perform_safety_check()
+
+
+def test_credit_safety_check_with_custom_subtotal_pattern():
+    """Test that a multi-card statement passes safety check using custom subtotal_pattern.
+
+    Simulates a Standard Chartered-style statement with two credit cards,
+    where each card has a "NEW BALANCE" line but no combined total.
+    """
+    config = StatementConfig(
+        statement_type=EntryType.CREDIT,
+        header_pattern=re.compile(r"Transaction.*Amount"),
+        transaction_pattern=re.compile(
+            r"(?P<transaction_date>\d{2} \w{3})\s+"
+            r"(?P<description>.+?)\s+" + SharedPatterns.AMOUNT
+        ),
+        statement_date_pattern="",
+        transaction_date_order=DateOrder("DMY"),
+        subtotal_pattern=re.compile(
+            rf"(?:NEW BALANCE.*?)\s+{SharedPatterns.AMOUNT}",
+            re.IGNORECASE,
+        ),
+    )
+
+    document = Document()
+    page = document.new_page()
+    text = (
+        "Card 1 ending 1234\n"
+        "01 Jan  GRAB TRANSPORT  15.00\n"
+        "02 Jan  FAIRPRICE  25.50\n"
+        "NEW BALANCE  40.50\n"
+        "\n"
+        "Card 2 ending 5678\n"
+        "05 Jan  AMAZON  30.00\n"
+        "NEW BALANCE  30.00\n"
+    )
+    page.lines = text.split("\n")
+    page.insert_text(point=(0, 0), text=text)
+
+    statement = CreditStatement(pages=[page], bank_name="standard_chartered", config=config, header="foo")
+    statement.transactions = [
+        Transaction(transaction_date="01/01", description="GRAB TRANSPORT", amount=15.0),
+        Transaction(transaction_date="02/01", description="FAIRPRICE", amount=25.5),
+        Transaction(transaction_date="05/01", description="AMAZON", amount=30.0),
+    ]
+
+    # Total is 70.50, which doesn't appear in the document.
+    # But subtotals 40.50 + 30.00 = 70.50, so the safety check should pass.
+    assert statement.perform_safety_check()

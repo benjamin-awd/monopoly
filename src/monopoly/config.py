@@ -72,6 +72,9 @@ class StatementConfig:
     date from the filename when it cannot be found in the PDF content. The pattern should
     have two capture groups: (1) month abbreviation and (2) year (e.g., r"_([A-Za-z]{3})(\d{4})")
     to match filenames like "eStatement_Nov2025_*.pdf". Disabled by default (None).
+    - `subtotal_pattern` is an optional regex pattern for matching subtotal lines in multi-card
+    or multi-section statements. When set, overrides the default pattern used by
+    `NumberExtractor` during safety checks. Disabled by default (None).
     """
 
     statement_type: EntryType
@@ -87,6 +90,7 @@ class StatementConfig:
     safety_check: bool = True
     transaction_auto_polarity: bool = True
     filename_fallback_pattern: Pattern[str] | None = None
+    subtotal_pattern: Pattern[str] | None = None
 
 
 @dataclass

@@ -270,7 +270,7 @@ class BaseStatement:
 
         This is used by child classes with implementations of perform_safety_check().
         """
-        extractor = NumberExtractor(self.pages)
+        extractor = NumberExtractor(self.pages, subtotal_pattern=self.config.subtotal_pattern)
         return extractor.get_all_numbers()
 
 
