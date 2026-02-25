@@ -24,9 +24,7 @@ class NumberExtractor:
 
     @cached_property
     def _subtotal_pattern(self) -> re.Pattern:
-        if self.subtotal_pattern:
-            return self.subtotal_pattern
-        return re.compile(rf"(?:sub\stotal.*?)\s+{SharedPatterns.AMOUNT}", re.IGNORECASE)
+        return self.subtotal_pattern or re.compile(rf"(?:sub\stotal.*?)\s+{SharedPatterns.AMOUNT}", re.IGNORECASE)
 
     def get_all_numbers(self) -> set[float]:
         """Extract all decimal numbers from all pages plus subtotal sums."""
