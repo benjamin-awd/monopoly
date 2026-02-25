@@ -1,7 +1,10 @@
 """Unit tests for NumberExtractor class."""
 
+import re
+
 import pytest
 
+from monopoly.constants import SharedPatterns
 from monopoly.pdf import PdfPage
 from monopoly.statements.number_extractor import NumberExtractor
 
@@ -188,3 +191,32 @@ class TestNumberExtractorPatterns:
         assert pattern.search("SUB TOTAL 1,234.56")
         assert pattern.search("Sub Total amount 50.25")
         assert not pattern.search("total 100.00")  # 'sub' required
+
+    def test_default_subtotal_pattern_when_none(self):
+        """Test that None falls back to the default 'sub total' pattern."""
+        extractor = NumberExtractor(pages=[], subtotal_pattern=None)
+        pattern = extractor._subtotal_pattern
+
+        assert pattern.search("sub total 100.00")
+        assert not pattern.search("NEW BALANCE 100.00")
+
+    def test_custom_subtotal_pattern_overrides_default(self):
+        """Test that a custom subtotal pattern is used instead of the default."""
+        custom_pattern = re.compile(rf"(?:NEW BALANCE.*?)\s+{SharedPatterns.AMOUNT}", re.IGNORECASE)
+        pages = [
+            PdfPage(raw_text="NEW BALANCE 250.00\nother line\nNEW BALANCE 150.00"),
+        ]
+        extractor = NumberExtractor(pages, subtotal_pattern=custom_pattern)
+
+        assert extractor._subtotal_pattern is custom_pattern
+        assert extractor._get_subtotal_sum() == 400.00
+
+    def test_custom_subtotal_pattern_ignores_default_keywords(self):
+        """Test that custom pattern does not match 'sub total' lines."""
+        custom_pattern = re.compile(rf"(?:NEW BALANCE.*?)\s+{SharedPatterns.AMOUNT}", re.IGNORECASE)
+        pages = [
+            PdfPage(raw_text="sub total 100.00\nNEW BALANCE 200.00"),
+        ]
+        extractor = NumberExtractor(pages, subtotal_pattern=custom_pattern)
+
+        assert extractor._get_subtotal_sum() == 200.00

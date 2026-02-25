@@ -10,8 +10,9 @@ from monopoly.pdf import PdfPage
 class NumberExtractor:
     """Extracts decimal numbers from statement pages for safety validation."""
 
-    def __init__(self, pages: list[PdfPage]):
+    def __init__(self, pages: list[PdfPage], subtotal_pattern: re.Pattern | None = None):
         self.pages = pages
+        self.subtotal_pattern = subtotal_pattern
 
     @cached_property
     def _number_pattern(self) -> re.Pattern:
@@ -23,7 +24,7 @@ class NumberExtractor:
 
     @cached_property
     def _subtotal_pattern(self) -> re.Pattern:
-        return re.compile(rf"(?:sub\stotal.*?)\s+{SharedPatterns.AMOUNT}", re.IGNORECASE)
+        return self.subtotal_pattern or re.compile(rf"(?:sub\stotal.*?)\s+{SharedPatterns.AMOUNT}", re.IGNORECASE)
 
     def get_all_numbers(self) -> set[float]:
         """Extract all decimal numbers from all pages plus subtotal sums."""

@@ -25,6 +25,7 @@ class StandardChartered(BankBase):
             + SharedPatterns.AMOUNT_EXTENDED
         ),
         transaction_date_format="%d %b",
+        subtotal_pattern=re.compile(rf"(?:NEW BALANCE.*?)\s+{SharedPatterns.AMOUNT}", re.IGNORECASE),
     )
 
     identifiers = [
