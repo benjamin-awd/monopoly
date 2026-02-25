@@ -14,8 +14,6 @@ class BankBase:
     Ensures consistency between bank classes.
     """
 
-    registry: ClassVar[list[type["BankBase"]]] = []
-
     name: ClassVar[str]
     statement_configs: ClassVar[list[StatementConfig]]
     pdf_config: PdfConfig = PdfConfig()
@@ -33,7 +31,6 @@ class BankBase:
             cls._validate_identifiers()
             cls._validate_name()
             cls._validate_statement_configs()
-            cls.registry.append(cls)
 
         return super().__init_subclass__(**kwargs)
 
@@ -58,12 +55,6 @@ class BankBase:
     def _validate_name(cls) -> None:
         if not isinstance(cls.name, str) or not cls.name.strip():
             msg = f"{cls.__name__}: `name` must be a non-empty string"
-            raise ValueError(msg)
-
-        existing_names = {bank.name for bank in cls.registry}
-        if cls.name in existing_names:
-            conflict = next(b for b in cls.registry if b.name == cls.name)
-            msg = f"{cls.__name__}: duplicate bank name {cls.name!r}, already used by {conflict.__name__}"
             raise ValueError(msg)
 
     @classmethod

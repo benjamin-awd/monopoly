@@ -54,19 +54,6 @@ class TestNameValidation:
                 statement_configs = [_VALID_CONFIG]
                 identifiers = [[MetadataIdentifier(creator="x")]]
 
-    def test_duplicate_name_raises_value_error(self):
-        class First(BankBase):
-            name = _unique_name("dup")
-            statement_configs = [_VALID_CONFIG]
-            identifiers = [[MetadataIdentifier(creator="x")]]
-
-        with pytest.raises(ValueError, match="duplicate bank name"):
-
-            class Second(BankBase):
-                name = _unique_name("dup")
-                statement_configs = [_VALID_CONFIG]
-                identifiers = [[MetadataIdentifier(creator="y")]]
-
 
 class TestStatementConfigsValidation:
     def test_empty_list_raises_type_error(self):
@@ -133,14 +120,14 @@ class TestEmptyIdentifiersSkipsValidation:
             statement_configs = []
             identifiers = []
 
-        assert GenericLike not in BankBase.registry
+        assert GenericLike  # no error raised
 
 
 class TestValidBankPasses:
-    def test_valid_bank_registered(self):
+    def test_valid_bank_passes(self):
         class ValidBank(BankBase):
             name = _unique_name("valid")
             statement_configs = [_VALID_CONFIG]
             identifiers = [[MetadataIdentifier(creator="valid_creator")]]
 
-        assert ValidBank in BankBase.registry
+        assert ValidBank  # no error raised
