@@ -15,11 +15,13 @@ from .hsbc import Hsbc
 from .maybank import Maybank
 from .ocbc import Ocbc
 from .rbc import RoyalBankOfCanada
+from .schwab_bank import Schwab
 from .scotiabank import Scotiabank
 from .standard_chartered import StandardChartered
 from .td_canada_trust import TDCanadaTrust
 from .trust import Trust
 from .uob import Uob
+from .usbank import UsBank
 from .zkb import ZurcherKantonalBank
 
 banks: list[type[BankBase]] = [
@@ -36,11 +38,13 @@ banks: list[type[BankBase]] = [
     Maybank,
     Ocbc,
     RoyalBankOfCanada,
+    Schwab,
     Scotiabank,
     StandardChartered,
     TDCanadaTrust,
     Trust,
     Uob,
+    UsBank,
     ZurcherKantonalBank,
 ]
 
