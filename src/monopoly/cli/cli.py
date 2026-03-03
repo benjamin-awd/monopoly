@@ -122,7 +122,7 @@ def get_statement_paths(files: Iterable[Path]) -> set[Path]:
     """Recursively collects paths to PDF files from a given collection of paths."""
     matched_files = set()
     for path in files:
-        if path.is_file() and str(path).endswith(".pdf"):
+        if path.is_file() and path.suffix.lower() == ".pdf":
             matched_files.add(path)
 
         if path.is_dir():

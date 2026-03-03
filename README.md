@@ -25,11 +25,13 @@ Supported banks:
 | Maybank                                | ✅                 | ✅                   |
 | OCBC                                   | ✅                 | ✅                   |
 | Royal Bank of Canada (RBC)             | ✅                 | ✅                   |
+| Schwab Bank                            | N/A                | ✅                   |
 | Scotiabank                             | ✅                 | ✅                   |
 | Standard Chartered                     | ✅                 | ❌                   |
 | TD Canada Trust                        | ✅                 | ✅                   |
 | Trust                                  | ✅                 | ❌                   |
 | UOB                                    | ✅                 | ✅                   |
+| US Bank                                | ✅                 | ❌                   |
 | Zürcher Kantonalbank                   | ❌                 | ✅                   |
 
 ## Install

@@ -5,4 +5,4 @@ setup:
 	# install uv dependencies
 	uv venv
 	uv sync --all-extras
-	source .venv/bin/activate
+	@echo "Run 'source .venv/bin/activate' to activate the venv"
