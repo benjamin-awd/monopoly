@@ -38,4 +38,6 @@ class ISO8601(RegexEnum):
     MM_DD_YYYY = rf"\b({DateFormats.MM}[\/\-\s.]{DateFormats.DD}[\/\-\s.]{DateFormats.YYYY})"
     MMMM_DD_YYYY = rf"\b({DateFormats.MMMM}\s{DateFormats.DD}[,\s]{{1,2}}{DateFormats.YYYY})"
     MMM_DD = rf"\b({DateFormats.MMM}[\/\-\s.]{DateFormats.DD})"
+    MMM_DD_RELAXED = rf"({DateFormats.MMM}(?:[\/\-\s.]|){DateFormats.DD})"
     MMM_DD_YYYY = rf"\b({DateFormats.MMM}[\/\-\s.]{DateFormats.DD}[,\s]{{1,2}}{DateFormats.YYYY})"
+    MMM_DD_YYYY_RELAXED = rf"({DateFormats.MMM}(?:[\/\-\s.]|){DateFormats.DD}[,\s]{{0,2}}{DateFormats.YYYY})"
