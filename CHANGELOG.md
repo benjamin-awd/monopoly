@@ -1,5 +1,55 @@
 # Changelog
 
+## [0.20.0] - 2026-03-11
+
+### ⛰️ Features
+
+- *(transactions)* Add balance field and update related processing
+- *(generic)* Improve pattern detection and statement date fallback
+
+### 🛠️ Bug Fixes
+
+- *(banks)* Improve BankBase subclass validation
+- *(tests)* Fix silent test pass in test_create_previous_balance_regex
+- *(generic)* Fix get_transaction_spans skipping candidate spans
+- Resolve mypy type errors in bank identifiers and generic handler
+- Handle squashed PDF text in RBC credit card statement parsing
+
+### 🚜 Refactor
+
+- *(transactions)* Set balance default value to 0 and re-sue existing flow coercion logic
+- *(statements)* Extract DateResolver and NumberExtractor from BaseStatement
+- *(statements)* Reduce indirection in transaction classes
+- *(statements/base)* Reduce levels of config nesting
+- *(banks)* Auto-register banks and colocate all config in bank classes
+- *(examples)* Move ExampleBank out of banks/ into examples/
+- *(generic)* Replace PatternMatcher dir() reflection with a dict
+- *(generic)* Stop mutating GenericBank.statement_configs class variable
+- Add IdentifierGroup type alias to reduce verbose annotations
+
+### ⚡ Performance
+
+- Cache BaseStatement.pattern to avoid regex recompilation per line
+- Replace dateparser.parse() with strptime in generic PatternMatcher
+- Pre-compile year detection regex in pipeline
+- Cache debit column positions to avoid repeated regex and line scans
+- Use str.join() instead of += concatenation in PdfDocument.raw_text
+
+### ⚙️ Miscellaneous Tasks
+
+- *(banks)* Remove unused logging imports from bank classes
+- Revert auto bank registration
+
+### Build
+
+- *(deps)* Bump actions/download-artifact from 5 to 7 (#251)
+- *(deps)* Bump actions/upload-artifact from 4 to 6
+- *(deps)* Bump cryptography from 45.0.3 to 46.0.5
+- *(deps)* Bump urllib3 from 2.4.0 to 2.6.3
+- *(deps)* Bump pillow from 11.2.1 to 12.1.1
+- *(deps)* Bump actions/upload-artifact from 6 to 7
+- *(deps)* Bump actions/download-artifact from 7 to 8
+
 ## [0.19.7] - 2025-12-22
 
 ### 🚜 Refactor
