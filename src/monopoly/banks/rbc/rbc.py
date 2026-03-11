@@ -53,17 +53,18 @@ class RoyalBankOfCanada(BankBase):
 
     credit = StatementConfig(
         statement_type=EntryType.CREDIT,
+        # Handle squashed PDF text (e.g. STATEMENTFROMJAN10TOFEB10,2025)
         statement_date_pattern=re.compile(
-            rf"STATEMENT FROM ({ISO8601.MMM_DD}|{ISO8601.MMM_DD_YYYY}) TO "
-            rf"(({DateFormats.MMM}\s{DateFormats.D}[,\s]{{1,2}}{DateFormats.YYYY})|{ISO8601.MMM_DD_YYYY})"
+            rf"STATEMENT\s*FROM\s*({ISO8601.MMM_DD_RELAXED}|{ISO8601.MMM_DD_YYYY_RELAXED})\s*TO\s*"
+            rf"({ISO8601.MMM_DD_YYYY_RELAXED})"
         ),
         header_pattern=re.compile(r"(TRANSACTION\s+POSTING)"),
         prev_balance_pattern=re.compile(
             r"(?P<description>PREVIOUS STATEMENT BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
         ),
         transaction_pattern=re.compile(
-            rf"(?P<transaction_date>\b({DateFormats.MMM}[-\s]{DateFormats.DD}))\s+"
-            rf"(?P<posting_date>\b({DateFormats.MMM}[-\s]{DateFormats.DD}))\s+"
+            rf"(?P<transaction_date>\b({DateFormats.MMM}[-\s]?{DateFormats.DD}))\s+"
+            rf"(?P<posting_date>\b({DateFormats.MMM}[-\s]?{DateFormats.DD}))\s+"
             + SharedPatterns.DESCRIPTION
             # transaction dr/cr with format -$999,000.00
             + r"(?P<polarity>\-)?"
