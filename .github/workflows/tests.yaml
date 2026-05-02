@@ -34,7 +34,7 @@ jobs:
           uv sync --all-extras
 
       - name: Install git-crypt
-        uses: Flydiverny/setup-git-crypt@v4
+        uses: Flydiverny/setup-git-crypt@v5
 
       - name: Unlock files
         continue-on-error: true

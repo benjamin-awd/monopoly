@@ -34,7 +34,7 @@ jobs:
           sudo dpkg -i hyperfine_1.19.0_amd64.deb
 
       - name: Install git-crypt
-        uses: Flydiverny/setup-git-crypt@v4
+        uses: Flydiverny/setup-git-crypt@v5
 
       - name: Unlock files
         continue-on-error: true
