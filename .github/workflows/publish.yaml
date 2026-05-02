@@ -55,7 +55,7 @@ jobs:
         run: uv run git cliff --latest > RELEASE_CHANGELOG.md
 
       - name: Create a Github Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: v${{ steps.monopoly_version.outputs.monopoly_version }}
           target_commitish: main
