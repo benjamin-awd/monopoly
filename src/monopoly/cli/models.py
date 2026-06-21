@@ -10,7 +10,7 @@ class RunConfig:
     pprint: bool = False
     safety_check: bool = True
     single_process: bool = False
-    use_ocr: bool = False
+    ocr_engine: str | None = None
     verbose: bool = False
     preserve_filename: bool = False
 

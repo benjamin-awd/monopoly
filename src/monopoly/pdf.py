@@ -127,6 +127,7 @@ class PdfParser:
         self,
         bank: type["BankBase"],
         document: PdfDocument,
+        ocr_engine: str | None = None,
     ):
         """
         Class responsible for parsing PDFs and returning raw text.
@@ -137,6 +138,7 @@ class PdfParser:
         self.bank = bank
         self.document = document
         self.metadata_identifier = document.metadata_identifier
+        self.ocr_engine = ocr_engine
 
     @property
     def pdf_config(self):
@@ -165,6 +167,14 @@ class PdfParser:
     def _get_pages(self) -> list[PdfPage]:
         logger.debug("Extracting text from PDF")
         document = self.document
+
+        if self.ocr_engine == "gemini":
+            from monopoly.ocr import GeminiOcr
+
+            gemini = GeminiOcr()
+            pages = gemini.extract_pages(document)
+            num_pages = list(range(len(pages)))
+            return [pages[i] for i in num_pages[self.page_range]]
 
         num_pages = list(range(document.page_count))
         document.select(num_pages[self.page_range])
