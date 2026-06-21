@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.21.1] - 2026-06-21
+
+### Build
+
+- *(deps)* Bump cryptography from 46.0.7 to 48.0.1
+- *(deps)* Bump urllib3 from 2.6.3 to 2.7.0
+
 ## [0.21.0] - 2026-06-21
 
 ### ⛰️ Features
