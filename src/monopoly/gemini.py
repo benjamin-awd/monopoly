@@ -33,7 +33,9 @@ Rules:
 - statement_type: "credit" for credit card statements, "debit" for bank account/savings/current account statements
 - amount: negative for debits/purchases, positive for credits/payments/refunds
 - date: the transaction date (not the posting date)
-- Ignore non-transaction lines (headers, footers, summaries, balances, fine print)
+- Include "Previous Statement Balance" or similar balance carry-forward lines as transactions \
+(use the statement start date as the date). These are needed for totals to balance.
+- Ignore other non-transaction lines (headers, footers, summaries, fine print)
 - Return ONLY the JSON object, no markdown fences or commentary
 """
 
