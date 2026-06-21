@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.21.4] - 2026-06-21
+
+### 🛠️ Bug Fixes
+
+- *(gemini)* Include previous statement balance as a transaction
+
 ## [0.21.3] - 2026-06-21
 
 ### 🛠️ Bug Fixes
