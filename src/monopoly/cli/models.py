@@ -11,6 +11,7 @@ class RunConfig:
     safety_check: bool = True
     single_process: bool = False
     use_ocr: bool = False
+    parser: str | None = None
     verbose: bool = False
     preserve_filename: bool = False
 
