@@ -17,6 +17,7 @@ Return a JSON object with exactly this structure:
 {
   "statement_date": "YYYY-MM-DD",
   "bank_name": "bank name",
+  "statement_type": "credit",
   "transactions": [
     {
       "date": "YYYY-MM-DD",
@@ -29,6 +30,7 @@ Return a JSON object with exactly this structure:
 Rules:
 - statement_date: the end date of the statement period
 - bank_name: lowercase with underscores (e.g. "hsbc", "bank_of_america")
+- statement_type: "credit" for credit card statements, "debit" for bank account/savings/current account statements
 - amount: negative for debits/purchases, positive for credits/payments/refunds
 - date: the transaction date (not the posting date)
 - Ignore non-transaction lines (headers, footers, summaries, balances, fine print)
@@ -46,10 +48,13 @@ class GeminiSettings(BaseSettings):
 
 
 class GeminiResult:
-    def __init__(self, transactions: list[Transaction], statement_date: datetime, bank_name: str):
+    def __init__(
+        self, transactions: list[Transaction], statement_date: datetime, bank_name: str, statement_type: str = "credit"
+    ):
         self.transactions = transactions
         self.statement_date = statement_date
         self.bank_name = bank_name
+        self.statement_type = statement_type
 
 
 class GeminiParser:
@@ -99,6 +104,7 @@ class GeminiParser:
 
         statement_date = datetime.strptime(data["statement_date"], "%Y-%m-%d").astimezone()
         bank_name = data.get("bank_name", "unknown")
+        statement_type = data.get("statement_type", "credit")
 
         transactions = []
         for tx in data["transactions"]:
@@ -116,4 +122,5 @@ class GeminiParser:
             transactions=transactions,
             statement_date=statement_date,
             bank_name=bank_name,
+            statement_type=statement_type,
         )

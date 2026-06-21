@@ -100,12 +100,12 @@ def _process_with_pipeline(file: Path, config: RunConfig) -> Result | None:
         document = PdfDocument(file)
         document.unlock_document()
 
-        if config.use_ocr:
+        if config.ocr_engine == "tesseract":
             document = PdfParser.apply_ocr(document)
 
         analyzer = BankDetector(document)
         bank = analyzer.detect_bank(banks) or GenericBank
-        parser = PdfParser(bank, document)
+        parser = PdfParser(bank, document, ocr_engine=config.ocr_engine)
         pipeline = Pipeline(parser)
 
         statement = pipeline.extract(safety_check=config.safety_check)
@@ -246,9 +246,12 @@ def get_statement_paths(files: Iterable[Path]) -> set[Path]:
 )
 @click.option(
     "--ocr",
-    "use_ocr",
-    is_flag=True,
-    help=("Apply OCR to extract text from scanned documents."),
+    "ocr_engine",
+    default=None,
+    is_flag=False,
+    flag_value="tesseract",
+    type=click.Choice(["tesseract", "gemini"], case_sensitive=False),
+    help="Apply OCR to extract text from scanned documents. Use 'tesseract' (default) or 'gemini'.",
 )
 @click.option(
     "--parser",
@@ -312,7 +315,11 @@ def show_welcome_message():
         ),
         (
             "monopoly . --ocr",
-            "applies OCR to extract text from scanned documents",
+            "applies OCR (tesseract) to scanned documents",
+        ),
+        (
+            "monopoly . --ocr gemini",
+            "uses Google Gemini for OCR",
         ),
         (
             "monopoly . --parser gemini",
