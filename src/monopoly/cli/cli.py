@@ -20,6 +20,76 @@ def process_statement(file: Path, config: RunConfig) -> Result | None:
     if config.verbose:
         file_context.set(file.name)
 
+    if config.parser == "gemini":
+        return _process_with_gemini(file, config)
+
+    return _process_with_pipeline(file, config)
+
+
+def _process_with_gemini(file: Path, config: RunConfig) -> Result | None:
+    """Process a statement using Google Gemini for full extraction."""
+    from monopoly.gemini import GeminiParser
+    from monopoly.pdf import PdfDocument
+
+    try:
+        document = PdfDocument(file)
+        document.unlock_document()
+
+        parser = GeminiParser()
+        result = parser.parse(document)
+
+        if config.pprint:
+            _pprint_gemini_transactions(result.transactions, file)
+            return None
+
+        if not config.output_directory:
+            config.output_directory = file.parent
+
+        output_file = _write_gemini_csv(
+            result, config.output_directory, file, preserve_filename=config.preserve_filename
+        )
+        return Result(file.name, output_file.name)
+
+    # ruff: noqa: BLE001
+    except Exception as err:
+        error_info = {
+            "message": f"{type(err).__name__}: {err!s}",
+            "traceback": traceback.format_exc(),
+        }
+        return Result(file.name, error_info=error_info)
+
+
+def _pprint_gemini_transactions(transactions: list, file: Path) -> None:
+    click.echo(f"{file.name}")
+    rows = [{"date": tx.date, "description": tx.description, "amount": str(tx.amount)} for tx in transactions]
+    headers = {col: col for col in ["date", "description", "amount"]}
+    click.echo(tabulate(rows, headers=headers, tablefmt="psql", numalign="right"))
+    click.echo()
+
+
+def _write_gemini_csv(result, output_directory: Path, file: Path, *, preserve_filename: bool) -> Path:
+    import csv
+
+    if preserve_filename:
+        filename = f"{file.stem}.csv"
+    else:
+        year = result.statement_date.year
+        month = result.statement_date.month
+        filename = f"{result.bank_name}-{year}-{month:02d}.csv"
+
+    output_path = output_directory / filename
+
+    with open(output_path, mode="w", encoding="utf8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["date", "description", "amount"])
+        for tx in result.transactions:
+            writer.writerow([tx.date, tx.description, tx.amount])
+
+    return output_path
+
+
+def _process_with_pipeline(file: Path, config: RunConfig) -> Result | None:
+    """Process a statement using the standard regex-based pipeline."""
     # Lazily importing here prevents from CLI from having a "slow" start
     from monopoly.banks import BankDetector, banks
     from monopoly.generic import GenericBank
@@ -183,6 +253,12 @@ def get_statement_paths(files: Iterable[Path]) -> set[Path]:
     type=click.Choice(["tesseract", "gemini"], case_sensitive=False),
     help="Apply OCR to extract text from scanned documents. Use 'tesseract' (default) or 'gemini'.",
 )
+@click.option(
+    "--parser",
+    type=click.Choice(["gemini"], case_sensitive=False),
+    default=None,
+    help="Use an alternative parser for full statement extraction (e.g. 'gemini').",
+)
 @click.pass_context
 @setup_logs
 def monopoly(ctx: click.Context, files: list[Path], **kwargs):
@@ -244,6 +320,10 @@ def show_welcome_message():
         (
             "monopoly . --ocr gemini",
             "uses Google Gemini for OCR",
+        ),
+        (
+            "monopoly . --parser gemini",
+            "uses Google Gemini to extract transactions",
         ),
         (
             "monopoly --help",
