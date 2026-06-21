@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.21.0] - 2026-06-21
+
+### ⛰️ Features
+
+- Add Gemini parser for full statement extraction
+
+### Build
+
+- *(deps-dev)* Bump black from 25.1.0 to 26.3.1
+- *(deps)* Bump lxml from 5.4.0 to 6.1.0
+- *(deps)* Bump python-dotenv from 1.1.0 to 1.2.2 (#271)
+- *(deps-dev)* Bump pytest from 8.4.0 to 9.0.3
+- *(deps)* Bump pillow from 12.1.1 to 12.2.0
+- *(deps)* Bump cryptography from 46.0.5 to 46.0.7 (#268)
+- *(deps)* Bump pygments from 2.19.1 to 2.20.0
+- *(deps)* Bump Flydiverny/setup-git-crypt from 4 to 5
+- *(deps)* Bump softprops/action-gh-release from 2 to 3
+
 ## [0.20.0] - 2026-03-11
 
 ### ⛰️ Features
