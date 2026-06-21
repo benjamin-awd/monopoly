@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.21.2] - 2026-06-21
+
+### 🛠️ Bug Fixes
+
+- Add missing parser field, patch flaky test, and clean up merge
+
 ## [0.21.1] - 2026-06-21
 
 ### Build
