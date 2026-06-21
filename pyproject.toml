@@ -34,6 +34,9 @@ repository = "https://github.com/benjamin-awd/monopoly"
 ocr = [
     "ocrmypdf>=16.5.0,<17.0.0",
 ]
+gemini = [
+    "google-genai>=2.9.0",
+]
 
 [build-system]
 requires = ["pdm-backend"]
@@ -117,5 +120,8 @@ module = [
     "ocrmypdf.exceptions",
     "pdftotext",
     "pdf2john",
+    "google",
+    "google.genai",
+    "google.genai.types",
 ]
 ignore_missing_imports = true
