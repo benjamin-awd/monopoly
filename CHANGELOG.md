@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.21.3] - 2026-06-21
+
+### 🛠️ Bug Fixes
+
+- *(hsbc)* Support OpenText v24.4 producer metadata for app-downloaded statements
+- *(hsbc)* Support OpenText v24.4 producer metadata for app-downloaded statements
+- *(gemini)* Pass source filename as context to reduce OCR misreads
+
 ## [0.21.2] - 2026-06-21
 
 ### 🛠️ Bug Fixes
