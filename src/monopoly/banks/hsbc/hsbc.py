@@ -36,15 +36,23 @@ class Hsbc(BankBase):
         TextIdentifier("HSBC"),
     ]
 
-    web_and_mobile_statement_identifier: IdentifierGroup = [
+    web_and_mobile_statement_identifier_v20: IdentifierGroup = [
         MetadataIdentifier(format="PDF 1.7", producer="OpenText Output Transformation Engine - 20.4"),
+    ]
+
+    web_and_mobile_statement_identifier_v24: IdentifierGroup = [
+        MetadataIdentifier(format="PDF 1.7", producer="OpenText Output Transformation Engine - 24.4"),
     ]
 
     pdf_config = PdfConfig(
         page_bbox=(0, 0, 379, 840),
-        ocr_identifiers=[web_and_mobile_statement_identifier],
+        ocr_identifiers=[web_and_mobile_statement_identifier_v20, web_and_mobile_statement_identifier_v24],
     )
 
-    identifiers = [email_statement_identifier, web_and_mobile_statement_identifier]
+    identifiers = [
+        email_statement_identifier,
+        web_and_mobile_statement_identifier_v20,
+        web_and_mobile_statement_identifier_v24,
+    ]
 
     statement_configs = [credit]
