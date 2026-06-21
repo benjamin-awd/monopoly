@@ -84,7 +84,12 @@ class GeminiParser:
             image_bytes = pixmap.tobytes("png")
             parts.append(types.Part.from_bytes(data=image_bytes, mime_type="image/png"))
 
-        parts.append(types.Part.from_text(text=EXTRACTION_PROMPT))
+        prompt = EXTRACTION_PROMPT
+        if document.file_path:
+            filename = document.file_path if isinstance(document.file_path, str) else document.file_path.name
+            prompt += f"\n\nThe source filename is: {filename}"
+
+        parts.append(types.Part.from_text(text=prompt))
 
         logger.debug("Sending %d page(s) to Gemini for extraction", len(parts) - 1)
 
