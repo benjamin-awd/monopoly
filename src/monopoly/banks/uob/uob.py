@@ -33,7 +33,9 @@ class Uob(BankBase):
             rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
             + SharedPatterns.DESCRIPTION
             + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
-            + SharedPatterns.BALANCE
+            # a running balance is always present, so require it to avoid matching
+            # single-number lines like "BALANCE B/F" or summary-page amounts
+            + rf"(?P<balance>{SharedPatterns.COMMA_FORMAT})$"
         ),
         transaction_bound=170,
         multiline_config=MultilineConfig(multiline_descriptions=True),
@@ -43,11 +45,11 @@ class Uob(BankBase):
     identifiers = [
         [
             MetadataIdentifier(
-                format="PDF 1.5",
                 creator="Vault Rendering Engine",
                 producer="Rendering Engine",
             ),
         ],
         [TextIdentifier("card.centre@uobgroup.com")],
+        [TextIdentifier("customer.service@uobgroup.com")],
     ]
     statement_configs = [credit, debit]
