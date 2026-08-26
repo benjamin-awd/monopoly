@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.21.6](https://github.com/benjamin-awd/monopoly/compare/v0.21.5...v0.21.6) (2026-08-26)
+
+
+### Bug Fixes
+
+* **trust:** match stacked/wrapped transaction header ([5d58df2](https://github.com/benjamin-awd/monopoly/commit/5d58df2f2042a46d85f415db614d249f954547f2))
+
 ## [0.21.5] - 2026-07-08
 
 ### 🛠️ Bug Fixes
