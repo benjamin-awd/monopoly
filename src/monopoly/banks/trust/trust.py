@@ -19,7 +19,10 @@ class Trust(BankBase):
             r".*?"
             r"(?P<year>20\d{2}\b)"
         ),
-        header_pattern=re.compile(r"(Posting date.*Description.*Amount in SGD)"),
+        header_pattern=re.compile(
+            r"(Posting date.*Description.*Amount in SGD"
+            r"|Transaction\s+Posting.*Amount in\s+Amount in)"
+        ),
         transaction_pattern=re.compile(
             rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
             rf"(?:{ISO8601.DD_MMM}\s+)?"  # Optional posting date
