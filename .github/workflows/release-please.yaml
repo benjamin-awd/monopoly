@@ -67,3 +67,24 @@ jobs:
             LICENSE.md \
             dist/*monopoly*.whl \
             dist/*monopoly*.tar.gz
+
+  # Tell monopoly-cloud to open a PR bumping monopoly-core to the version we
+  # just published. Runs only after a successful publish, so the version is
+  # already on PyPI when the downstream `uv add` runs.
+  notify-cloud:
+    needs: [release-please, publish]
+    if: needs.release-please.outputs.release_created == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch bump to monopoly-cloud
+        env:
+          # PAT (or GitHub App token) with permission to create dispatches on
+          # benjamin-awd/monopoly-cloud (Contents: write). GITHUB_TOKEN cannot
+          # reach another repository.
+          GH_TOKEN: ${{ secrets.CLOUD_DISPATCH_TOKEN }}
+        run: |
+          version="${{ needs.release-please.outputs.tag_name }}"
+          version="${version#v}"
+          gh api --method POST repos/benjamin-awd/monopoly-cloud/dispatches \
+            -f event_type=monopoly-core-release \
+            -f "client_payload[version]=${version}"
