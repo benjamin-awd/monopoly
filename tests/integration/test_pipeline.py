@@ -1,3 +1,4 @@
+from datetime import date
 from pathlib import Path
 
 import pytest
@@ -24,6 +25,19 @@ def test_pipeline_with_bank():
     transactions = pipeline.extract(pages).transactions
     assert len(transactions) == 53
     assert transactions[0].description == "LAST MONTH'S BALANCE"
+
+
+def test_pipeline_extracts_payment_summary():
+    file_path = Path("src/monopoly/examples/example_statement.pdf")
+    document = PdfDocument(file_path)
+    parser = PdfParser(ExampleBank, document)
+    pipeline = Pipeline(parser)
+    statement = pipeline.extract(parser._get_pages())
+
+    summary = statement.payment_summary
+    assert summary.payment_due_date == date(2023, 8, 24)
+    assert summary.total_amount_due == 702.10
+    assert summary.minimum_payment == 50.00
 
 
 def test_pipeline_with_bad_bank():
