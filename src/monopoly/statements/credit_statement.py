@@ -1,8 +1,10 @@
 import logging
 import re
+from functools import cached_property
 
 from monopoly.constants import EntryType
 from monopoly.statements.debit_statement import DebitStatement
+from monopoly.statements.payment_summary import PaymentSummary, PaymentSummaryExtractor
 from monopoly.statements.transaction import RawTransaction, Transaction
 
 from .base import BaseStatement, SafetyCheckError
@@ -14,6 +16,11 @@ class CreditStatement(BaseStatement):
     """A dataclass representation of a credit statement."""
 
     statement_type = EntryType.CREDIT
+
+    @cached_property
+    def payment_summary(self) -> PaymentSummary:
+        """Extract the statement's payment due date, total amount due, and minimum payment."""
+        return PaymentSummaryExtractor(self.pages, self.config).extract()
 
     def post_process_transactions(self, transactions) -> list[Transaction]:
         previous_month_balances = self.get_prev_month_balances()

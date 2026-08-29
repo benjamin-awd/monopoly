@@ -10,6 +10,18 @@ from pydantic_core import ArgsKwargs
 from monopoly.constants import Columns
 
 
+def strip_non_numeric(value: str) -> str:
+    """
+    Strip everything except digits, dot, and minus from an amount string.
+
+    1'234.00 -> 1234.00
+    1,234.00 -> 1234.00
+    S$50.00  -> 50.00
+    (-10.00) -> -10.00.
+    """
+    return re.sub(r"[^\d.\-]", "", value)
+
+
 # ruff: noqa: N805
 @dataclass
 class RawTransaction:
@@ -93,7 +105,7 @@ class Transaction:
         if value is None:
             return "0"
         if isinstance(value, str):
-            return re.sub(r"[^\d\.\-]", "", value)
+            return strip_non_numeric(value)
         return str(value)
 
     # pylint: disable=bad-classmethod-argument
