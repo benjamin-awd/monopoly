@@ -1,7 +1,7 @@
 import re
 
 from monopoly.banks.base import BankBase
-from monopoly.config import MultilineConfig, PdfConfig, StatementConfig
+from monopoly.config import MultilineConfig, PaymentSummaryConfig, PdfConfig, StatementConfig
 from monopoly.constants import EntryType, SharedPatterns
 from monopoly.constants.date import ISO8601
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
@@ -21,6 +21,13 @@ class Ocbc(BankBase):
             r"(?P<transaction_date>\d+/\d+)\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
         ),
         transaction_date_format="%d/%m",
+        payment_summary_config=PaymentSummaryConfig(
+            # payment slip near the foot of page 1: "PAYMENT DUE DATE : 24 AUG 23"
+            payment_due_date=re.compile(r"PAYMENT DUE DATE\s*:\s*(?P<due_date>\d{1,2}\s+\w{3}\s+\d{2,4})"),
+            total_amount_due=re.compile(r"TOTAL AMOUNT DUE\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL),
+            # last S$ figure on the summary row: "01-08-2023  24-08-2023  S$22,800  S$22,058.11  S$50.00"
+            minimum_payment=re.compile(r"\d{2}-\d{2}-\d{4}\s+\d{2}-\d{2}-\d{4}.*S\$\s*(?P<amount>[\d,]+\.\d{2})"),
+        ),
     )
 
     debit = StatementConfig(
