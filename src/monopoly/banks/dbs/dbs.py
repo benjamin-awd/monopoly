@@ -1,7 +1,7 @@
 import re
 
 from monopoly.banks.base import BankBase
-from monopoly.config import MultilineConfig, StatementConfig
+from monopoly.config import MultilineConfig, PaymentSummaryConfig, StatementConfig
 from monopoly.constants import EntryType, SharedPatterns
 from monopoly.constants.date import ISO8601
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
@@ -20,6 +20,21 @@ class Dbs(BankBase):
         ),
         prev_balance_pattern=re.compile(
             r"(?P<description>PREVIOUS BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+        ),
+        payment_summary_config=PaymentSummaryConfig(
+            # top summary row: "15 Oct 2023   $25,000.00   $509.08   09 Nov 2023"
+            #                  (statement date, credit limit, min payment, due date)
+            payment_due_date=re.compile(
+                r"\d{1,2}\s+\w{3}\s+\d{4}\s+\$[\d,]+\.\d{2}\s+\$[\d,]+\.\d{2}\s+"
+                r"(?P<due_date>\d{1,2}\s+\w{3}\s+\d{4})"
+            ),
+            # payment coupon: "TOTAL   $ 16,969.17   $ 509.08"
+            total_amount_due=re.compile(
+                r"TOTAL\s+\$\s*(?P<amount>" + SharedPatterns.COMMA_FORMAT + r")\s+\$\s*[\d,]+\.\d{2}"
+            ),
+            minimum_payment=re.compile(
+                r"TOTAL\s+\$\s*[\d,]+\.\d{2}\s+\$\s*(?P<amount>" + SharedPatterns.COMMA_FORMAT + r")"
+            ),
         ),
     )
 

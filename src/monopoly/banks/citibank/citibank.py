@@ -1,7 +1,7 @@
 import re
 
 from monopoly.banks.base import BankBase
-from monopoly.config import DateOrder, PdfConfig, StatementConfig
+from monopoly.config import DateOrder, PaymentSummaryConfig, PdfConfig, StatementConfig
 from monopoly.constants import EntryType, SharedPatterns
 from monopoly.constants.date import ISO8601
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
@@ -22,13 +22,20 @@ class Citibank(BankBase):
             rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
         ),
         filename_fallback_pattern=re.compile(r"_([A-Za-z]{3})(\d{4})"),
+        payment_summary_config=PaymentSummaryConfig(
+            # summary block: "Payment Due Date   March 12, 2022"
+            payment_due_date=re.compile(r"Payment Due Date\s*:?\s*(?P<due_date>[A-Z][a-z]+ \d{1,2}, \d{4})"),
+            # Citibank bills the full current balance: "Current Balance   $1,060.88"
+            total_amount_due=re.compile(r"Current Balance\s+\$\s*(?P<amount>" + SharedPatterns.COMMA_FORMAT + r")"),
+            minimum_payment=re.compile(
+                r"Total Minimum Payment\s+\$\s*(?P<amount>" + SharedPatterns.COMMA_FORMAT + r")"
+            ),
+        ),
     )
 
     credit_us = StatementConfig(
         statement_type=EntryType.CREDIT,
-        statement_date_pattern=re.compile(
-            r"Billing Period:\s+\d{2}/\d{2}/\d{2}-(\d{2}/\d{2}/\d{2})"
-        ),
+        statement_date_pattern=re.compile(r"Billing Period:\s+\d{2}/\d{2}/\d{2}-(\d{2}/\d{2}/\d{2})"),
         statement_date_order=DateOrder("MDY"),
         transaction_date_order=DateOrder("MDY"),
         header_pattern=re.compile(r"(date\s+date\s+Description\s+Amount)", re.IGNORECASE),
