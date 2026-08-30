@@ -81,6 +81,20 @@ def test_payment_summary_is_partial_when_field_absent():
     assert result == PaymentSummary(total_amount_due=702.10)
 
 
+def test_payment_summary_credit_balance_is_negative():
+    # AMOUNT_EXTENDED_WITHOUT_EOL exposes the CR/parenthesis polarity that OCBC uses
+    from monopoly.constants import SharedPatterns
+
+    pattern = re.compile(r"TOTAL AMOUNT DUE\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL)
+    config = _config(PaymentSummaryConfig(total_amount_due=pattern))
+
+    cr_result = PaymentSummaryExtractor(_pages(["TOTAL AMOUNT DUE   412.16 CR"]), config).extract()
+    paren_result = PaymentSummaryExtractor(_pages(["TOTAL AMOUNT DUE   (412.16)"]), config).extract()
+
+    assert cr_result.total_amount_due == -412.16
+    assert paren_result.total_amount_due == -412.16
+
+
 def test_payment_summary_unparseable_date_is_none():
     config = _config(PaymentSummaryConfig(payment_due_date=re.compile(r"DUE:\s*(?P<due_date>.+)")))
 

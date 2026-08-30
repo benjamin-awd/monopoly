@@ -72,10 +72,28 @@ class PaymentSummaryExtractor:
 
     def _extract_amount(self, pattern) -> float | None:
         if match := self._search(pattern):
-            cleaned = strip_non_numeric(match.group("amount"))
+            amount = match.group("amount")
+            cleaned = strip_non_numeric(amount)
             if cleaned:
-                return float(cleaned)
+                value = float(cleaned)
+                return -abs(value) if self._is_credit(match, amount) else value
         return None
+
+    @staticmethod
+    def _is_credit(match: re.Match, amount: str) -> bool:
+        """
+        Return True if the amount represents a credit balance (e.g. an overpayment).
+
+        Credit balances are printed either enclosed in parentheses (``(412.16)``)
+        or with a trailing ``CR``/``-`` polarity, both of which `strip_non_numeric`
+        discards. Without this, a credit balance would be reported as a positive
+        amount owed instead of a negative one.
+        """
+        if amount.strip().startswith("("):
+            return True
+        if "polarity" in match.re.groupindex:
+            return match.group("polarity") in ("CR", "-")
+        return False
 
     def _extract_date(self, pattern) -> date | None:
         if match := self._search(pattern):
