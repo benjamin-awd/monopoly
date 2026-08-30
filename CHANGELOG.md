@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.21.7](https://github.com/benjamin-awd/monopoly/compare/v0.21.6...v0.21.7) (2026-08-30)
+
+
+### Features
+
+* **banks:** configure credit statement payment summary ([dd912cf](https://github.com/benjamin-awd/monopoly/commit/dd912cf72f23f89a9197518aff48673b6add6b72))
+* **hsbc:** configure credit statement payment summary ([3d03059](https://github.com/benjamin-awd/monopoly/commit/3d03059534fddfa83bd6075ff055ec6fbd836455))
+* **ocbc:** configure credit statement payment summary ([9e96756](https://github.com/benjamin-awd/monopoly/commit/9e96756092385859f5df4f286df8353388d1a9fe))
+* **statements:** extract credit statement payment summary ([7e47ffc](https://github.com/benjamin-awd/monopoly/commit/7e47ffc1be69f180097425614cf1129df7483c9b))
+
+
+### Bug Fixes
+
+* **statements:** report credit-balance payment totals as negative ([248106e](https://github.com/benjamin-awd/monopoly/commit/248106e8c16104eb5e47aeaecade3667e68c4a6c))
+
 ## [0.21.6](https://github.com/benjamin-awd/monopoly/compare/v0.21.5...v0.21.6) (2026-08-26)
 
 
