@@ -25,6 +25,8 @@ test_cases = [
 expected_payment_summaries = {
     "citibank": PaymentSummary(date(2022, 12, 10), 1414.07, 50.00),
     "dbs": PaymentSummary(date(2023, 11, 9), 16969.17, 509.08),
+    # HSBC prints no payment due date, so it stays None
+    "hsbc": PaymentSummary(None, 1218.20, 50.00),
     "standard_chartered": PaymentSummary(date(2023, 6, 7), 82.45, 50.00),
     "trust": PaymentSummary(date(2024, 9, 2), 681.27, 50.00),
 }
