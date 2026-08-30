@@ -1,7 +1,7 @@
 import re
 
 from monopoly.banks.base import BankBase
-from monopoly.config import MultilineConfig, PdfConfig, StatementConfig
+from monopoly.config import MultilineConfig, PaymentSummaryConfig, PdfConfig, StatementConfig
 from monopoly.constants import EntryType, SharedPatterns
 from monopoly.constants.date import ISO8601
 from monopoly.identifiers import IdentifierGroup, MetadataIdentifier, TextIdentifier
@@ -25,6 +25,22 @@ class Hsbc(BankBase):
         ),
         transaction_date_format="%d %b",
         multiline_config=MultilineConfig(multiline_descriptions=True),
+        payment_summary_config=PaymentSummaryConfig(
+            # HSBC prints no payment due date. "Total Due" and "Minimum" share one
+            # row, whose prefix differs by statement vintage: the bank's "PO Box 896"
+            # return address (older) or the "...to <date>" statement period (newer).
+            total_amount_due=re.compile(
+                r"(?:PO Box 896|to \d{1,2} \w{3} \d{4})\s+"
+                r"(?P<amount>" + SharedPatterns.COMMA_FORMAT + r")\s+" + SharedPatterns.COMMA_FORMAT
+            ),
+            minimum_payment=re.compile(
+                r"(?:PO Box 896|to \d{1,2} \w{3} \d{4})\s+"
+                + SharedPatterns.COMMA_FORMAT
+                + r"\s+(?P<amount>"
+                + SharedPatterns.COMMA_FORMAT
+                + r")"
+            ),
+        ),
     )
 
     email_statement_identifier: IdentifierGroup = [
