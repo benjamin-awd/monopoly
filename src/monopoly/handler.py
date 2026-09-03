@@ -4,7 +4,7 @@ from functools import cached_property
 from monopoly.config import StatementConfig
 from monopoly.constants import EntryType
 from monopoly.pdf import PdfParser
-from monopoly.statements import BaseStatement, CreditStatement, DebitStatement
+from monopoly.statements import BaseStatement, CreditStatement, DebitStatement, MissingHeaderError
 
 logger = logging.getLogger(__name__)
 
@@ -49,4 +49,4 @@ class StatementHandler:
                         return CreditStatement(pages, bank_name, config, header, self.file_path)
 
         msg = "Could not find header in statement"
-        raise RuntimeError(msg)
+        raise MissingHeaderError(msg)

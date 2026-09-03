@@ -8,7 +8,7 @@ from monopoly.config import DateOrder, MultilineConfig, PdfConfig, StatementConf
 from monopoly.constants import EntryType
 from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfParser
-from monopoly.statements import BaseStatement, CreditStatement, DebitStatement
+from monopoly.statements import BaseStatement, CreditStatement, DebitStatement, MissingHeaderError
 
 from .generic import DatePatternAnalyzer
 
@@ -42,7 +42,7 @@ class GenericStatementHandler(StatementHandler):
                         return CreditStatement(self.pages, self.bank.name, config, header, self.file_path)
 
         msg = "Could not find header in statement"
-        raise RuntimeError(msg)
+        raise MissingHeaderError(msg)
 
     # override get_header and ignore passed config, since
     # the header line has already been found

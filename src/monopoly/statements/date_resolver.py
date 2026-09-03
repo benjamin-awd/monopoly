@@ -9,6 +9,7 @@ from dateparser import parse
 
 from monopoly.config import StatementConfig
 from monopoly.constants.date import ISO8601
+from monopoly.exceptions import MissingStatementDateError
 from monopoly.pdf import PdfPage
 
 logger = logging.getLogger(__name__)
@@ -59,7 +60,7 @@ class DateResolver:
             return filename_date
 
         msg = "Statement date not found"
-        raise ValueError(msg)
+        raise MissingStatementDateError(msg)
 
     def _get_search_text(self, lines: list[str], i: int, line: str) -> str:
         """Get text to search, optionally combining multiple lines and removing whitespace."""

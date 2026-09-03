@@ -2,6 +2,7 @@ import csv
 import logging
 import re
 from datetime import datetime
+from functools import cached_property
 from pathlib import Path
 
 from pydantic import SecretStr
@@ -10,7 +11,7 @@ from monopoly.constants.date import DateFormats
 from monopoly.generic import GenericBank, GenericStatementHandler
 from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfParser
-from monopoly.statements import BaseStatement, Transaction
+from monopoly.statements import BaseStatement, NoTransactionsFoundError, Transaction
 from monopoly.write import generate_name
 
 logger = logging.getLogger(__name__)
@@ -28,8 +29,15 @@ class Pipeline:
         parser: PdfParser,
         passwords: list[SecretStr] | None = None,
     ):
+        self.parser = parser
         self.passwords = passwords
-        self.handler = self.create_handler(parser)
+
+    @cached_property
+    def handler(self) -> StatementHandler:
+        # Constructed lazily so tier-1 failures (which can occur during handler
+        # construction, e.g. GenericParserError) surface inside extract() rather
+        # than in __init__ — a prerequisite for the extraction cascade.
+        return self.create_handler(self.parser)
 
     @staticmethod
     def create_handler(parser: PdfParser) -> StatementHandler:
@@ -49,7 +57,7 @@ class Pipeline:
 
         if not statement.transactions:
             msg = "No transactions found - statement extraction failed"
-            raise ValueError(msg)
+            raise NoTransactionsFoundError(msg)
 
         logger.debug("%s transactions found", len(statement.transactions))
 
