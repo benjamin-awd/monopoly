@@ -15,6 +15,8 @@ jobs:
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
+      prs_created: ${{ steps.release.outputs.prs_created }}
+      pr: ${{ steps.release.outputs.pr }}
     steps:
       - name: Run release-please
         id: release
@@ -22,6 +24,39 @@ jobs:
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+
+  # release-please bumps the version in pyproject.toml but knows nothing about
+  # uv.lock, which pins monopoly-core itself. Re-lock on the release PR branch
+  # so the lockfile lands in the same commit range as the bump.
+  relock:
+    needs: release-please
+    if: needs.release-please.outputs.prs_created == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout release PR branch
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ fromJson(needs.release-please.outputs.pr).headBranchName }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Re-lock
+        run: uv lock
+
+      - name: Commit uv.lock if it changed
+        run: |
+          if git diff --quiet -- uv.lock; then
+            echo "uv.lock already in sync"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add uv.lock
+          git commit -m "chore: sync uv.lock with released version"
+          git push
 
   publish:
     needs: release-please
@@ -51,7 +86,7 @@ jobs:
       - name: Install dependencies
         run: |
           uv venv
-          uv sync --all-extras
+          uv sync --all-extras --locked
 
       - name: Build source and wheels
         run: uv build

@@ -31,7 +31,7 @@ jobs:
       - name: Install dependencies
         run: |
           uv venv
-          uv sync --all-extras
+          uv sync --all-extras --locked
 
       - name: Install git-crypt
         uses: Flydiverny/setup-git-crypt@v5
