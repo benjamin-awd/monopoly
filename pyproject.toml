@@ -115,6 +115,7 @@ ignore = [
 
 [tool.taskipy.tasks]
 format = "ruff format ."
+format-check = "ruff format --check ."
 lint = "ruff check ."
 test = "pytest ."
 mypy = "mypy src"
