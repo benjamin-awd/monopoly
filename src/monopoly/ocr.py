@@ -1,8 +1,6 @@
 import logging
 
-from pydantic import SecretStr
-from pydantic_settings import BaseSettings, SettingsConfigDict
-
+from monopoly.llm import GeminiSettings, MissingApiKeyError
 from monopoly.pdf import PdfDocument, PdfPage
 
 logger = logging.getLogger(__name__)
@@ -13,15 +11,6 @@ EXTRACTION_PROMPT = (
     "Do not add any commentary, headers, or formatting. "
     "Return only the raw text content."
 )
-
-
-class MissingApiKeyError(Exception):
-    """Raised when a required API key is not configured."""
-
-
-class GeminiSettings(BaseSettings):
-    google_api_key: SecretStr | None = None
-    model_config = SettingsConfigDict(env_file=".env", extra="allow")
 
 
 class GeminiOcr:

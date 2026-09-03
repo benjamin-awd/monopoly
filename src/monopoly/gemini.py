@@ -2,9 +2,7 @@ import json
 import logging
 from datetime import datetime
 
-from pydantic import SecretStr
-from pydantic_settings import BaseSettings, SettingsConfigDict
-
+from monopoly.llm import GeminiSettings, MissingApiKeyError
 from monopoly.pdf import PdfDocument
 from monopoly.statements.transaction import Transaction
 
@@ -38,15 +36,6 @@ Rules:
 - Ignore other non-transaction lines (headers, footers, summaries, fine print)
 - Return ONLY the JSON object, no markdown fences or commentary
 """
-
-
-class MissingApiKeyError(Exception):
-    """Raised when a required API key is not configured."""
-
-
-class GeminiSettings(BaseSettings):
-    google_api_key: SecretStr | None = None
-    model_config = SettingsConfigDict(env_file=".env", extra="allow")
 
 
 class GeminiResult:
