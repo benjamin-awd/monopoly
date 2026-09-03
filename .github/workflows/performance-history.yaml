@@ -1,0 +1,110 @@
+name: performance-history
+
+# Tracks absolute performance of `main` over time so slow drift that never trips the
+# per-PR gate (many sub-threshold regressions accumulating) becomes visible. Results are
+# appended to the gh-pages branch and rendered as a chart at:
+#   https://<owner>.github.io/<repo>/dev/bench/
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC — catches drift from dependency updates even with no commits
+  workflow_dispatch:
+
+# Serialize runs so concurrent pushes don't race each other pushing to gh-pages.
+concurrency:
+  group: performance-history
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Install pdftotext dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libpoppler-cpp-dev pkg-config ocrmypdf
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Install hyperfine
+        run: |
+          wget https://github.com/sharkdp/hyperfine/releases/download/v1.19.0/hyperfine_1.19.0_amd64.deb
+          sudo dpkg -i hyperfine_1.19.0_amd64.deb
+
+      - name: Install git-crypt
+        uses: Flydiverny/setup-git-crypt@v5
+
+      - name: Unlock files
+        continue-on-error: true
+        run: echo "${{ secrets.GIT_CRYPT_KEY }}" | base64 --decode | git-crypt unlock -
+
+      - name: Install dependencies
+        run: uv sync --all-extras
+
+      - name: Run performance tests
+        run: |
+          BIN="$(pwd)/.venv/bin/monopoly"
+          SINGLE="src/monopoly/examples/example_statement.pdf"
+
+          MULTI="tests/integration/banks/citibank/credit/input.pdf \
+          tests/integration/banks/dbs/credit/input.pdf \
+          tests/integration/banks/dbs/debit/input.pdf \
+          tests/integration/banks/hsbc/credit/input.pdf \
+          tests/integration/banks/maybank/credit/input.pdf \
+          tests/integration/banks/maybank/debit/input.pdf \
+          tests/integration/banks/ocbc/credit/input.pdf \
+          tests/integration/banks/ocbc/debit/input.pdf \
+          tests/integration/banks/standard_chartered/credit/input.pdf \
+          tests/integration/banks/trust/credit/input.pdf"
+
+          hyperfine --warmup 3 --runs 10 "$BIN $SINGLE" --export-json single-file-perf.json
+          hyperfine --warmup 3 --runs 5  "$BIN $MULTI"  --export-json multiple-file-perf.json
+
+      - name: Convert to benchmark-action format
+        run: |
+          jq -n \
+            --slurpfile s single-file-perf.json \
+            --slurpfile m multiple-file-perf.json '
+            [
+              { name: "Single file",
+                unit: "s",
+                value: ($s[0].results[0].mean),
+                range: ("± " + ($s[0].results[0].stddev | tostring)) },
+              { name: "Integration (10 banks)",
+                unit: "s",
+                value: ($m[0].results[0].mean),
+                range: ("± " + ($m[0].results[0].stddev | tostring)) }
+            ]' > benchmark-output.json
+          cat benchmark-output.json
+
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: monopoly CLI performance
+          tool: customSmallerIsBetter
+          output-file-path: benchmark-output.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Append to gh-pages and keep the historical chart up to date.
+          auto-push: true
+          gh-pages-branch: gh-pages
+          benchmark-data-dir-path: dev/bench
+          # Flag (comment on the commit) when a run is >20% slower than the previous best,
+          # but don't fail the main build over inherently noisy wall-clock numbers.
+          alert-threshold: "120%"
+          comment-on-alert: true
+          fail-on-alert: false
