@@ -10,6 +10,7 @@ from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pymupdf import TEXTFLAGS_TEXT, Document, Page
 
+from monopoly.exceptions import ExtractionError
 from monopoly.identifiers import MetadataIdentifier
 
 if TYPE_CHECKING:
@@ -20,7 +21,7 @@ logger = logging.getLogger(__name__)
 MIN_OCR_TEXT_LENGTH = 10
 
 
-class MissingOCRError(Exception):
+class MissingOCRError(ExtractionError):
     """Error that is raised when PDF does not contain any selectable text."""
 
 

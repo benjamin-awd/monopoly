@@ -4,6 +4,7 @@ from collections import defaultdict
 from functools import cached_property
 
 from monopoly.constants import EntryType, SharedPatterns
+from monopoly.exceptions import ExtractionError
 from monopoly.pdf import MetadataIdentifier, PdfPage
 
 from .patterns import DateMatch, DatePattern, PatternMatcher
@@ -17,7 +18,7 @@ EXPECTED_DATE_SPAN_COUNT = 2
 MULTILINE_DISTANCE_THRESHOLD = 2  # Avg line gap above this is considered multiline
 
 
-class GenericParserError(Exception):
+class GenericParserError(ExtractionError):
     """Exception raised when the generic parser fails to find exceptions."""
 
 
