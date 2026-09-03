@@ -63,7 +63,7 @@ dev = [
     "types-tabulate>=0.9.0.20241207",
     "pytest-xdist>=3.7.0",
     "flake8>=7.2.0",
-    "ruff>=0.11.12",
+    "ruff>=0.16.5",
     "git-cliff>=2.8.0",
 ]
 
@@ -83,6 +83,7 @@ ignore = [
 
     # specific rules
     "COM812",
+    "CPY001",  # no per-file copyright headers; LICENSE.md covers the project
     "D100",
     "D101",
     "D102",
@@ -100,6 +101,17 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 "**/banks/**.py" = ["RUF012"]
 "**/examples/example_bank.py" = ["RUF012"]
+
+# PLC0415 (import-outside-top-level): these modules defer imports on purpose -
+# to keep the gemini and ocr extras optional, to load dateparser only on the
+# strptime fallback, and to keep the CLI's startup fast. Scoped per-file rather
+# than ignored globally so stray function-level imports elsewhere still fail.
+"src/monopoly/cli/cli.py" = ["PLC0415"]
+"src/monopoly/gemini.py" = ["PLC0415"]
+"src/monopoly/generic/patterns.py" = ["PLC0415"]
+"src/monopoly/ocr.py" = ["PLC0415"]
+"src/monopoly/pdf.py" = ["PLC0415"]
+"src/monopoly/pipeline.py" = ["PLC0415"]
 
 [tool.taskipy.tasks]
 format = "ruff format ."
