@@ -136,6 +136,7 @@ from monopoly.banks.base import BankBase
 from monopoly.config import StatementConfig
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
+
 class NewBank(BankBase):
     name = "New Bank"
 
