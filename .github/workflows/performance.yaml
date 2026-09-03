@@ -5,15 +5,11 @@ on:
 jobs:
   perf-test:
     runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        target: [current, main]
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
-          ref: ${{ matrix.target == 'main' && 'main' || github.sha }}
 
       - name: Install pdftotext dependencies
         run: |
@@ -40,102 +36,136 @@ jobs:
         continue-on-error: true
         run: echo "${{ secrets.GIT_CRYPT_KEY }}" | base64 --decode | git-crypt unlock -
 
-      - name: Install dependencies
+      - name: Build current and main environments
         run: |
-          uv venv
-          source .venv/bin/activate
-          uv sync --all-extras
+          # Current PR head is the primary checkout.
+          UV_PROJECT_ENVIRONMENT="$GITHUB_WORKSPACE/.venv-current" uv sync --all-extras
+
+          # main lives in a linked worktree that shares .git (and the unlocked git-crypt state).
+          git worktree add "$RUNNER_TEMP/main-checkout" origin/main
+          cd "$RUNNER_TEMP/main-checkout"
+          UV_PROJECT_ENVIRONMENT="$RUNNER_TEMP/main-checkout/.venv-main" uv sync --all-extras
 
       - name: Run performance tests
         run: |
-          source .venv/bin/activate
+          CURRENT="$GITHUB_WORKSPACE/.venv-current/bin/monopoly"
+          MAIN="$RUNNER_TEMP/main-checkout/.venv-main/bin/monopoly"
 
-          hyperfine 'monopoly src/monopoly/examples/example_statement.pdf' --warmup 3 --runs 10 \
-            --export-json ${{ matrix.target }}-single-file-perf.json
+          # Both binaries process the SAME input files (from the current checkout) so only
+          # the code differs. Running them in one hyperfine invocation on one runner means
+          # results are interleaved on identical hardware — no cross-machine variance.
+          SINGLE="$GITHUB_WORKSPACE/src/monopoly/examples/example_statement.pdf"
+
+          MULTI="$GITHUB_WORKSPACE/tests/integration/banks/citibank/credit/input.pdf \
+          $GITHUB_WORKSPACE/tests/integration/banks/dbs/credit/input.pdf \
+          $GITHUB_WORKSPACE/tests/integration/banks/dbs/debit/input.pdf \
+          $GITHUB_WORKSPACE/tests/integration/banks/hsbc/credit/input.pdf \
+          $GITHUB_WORKSPACE/tests/integration/banks/maybank/credit/input.pdf \
+          $GITHUB_WORKSPACE/tests/integration/banks/maybank/debit/input.pdf \
+          $GITHUB_WORKSPACE/tests/integration/banks/ocbc/credit/input.pdf \
+          $GITHUB_WORKSPACE/tests/integration/banks/ocbc/debit/input.pdf \
+          $GITHUB_WORKSPACE/tests/integration/banks/standard_chartered/credit/input.pdf \
+          $GITHUB_WORKSPACE/tests/integration/banks/trust/credit/input.pdf"
+
+          hyperfine --warmup 3 --runs 10 \
+            --command-name current "$CURRENT $SINGLE" \
+            --command-name main "$MAIN $SINGLE" \
+            --export-json single-file-perf.json
 
           hyperfine --warmup 3 --runs 5 \
-          "monopoly \
-          tests/integration/banks/citibank/credit/input.pdf \
-          tests/integration/banks/dbs/credit/input.pdf \
-          tests/integration/banks/dbs/debit/input.pdf \
-          tests/integration/banks/hsbc/credit/input.pdf \
-          tests/integration/banks/maybank/credit/input.pdf \
-          tests/integration/banks/maybank/debit/input.pdf \
-          tests/integration/banks/ocbc/credit/input.pdf \
-          tests/integration/banks/ocbc/debit/input.pdf \
-          tests/integration/banks/standard_chartered/credit/input.pdf \
-          tests/integration/banks/trust/credit/input.pdf" \
-            --export-json ${{ matrix.target }}-multiple-file-perf.json
+            --command-name current "$CURRENT $MULTI" \
+            --command-name main "$MAIN $MULTI" \
+            --export-json multiple-file-perf.json
 
       - name: Upload performance results
         uses: actions/upload-artifact@v7
         with:
-          name: performance-results-${{ matrix.target }}
+          name: performance-results
           path: |
-            ${{ matrix.target }}-single-file-perf.json
-            ${{ matrix.target }}-multiple-file-perf.json
-
-  comparison:
-    needs: perf-test
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Download performance results
-        uses: actions/download-artifact@v8
-        with:
-          pattern: performance-results-*
-          merge-multiple: true
+            single-file-perf.json
+            multiple-file-perf.json
 
       - name: Performance comparison and regression check
         run: |
-          # Extract performance metrics
-          CURRENT_SINGLE=$(printf "%.3f" "$(jq -r '.results[0].mean' current-single-file-perf.json)")
-          MAIN_SINGLE=$(printf "%.3f" "$(jq -r '.results[0].mean' main-single-file-perf.json)")
-          CURRENT_INTEGRATION=$(printf "%.3f" "$(jq -r '.results[0].mean' current-multiple-file-perf.json)")
-          MAIN_INTEGRATION=$(printf "%.3f" "$(jq -r '.results[0].mean' main-multiple-file-perf.json)")
+          set -euo pipefail
 
-          # Calculate percentage change
+          # results[0] is "current", results[1] is "main" (command order above).
+          stat () { jq -r ".results[$2].$3" "$1"; }
+
+          CURRENT_SINGLE=$(stat single-file-perf.json 0 mean)
+          MAIN_SINGLE=$(stat single-file-perf.json 1 mean)
+          CURRENT_SINGLE_SD=$(stat single-file-perf.json 0 stddev)
+          MAIN_SINGLE_SD=$(stat single-file-perf.json 1 stddev)
+
+          CURRENT_INTEGRATION=$(stat multiple-file-perf.json 0 mean)
+          MAIN_INTEGRATION=$(stat multiple-file-perf.json 1 mean)
+          CURRENT_INTEGRATION_SD=$(stat multiple-file-perf.json 0 stddev)
+          MAIN_INTEGRATION_SD=$(stat multiple-file-perf.json 1 stddev)
+
           SINGLE_CHANGE=$(echo "scale=2; (($CURRENT_SINGLE - $MAIN_SINGLE) / $MAIN_SINGLE) * 100" | bc -l)
           INTEGRATION_CHANGE=$(echo "scale=2; (($CURRENT_INTEGRATION - $MAIN_INTEGRATION) / $MAIN_INTEGRATION) * 100" | bc -l)
 
+          # Combined run-to-run noise of the two measurements (independent stddevs add in quadrature).
+          SINGLE_NOISE=$(echo "scale=6; sqrt(($CURRENT_SINGLE_SD)^2 + ($MAIN_SINGLE_SD)^2)" | bc -l)
+          INTEGRATION_NOISE=$(echo "scale=6; sqrt(($CURRENT_INTEGRATION_SD)^2 + ($MAIN_INTEGRATION_SD)^2)" | bc -l)
+          SINGLE_DIFF=$(echo "$CURRENT_SINGLE - $MAIN_SINGLE" | bc -l)
+          INTEGRATION_DIFF=$(echo "$CURRENT_INTEGRATION - $MAIN_INTEGRATION" | bc -l)
+
           echo "Performance Comparison Results:"
           echo "================================"
-          echo "Single file processing:"
-          echo "  Main branch: ${MAIN_SINGLE}s"
-          echo "  Current branch: ${CURRENT_SINGLE}s"
-          echo "  Change: ${SINGLE_CHANGE}%"
-          echo ""
-          echo "Integration tests:"
-          echo "  Main branch: ${MAIN_INTEGRATION}s"
-          echo "  Current branch: ${CURRENT_INTEGRATION}s"
-          echo "  Change: ${INTEGRATION_CHANGE}%"
+          printf "Single file:      main=%.3fs (±%.3f)  current=%.3fs (±%.3f)  change=%s%%\n" \
+            "$MAIN_SINGLE" "$MAIN_SINGLE_SD" "$CURRENT_SINGLE" "$CURRENT_SINGLE_SD" "$SINGLE_CHANGE"
+          printf "Integration:      main=%.3fs (±%.3f)  current=%.3fs (±%.3f)  change=%s%%\n" \
+            "$MAIN_INTEGRATION" "$MAIN_INTEGRATION_SD" "$CURRENT_INTEGRATION" "$CURRENT_INTEGRATION_SD" "$INTEGRATION_CHANGE"
 
-          # Set environment variables for summary
-          echo "CURRENT_SINGLE=$CURRENT_SINGLE" >> $GITHUB_ENV
-          echo "MAIN_SINGLE=$MAIN_SINGLE" >> $GITHUB_ENV
-          echo "SINGLE_CHANGE=$SINGLE_CHANGE" >> $GITHUB_ENV
-          echo "CURRENT_INTEGRATION=$CURRENT_INTEGRATION" >> $GITHUB_ENV
-          echo "MAIN_INTEGRATION=$MAIN_INTEGRATION" >> $GITHUB_ENV
-          echo "INTEGRATION_CHANGE=$INTEGRATION_CHANGE" >> $GITHUB_ENV
+          # Expose rounded values for the summary step.
+          {
+            printf "CURRENT_SINGLE=%.3f\n" "$CURRENT_SINGLE"
+            printf "MAIN_SINGLE=%.3f\n" "$MAIN_SINGLE"
+            printf "CURRENT_SINGLE_SD=%.3f\n" "$CURRENT_SINGLE_SD"
+            printf "MAIN_SINGLE_SD=%.3f\n" "$MAIN_SINGLE_SD"
+            echo "SINGLE_CHANGE=$SINGLE_CHANGE"
+            printf "CURRENT_INTEGRATION=%.3f\n" "$CURRENT_INTEGRATION"
+            printf "MAIN_INTEGRATION=%.3f\n" "$MAIN_INTEGRATION"
+            printf "CURRENT_INTEGRATION_SD=%.3f\n" "$CURRENT_INTEGRATION_SD"
+            printf "MAIN_INTEGRATION_SD=%.3f\n" "$MAIN_INTEGRATION_SD"
+            echo "INTEGRATION_CHANGE=$INTEGRATION_CHANGE"
+          } >> "$GITHUB_ENV"
 
-          # Regression check - fail if performance degrades by more than 20%
+          # Fail only when the slowdown is BOTH large (> threshold %) AND larger than the
+          # measurement noise (gap > 2x combined stddev). This stops overlapping distributions
+          # from tripping the gate on pure runner jitter.
           REGRESSION_THRESHOLD=20
+          regressed=0
+
           if (( $(echo "$SINGLE_CHANGE > $REGRESSION_THRESHOLD" | bc -l) )); then
-            echo "❌ Performance regression detected in single file processing: ${SINGLE_CHANGE}% slower than main"
-            exit 1
+            if (( $(echo "$SINGLE_DIFF > 2 * $SINGLE_NOISE" | bc -l) )); then
+              echo "❌ Single file regression: ${SINGLE_CHANGE}% slower than main (gap ${SINGLE_DIFF}s > 2x noise ${SINGLE_NOISE}s)"
+              regressed=1
+            else
+              echo "⚠️  Single file ${SINGLE_CHANGE}% slower, but within measurement noise (gap ${SINGLE_DIFF}s <= 2x noise ${SINGLE_NOISE}s) — not failing"
+            fi
           fi
 
           if (( $(echo "$INTEGRATION_CHANGE > $REGRESSION_THRESHOLD" | bc -l) )); then
-            echo "❌ Performance regression detected in integration tests: ${INTEGRATION_CHANGE}% slower than main"
-            exit 1
+            if (( $(echo "$INTEGRATION_DIFF > 2 * $INTEGRATION_NOISE" | bc -l) )); then
+              echo "❌ Integration regression: ${INTEGRATION_CHANGE}% slower than main (gap ${INTEGRATION_DIFF}s > 2x noise ${INTEGRATION_NOISE}s)"
+              regressed=1
+            else
+              echo "⚠️  Integration ${INTEGRATION_CHANGE}% slower, but within measurement noise (gap ${INTEGRATION_DIFF}s <= 2x noise ${INTEGRATION_NOISE}s) — not failing"
+            fi
           fi
 
-          # Absolute threshold check
+          # Absolute ceiling — independent of the baseline.
           if (( $(echo "$CURRENT_SINGLE > 10.0" | bc -l) )); then
-            echo "❌ Performance threshold exceeded: Single file processing took ${CURRENT_SINGLE}s (threshold: 10s)"
-            exit 1
+            echo "❌ Absolute threshold exceeded: single file took ${CURRENT_SINGLE}s (limit: 10s)"
+            regressed=1
           fi
 
-          echo "✅ No performance regressions detected"
+          if [ "$regressed" -ne 0 ]; then
+            exit 1
+          fi
+          echo "✅ No significant performance regressions detected"
 
       - name: Write performance results to summary
         if: always()
@@ -145,23 +175,23 @@ jobs:
           echo "### Single File Processing" >> $GITHUB_STEP_SUMMARY
           echo "| Branch | Time | Change |" >> $GITHUB_STEP_SUMMARY
           echo "|--------|------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Main | ${MAIN_SINGLE}s | baseline |" >> $GITHUB_STEP_SUMMARY
+          echo "| Main | ${MAIN_SINGLE}s ± ${MAIN_SINGLE_SD} | baseline |" >> $GITHUB_STEP_SUMMARY
           if (( $(echo "$SINGLE_CHANGE >= 0" | bc -l) )); then
-            echo "| Current | ${CURRENT_SINGLE}s | 🔴 +${SINGLE_CHANGE}% |" >> $GITHUB_STEP_SUMMARY
+            echo "| Current | ${CURRENT_SINGLE}s ± ${CURRENT_SINGLE_SD} | 🔴 +${SINGLE_CHANGE}% |" >> $GITHUB_STEP_SUMMARY
           else
-            echo "| Current | ${CURRENT_SINGLE}s | 🟢 ${SINGLE_CHANGE}% |" >> $GITHUB_STEP_SUMMARY
+            echo "| Current | ${CURRENT_SINGLE}s ± ${CURRENT_SINGLE_SD} | 🟢 ${SINGLE_CHANGE}% |" >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Integration Tests" >> $GITHUB_STEP_SUMMARY
           echo "| Branch | Time | Change |" >> $GITHUB_STEP_SUMMARY
           echo "|--------|------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Main | ${MAIN_INTEGRATION}s | baseline |" >> $GITHUB_STEP_SUMMARY
+          echo "| Main | ${MAIN_INTEGRATION}s ± ${MAIN_INTEGRATION_SD} | baseline |" >> $GITHUB_STEP_SUMMARY
           if (( $(echo "$INTEGRATION_CHANGE >= 0" | bc -l) )); then
-            echo "| Current | ${CURRENT_INTEGRATION}s | 🔴 +${INTEGRATION_CHANGE}% |" >> $GITHUB_STEP_SUMMARY
+            echo "| Current | ${CURRENT_INTEGRATION}s ± ${CURRENT_INTEGRATION_SD} | 🔴 +${INTEGRATION_CHANGE}% |" >> $GITHUB_STEP_SUMMARY
           else
-            echo "| Current | ${CURRENT_INTEGRATION}s | 🟢 ${INTEGRATION_CHANGE}% |" >> $GITHUB_STEP_SUMMARY
+            echo "| Current | ${CURRENT_INTEGRATION}s ± ${CURRENT_INTEGRATION_SD} | 🟢 ${INTEGRATION_CHANGE}% |" >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Thresholds:**" >> $GITHUB_STEP_SUMMARY
           echo "- Absolute: 10s for single file processing" >> $GITHUB_STEP_SUMMARY
-          echo "- Regression: 20% performance degradation" >> $GITHUB_STEP_SUMMARY
+          echo "- Regression: >20% slower **and** gap exceeds 2× combined measurement noise" >> $GITHUB_STEP_SUMMARY
