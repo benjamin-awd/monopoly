@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 
 import pytest
@@ -9,7 +9,7 @@ from monopoly.banks import Citibank, Dbs, Hsbc, Maybank, Ocbc, StandardChartered
 from monopoly.banks.base import BankBase
 from monopoly.pdf import PdfDocument, PdfParser
 from monopoly.pipeline import Pipeline
-from monopoly.statements import CreditStatement
+from monopoly.statements import CreditStatement, PaymentSummary
 
 test_cases = [
     (Citibank, -1414.07, datetime(2022, 11, 15)),
@@ -20,6 +20,16 @@ test_cases = [
     (StandardChartered, -82.45, datetime(2023, 5, 16)),
     (Trust, -681.27, datetime(2024, 8, 18)),
 ]
+
+# expected payment summary per bank that configures one, keyed by bank name
+expected_payment_summaries = {
+    "citibank": PaymentSummary(date(2022, 12, 10), 1414.07, 50.00),
+    "dbs": PaymentSummary(date(2023, 11, 9), 16969.17, 509.08),
+    # HSBC prints no payment due date, so it stays None
+    "hsbc": PaymentSummary(None, 1218.20, 50.00),
+    "standard_chartered": PaymentSummary(date(2023, 6, 7), 82.45, 50.00),
+    "trust": PaymentSummary(date(2024, 9, 2), 681.27, 50.00),
+}
 
 
 @skip_if_encrypted
@@ -52,3 +62,7 @@ def test_bank_credit_statements(
     transformed_transactions = pipeline.transform(statement)
     transformed_transactions_as_dict = get_transactions_as_dict(transformed_transactions)
     assert expected_transformed_transactions == transformed_transactions_as_dict
+
+    # check the extracted payment summary, for banks that configure one
+    if expected_summary := expected_payment_summaries.get(bank.name):
+        assert statement.payment_summary == expected_summary

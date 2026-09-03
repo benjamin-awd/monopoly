@@ -1,7 +1,7 @@
 import re
 
 from monopoly.banks.base import BankBase
-from monopoly.config import MultilineConfig, StatementConfig
+from monopoly.config import MultilineConfig, PaymentSummaryConfig, StatementConfig
 from monopoly.constants import EntryType, SharedPatterns
 from monopoly.constants.date import ISO8601
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
@@ -23,6 +23,12 @@ class Uob(BankBase):
         ),
         multiline_config=MultilineConfig(multiline_descriptions=True),
         transaction_date_format="%d %b",
+        payment_summary_config=PaymentSummaryConfig(
+            # "Payment Summary" block on page 1
+            payment_due_date=re.compile(r"Payment Due Date\s+(?P<due_date>\d{1,2}\s+\w{3}\s+\d{4})"),
+            total_amount_due=re.compile(r"Total Amount Due\s+SGD\s*(?P<amount>" + SharedPatterns.COMMA_FORMAT + r")"),
+            minimum_payment=re.compile(r"Minimum Payment Due\s+SGD\s*(?P<amount>" + SharedPatterns.COMMA_FORMAT + r")"),
+        ),
     )
 
     debit = StatementConfig(

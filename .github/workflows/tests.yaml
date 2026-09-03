@@ -21,7 +21,7 @@ jobs:
           sudo apt-get install -y build-essential libpoppler-cpp-dev pkg-config ocrmypdf
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -31,7 +31,7 @@ jobs:
       - name: Install dependencies
         run: |
           uv venv
-          uv sync --all-extras
+          uv sync --all-extras --locked
 
       - name: Install git-crypt
         uses: Flydiverny/setup-git-crypt@v5

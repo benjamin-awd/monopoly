@@ -1,7 +1,7 @@
 import re
 
 from monopoly.banks.base import BankBase
-from monopoly.config import StatementConfig
+from monopoly.config import PaymentSummaryConfig, StatementConfig
 from monopoly.constants import EntryType, SharedPatterns
 from monopoly.identifiers import TextIdentifier
 
@@ -22,6 +22,11 @@ class ExampleBank(BankBase):
             r"(?P<transaction_date>\d+/\d+)\s*" + SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT_EXTENDED
         ),
         transaction_date_format="%d/%m",
+        payment_summary_config=PaymentSummaryConfig(
+            payment_due_date=re.compile(r"PAYMENT DUE DATE\s*:\s*(?P<due_date>\d{1,2}\s+\w{3}\s+\d{2,4})"),
+            total_amount_due=re.compile(r"TOTAL AMOUNT DUE\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL),
+            minimum_payment=re.compile(r"\d{2}-\d{2}-\d{4}\s+\d{2}-\d{2}-\d{4}.*S\$\s*(?P<amount>[\d,]+\.\d{2})"),
+        ),
     )
 
     identifiers = [

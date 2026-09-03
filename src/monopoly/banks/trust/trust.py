@@ -1,7 +1,7 @@
 import re
 
 from monopoly.banks.base import BankBase
-from monopoly.config import MultilineConfig, StatementConfig
+from monopoly.config import MultilineConfig, PaymentSummaryConfig, StatementConfig
 from monopoly.constants import EntryType, SharedPatterns
 from monopoly.constants.date import ISO8601
 from monopoly.identifiers import TextIdentifier
@@ -19,7 +19,10 @@ class Trust(BankBase):
             r".*?"
             r"(?P<year>20\d{2}\b)"
         ),
-        header_pattern=re.compile(r"(Posting date.*Description.*Amount in SGD)"),
+        header_pattern=re.compile(
+            r"(Posting date.*Description.*Amount in SGD"
+            r"|Transaction\s+Posting.*Amount in\s+Amount in)"
+        ),
         transaction_pattern=re.compile(
             rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
             rf"(?:{ISO8601.DD_MMM}\s+)?"  # Optional posting date
@@ -35,6 +38,12 @@ class Trust(BankBase):
         ),
         safety_check=True,
         transaction_date_format="%d %b",
+        payment_summary_config=PaymentSummaryConfig(
+            # summary block: "Statement balance S$681.27 / Minimum amount due S$50.00 / Payment due date 2 Sep 2024"
+            payment_due_date=re.compile(r"Payment due date\s+(?P<due_date>\d{1,2}\s+\w{3}\s+\d{4})"),
+            total_amount_due=re.compile(r"Statement balance\s+S\$\s*(?P<amount>" + SharedPatterns.COMMA_FORMAT + r")"),
+            minimum_payment=re.compile(r"Minimum amount due\s+S\$\s*(?P<amount>" + SharedPatterns.COMMA_FORMAT + r")"),
+        ),
     )
 
     identifiers = [[TextIdentifier("Trust Bank Singapore Limited")]]

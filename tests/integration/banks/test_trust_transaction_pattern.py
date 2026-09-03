@@ -153,3 +153,25 @@ def test_trust_transaction_with_decimal_fcy(statement: BaseStatement):
         )
     ]
     assert transactions == expected
+
+
+def test_trust_header_pattern_single_line_layout():
+    """The original (single date column) header renders on one line.
+
+    Example: Posting date   Description   Amount in FCY   Amount in SGD
+    """
+    header = "Posting date   Description   Amount in FCY   Amount in SGD"
+    assert Trust.credit.header_pattern.search(header)
+
+
+def test_trust_header_pattern_stacked_layout():
+    """Newer statements add a Transaction date column, wrapping the header
+    across multiple lines. The pattern must still match the top line.
+
+    Example layout:
+        Transaction   Posting                     Amount in     Amount in
+                                Description
+        date          date                              FCY          SGD
+    """
+    header = "Transaction   Posting                     Amount in     Amount in"
+    assert Trust.credit.header_pattern.search(header)

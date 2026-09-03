@@ -1,3 +1,4 @@
+import csv
 import traceback
 from collections.abc import Collection, Iterable
 from concurrent.futures import ProcessPoolExecutor
@@ -68,8 +69,6 @@ def _pprint_gemini_transactions(transactions: list, file: Path) -> None:
 
 
 def _write_gemini_csv(result, output_directory: Path, file: Path, *, preserve_filename: bool) -> Path:
-    import csv
-
     if preserve_filename:
         filename = f"{file.stem}.csv"
     else:

@@ -33,6 +33,27 @@ class MultilineConfig:
     description_margin: int = 3
 
 
+@dataclass
+class PaymentSummaryConfig:
+    r"""
+    Regex patterns for extracting a credit statement's payment summary.
+
+    The payment summary is the block of figures on a credit card statement that
+    states what the cardholder must pay, and by when (as opposed to the
+    individual transactions). Each pattern is optional; a bank only needs to
+    configure the fields it can reliably locate.
+
+    - `payment_due_date` should expose a named `due_date` group, e.g.
+        r"PAYMENT DUE DATE\s*:\s*(?P<due_date>\d{2} \w{3} \d{2})"
+    - `total_amount_due` and `minimum_payment` should each expose a named
+    `amount` group, e.g. r"TOTAL AMOUNT DUE\s+(?P<amount>[\d,]+\.\d{2})".
+    """
+
+    payment_due_date: Pattern[str] | RegexEnum | None = None
+    total_amount_due: Pattern[str] | RegexEnum | None = None
+    minimum_payment: Pattern[str] | RegexEnum | None = None
+
+
 # pylint: disable=too-many-instance-attributes
 @dataclass(kw_only=True)
 class StatementConfig:
@@ -72,6 +93,10 @@ class StatementConfig:
     date from the filename when it cannot be found in the PDF content. The pattern should
     have two capture groups: (1) month abbreviation and (2) year (e.g., r"_([A-Za-z]{3})(\d{4})")
     to match filenames like "eStatement_Nov2025_*.pdf". Disabled by default (None).
+    - `payment_summary_config` is an optional `PaymentSummaryConfig` holding the regex
+    patterns used to extract the credit statement's payment summary (payment due date,
+    total amount due, minimum payment). See `CreditStatement.payment_summary`. Disabled by
+    default (None).
     """
 
     statement_type: EntryType
@@ -87,6 +112,7 @@ class StatementConfig:
     safety_check: bool = True
     transaction_auto_polarity: bool = True
     filename_fallback_pattern: Pattern[str] | None = None
+    payment_summary_config: PaymentSummaryConfig | None = None
 
 
 @dataclass

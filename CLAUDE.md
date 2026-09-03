@@ -2,6 +2,33 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Working in this repo
+
+Scaffolding lives in `.claude/` (local only, gitignored). Prefer these over
+improvising a workflow:
+
+| Skill | Use for |
+|---|---|
+| `/plan` | Research a change and write a durable plan to `.claude/plans/` |
+| `/execute` | Work a plan file, one verified step at a time |
+| `/verify` | Run the full gate and report what passed, failed, or **skipped** |
+| `/add-bank` | Add a bank or statement type from a sample PDF |
+| `/debug-statement` | Diagnose a single PDF that fails to parse |
+| `/commit` | Conventional Commits, as release-please and git-cliff expect |
+
+`dev-guide` (auto-loaded) is the reference for test/lint/type commands.
+The `statement-debugger` subagent investigates a failing PDF without pulling
+page dumps into the main context.
+
+Two repo-specific rules that override normal instincts:
+
+- **Real statements are PII.** `*.pdf` and `*.csv` are gitignored, and a
+  PreToolUse hook blocks force-adding them. Never work around it. `.env` and
+  `*.key` are denied to the Read tool by design.
+- **A green test run can be a lie.** Bank integration tests are guarded by
+  `skip_if_encrypted` and skip silently when the git-crypt fixtures are locked.
+  Always report skip counts, never just passes.
+
 ## Project Overview
 
 Monopoly is a Python library & CLI that converts bank statement PDFs to CSV. It parses bank statements using predefined configuration classes per bank, handles locked PDFs, supports OCR for image-based statements, and includes safety checks to validate transaction totals.
@@ -109,6 +136,7 @@ from monopoly.banks.base import BankBase
 from monopoly.config import StatementConfig
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
+
 class NewBank(BankBase):
     name = "New Bank"
 
@@ -174,5 +202,7 @@ The CLI (`src/monopoly/cli/cli.py`) supports:
 - Cross-year detection handles statements from Jan/Feb with Dec transactions
 
 ### Adding Statement Metadata
-- Metadata for supported banks is stored in `src/monopoly/banks/<bank_name>/<bank_name>.py`
-- Update the metadata comment header when adding new statement examples
+- Metadata identifiers for supported banks live in `src/monopoly/banks/<bank_name>/<bank_name>.py`
+- Producer/creator strings vary by statement vintage. When a new example does not
+  match, add another identifier group rather than loosening an existing one, and
+  comment what vintage it covers (see `hsbc.py` for the pattern)
