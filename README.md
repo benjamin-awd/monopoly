@@ -82,6 +82,16 @@ To keep the output filename the same as the input (with a `.csv` extension), pas
 monopoly path/to/file.pdf --output ./out --preserve-filename
 ```
 
+By default Monopoly writes a 4-column CSV. Pass `--format json` for a richer,
+versioned schema (`schema_version`, statement metadata, payment summary, and a
+stable per-transaction `id`):
+```sh
+monopoly path/to/file.pdf --output ./out --format json
+```
+The JSON schema also carries `currency` (the statement's settlement currency),
+`posting_date`, and nullable `account` slots. Per-transaction FX/original-currency
+and account last-4 extraction are a planned follow-up (currently `null`).
+
 If you need to run monopoly on a password protected file, ensure that passwords are set in the .env file:
 ```sh
 cp .env.template .env

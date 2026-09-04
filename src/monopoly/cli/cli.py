@@ -124,6 +124,7 @@ def _process_with_pipeline(file: Path, config: RunConfig) -> Result | None:
             statement,
             config.output_directory,
             preserve_filename=config.preserve_filename,
+            format_type=config.output_format,
         )
         return Result(file.name, output_file.name)
 
@@ -218,6 +219,14 @@ def get_statement_paths(files: Iterable[Path]) -> set[Path]:
     "--preserve-filename",
     is_flag=True,
     help="Keep the input filename (with .csv extension) instead of generating a new one.",
+)
+@click.option(
+    "-f",
+    "--format",
+    "output_format",
+    type=click.Choice(["csv", "json"], case_sensitive=False),
+    default="csv",
+    help="Output format for parsed statements. Use 'csv' (default) or 'json' for the richer schema.",
 )
 @click.option(
     "-p",

@@ -11,6 +11,7 @@ class StandardChartered(BankBase):
     name = "standard_chartered"
 
     credit = StatementConfig(
+        currency="SGD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(rf": {ISO8601.DD_MMM_YYYY}$"),
         header_pattern=re.compile(r"(Transaction.*Posting.*Amount)"),

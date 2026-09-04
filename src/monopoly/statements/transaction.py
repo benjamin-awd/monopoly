@@ -1,6 +1,8 @@
 import json
 import re
 from dataclasses import dataclass, field
+from functools import cached_property
+from hashlib import sha256
 from typing import Any
 
 from pydantic import Field, field_validator, model_validator
@@ -36,6 +38,7 @@ class RawTransaction:
     description: str
     amount: str
     transaction_date: str | None = None
+    posting_date: str | None = None
     polarity: str | None = None
     balance: str | None = None
 
@@ -49,6 +52,7 @@ class RawTransaction:
             "description": self.description,
             "amount": self.amount,
             "transaction_date": self.transaction_date,
+            "posting_date": self.posting_date,
             "polarity": self.polarity,
             "balance": self.balance,
         }
@@ -71,6 +75,14 @@ class Transaction:
     date: str = Field(alias="transaction_date")
     polarity: str | None = None
     balance: float = Field(default=0)
+    # Richer, nullable slots surfaced only in the JSON schema (not the CSV, not
+    # __str__/as_raw_dict). posting_date comes from the bank regex; currency is
+    # stamped in Pipeline.extract from the matched StatementConfig; account is a
+    # follow-up placeholder. These must stay out of __str__ so the filename hash
+    # (write.generate_hash) is byte-stable.
+    posting_date: str | None = None
+    currency: str | None = None
+    account: str | None = None
     # avoid storing config logic, since the Transaction object is used to create
     # a single unique hash which should not change
     auto_polarity: bool = Field(default=True, init=True, repr=False)
@@ -137,3 +149,17 @@ class Transaction:
 
     def __str__(self):
         return json.dumps(self.as_raw_dict(show_polarity=True))
+
+    @cached_property
+    def transaction_id(self) -> str:
+        """
+        Stable content hash identifying this transaction across statements.
+
+        Hashes the transaction's *identity* — date, description, amount, currency,
+        and account — deliberately excluding the running `balance`, which is
+        statement-position-dependent. This is separate from `write.generate_hash`
+        (the per-statement filename UUID) and is kept out of `__str__`/`as_raw_dict`
+        so the filename hash stays byte-stable.
+        """
+        identity = (self.date, self.description, self.amount, self.currency, self.account)
+        return sha256(repr(identity).encode("utf-8")).hexdigest()

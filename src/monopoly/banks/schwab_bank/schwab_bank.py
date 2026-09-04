@@ -11,6 +11,7 @@ class Schwab(BankBase):
     name = "schwab_bank"
 
     debit = StatementConfig(
+        currency="USD",
         statement_type=EntryType.DEBIT,
         # Matches two statement date formats:
         #   Single-line range: "January 1-30, 2026"

@@ -11,6 +11,7 @@ class CIBC(BankBase):
     name = "cibc"
 
     debit = StatementConfig(
+        currency="CAD",
         statement_type=EntryType.DEBIT,
         header_pattern=re.compile(
             r"(\s+)?Date\s+Description\s+Withdrawals\ \(\$\)\s+Deposits\ \(\$\)\s+Balance\ \(\$\)"
@@ -36,6 +37,7 @@ class CIBC(BankBase):
     )
 
     credit = StatementConfig(
+        currency="CAD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(
             rf"(?:to\s+)?(?P<date>{DateFormats.MMM}\s+{DateFormats.DD},\s+{DateFormats.YYYY})"

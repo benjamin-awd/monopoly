@@ -11,6 +11,7 @@ class CanadianTire(BankBase):
     name = "canadian_tire"
 
     credit = StatementConfig(
+        currency="CAD",
         statement_type=EntryType.CREDIT,
         header_pattern=re.compile(r"\s+DATE\s+DATE\s+TRANSACTION\ DESCRIPTION\s+AMOUNT\ \(\$\)"),
         statement_date_pattern=re.compile(rf"Statement\s+date\s+(?P<statement_date>{ISO8601.MMMM_DD_YYYY})"),

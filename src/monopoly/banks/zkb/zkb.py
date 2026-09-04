@@ -11,6 +11,7 @@ class ZurcherKantonalBank(BankBase):
     name = "zkb"
 
     debit = StatementConfig(
+        currency="CHF",
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"Balance as of: ({ISO8601.DD_MM_YYYY})"),
         header_pattern=re.compile(r"(Date.*Booking text.*Debit CHF.*Credit CHF)"),

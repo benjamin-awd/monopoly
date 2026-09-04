@@ -11,6 +11,7 @@ class Chase(BankBase):
     name = "chase"
 
     credit = StatementConfig(
+        currency="USD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(r"Statement Date:\s+(.*)"),
         statement_date_order=DateOrder("MDY"),

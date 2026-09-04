@@ -11,6 +11,7 @@ class Uob(BankBase):
     name = "uob"
 
     credit = StatementConfig(
+        currency="SGD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(rf"Statement Date.*{ISO8601.DD_MMM_YYYY}"),
         header_pattern=re.compile(r"(Description of Transaction.*Transaction Amount)"),
@@ -32,6 +33,7 @@ class Uob(BankBase):
     )
 
     debit = StatementConfig(
+        currency="SGD",
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"Period: .* to {ISO8601.DD_MMM_YYYY}"),
         header_pattern=re.compile(r"(Date.*Description.*Withdrawals.*Deposits.*Balance)"),

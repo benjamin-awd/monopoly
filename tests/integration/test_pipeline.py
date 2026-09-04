@@ -27,6 +27,18 @@ def test_pipeline_with_bank():
     assert transactions[0].description == "LAST MONTH'S BALANCE"
 
 
+def test_pipeline_stamps_config_currency(monkeypatch):
+    # currency lives on the matched StatementConfig, not the bank class
+    monkeypatch.setattr(ExampleBank.credit, "currency", "SGD")
+    file_path = Path("src/monopoly/examples/example_statement.pdf")
+    document = PdfDocument(file_path)
+    parser = PdfParser(ExampleBank, document)
+    pipeline = Pipeline(parser)
+    transactions = pipeline.extract(parser._get_pages()).transactions
+    assert transactions
+    assert all(tx.currency == "SGD" for tx in transactions)
+
+
 def test_pipeline_extracts_payment_summary():
     file_path = Path("src/monopoly/examples/example_statement.pdf")
     document = PdfDocument(file_path)
@@ -61,6 +73,8 @@ def test_pipeline_initialization_with_file_path():
         statement = pipeline.extract(pages)
         transactions = pipeline.transform(statement)
         assert len(transactions) == 53
+        # ExampleBank sets no currency, so it stays None (default)
+        assert all(tx.currency is None for tx in transactions)
     except RuntimeError as e:
         pytest.fail(f"Pipeline initialization failed with RuntimeError: {e}")
 

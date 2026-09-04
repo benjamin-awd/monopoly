@@ -11,6 +11,7 @@ class Hsbc(BankBase):
     name = "hsbc"
 
     credit = StatementConfig(
+        currency="SGD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(rf"From \d{{2}} \w{{3}} \d{{4}} to {ISO8601.DD_MMM_YYYY}"),
         header_pattern=re.compile(r"(DATE.*DESCRIPTION.*AMOUNT)"),
