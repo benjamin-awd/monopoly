@@ -11,6 +11,7 @@ class Citibank(BankBase):
     name = "citibank"
 
     credit = StatementConfig(
+        currency="SGD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(r"Statement\sDate\s+(.*)"),
         header_pattern=re.compile(r"(DATE.*DESCRIPTION.*AMOUNT)"),
@@ -34,6 +35,7 @@ class Citibank(BankBase):
     )
 
     credit_us = StatementConfig(
+        currency="USD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(r"Billing Period:\s+\d{2}/\d{2}/\d{2}-(\d{2}/\d{2}/\d{2})"),
         statement_date_order=DateOrder("MDY"),

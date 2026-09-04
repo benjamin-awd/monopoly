@@ -11,6 +11,7 @@ class Trust(BankBase):
     name = "trust"
 
     credit = StatementConfig(
+        currency="SGD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(
             r"-\s*"

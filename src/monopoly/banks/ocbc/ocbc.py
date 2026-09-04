@@ -11,6 +11,7 @@ class Ocbc(BankBase):
     name = "ocbc"
 
     credit = StatementConfig(
+        currency="SGD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=ISO8601.DD_MM_YYYY,
         header_pattern=re.compile(r"(TRANSACTION DATE.*DESCRIPTION.*AMOUNT)"),
@@ -31,6 +32,7 @@ class Ocbc(BankBase):
     )
 
     debit = StatementConfig(
+        currency="SGD",
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"\s{ISO8601.DD_MMM_YYYY}$"),
         header_pattern=re.compile(r"(Withdrawal.*Deposit.*Balance)"),

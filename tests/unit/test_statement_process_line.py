@@ -65,6 +65,7 @@ def test_get_multiline_descriptions(statement: BaseStatement):
             description="SHOPEE CCY FEE 1.25 SINGAPORE SG",
             amount=-3.2,
             polarity=None,
+            posting_date="04 Aug",
         )
     ]
     assert transactions == expected
@@ -93,6 +94,7 @@ def test_process_match_multiline_description(statement: BaseStatement):
     lines = ["04 Aug 02 Aug SHOPEE 3.20", "05 Aug 02 Aug ValueVille 3.20"]
     expected_groupdict = {
         "transaction_date": "04 Aug",
+        "posting_date": None,
         "amount": "3.20",
         "description": "SHOPEE",
         "polarity": None,
@@ -108,6 +110,7 @@ def test_process_match_multiline_description(statement: BaseStatement):
     context = MatchContext(line=line, lines=lines, idx=0, description="SHOPEE")
     groupdict = {
         "transaction_date": "04 Aug",
+        "posting_date": None,
         "description": "SHOPEE",
         "amount": "3.20",
         "polarity": None,

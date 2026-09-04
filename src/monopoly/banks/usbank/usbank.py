@@ -11,6 +11,7 @@ class UsBank(BankBase):
     name = "usbank"
 
     credit = StatementConfig(
+        currency="USD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(rf"Closing Date:\s+{ISO8601.MM_DD_YYYY}"),
         statement_date_order=DateOrder("MDY"),

@@ -14,6 +14,7 @@ class BankOfMontreal(BankBase):
     name = "bmo"
 
     debit = StatementConfig(
+        currency="CAD",
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"For the period ending.*{ISO8601.MMMM_DD_YYYY}"),
         header_pattern=re.compile(
@@ -30,6 +31,7 @@ class BankOfMontreal(BankBase):
         multiline_config=MultilineConfig(multiline_descriptions=True, multiline_transaction_date=True),
     )
     credit = StatementConfig(
+        currency="CAD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(rf"Statement\s+date\s+(?P<statement_date>{MMM_DOT_DD_YYYY})"),
         header_pattern=re.compile(r"DATE\s+DATE\s+DESCRIPTION\s+AMOUNT\ \(\$\)"),

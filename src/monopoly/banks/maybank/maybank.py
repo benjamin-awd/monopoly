@@ -11,6 +11,7 @@ class Maybank(BankBase):
     name = "maybank"
 
     my_debit = StatementConfig(
+        currency="MYR",
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"(?:結單日期)[:\s]+{ISO8601.DD_MM_YY}"),
         header_pattern=re.compile(r"(DATE.*DESCRIPTION.*AMOUNT.*BALANCE)"),
@@ -27,6 +28,7 @@ class Maybank(BankBase):
     )
 
     my_credit = StatementConfig(
+        currency="MYR",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=ISO8601.DD_MMM_YY,
         header_pattern=re.compile(r"(Date.*Description.*Amount)"),
@@ -42,6 +44,7 @@ class Maybank(BankBase):
     )
 
     sg_credit = StatementConfig(
+        currency="SGD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(f"AS AT {ISO8601.DD_MMM_YYYY}"),
         header_pattern=re.compile(r"(.*DESCRIPTION OF TRANSACTION.*TRANSACTION AMOUNT)"),

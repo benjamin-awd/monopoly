@@ -173,6 +173,7 @@ class BaseStatement:
                     description=groupdict["description"],
                     amount=groupdict["amount"],
                     transaction_date=groupdict.get("transaction_date"),
+                    posting_date=groupdict.get("posting_date"),
                     polarity=groupdict.get("polarity"),
                     balance=groupdict.get("balance"),
                 )

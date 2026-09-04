@@ -11,6 +11,7 @@ class BankOfAmerica(BankBase):
     name = "bank_of_america"
 
     debit = StatementConfig(
+        currency="USD",
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"for .* to {ISO8601.MMMM_DD_YYYY}"),
         statement_date_order=DateOrder("MDY"),
@@ -28,6 +29,7 @@ class BankOfAmerica(BankBase):
     )
 
     credit = StatementConfig(
+        currency="USD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(rf"Statement Closing Date\s+{ISO8601.MM_DD_YYYY}"),
         statement_date_order=DateOrder("MDY"),

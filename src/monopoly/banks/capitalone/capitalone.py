@@ -10,6 +10,7 @@ from monopoly.identifiers import MetadataIdentifier
 class CapitalOneCanada(BankBase):
     name = "capital_one"
     credit = StatementConfig(
+        currency="CAD",
         statement_type=EntryType.CREDIT,
         header_pattern=re.compile(r"(\s+)?Transaction Date\s+Posting Date\s+Description\s+Amount"),
         statement_date_pattern=re.compile(rf" - (?P<statement_date>{ISO8601.MMM_DD_YYYY})"),
