@@ -79,3 +79,8 @@ def test_transaction_id_reflects_later_mutation():
     early = tx.transaction_id
     tx.currency = "SGD"
     assert tx.transaction_id != early
+
+
+def test_balance_none_when_absent_float_when_present():
+    assert _tx().balance is None
+    assert _tx(balance="100.00").balance == 100.0
