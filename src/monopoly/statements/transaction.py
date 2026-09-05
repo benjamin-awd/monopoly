@@ -1,7 +1,6 @@
 import json
 import re
 from dataclasses import dataclass, field
-from functools import cached_property
 from hashlib import sha256
 from typing import Any
 
@@ -150,7 +149,7 @@ class Transaction:
     def __str__(self):
         return json.dumps(self.as_raw_dict(show_polarity=True))
 
-    @cached_property
+    @property
     def transaction_id(self) -> str:
         """
         Stable content hash identifying this transaction across statements.
@@ -160,6 +159,9 @@ class Transaction:
         statement-position-dependent. This is separate from `write.generate_hash`
         (the per-statement filename UUID) and is kept out of `__str__`/`as_raw_dict`
         so the filename hash stays byte-stable.
+
+        Computed fresh on each access (not cached) so it can't freeze a stale
+        value if read before the pipeline stamps currency or normalizes the date.
         """
         identity = (self.date, self.description, self.amount, self.currency, self.account)
         return sha256(repr(identity).encode("utf-8")).hexdigest()
