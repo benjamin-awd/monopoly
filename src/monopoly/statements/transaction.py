@@ -84,6 +84,7 @@ class Transaction:
     posting_date: str | None = None
     currency: str | None = None
     account: str | None = None
+    kind: str = "transaction"
     # avoid storing config logic, since the Transaction object is used to create
     # a single unique hash which should not change
     auto_direction: bool = Field(default=True, init=True, repr=False)

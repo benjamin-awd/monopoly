@@ -183,8 +183,12 @@ The CLI (`src/monopoly/cli/cli.py`) supports:
 - Output format with `--format csv|json` (`-f`). CSV stays a fixed 4-column
   contract; JSON emits the versioned richer schema built by
   `src/monopoly/serialize.py` (`SCHEMA_VERSION`, statement metadata, payment
-  summary, and a stable per-transaction `id`). Bump `SCHEMA_VERSION` on any
-  breaking envelope change.
+  summary, top-level `balances`, and a stable per-transaction `id`).
+  `SCHEMA_VERSION` is a single integer that bumps **only on a breaking change**
+  (removing/renaming a field, changing a value's type/meaning/units, or
+  restructuring nesting — e.g. v2 moved balance rows out of `transactions`).
+  Adding a new **optional/nullable** field is NOT breaking and must NOT bump it;
+  consumers are expected to ignore fields they don't recognize (tolerant reader).
 - Pretty-print mode with `--pprint` (no CSV output)
 - OCR support with `--ocr` flag
 - Safety check control with `--safe/--nosafe`
@@ -195,6 +199,19 @@ raw `polarity` marker), and a nullable `account` slot. `Transaction.direction` i
 normalized in the model; the internal parser still captures raw markers into
 `RawTransaction.direction`. Known follow-ups (currently `None`): per-transaction
 original/FX currency + amount, account last-4, and `period_start`.
+
+A previous-balance row is not a transaction, so it goes in a separate top-level
+`balances` list (`{type, amount, date, direction, currency}`) rather than in
+`transactions`. `type` is `"previous"` today (`"opening"`/`"closing"` may come
+later). Internally the row is marked with `Transaction.kind` and kept in the
+transaction list so the safety-check total still adds up; only `serialize.py`
+moves it into `balances` for output. `kind` stays internal — it is never written
+to the CSV or the filename/id hashes.
+
+This v1→v2 change is a breaking one: the balance row moved out of `transactions`,
+so an old reader that lists or sums transactions would silently miss it. That is
+why `SCHEMA_VERSION` was bumped. Consumers should check `schema_version` and
+refuse anything newer than they understand.
 
 ## Important Implementation Notes
 
