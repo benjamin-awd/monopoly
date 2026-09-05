@@ -50,10 +50,15 @@ class DateTransformer:
             date_str = f"{date_str} {self.statement_date.year}"
             fmt += " %Y"
 
-        try:
-            return datetime.strptime(date_str, fmt).astimezone(), needs_year
-        except ValueError:
-            logger.debug("strptime failed for %s with format %s", date_str, fmt)
+        # strptime is only attempted with a year-bearing format: a yearless one
+        # can't consume a year present in the string (so it fails anyway) and,
+        # on Python 3.14+, warns that parsing a day of month without a year is
+        # deprecated.
+        if "y" in fmt.lower():
+            try:
+                return datetime.strptime(date_str, fmt).astimezone(), needs_year
+            except ValueError:
+                logger.debug("strptime failed for %s with format %s", date_str, fmt)
 
         # imported lazily: dateparser is slow to import and rarely needed
         from dateparser import parse

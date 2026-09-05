@@ -148,16 +148,16 @@ class PatternMatcher:
         if fmt:
             normalized = _SEPARATOR_RE.sub(" ", raw_date)
             normalized = _MULTI_SPACE_RE.sub(" ", normalized).strip()
+            # A yearless format defaults to 1900 and, on Python 3.14+, warns that
+            # parsing a day of month without a year is deprecated. Inject the
+            # current year so comparisons stay consistent and no warning fires.
+            if "%y" not in fmt.lower():
+                normalized = f"{normalized} {datetime.now().year}"  # noqa: DTZ005
+                fmt = f"{fmt} %Y"
             try:
-                parsed = datetime.strptime(normalized, fmt)  # noqa: DTZ007
+                return datetime.strptime(normalized, fmt)  # noqa: DTZ007
             except ValueError:
                 pass
-            else:
-                # strptime defaults to year 1900 when no year in format;
-                # use current year for consistent date comparisons
-                if "%y" not in fmt.lower():
-                    parsed = parsed.replace(year=datetime.now().year)  # noqa: DTZ005
-                return parsed
 
         from dateparser import parse
 
