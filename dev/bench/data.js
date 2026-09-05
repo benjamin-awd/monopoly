@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788619056931,
+  "lastUpdate": 1788619468185,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -503,6 +503,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 4.13266383564,
             "range": "± 0.015388779788093554",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bc5b26a5287056d7009e44d801a41600dbca1b3b",
+          "message": "Merge pull request #319 from benjamin-awd/ci/speed-up-workflows\n\nci: speed up workflows (drop ocrmypdf, cache uv, cancel stale runs)",
+          "timestamp": "2026-09-05T22:42:38+08:00",
+          "tree_id": "a1e9e4dfa37a48a6c1319738edd93f6517fb634c",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/bc5b26a5287056d7009e44d801a41600dbca1b3b"
+        },
+        "date": 1788619467271,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.9441715329600001,
+            "range": "± 0.018525918268891724",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 4.303298497959999,
+            "range": "± 0.035103385543316414",
             "unit": "s"
           }
         ]
