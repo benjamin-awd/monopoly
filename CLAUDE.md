@@ -14,6 +14,11 @@ improvising a workflow:
 | `/verify` | Run the full gate and report what passed, failed, or **skipped** |
 | `/add-bank` | Add a bank or statement type from a sample PDF |
 | `/debug-statement` | Diagnose a single PDF that fails to parse |
+| `/adr` | Record an architectural decision as a committed ADR in `docs/adr/` |
+
+The skills and their output are local-only *except* ADRs: `docs/adr/` is
+version-controlled (see `docs/adr/README.md`), so architectural decisions travel
+with the repo.
 
 `dev-guide` (auto-loaded) is the reference for test/lint/type commands.
 The `statement-debugger` subagent investigates a failing PDF without pulling
@@ -189,8 +194,12 @@ The CLI (`src/monopoly/cli/cli.py`) supports:
 - Output format with `--format csv|json` (`-f`). CSV stays a fixed 4-column
   contract; JSON emits the versioned richer schema built by
   `src/monopoly/serialize.py` (`SCHEMA_VERSION`, statement metadata, payment
-  summary, and a unique per-transaction `id`). Bump `SCHEMA_VERSION` on any
-  breaking envelope change.
+  summary, top-level `balances`, and a unique per-transaction `id`).
+  `SCHEMA_VERSION` is a single integer that bumps **only on a breaking change**
+  (removing/renaming a field, changing a value's type/meaning/units, or
+  restructuring nesting — e.g. v2 moved balance rows out of `transactions`).
+  Adding a new **optional/nullable** field is NOT breaking and must NOT bump it;
+  consumers are expected to ignore fields they don't recognize (tolerant reader).
 - Pretty-print mode with `--pprint` (no CSV output)
 - OCR support with `--ocr` flag
 - Safety check control with `--safe/--nosafe`
@@ -201,6 +210,19 @@ raw `polarity` marker), and a nullable `account` slot. `Transaction.direction` i
 normalized in the model; the internal parser still captures raw markers into
 `RawTransaction.direction`. Known follow-ups (currently `None`): per-transaction
 original/FX currency + amount, account last-4, and `period_start`.
+
+A previous-balance row is not a transaction, so it goes in a separate top-level
+`balances` list (`{type, amount, date, direction, currency}`) rather than in
+`transactions`. `type` is `"previous"` today (`"opening"`/`"closing"` may come
+later). Internally the row is marked with `Transaction.kind` and kept in the
+transaction list so the safety-check total still adds up; only `serialize.py`
+moves it into `balances` for output. `kind` stays internal — it is never written
+to the CSV or the filename/id hashes.
+
+This v1→v2 change is a breaking one: the balance row moved out of `transactions`,
+so an old reader that lists or sums transactions would silently miss it. That is
+why `SCHEMA_VERSION` was bumped. Consumers should check `schema_version` and
+refuse anything newer than they understand.
 
 Per-transaction `id`: the JSON `"id"` is *unique within an envelope* and is the
 only sanctioned per-row identifier, produced by `serialize.assign_ids`. It is a

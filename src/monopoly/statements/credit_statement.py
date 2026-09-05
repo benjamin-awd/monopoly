@@ -30,7 +30,7 @@ class CreditStatement(BaseStatement):
                 groupdict = prev_month_balance.groupdict()
                 groupdict["transaction_date"] = first_transaction_date
                 raw_transaction = RawTransaction(**groupdict)
-                prev_month_transaction = Transaction(**raw_transaction.as_dict())
+                prev_month_transaction = Transaction(**raw_transaction.as_dict(), kind="previous_balance")
                 transactions.insert(0, prev_month_transaction)
         return transactions
 

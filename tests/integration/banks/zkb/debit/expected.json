@@ -1,10 +1,11 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "bank": "zkb",
   "statement_type": "debit",
   "period_start": null,
   "period_end": "2025-09-05",
   "payment_summary": null,
+  "balances": [],
   "transactions": [
     {
       "id": "8cf3a8c941c3c07f30e2924c08d29d95f9b3bfb08afc5e5ad98ee4a3e3b743e1",

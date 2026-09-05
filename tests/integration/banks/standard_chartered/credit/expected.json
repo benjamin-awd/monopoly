@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "bank": "standard_chartered",
   "statement_type": "credit",
   "period_start": null,
@@ -9,18 +9,16 @@
     "total_amount_due": 194.75,
     "minimum_payment": 50.0
   },
-  "transactions": [
+  "balances": [
     {
-      "id": "8d28e5e918fc2eabe7e04329327d099a6371553e324ec32b1a0b78f44ba77358",
-      "transaction_date": "2024-05-03",
-      "posting_date": null,
-      "description": "BALANCE FROM PREVIOUS STATEMENT",
+      "type": "previous",
       "amount": -120.0,
-      "currency": "SGD",
-      "account": null,
-      "balance": null,
-      "direction": "debit"
-    },
+      "date": "2024-05-03",
+      "direction": "debit",
+      "currency": "SGD"
+    }
+  ],
+  "transactions": [
     {
       "id": "d88c691573eb7fb6a38ac861d1a10fd1c7a97b12fe998554ed25c96ffb70f786",
       "transaction_date": "2024-05-03",

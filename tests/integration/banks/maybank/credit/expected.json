@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "bank": "maybank",
   "statement_type": "credit",
   "period_start": null,
@@ -9,18 +9,16 @@
     "total_amount_due": null,
     "minimum_payment": null
   },
-  "transactions": [
+  "balances": [
     {
-      "id": "6b95d8718fb49b0ec6085b4e474ea6b077bd480ff3fecfa6a62f819b0e19b5f3",
-      "transaction_date": "2024-10-11",
-      "posting_date": null,
-      "description": "YOUR PREVIOUS STATEMENT BALANCE",
+      "type": "previous",
       "amount": -1200.0,
-      "currency": "MYR",
-      "account": null,
-      "balance": null,
-      "direction": "debit"
-    },
+      "date": "2024-10-11",
+      "direction": "debit",
+      "currency": "MYR"
+    }
+  ],
+  "transactions": [
     {
       "id": "a9fdd79cf51145aa498ec147192e19946d5debc75a7cd48dc1f4f9c1d0d985de",
       "transaction_date": "2024-10-11",

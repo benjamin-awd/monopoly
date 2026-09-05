@@ -17,6 +17,8 @@ TRANSACTION_KEYS = {
     "direction",
 }
 
+BALANCE_KEYS = {"type", "amount", "date", "direction", "currency"}
+
 
 def _tx():
     return Transaction(transaction_date="2023-06-01", description="COFFEE", amount="4.50", currency="SGD")
@@ -38,7 +40,48 @@ def test_envelope_shape_and_json_roundtrip(credit_statement):
     assert tx["id"]  # non-empty stable hash
     assert tx["currency"] == "SGD"
 
+    # no balance rows -> empty balances list, not absent
+    assert envelope["balances"] == []
+
     # round-trips with the stdlib encoder: no datetime/date objects leak through
+    assert json.loads(json.dumps(envelope)) == envelope
+
+
+def test_schema_version_is_2():
+    # v2 introduced the top-level `balances` split; guard against silent regression
+    assert SCHEMA_VERSION == 2
+
+
+def test_previous_balance_routed_to_balances(credit_statement):
+    credit_statement.statement_date = datetime(2023, 6, 30)
+    transactions = [
+        Transaction(
+            transaction_date="2023-06-01",
+            description="PREVIOUS BALANCE",
+            amount="100.00",
+            direction="DR",
+            currency="SGD",
+            kind="previous_balance",
+        ),
+        _tx(),
+    ]
+    envelope = statement_to_dict(credit_statement, transactions)
+
+    # the carry-forward row is hoisted out of transactions
+    assert len(envelope["transactions"]) == 1
+    assert envelope["transactions"][0]["description"] == "COFFEE"
+
+    # and lands in balances with the CAMT.053-aligned `previous` type
+    assert len(envelope["balances"]) == 1
+    balance = envelope["balances"][0]
+    assert set(balance) == BALANCE_KEYS
+    assert balance["type"] == "previous"
+    assert balance["amount"] == -100.0
+    assert balance["date"] == "2023-06-01"
+    assert balance["direction"] == "debit"
+    assert balance["currency"] == "SGD"
+
+    # still JSON-native
     assert json.loads(json.dumps(envelope)) == envelope
 
 

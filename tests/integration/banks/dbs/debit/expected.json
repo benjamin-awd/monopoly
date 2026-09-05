@@ -1,10 +1,11 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "bank": "dbs",
   "statement_type": "debit",
   "period_start": null,
   "period_end": "2024-11-30",
   "payment_summary": null,
+  "balances": [],
   "transactions": [
     {
       "id": "138a44f8db7c581d50d7d7c6ea815b4fd551e9d6eb858040e2fe9fe4aaab7095",

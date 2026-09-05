@@ -94,9 +94,15 @@ def test_monopoly_output_json(cli_runner: CliRunner, tmp_path: Path):
     assert not [f for f in os.listdir(output_dir) if f.endswith(".csv")]
 
     data = json.loads((output_dir / json_files[0]).read_text())
-    assert data["schema_version"] == 1
+    assert data["schema_version"] == 2
     assert data["transactions"]
     assert data["transactions"][0]["id"]
+
+    # the example statement's previous-balance line is routed into `balances`,
+    # not `transactions`
+    assert len(data["balances"]) == 1
+    assert data["balances"][0]["type"] == "previous"
+    assert not any("PREVIOUS BALANCE" in t["description"].upper() for t in data["transactions"])
 
 
 def test_monopoly_output_csv_explicit(cli_runner: CliRunner, tmp_path: Path):

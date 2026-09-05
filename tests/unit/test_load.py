@@ -76,9 +76,10 @@ def test_load_json(credit_statement: BaseStatement, tmp_path: Path):
     assert output_path == tmp_path / "test_file.json"
 
     data = json.loads(output_path.read_text())
-    assert data["schema_version"] == 1
+    assert data["schema_version"] == 2
     assert data["bank"] == "example"
     assert data["statement_type"] == "credit"
+    assert data["balances"] == []
     assert len(data["transactions"]) == 1
     assert data["transactions"][0]["id"]
     assert data["transactions"][0]["currency"] == "SGD"

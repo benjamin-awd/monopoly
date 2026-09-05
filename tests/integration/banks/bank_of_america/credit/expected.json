@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "bank": "bank_of_america",
   "statement_type": "credit",
   "period_start": null,
@@ -9,6 +9,7 @@
     "total_amount_due": null,
     "minimum_payment": null
   },
+  "balances": [],
   "transactions": [
     {
       "id": "41abad464dc1fa51058e585ceed14681e2466dae9145820e03fa6092b1527c7f",

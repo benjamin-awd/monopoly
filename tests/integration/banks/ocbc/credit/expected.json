@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "bank": "ocbc",
   "statement_type": "credit",
   "period_start": null,
@@ -9,18 +9,16 @@
     "total_amount_due": 210.0,
     "minimum_payment": 50.0
   },
-  "transactions": [
+  "balances": [
     {
-      "id": "ae5585e5715548944eebf5484bfaa5fb19129fca47779ae016a33e1a8ea248d5",
-      "transaction_date": "2023-07-02",
-      "posting_date": null,
-      "description": "LAST MONTH'S BALANCE",
+      "type": "previous",
       "amount": -500.0,
-      "currency": "SGD",
-      "account": null,
-      "balance": null,
-      "direction": "debit"
-    },
+      "date": "2023-07-02",
+      "direction": "debit",
+      "currency": "SGD"
+    }
+  ],
+  "transactions": [
     {
       "id": "cb625c815b823ddb280344536f809394b586ae1c45df94ecc36aceb1aa7bd74e",
       "transaction_date": "2023-07-02",

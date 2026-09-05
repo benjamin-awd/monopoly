@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "bank": "uob",
   "statement_type": "credit",
   "period_start": null,
@@ -9,18 +9,16 @@
     "total_amount_due": 382.45,
     "minimum_payment": 50.0
   },
-  "transactions": [
+  "balances": [
     {
-      "id": "48400d67b165b86be203dde4debb97318621b91a5ac7988f7b42844bd0e8d59c",
-      "transaction_date": "2025-02-01",
-      "posting_date": null,
-      "description": "PREVIOUS BALANCE",
+      "type": "previous",
       "amount": 0.0,
-      "currency": "SGD",
-      "account": null,
-      "balance": null,
-      "direction": "credit"
-    },
+      "date": "2025-02-01",
+      "direction": "credit",
+      "currency": "SGD"
+    }
+  ],
+  "transactions": [
     {
       "id": "7c345973dd2ea34f95c1c30eaaa09831e336b7fdceb7d391f303c968a9c99419",
       "transaction_date": "2025-02-01",

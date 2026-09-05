@@ -1,10 +1,11 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "bank": "ocbc",
   "statement_type": "debit",
   "period_start": null,
   "period_end": "2024-09-30",
   "payment_summary": null,
+  "balances": [],
   "transactions": [
     {
       "id": "e4d6c968c554a5f76cac8c663076de0ab661576327121ccab0aa8a9a5aded269",

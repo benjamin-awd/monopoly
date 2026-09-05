@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "bank": "trust",
   "statement_type": "credit",
   "period_start": null,
@@ -9,6 +9,7 @@
     "total_amount_due": 27.0,
     "minimum_payment": 25.0
   },
+  "balances": [],
   "transactions": [
     {
       "id": "747a2e62fb1d5333d1342b98b375a2fae9b85ca474e1dd3966d204e092eb0b0b",

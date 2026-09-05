@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "bank": "dbs",
   "statement_type": "credit",
   "period_start": null,
@@ -9,18 +9,16 @@
     "total_amount_due": 550.0,
     "minimum_payment": 50.0
   },
-  "transactions": [
+  "balances": [
     {
-      "id": "e3508e126c2a409319f66165ecf5798129704572d498366c0d2c0b260d02f272",
-      "transaction_date": "2023-11-05",
-      "posting_date": null,
-      "description": "PREVIOUS BALANCE",
+      "type": "previous",
       "amount": -1200.0,
-      "currency": "SGD",
-      "account": null,
-      "balance": null,
-      "direction": "debit"
-    },
+      "date": "2023-11-05",
+      "direction": "debit",
+      "currency": "SGD"
+    }
+  ],
+  "transactions": [
     {
       "id": "b25ad417c7dbbc2dd72118e232b8a3ea7946b96b35e850747565be01eeab6fa1",
       "transaction_date": "2023-11-05",

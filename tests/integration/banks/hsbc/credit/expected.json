@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "bank": "hsbc",
   "statement_type": "credit",
   "period_start": null,
@@ -9,18 +9,16 @@
     "total_amount_due": 575.94,
     "minimum_payment": 50.0
   },
-  "transactions": [
+  "balances": [
     {
-      "id": "61ede948544a819b60f0bfbe5c4cc5e2a11c3b8bce6e4a84e66734e6b362baab",
-      "transaction_date": "2024-09-02",
-      "posting_date": null,
-      "description": "Previous Statement Balance",
+      "type": "previous",
       "amount": -850.0,
-      "currency": "SGD",
-      "account": null,
-      "balance": null,
-      "direction": "debit"
-    },
+      "date": "2024-09-02",
+      "direction": "debit",
+      "currency": "SGD"
+    }
+  ],
+  "transactions": [
     {
       "id": "1ca39b5b438a8a2868213d53688a227a77925b366f825a3d621064b92075e64a",
       "transaction_date": "2024-09-02",

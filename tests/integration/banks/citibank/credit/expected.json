@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "bank": "citibank",
   "statement_type": "credit",
   "period_start": null,
@@ -9,18 +9,16 @@
     "total_amount_due": 310.8,
     "minimum_payment": 50.0
   },
-  "transactions": [
+  "balances": [
     {
-      "id": "1e0ecef7968b0b3ef3e7e02f044f2d7df0350ec398916a6e7fad124341b442fd",
-      "transaction_date": "2022-02-03",
-      "posting_date": null,
-      "description": "BALANCE PREVIOUS STATEMENT",
+      "type": "previous",
       "amount": -420.0,
-      "currency": "SGD",
-      "account": null,
-      "balance": null,
-      "direction": "debit"
-    },
+      "date": "2022-02-03",
+      "direction": "debit",
+      "currency": "SGD"
+    }
+  ],
+  "transactions": [
     {
       "id": "0850c23e920453447733a88cdcc51ae0a916b42c98eff0918de40c5b93a090a9",
       "transaction_date": "2022-02-03",

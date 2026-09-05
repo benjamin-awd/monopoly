@@ -36,4 +36,3 @@ dist
 !release-please-config.json
 
 .claude
-docs/adr

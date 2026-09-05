@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "bank": "amex",
   "statement_type": "credit",
   "period_start": null,
@@ -9,6 +9,7 @@
     "total_amount_due": null,
     "minimum_payment": null
   },
+  "balances": [],
   "transactions": [
     {
       "id": "657adbf8f9917798642a577ffb2568249892abb59a46fc64798890e83c339ab5",

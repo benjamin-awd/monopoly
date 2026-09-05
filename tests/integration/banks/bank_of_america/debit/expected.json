@@ -1,10 +1,11 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "bank": "bank_of_america",
   "statement_type": "debit",
   "period_start": null,
   "period_end": "2023-07-25",
   "payment_summary": null,
+  "balances": [],
   "transactions": [
     {
       "id": "ef61211dad1904ddb14daf2466a0f1b24ccff36ea509d21e638fcfb9de340fd6",
