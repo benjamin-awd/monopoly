@@ -11,6 +11,7 @@ class CanadianTire(BankBase):
     name = "canadian_tire"
 
     credit = StatementConfig(
+        currency="CAD",
         statement_type=EntryType.CREDIT,
         header_pattern=re.compile(r"\s+DATE\s+DATE\s+TRANSACTION\ DESCRIPTION\s+AMOUNT\ \(\$\)"),
         statement_date_pattern=re.compile(rf"Statement\s+date\s+(?P<statement_date>{ISO8601.MMMM_DD_YYYY})"),
@@ -20,7 +21,7 @@ class CanadianTire(BankBase):
             r"(?P<posting_date>[A-Z][a-z]{2}\s\d{2})\s+"
             r"(?!\s*\d+\b)"
             r"(?P<description>.+?)\s{2,}"  # NOTE: no way to not parse trailing text in line as description?
-            r"(?P<polarity>-)"
+            r"(?P<direction>-)"
             r"?(?P<amount>\d{1,3}(?:,\d{3})*\.\d{2})"
         ),
         transaction_date_format="%b %d",

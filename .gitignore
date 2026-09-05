@@ -4,6 +4,7 @@
 # financial documents
 *.pdf
 *.csv
+*.json
 
 # dev
 *.ipynb
@@ -25,6 +26,14 @@ dist
 # redacted text fixtures
 !tests/integration/text_fixtures/**/*.txt
 !tests/integration/text_fixtures/**/*.csv
+
+# fixture expectations/metadata (json is otherwise ignored)
+!tests/integration/banks/**/*.json
+!tests/integration/text_fixtures/**/*.json
+
+# allowed json config
+!.release-please-manifest.json
+!release-please-config.json
 
 .claude
 docs/adr

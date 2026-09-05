@@ -14,6 +14,7 @@ class RunConfig:
     parser: str | None = None
     verbose: bool = False
     preserve_filename: bool = False
+    output_format: str = "csv"
 
 
 @dataclass

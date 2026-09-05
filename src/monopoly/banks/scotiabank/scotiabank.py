@@ -11,6 +11,7 @@ class Scotiabank(BankBase):
     name = "scotiabank"
 
     debit_personal = StatementConfig(
+        currency="CAD",
         statement_type=EntryType.DEBIT,
         header_pattern=re.compile(r"\s+Date\s+Transactions\s+withdrawn\ \(\$\)\s+deposited\ \(\$\)\s+Balance\ \(\$\)"),
         statement_date_pattern=re.compile(
@@ -27,6 +28,7 @@ class Scotiabank(BankBase):
         multiline_config=MultilineConfig(multiline_descriptions=True),
     )
     debit_business = StatementConfig(
+        currency="CAD",
         statement_type=EntryType.DEBIT,
         header_pattern=re.compile(
             r"(\s+)?Date\s+Description\s+Withdrawals/Debits \(\$\)\s+Deposits/Credits \(\$\)\s+Balance \(\$\)"
@@ -47,6 +49,7 @@ class Scotiabank(BankBase):
     )
 
     credit_variant_1 = StatementConfig(
+        currency="CAD",
         statement_type=EntryType.CREDIT,
         header_pattern=re.compile(r"\s+REF\.\#\ DATE\s+DATE\s+DETAILS\s+AMOUNT\(\$\)"),
         prev_balance_pattern=re.compile(

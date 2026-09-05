@@ -108,7 +108,7 @@ class GeminiParser:
                 transaction_date=tx["date"],
                 description=tx["description"],
                 amount=float(tx["amount"]),
-                auto_polarity=False,
+                auto_direction=False,
             )
             transactions.append(transaction)
 

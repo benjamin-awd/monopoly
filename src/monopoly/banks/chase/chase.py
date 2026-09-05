@@ -11,6 +11,7 @@ class Chase(BankBase):
     name = "chase"
 
     credit = StatementConfig(
+        currency="USD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(r"Statement Date:\s+(.*)"),
         statement_date_order=DateOrder("MDY"),
@@ -20,7 +21,7 @@ class Chase(BankBase):
         transaction_pattern=re.compile(
             rf"(?P<transaction_date>{ISO8601.MM_DD})\s+"
             + SharedPatterns.DESCRIPTION
-            + r"(?P<polarity>\-)?"
+            + r"(?P<direction>\-)?"
             + r"(?P<amount>(\d{1,3}(,\d{3})*|\d*)\.\d+)$"
         ),
         multiline_config=MultilineConfig(multiline_descriptions=True),

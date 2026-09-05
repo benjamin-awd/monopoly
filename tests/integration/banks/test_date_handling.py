@@ -47,6 +47,26 @@ def test_transform_cross_year(statement: BaseStatement):
     assert transformed_transactions == expected_transactions
 
 
+def test_transform_normalizes_posting_date(statement: BaseStatement):
+    statement.transactions = [
+        Transaction(
+            transaction_date="05/01",
+            posting_date="07/01",
+            description="FAIRPRICE FINEST",
+            amount="18.49",
+        ),
+    ]
+    statement.statement_date = datetime(2024, 1, 31)
+    statement.config.transaction_date_order = DateOrder("DMY")
+    statement.config.transaction_date_format = "%d/%m"
+
+    [transaction] = Pipeline.transform(statement)
+
+    # both dates are ISO 8601, not the raw captured strings
+    assert transaction.date == "2024-01-05"
+    assert transaction.posting_date == "2024-01-07"
+
+
 def test_transform_within_year(statement: BaseStatement):
     raw_transactions = [
         Transaction(transaction_date="12/06", description="FAIRPRICE FINEST", amount="18.49"),

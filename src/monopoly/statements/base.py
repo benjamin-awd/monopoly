@@ -173,7 +173,8 @@ class BaseStatement:
                     description=groupdict["description"],
                     amount=groupdict["amount"],
                     transaction_date=groupdict.get("transaction_date"),
-                    polarity=groupdict.get("polarity"),
+                    posting_date=groupdict.get("posting_date"),
+                    direction=groupdict.get("direction"),
                     balance=groupdict.get("balance"),
                 )
                 raw_transaction = self.pre_process_match(raw_transaction)
@@ -187,7 +188,7 @@ class BaseStatement:
                 processed_match = self.process_match(raw_transaction, context)
                 transaction = Transaction(
                     **processed_match.as_dict(),
-                    auto_polarity=self.config.transaction_auto_polarity,
+                    auto_direction=self.config.transaction_auto_direction,
                 )
                 transactions.append(transaction)
 
@@ -221,17 +222,17 @@ class BaseStatement:
         if context.idx >= len(context.lines) - 1:
             return match
 
-        if config.multiline_polarity:
-            match.polarity = self.get_multiline_polarity(context)
+        if config.multiline_direction:
+            match.direction = self.get_multiline_direction(context)
 
         if config.multiline_descriptions:
             match.description = DescriptionBuilder(context, self.pattern).build()
 
         return match
 
-    def get_multiline_polarity(self, ctx: MatchContext):
+    def get_multiline_direction(self, ctx: MatchContext):
         """
-        Pull polarity from the next line, if it can be found on the next line.
+        Pull direction from the next line, if it can be found on the next line.
 
         e.g.
         Date                           Description                            Amount
@@ -239,10 +240,10 @@ class BaseStatement:
         24.02.25                       PAYMENT RECEIVED - THANK YOU            79.99
                                                                                   CR
 
-        In this case, the polarity will resolve to CR.
+        In this case, the direction will resolve to CR.
         """
         next_line = ctx.lines[ctx.idx + 1]
-        if re.match(SharedPatterns.POLARITY, next_line):
+        if re.match(SharedPatterns.DIRECTION, next_line):
             return next_line.strip()
         return None
 

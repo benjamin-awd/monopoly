@@ -11,6 +11,7 @@ class Dbs(BankBase):
     name = "dbs"
 
     credit = StatementConfig(
+        currency="SGD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=ISO8601.DD_MMM_YYYY,
         header_pattern=re.compile(r"(DATE.*DESCRIPTION.*AMOUNT)"),
@@ -39,6 +40,7 @@ class Dbs(BankBase):
     )
 
     debit = StatementConfig(
+        currency="SGD",
         statement_type=EntryType.DEBIT,
         statement_date_pattern=ISO8601.DD_MMM_YYYY,
         multiline_config=MultilineConfig(
@@ -56,6 +58,7 @@ class Dbs(BankBase):
     )
 
     consolidated = StatementConfig(
+        currency="SGD",
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"Details as at {ISO8601.DD_MMM_YYYY}"),
         multiline_config=MultilineConfig(

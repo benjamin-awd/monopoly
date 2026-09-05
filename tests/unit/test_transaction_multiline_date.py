@@ -19,7 +19,7 @@ def test_carry_forward_date_when_multiline_is_enabled():
         statement_date_pattern=".*",
         statement_type=EntryType.CREDIT,
         header_pattern=".*",
-        transaction_auto_polarity=True,
+        transaction_auto_direction=True,
     )
     statement = BaseStatement(pages=[], bank_name="Test Bank", config=config, header="")
 
@@ -65,7 +65,7 @@ def test_date_is_not_carried_forward_when_multiline_is_disabled():
         statement_date_pattern=".*",
         header_pattern=".*",
         statement_type=EntryType.CREDIT,
-        transaction_auto_polarity=True,
+        transaction_auto_direction=True,
     )
     statement = BaseStatement(pages=[], bank_name="Test Bank", config=config, header="")
     dummy_match = re.search("foo", "foo")

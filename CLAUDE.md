@@ -187,9 +187,21 @@ The CLI (`src/monopoly/cli/cli.py`) supports:
 - Parallel processing using `ProcessPoolExecutor`
 - Output directory specification with `--output`
 - Filename preservation with `--preserve-filename`
+- Output format with `--format csv|json` (`-f`). CSV stays a fixed 4-column
+  contract; JSON emits the versioned richer schema built by
+  `src/monopoly/serialize.py` (`SCHEMA_VERSION`, statement metadata, payment
+  summary, and a stable per-transaction `id`). Bump `SCHEMA_VERSION` on any
+  breaking envelope change.
 - Pretty-print mode with `--pprint` (no CSV output)
 - OCR support with `--ocr` flag
 - Safety check control with `--safe/--nosafe`
+
+The JSON schema carries `currency` (per-`StatementConfig` settlement currency),
+`posting_date`, a normalized `direction` (`"credit"`/`"debit"`, replacing the old
+raw `polarity` marker), and a nullable `account` slot. `Transaction.direction` is
+normalized in the model; the internal parser still captures raw markers into
+`RawTransaction.direction`. Known follow-ups (currently `None`): per-transaction
+original/FX currency + amount, account last-4, and `period_start`.
 
 ## Important Implementation Notes
 

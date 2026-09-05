@@ -1,3 +1,4 @@
+import json
 import os
 import re
 from pathlib import Path
@@ -72,6 +73,46 @@ def test_monopoly_output(cli_runner: CliRunner, tmp_path: Path):
     csv_files = [f for f in os.listdir(output_dir) if f.endswith(".csv")]
     assert len(csv_files) == 1, f"Expected exactly one CSV file, found {len(csv_files)}"
     assert csv_files[0] in result.output
+
+
+def test_monopoly_output_json(cli_runner: CliRunner, tmp_path: Path):
+    output_dir = tmp_path / "results"
+    output_dir.mkdir()
+
+    result = cli_runner.invoke(
+        monopoly,
+        ["src/monopoly/examples/example_statement.pdf", "--output", str(output_dir), "--format", "json"],
+    )
+
+    assert result.exit_code == 0
+    assert "1 statement(s) processed" in result.output
+
+    # exactly one .json and no .csv written
+    json_files = [f for f in os.listdir(output_dir) if f.endswith(".json")]
+    assert len(json_files) == 1, f"Expected exactly one JSON file, found {len(json_files)}"
+    assert json_files[0] in result.output
+    assert not [f for f in os.listdir(output_dir) if f.endswith(".csv")]
+
+    data = json.loads((output_dir / json_files[0]).read_text())
+    assert data["schema_version"] == 1
+    assert data["transactions"]
+    assert data["transactions"][0]["id"]
+
+
+def test_monopoly_output_csv_explicit(cli_runner: CliRunner, tmp_path: Path):
+    # --format csv is the default behaviour: one .csv, no .json
+    output_dir = tmp_path / "results"
+    output_dir.mkdir()
+
+    result = cli_runner.invoke(
+        monopoly,
+        ["src/monopoly/examples/example_statement.pdf", "--output", str(output_dir), "--format", "csv"],
+    )
+
+    assert result.exit_code == 0
+    csv_files = [f for f in os.listdir(output_dir) if f.endswith(".csv")]
+    assert len(csv_files) == 1
+    assert not [f for f in os.listdir(output_dir) if f.endswith(".json")]
 
 
 def test_monopoly_output_preserve_filename(cli_runner: CliRunner, tmp_path: Path):

@@ -11,6 +11,7 @@ class TDCanadaTrust(BankBase):
     name = "tdct"
 
     debit_personal = StatementConfig(
+        currency="CAD",
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"- {ISO8601.MMM_DD}\/{DateFormats.YY}"),
         header_pattern=re.compile(r"Description.*Withdrawals.*Deposits.*Date.*Balance"),
@@ -22,10 +23,11 @@ class TDCanadaTrust(BankBase):
         ),
         transaction_date_format="%b%d",
         safety_check=False,  # total amounts are *per page*, not overall
-        transaction_auto_polarity=True,
+        transaction_auto_direction=True,
     )
 
     debit_business = StatementConfig(
+        currency="CAD",
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"- {ISO8601.MMM_DD}\/{DateFormats.YY}"),
         header_pattern=re.compile(r"DESCRIPTION.*CHEQUE/DEBIT.*DEPOSIT/CREDIT.*DATE.*BALANCE"),
@@ -37,10 +39,11 @@ class TDCanadaTrust(BankBase):
         ),
         transaction_date_format="%b%d",
         safety_check=False,  # total amounts are *per page*, not overall
-        transaction_auto_polarity=True,
+        transaction_auto_direction=True,
     )
 
     credit = StatementConfig(
+        currency="CAD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(rf"STATEMENT PERIOD.*{ISO8601.MMMM_DD_YYYY}"),
         header_pattern=re.compile(r"(TRANSACTION\s+POSTING)"),
@@ -55,8 +58,8 @@ class TDCanadaTrust(BankBase):
             + rf"(?P<amount>{SharedPatterns.OPTIONAL_NEGATIVE_SYMBOL}\$?{SharedPatterns.COMMA_FORMAT})\s*"
         ),
         transaction_date_format="%b %d",
-        multiline_config=MultilineConfig(multiline_descriptions=True, multiline_polarity=True),
-        transaction_auto_polarity=False,
+        multiline_config=MultilineConfig(multiline_descriptions=True, multiline_direction=True),
+        transaction_auto_direction=False,
     )
 
     identifiers = [

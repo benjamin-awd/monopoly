@@ -1,9 +1,11 @@
 from datetime import datetime
+from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from monopoly.write import generate_name
+from monopoly.statements import Transaction
+from monopoly.write import generate_hash, generate_name
 
 
 @pytest.fixture
@@ -11,6 +13,18 @@ def mock_generate_hash():
     with patch("monopoly.write.generate_hash") as mock:
         mock.return_value = "b960bf1e"
         yield mock
+
+
+def test_generate_hash_pinned_and_field_independent():
+    # Pinned value: generate_hash hashes an explicit field list, so adding new
+    # fields to Transaction must never change existing filenames. This guards the
+    # regression the mocked fixture above cannot catch.
+    transactions = [
+        Transaction(transaction_date="2023-01-01", description="foo", amount="10.00", direction="CR"),
+        Transaction(transaction_date="2023-01-02", description="bar", amount="5.00"),
+    ]
+    statement = SimpleNamespace(transactions=transactions)
+    assert generate_hash(statement) == "374c20"
 
 
 @pytest.mark.usefixtures("mock_generate_hash")

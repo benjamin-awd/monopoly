@@ -26,7 +26,7 @@ class DateOrder:
 @dataclass
 class MultilineConfig:
     multiline_descriptions: bool = False
-    multiline_polarity: bool = False
+    multiline_direction: bool = False
     multiline_statement_date: bool = False
     multiline_transaction_date: bool = False
     include_prev_margin: int | None = None
@@ -83,8 +83,8 @@ class StatementConfig:
     number of spaces will be ignored. For example, if `transaction_bound` = 32:
         "01 NOV  BALANCE B/F              190.77" (will be ignored)
         "01 NOV  YA KUN KAYA TOAST  12.00       " (will be kept)
-    - `transaction_auto_polarity` controls whether transaction amounts are set as negative.
-    or positive if they have 'CR' or '+' as a polarity identifier. Enabled by default.
+    - `transaction_auto_direction` controls whether transaction amounts are set as negative.
+    or positive if they have 'CR' or '+' as a direction identifier. Enabled by default.
     If enabled, only 'CR' or '+' will make a transaction positive. Disabled by default.
     - `safety_check` controls whether the safety check for banks. Use
     for banks that don't provide total amount (or total debit/credit)
@@ -97,6 +97,13 @@ class StatementConfig:
     patterns used to extract the credit statement's payment summary (payment due date,
     total amount due, minimum payment). See `CreditStatement.payment_summary`. Disabled by
     default (None).
+    - `currency` is the ISO 4217 settlement currency this statement type is denominated
+    in (what totals, balances and the safety check are in). It is stamped onto every
+    Transaction in `Pipeline.extract` and surfaced in the JSON schema. Set per config
+    (not per bank) so multi-country banks work: e.g. Maybank's MY configs are MYR while
+    its SG config is SGD. Left None for the generic handler and where the currency is
+    unknown. This is the account/settlement currency, distinct from a transaction's
+    original/FX currency (a per-transaction follow-up).
     """
 
     statement_type: EntryType
@@ -110,9 +117,10 @@ class StatementConfig:
     transaction_bound: int | None = None
     prev_balance_pattern: Pattern[str] | RegexEnum | None = None
     safety_check: bool = True
-    transaction_auto_polarity: bool = True
+    transaction_auto_direction: bool = True
     filename_fallback_pattern: Pattern[str] | None = None
     payment_summary_config: PaymentSummaryConfig | None = None
+    currency: str | None = None
 
 
 @dataclass

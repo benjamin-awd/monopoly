@@ -22,13 +22,13 @@ def test_get_transactions(statement: BaseStatement):
             transaction_date="19/06",
             description="YA KUN KAYA TOAST",
             amount=-3.2,
-            polarity=None,
+            direction=None,
         ),
         Transaction(
             transaction_date="20/06",
             description="FAIRPRICE FINEST",
             amount=-9.9,
-            polarity=None,
+            direction=None,
         ),
     ]
     assert transactions == expected
@@ -46,7 +46,7 @@ def test_check_bound(statement: BaseStatement):
             transaction_date="19/06",
             description="YA KUN KAYA TOAST",
             amount=-3.2,
-            polarity=None,
+            direction=None,
         ),
     ]
     statement.config.transaction_bound = None
@@ -64,7 +64,8 @@ def test_get_multiline_descriptions(statement: BaseStatement):
             transaction_date="02 Aug",
             description="SHOPEE CCY FEE 1.25 SINGAPORE SG",
             amount=-3.2,
-            polarity=None,
+            direction=None,
+            posting_date="04 Aug",
         )
     ]
     assert transactions == expected
@@ -79,7 +80,7 @@ def test_process_match_multiline_description(statement: BaseStatement):
         "transaction_date": "04 Aug",
         "description": "SHOPEE",
         "amount": "3.20",
-        "polarity": None,
+        "direction": None,
         "balance": None,
     }
     match = RawTransaction(
@@ -93,9 +94,10 @@ def test_process_match_multiline_description(statement: BaseStatement):
     lines = ["04 Aug 02 Aug SHOPEE 3.20", "05 Aug 02 Aug ValueVille 3.20"]
     expected_groupdict = {
         "transaction_date": "04 Aug",
+        "posting_date": None,
         "amount": "3.20",
         "description": "SHOPEE",
-        "polarity": None,
+        "direction": None,
         "balance": None,
     }
     context = MatchContext(line=line, lines=lines, idx=0, description="SHOPEE")
@@ -108,9 +110,10 @@ def test_process_match_multiline_description(statement: BaseStatement):
     context = MatchContext(line=line, lines=lines, idx=0, description="SHOPEE")
     groupdict = {
         "transaction_date": "04 Aug",
+        "posting_date": None,
         "description": "SHOPEE",
         "amount": "3.20",
-        "polarity": None,
+        "direction": None,
         "balance": None,
     }
     assert match.as_dict() == groupdict

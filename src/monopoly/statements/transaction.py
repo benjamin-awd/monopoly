@@ -1,6 +1,7 @@
 import json
 import re
 from dataclasses import dataclass, field
+from hashlib import sha256
 from typing import Any
 
 from pydantic import Field, field_validator, model_validator
@@ -36,7 +37,8 @@ class RawTransaction:
     description: str
     amount: str
     transaction_date: str | None = None
-    polarity: str | None = None
+    posting_date: str | None = None
+    direction: str | None = None
     balance: str | None = None
 
     # Parse context
@@ -49,7 +51,8 @@ class RawTransaction:
             "description": self.description,
             "amount": self.amount,
             "transaction_date": self.transaction_date,
-            "polarity": self.polarity,
+            "posting_date": self.posting_date,
+            "direction": self.direction,
             "balance": self.balance,
         }
 
@@ -69,23 +72,33 @@ class Transaction:
     description: str
     amount: float
     date: str = Field(alias="transaction_date")
-    polarity: str | None = None
-    balance: float = Field(default=0)
+    direction: str | None = None
+    # None means the statement has no balance column; distinct from a real 0.00
+    # balance. The CSV writer still collapses None to 0; the JSON schema keeps null.
+    balance: float | None = Field(default=None)
+    # Richer, nullable slots surfaced only in the JSON schema, not the CSV.
+    # posting_date comes from the bank regex; currency is stamped in
+    # Pipeline.extract from the matched StatementConfig; account is a follow-up
+    # placeholder. They don't affect the filename hash: write.generate_hash
+    # hashes an explicit field list, not the dataclass repr.
+    posting_date: str | None = None
+    currency: str | None = None
+    account: str | None = None
     # avoid storing config logic, since the Transaction object is used to create
     # a single unique hash which should not change
-    auto_polarity: bool = Field(default=True, init=True, repr=False)
+    auto_direction: bool = Field(default=True, init=True, repr=False)
 
-    def as_raw_dict(self, *_, show_polarity=False, show_balance=False):
+    def as_raw_dict(self, *_, show_direction=False, show_balance=False):
         """Return stringified dictionary version of the transaction."""
         items = {
             Columns.DATE.value: self.date,
             Columns.DESCRIPTION.value: self.description,
             Columns.AMOUNT.value: str(self.amount),
         }
-        if show_polarity and self.polarity is not None:
-            items[Columns.POLARITY.value] = self.polarity
+        if show_direction and self.direction is not None:
+            items[Columns.DIRECTION.value] = self.direction
         if show_balance:
-            items[Columns.BALANCE.value] = str(self.balance)
+            items[Columns.BALANCE.value] = str(self.balance) if self.balance is not None else "0"
         return items
 
     @field_validator("description", mode="after")
@@ -93,7 +106,7 @@ class Transaction:
         return " ".join(value.split())
 
     @field_validator(Columns.AMOUNT, Columns.BALANCE, mode="before")
-    def prepare_for_float_coercion(cls, value: str | None) -> str:
+    def prepare_for_float_coercion(cls, value: str | None, info) -> str | None:
         """
         Replace commas, whitespaces, apostrophes and parentheses for string representation of floats.
 
@@ -103,7 +116,8 @@ class Transaction:
         (-1.56 ) -> -1.56.
         """
         if value is None:
-            return "0"
+            # a missing balance stays null (no balance column); amount is always present
+            return None if info.field_name == Columns.BALANCE.value else "0"
         if isinstance(value, str):
             return strip_non_numeric(value)
         return str(value)
@@ -115,25 +129,52 @@ class Transaction:
         if self.kwargs:
             amount: str = self.kwargs[Columns.AMOUNT]
             if isinstance(amount, str) and amount.startswith("(") and amount.endswith(")"):
-                self.kwargs[Columns.POLARITY] = "CR"
+                self.kwargs[Columns.DIRECTION] = "CR"
         return self
 
     @model_validator(mode="after")
-    def convert_credit_amount_to_negative(self: "Transaction") -> "Transaction":
-        """Convert transactions with a polarity of "CR" or "+" to positive."""
-        # avoid negative zero
-        if self.amount == 0:
-            return self
+    def normalize_direction_and_sign_amount(self: "Transaction") -> "Transaction":
+        """
+        Sign the amount from the raw direction marker, then normalize the marker.
 
-        if not self.auto_polarity:
-            return self
-
-        if self.polarity in ("CR", "+"):
-            self.amount = abs(self.amount)
-
+        `direction` arrives as a raw marker (CR/DR/DB/+/-/None). Credits are made
+        positive and debits negative (when auto_direction is on); the stored
+        direction is then rewritten to "credit"/"debit" so downstream consumers
+        (e.g. the JSON schema) never see raw, bank-specific markers.
+        """
+        if self.direction in ("CR", "+"):
+            is_credit = True
+        elif self.direction in ("DR", "DB", "-"):
+            is_credit = False
         else:
-            self.amount = -abs(self.amount)
+            is_credit = None
+
+        # sign the amount (skip zero to avoid negative zero, and when disabled)
+        if self.auto_direction and self.amount != 0:
+            self.amount = abs(self.amount) if is_credit else -abs(self.amount)
+
+        # no explicit marker: fall back to the sign of the amount
+        if is_credit is None:
+            is_credit = self.amount >= 0
+        self.direction = "credit" if is_credit else "debit"
         return self
 
     def __str__(self):
-        return json.dumps(self.as_raw_dict(show_polarity=True))
+        return json.dumps(self.as_raw_dict(show_direction=True))
+
+    @property
+    def transaction_id(self) -> str:
+        """
+        Stable content hash identifying this transaction across statements.
+
+        Hashes the transaction's *identity* — date, description, amount, currency,
+        and account — deliberately excluding the running `balance`, which is
+        statement-position-dependent. This is separate from `write.generate_hash`
+        (the per-statement filename UUID) and is kept out of `__str__`/`as_raw_dict`
+        so the filename hash stays byte-stable.
+
+        Computed fresh on each access (not cached) so it can't freeze a stale
+        value if read before the pipeline stamps currency or normalizes the date.
+        """
+        identity = (self.date, self.description, self.amount, self.currency, self.account)
+        return sha256(repr(identity).encode("utf-8")).hexdigest()

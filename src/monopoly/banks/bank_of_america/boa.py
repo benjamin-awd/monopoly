@@ -11,6 +11,7 @@ class BankOfAmerica(BankBase):
     name = "bank_of_america"
 
     debit = StatementConfig(
+        currency="USD",
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"for .* to {ISO8601.MMMM_DD_YYYY}"),
         statement_date_order=DateOrder("MDY"),
@@ -19,7 +20,7 @@ class BankOfAmerica(BankBase):
         transaction_pattern=re.compile(
             rf"(?P<transaction_date>{ISO8601.MM_DD_YY})\s+"
             + SharedPatterns.DESCRIPTION
-            + r"(?P<polarity>\-)?"
+            + r"(?P<direction>\-)?"
             + SharedPatterns.AMOUNT
         ),
         transaction_date_format="%m/%d/%y",
@@ -28,6 +29,7 @@ class BankOfAmerica(BankBase):
     )
 
     credit = StatementConfig(
+        currency="USD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(rf"Statement Closing Date\s+{ISO8601.MM_DD_YYYY}"),
         statement_date_order=DateOrder("MDY"),
@@ -39,7 +41,7 @@ class BankOfAmerica(BankBase):
             + SharedPatterns.DESCRIPTION
             + r"(?P<reference_number>\d{4})?\s+"
             + r"(?P<account_number>\d{4})?\s+"
-            + r"(?P<polarity>\-)?"
+            + r"(?P<direction>\-)?"
             + SharedPatterns.AMOUNT
         ),
         transaction_date_format="%m/%d",

@@ -77,13 +77,13 @@ def test_inject_prev_month_balance(credit_statement):
             transaction_date="2024-01-01",
             description="bar",
             amount=-123.12,
-            polarity=None,
+            direction=None,
         ),
         Transaction(
             transaction_date="2024-01-01",
             description="foo",
             amount=-99.99,
-            polarity=None,
+            direction=None,
         ),
     ]
     assert result[0] in expected

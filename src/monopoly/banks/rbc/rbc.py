@@ -11,6 +11,7 @@ class RoyalBankOfCanada(BankBase):
     name = "rbc"
 
     debit_personal = StatementConfig(
+        currency="CAD",
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"From {ISO8601.MMMM_DD_YYYY} to (?P<date>{ISO8601.MMMM_DD_YYYY})"),
         header_pattern=re.compile(r"Date\s+Description\s+Withdrawals \(\$\)\s+Deposits \(\$\)\s+Balance\ \(\$\)"),
@@ -28,6 +29,7 @@ class RoyalBankOfCanada(BankBase):
     )
 
     debit_business = StatementConfig(
+        currency="CAD",
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(
             rf"\b({DateFormats.MMMM}\s{DateFormats.D}[,\s]{{1,2}}{DateFormats.YYYY}) to "
@@ -52,6 +54,7 @@ class RoyalBankOfCanada(BankBase):
     )
 
     credit = StatementConfig(
+        currency="CAD",
         statement_type=EntryType.CREDIT,
         # Handle squashed PDF text (e.g. STATEMENTFROMJAN10TOFEB10,2025)
         statement_date_pattern=re.compile(
@@ -67,7 +70,7 @@ class RoyalBankOfCanada(BankBase):
             rf"(?P<posting_date>\b({DateFormats.MMM}[-\s]?{DateFormats.DD}))\s+"
             + SharedPatterns.DESCRIPTION
             # transaction dr/cr with format -$999,000.00
-            + r"(?P<polarity>\-)?"
+            + r"(?P<direction>\-)?"
             + rf"(?P<amount>\$?{SharedPatterns.COMMA_FORMAT}|{SharedPatterns.ENCLOSED_COMMA_FORMAT}\s*"
         ),
         transaction_date_format="%b %d",

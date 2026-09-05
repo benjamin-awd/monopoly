@@ -35,10 +35,10 @@ class CreditStatement(BaseStatement):
         return transactions
 
     def pre_process_match(self, raw_transaction: RawTransaction) -> RawTransaction:
-        """Pre-process transactions by adding a debit or credit polarity identifier to the group dict."""
+        """Pre-process transactions by adding a debit or credit direction identifier to the group dict."""
         raw_transaction = super().pre_process_match(raw_transaction)
-        if raw_transaction.polarity == "-":
-            raw_transaction.polarity = "CR"
+        if raw_transaction.direction == "-":
+            raw_transaction.direction = "CR"
         return raw_transaction
 
     def get_prev_month_balances(self) -> list[re.Match]:

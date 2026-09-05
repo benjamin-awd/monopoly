@@ -30,7 +30,7 @@ def test_trust_single_line_transaction(statement: BaseStatement):
             transaction_date="21 Oct",
             description="SP Services",
             amount=-225.77,
-            polarity=None,
+            direction=None,
         )
     ]
     assert transactions == expected
@@ -51,7 +51,7 @@ def test_trust_transaction_with_fcy(statement: BaseStatement):
             transaction_date="20 Oct",
             description="Google 9.99 USD",
             amount=-12.96,
-            polarity=None,
+            direction=None,
         )
     ]
     assert transactions == expected
@@ -75,7 +75,7 @@ def test_trust_multiline_transaction_no_fcy(statement: BaseStatement):
             transaction_date="19 Oct",
             description="NEX FJ-ZHEN SHI KOREAN SINGAPORE SG",
             amount=-7.20,
-            polarity=None,
+            direction=None,
         )
     ]
     assert transactions == expected
@@ -97,29 +97,29 @@ def test_trust_multiple_transactions(statement: BaseStatement):
             transaction_date="21 Oct",
             description="SP Services",
             amount=-225.77,
-            polarity=None,
+            direction=None,
         ),
         Transaction(
             transaction_date="20 Oct",
             description="Google 9.99 USD",
             amount=-12.96,
-            polarity=None,
+            direction=None,
         ),
         Transaction(
             transaction_date="19 Oct",
             description="NEX FJ-ZHEN SHI KOREAN SINGAPORE SG",
             amount=-7.20,
-            polarity=None,
+            direction=None,
         ),
     ]
     assert transactions == expected
 
 
 def test_trust_transaction_with_refund(statement: BaseStatement):
-    """Test transaction with positive polarity (refund/credit).
+    """Test transaction with positive direction (refund/credit).
 
     Example: 15 Oct 17 Oct REFUND +50.00
-    Should extract: transaction_date=15 Oct, description=REFUND, amount=50.00, polarity=+
+    Should extract: transaction_date=15 Oct, description=REFUND, amount=50.00, direction=+
     """
     statement.pages = [PdfPage("15 Oct 17 Oct REFUND +50.00")]
     transactions = statement.get_transactions()
@@ -129,7 +129,7 @@ def test_trust_transaction_with_refund(statement: BaseStatement):
             transaction_date="15 Oct",
             description="REFUND",
             amount=50.0,
-            polarity="+",
+            direction="+",
         )
     ]
     assert transactions == expected
@@ -149,7 +149,7 @@ def test_trust_transaction_with_decimal_fcy(statement: BaseStatement):
             transaction_date="18 Oct",
             description="Amazon 49.99 USD",
             amount=-64.85,
-            polarity=None,
+            direction=None,
         )
     ]
     assert transactions == expected
