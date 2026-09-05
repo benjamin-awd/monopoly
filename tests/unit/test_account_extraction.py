@@ -3,11 +3,12 @@
 import re
 
 import pytest
+from test_utils.statements import StubStatement
 
 from monopoly.config import DateOrder, StatementConfig
 from monopoly.constants import EntryType
 from monopoly.pdf import PdfPage
-from monopoly.statements.base import BaseStatement, extract_last4
+from monopoly.statements.base import extract_last4
 
 
 @pytest.mark.parametrize(
@@ -39,7 +40,8 @@ def _config_with_account_pattern(pattern):
 
 
 def _statement(pages, config):
-    return BaseStatement(pages=pages, bank_name="example", config=config, header="foo")
+    # BaseStatement is abstract; StubStatement is the minimal instantiable subclass
+    return StubStatement(pages=pages, bank_name="example", config=config, header="foo")
 
 
 def test_account_none_when_no_pattern_configured():

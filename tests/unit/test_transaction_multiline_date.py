@@ -1,6 +1,6 @@
 import re
 from monopoly.config import MultilineConfig, StatementConfig, EntryType
-from monopoly.statements.base import BaseStatement
+from test_utils.statements import StubStatement
 from monopoly.statements.transaction import RawTransaction
 
 
@@ -21,7 +21,7 @@ def test_carry_forward_date_when_multiline_is_enabled():
         header_pattern=".*",
         transaction_auto_direction=True,
     )
-    statement = BaseStatement(pages=[], bank_name="Test Bank", config=config, header="")
+    statement = StubStatement(pages=[], bank_name="Test Bank", config=config, header="")
 
     # SCENARIO: Process a sequence of transactions
     first_date = "24 FEB 2025"
@@ -67,7 +67,7 @@ def test_date_is_not_carried_forward_when_multiline_is_disabled():
         statement_type=EntryType.CREDIT,
         transaction_auto_direction=True,
     )
-    statement = BaseStatement(pages=[], bank_name="Test Bank", config=config, header="")
+    statement = StubStatement(pages=[], bank_name="Test Bank", config=config, header="")
     dummy_match = re.search("foo", "foo")
 
     # SCENARIO: Process two transactions
@@ -80,3 +80,26 @@ def test_date_is_not_carried_forward_when_multiline_is_disabled():
 
     # 3. ASSERT: The date should remain None because the feature is off
     assert result.transaction_date is None, "Date should not be carried forward when the feature is disabled"
+
+
+def test_first_match_without_a_date_carries_nothing_forward():
+    """
+    A statement may open on a continuation line with no date of its own.
+
+    `previous_transaction_date` used to be initialised on `DescriptionBuilder`
+    — which never read it — and not on the statement that does, so reaching
+    this path raised `AttributeError` before any transaction was returned.
+    """
+    config = StatementConfig(
+        multiline_config=MultilineConfig(multiline_transaction_date=True),
+        transaction_pattern=".*",
+        statement_date_pattern=".*",
+        header_pattern=".*",
+        statement_type=EntryType.CREDIT,
+    )
+    statement = StubStatement(pages=[], bank_name="Test Bank", config=config, header="")
+
+    raw = RawTransaction(description="CONTINUED LINE", amount="3.20", transaction_date=None)
+    processed = statement.pre_process_match(raw)
+
+    assert processed.transaction_date is None

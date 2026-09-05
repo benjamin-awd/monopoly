@@ -3,8 +3,8 @@ import re
 from functools import cached_property
 
 from monopoly.constants import Direction, EntryType, TransactionKind
-from monopoly.statements.debit_statement import DebitStatement
 from monopoly.statements.payment_summary import PaymentSummary, PaymentSummaryExtractor
+from monopoly.statements.safety import sums_reconcile
 from monopoly.statements.transaction import RawTransaction, Transaction
 
 from .base import BaseStatement, SafetyCheckError
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class CreditStatement(BaseStatement):
-    """A dataclass representation of a credit statement."""
+    """A credit statement."""
 
     statement_type = EntryType.CREDIT
     minus_direction = Direction.CREDIT
@@ -69,10 +69,10 @@ class CreditStatement(BaseStatement):
         if abs(total_amount) in numbers or total_amount_found:
             return True
 
-        # attempt a debit-statement style safety for banks that have
-        # debit and credit amounts as separate numbers and not a single total sum
-        logger.debug("Running debit statement safety check for credit statement")
-        if DebitStatement.perform_safety_check(self):
+        # some banks print debits and credits as separate figures rather than
+        # a single net total, so fall back to reconciling the two sums
+        logger.debug("Falling back to debit-style reconciliation")
+        if sums_reconcile(transactions, numbers | {0.0}):
             return True
 
         msg = f"Total amount {total_amount} cannot be found in credit statement"
