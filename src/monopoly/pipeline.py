@@ -152,6 +152,11 @@ class Pipeline:
         preserve_filename: bool,
         format_type: str = "csv",
     ):
+        # guard direct library callers; the CLI already restricts this via click.Choice
+        if format_type not in ("csv", "json"):
+            msg = f"Unsupported output format: {format_type!r} (expected 'csv' or 'json')"
+            raise ValueError(msg)
+
         output_directory = Path(output_directory)
 
         if preserve_filename and statement.file_path:
