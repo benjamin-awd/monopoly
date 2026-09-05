@@ -20,7 +20,7 @@ class BankOfAmerica(BankBase):
         transaction_pattern=re.compile(
             rf"(?P<transaction_date>{ISO8601.MM_DD_YY})\s+"
             + SharedPatterns.DESCRIPTION
-            + r"(?P<polarity>\-)?"
+            + r"(?P<direction>\-)?"
             + SharedPatterns.AMOUNT
         ),
         transaction_date_format="%m/%d/%y",
@@ -41,7 +41,7 @@ class BankOfAmerica(BankBase):
             + SharedPatterns.DESCRIPTION
             + r"(?P<reference_number>\d{4})?\s+"
             + r"(?P<account_number>\d{4})?\s+"
-            + r"(?P<polarity>\-)?"
+            + r"(?P<direction>\-)?"
             + SharedPatterns.AMOUNT
         ),
         transaction_date_format="%m/%d",

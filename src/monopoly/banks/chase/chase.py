@@ -21,7 +21,7 @@ class Chase(BankBase):
         transaction_pattern=re.compile(
             rf"(?P<transaction_date>{ISO8601.MM_DD})\s+"
             + SharedPatterns.DESCRIPTION
-            + r"(?P<polarity>\-)?"
+            + r"(?P<direction>\-)?"
             + r"(?P<amount>(\d{1,3}(,\d{3})*|\d*)\.\d+)$"
         ),
         multiline_config=MultilineConfig(multiline_descriptions=True),

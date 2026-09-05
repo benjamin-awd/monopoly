@@ -19,41 +19,41 @@ class DebitStatement(BaseStatement):
         self._column_pos_cache: dict[tuple[str, int], int | None] = {}
 
     def pre_process_match(self, raw_transaction: RawTransaction) -> RawTransaction:
-        """Pre-process transactions by adding a debit or credit polarity identifier to the group dict."""
+        """Pre-process transactions by adding a debit or credit direction identifier to the group dict."""
         raw_transaction = super().pre_process_match(raw_transaction)
         page_number = raw_transaction.page_number
         withdrawal_pos = self.get_withdrawal_pos(page_number)
         deposit_pos = self.get_deposit_pos(page_number)
-        polarity = raw_transaction.polarity
+        direction = raw_transaction.direction
 
-        # If the transaction doesn't have an explicit polarity, attempt to infer from column positions
-        if not polarity and withdrawal_pos and deposit_pos:
-            polarity = self.get_debit_polarity(raw_transaction, withdrawal_pos, deposit_pos)
+        # If the transaction doesn't have an explicit direction, attempt to infer from column positions
+        if not direction and withdrawal_pos and deposit_pos:
+            direction = self.get_debit_direction(raw_transaction, withdrawal_pos, deposit_pos)
 
-        match polarity:
+        match direction:
             case "-" | "DR":
-                polarity = "DR"
+                direction = "DR"
             case "+" | "CR":
-                polarity = "CR"
+                direction = "CR"
             case None:
-                polarity = "CR"  # default to credit
+                direction = "CR"  # default to credit
             case _:
-                error = f"Unsupported polarity type {polarity}"
+                error = f"Unsupported direction type {direction}"
                 raise RuntimeError(error)
 
-        raw_transaction.polarity = polarity
+        raw_transaction.direction = direction
         return raw_transaction
 
-    def get_debit_polarity(self, raw_transaction: RawTransaction, withdrawal_pos: int, deposit_pos: int) -> str:
+    def get_debit_direction(self, raw_transaction: RawTransaction, withdrawal_pos: int, deposit_pos: int) -> str:
         """
-        Get the accounting polarity for debit card statements.
+        Get the accounting direction for debit card statements.
 
         Attempts to identify whether a transaction is a debit
         or credit entry based on the distance from the withdrawal
         or deposit columns.
         """
         if raw_transaction.match is None:
-            msg = "RawTransaction.match is required for polarity detection"
+            msg = "RawTransaction.match is required for direction detection"
             raise ValueError(msg)
         amount = raw_transaction.amount
         line = raw_transaction.match.string

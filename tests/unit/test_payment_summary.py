@@ -82,7 +82,7 @@ def test_payment_summary_is_partial_when_field_absent():
 
 
 def test_payment_summary_credit_balance_is_negative():
-    # AMOUNT_EXTENDED_WITHOUT_EOL exposes the CR/parenthesis polarity that OCBC uses
+    # AMOUNT_EXTENDED_WITHOUT_EOL exposes the CR/parenthesis direction that OCBC uses
     from monopoly.constants import SharedPatterns
 
     pattern = re.compile(r"TOTAL AMOUNT DUE\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL)

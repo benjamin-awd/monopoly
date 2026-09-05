@@ -33,7 +33,7 @@ class CIBC(BankBase):
             multiline_descriptions=True,
         ),
         safety_check=True,
-        transaction_auto_polarity=True,
+        transaction_auto_direction=True,
     )
 
     credit = StatementConfig(
@@ -56,7 +56,7 @@ class CIBC(BankBase):
             rf"(?P<amount>{SharedPatterns.OPTIONAL_NEGATIVE_SYMBOL}\$?{SharedPatterns.COMMA_FORMAT}|{SharedPatterns.ENCLOSED_COMMA_FORMAT}\s*"
         ),
         transaction_date_format="%b %d",
-        transaction_auto_polarity=False,
+        transaction_auto_direction=False,
     )
 
     identifiers = [

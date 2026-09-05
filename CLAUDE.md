@@ -190,8 +190,11 @@ The CLI (`src/monopoly/cli/cli.py`) supports:
 - Safety check control with `--safe/--nosafe`
 
 The JSON schema carries `currency` (per-`StatementConfig` settlement currency),
-`posting_date`, and nullable `account` slots. Known follow-ups (currently `None`):
-per-transaction original/FX currency + amount, account last-4, and `period_start`.
+`posting_date`, a normalized `direction` (`"credit"`/`"debit"`, replacing the old
+raw `polarity` marker), and a nullable `account` slot. `Transaction.direction` is
+normalized in the model; the internal parser still captures raw markers into
+`RawTransaction.direction`. Known follow-ups (currently `None`): per-transaction
+original/FX currency + amount, account last-4, and `period_start`.
 
 ## Important Implementation Notes
 

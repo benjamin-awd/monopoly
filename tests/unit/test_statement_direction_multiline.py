@@ -1,7 +1,7 @@
 from monopoly.statements.base import BaseStatement, MatchContext
 
 
-def test_multiline_polarity_detected(statement: BaseStatement):
+def test_multiline_direction_detected(statement: BaseStatement):
     statement.pages[0].lines = [
         "24.02.25  PAYMENT RECEIVED - THANK YOU            79.99",
         "                                                  CR",
@@ -14,5 +14,5 @@ def test_multiline_polarity_detected(statement: BaseStatement):
         idx=0,
     )
 
-    result = statement.get_multiline_polarity(context)
+    result = statement.get_multiline_direction(context)
     assert result == "CR"

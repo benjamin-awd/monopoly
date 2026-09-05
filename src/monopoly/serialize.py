@@ -46,7 +46,7 @@ def _transaction_to_dict(transaction: Transaction) -> dict[str, Any]:
         "currency": transaction.currency,
         "account": transaction.account,
         "balance": transaction.balance,
-        "polarity": transaction.polarity,
+        "direction": transaction.direction,
     }
 
 
