@@ -5,9 +5,15 @@ from monopoly.statements import BaseStatement
 
 
 def generate_hash(statement: BaseStatement) -> str:
-    """Generate a hash based on PDF metadata."""
+    """
+    Generate a short filename UUID from the statement's transactions.
+
+    Hashes an explicit list of the core transaction fields rather than the
+    dataclass repr, so adding new fields to Transaction never churns filenames.
+    """
     hash_object = sha256()
-    hash_object.update(str(statement.transactions).encode("utf-8"))
+    identities = [(tx.date, tx.description, tx.amount, tx.direction, tx.balance) for tx in statement.transactions]
+    hash_object.update(repr(identities).encode("utf-8"))
     return hash_object.hexdigest()[0:6]
 
 

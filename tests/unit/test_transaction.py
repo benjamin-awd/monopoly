@@ -44,9 +44,10 @@ def test_richer_fields_excluded_from_str_and_raw_dict():
     )
     assert str(plain) == str(enriched)
 
-    keys = set(enriched.as_raw_dict(show_polarity=True, show_balance=True))
+    keys = set(enriched.as_raw_dict(show_direction=True, show_balance=True))
     assert keys.isdisjoint({"posting_date", "currency", "account"})
-    assert set(json.loads(str(enriched))) == {"date", "description", "amount"}
+    # direction is always populated (normalized); richer fields never leak into __str__
+    assert set(json.loads(str(enriched))) == {"date", "description", "amount", "direction"}
 
 
 def _tx(**overrides):

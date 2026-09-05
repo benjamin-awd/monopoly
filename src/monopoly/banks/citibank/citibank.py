@@ -46,7 +46,7 @@ class Citibank(BankBase):
             rf"(?P<transaction_date>{ISO8601.MM_DD})\s+"
             rf"(?:(?P<posting_date>{ISO8601.MM_DD})\s+)?"
             + SharedPatterns.DESCRIPTION
-            + r"(?P<polarity>\-)?"
+            + r"(?P<direction>\-)?"
             + r"\$(?P<amount>"
             + SharedPatterns.COMMA_FORMAT
             + r")"

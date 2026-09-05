@@ -28,7 +28,7 @@ class Trust(BankBase):
             rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"
             rf"(?:{ISO8601.DD_MMM}\s+)?"  # Optional posting date
             r"(?P<description>(?:(?!Total outstanding balance).)*?)"
-            r"(?P<polarity>\+)?"
+            r"(?P<direction>\+)?"
             f"{SharedPatterns.AMOUNT}"
             r"$"  # necessary to ignore FCY
         ),

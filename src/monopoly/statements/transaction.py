@@ -38,7 +38,7 @@ class RawTransaction:
     amount: str
     transaction_date: str | None = None
     posting_date: str | None = None
-    polarity: str | None = None
+    direction: str | None = None
     balance: str | None = None
 
     # Parse context
@@ -52,7 +52,7 @@ class RawTransaction:
             "amount": self.amount,
             "transaction_date": self.transaction_date,
             "posting_date": self.posting_date,
-            "polarity": self.polarity,
+            "direction": self.direction,
             "balance": self.balance,
         }
 
@@ -72,31 +72,31 @@ class Transaction:
     description: str
     amount: float
     date: str = Field(alias="transaction_date")
-    polarity: str | None = None
+    direction: str | None = None
     # None means the statement has no balance column; distinct from a real 0.00
     # balance. The CSV writer still collapses None to 0; the JSON schema keeps null.
     balance: float | None = Field(default=None)
-    # Richer, nullable slots surfaced only in the JSON schema (not the CSV, not
-    # __str__/as_raw_dict). posting_date comes from the bank regex; currency is
-    # stamped in Pipeline.extract from the matched StatementConfig; account is a
-    # follow-up placeholder. These must stay out of __str__ so the filename hash
-    # (write.generate_hash) is byte-stable.
+    # Richer, nullable slots surfaced only in the JSON schema, not the CSV.
+    # posting_date comes from the bank regex; currency is stamped in
+    # Pipeline.extract from the matched StatementConfig; account is a follow-up
+    # placeholder. They don't affect the filename hash: write.generate_hash
+    # hashes an explicit field list, not the dataclass repr.
     posting_date: str | None = None
     currency: str | None = None
     account: str | None = None
     # avoid storing config logic, since the Transaction object is used to create
     # a single unique hash which should not change
-    auto_polarity: bool = Field(default=True, init=True, repr=False)
+    auto_direction: bool = Field(default=True, init=True, repr=False)
 
-    def as_raw_dict(self, *_, show_polarity=False, show_balance=False):
+    def as_raw_dict(self, *_, show_direction=False, show_balance=False):
         """Return stringified dictionary version of the transaction."""
         items = {
             Columns.DATE.value: self.date,
             Columns.DESCRIPTION.value: self.description,
             Columns.AMOUNT.value: str(self.amount),
         }
-        if show_polarity and self.polarity is not None:
-            items[Columns.POLARITY.value] = self.polarity
+        if show_direction and self.direction is not None:
+            items[Columns.DIRECTION.value] = self.direction
         if show_balance:
             items[Columns.BALANCE.value] = str(self.balance) if self.balance is not None else "0"
         return items
@@ -129,28 +129,38 @@ class Transaction:
         if self.kwargs:
             amount: str = self.kwargs[Columns.AMOUNT]
             if isinstance(amount, str) and amount.startswith("(") and amount.endswith(")"):
-                self.kwargs[Columns.POLARITY] = "CR"
+                self.kwargs[Columns.DIRECTION] = "CR"
         return self
 
     @model_validator(mode="after")
-    def convert_credit_amount_to_negative(self: "Transaction") -> "Transaction":
-        """Convert transactions with a polarity of "CR" or "+" to positive."""
-        # avoid negative zero
-        if self.amount == 0:
-            return self
+    def normalize_direction_and_sign_amount(self: "Transaction") -> "Transaction":
+        """
+        Sign the amount from the raw direction marker, then normalize the marker.
 
-        if not self.auto_polarity:
-            return self
-
-        if self.polarity in ("CR", "+"):
-            self.amount = abs(self.amount)
-
+        `direction` arrives as a raw marker (CR/DR/DB/+/-/None). Credits are made
+        positive and debits negative (when auto_direction is on); the stored
+        direction is then rewritten to "credit"/"debit" so downstream consumers
+        (e.g. the JSON schema) never see raw, bank-specific markers.
+        """
+        if self.direction in ("CR", "+"):
+            is_credit = True
+        elif self.direction in ("DR", "DB", "-"):
+            is_credit = False
         else:
-            self.amount = -abs(self.amount)
+            is_credit = None
+
+        # sign the amount (skip zero to avoid negative zero, and when disabled)
+        if self.auto_direction and self.amount != 0:
+            self.amount = abs(self.amount) if is_credit else -abs(self.amount)
+
+        # no explicit marker: fall back to the sign of the amount
+        if is_credit is None:
+            is_credit = self.amount >= 0
+        self.direction = "credit" if is_credit else "debit"
         return self
 
     def __str__(self):
-        return json.dumps(self.as_raw_dict(show_polarity=True))
+        return json.dumps(self.as_raw_dict(show_direction=True))
 
     @property
     def transaction_id(self) -> str:

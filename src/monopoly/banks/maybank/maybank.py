@@ -21,7 +21,7 @@ class Maybank(BankBase):
             + SharedPatterns.DESCRIPTION
             # remove *\s
             + SharedPatterns.AMOUNT[:-3]
-            + r"(?P<polarity>\-|\+)\s+"
+            + r"(?P<direction>\-|\+)\s+"
             + SharedPatterns.BALANCE
         ),
         multiline_config=MultilineConfig(multiline_descriptions=True),

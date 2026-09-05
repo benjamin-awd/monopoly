@@ -70,7 +70,7 @@ class RoyalBankOfCanada(BankBase):
             rf"(?P<posting_date>\b({DateFormats.MMM}[-\s]?{DateFormats.DD}))\s+"
             + SharedPatterns.DESCRIPTION
             # transaction dr/cr with format -$999,000.00
-            + r"(?P<polarity>\-)?"
+            + r"(?P<direction>\-)?"
             + rf"(?P<amount>\$?{SharedPatterns.COMMA_FORMAT}|{SharedPatterns.ENCLOSED_COMMA_FORMAT}\s*"
         ),
         transaction_date_format="%b %d",

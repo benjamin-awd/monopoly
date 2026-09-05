@@ -85,14 +85,14 @@ class PaymentSummaryExtractor:
         Return True if the amount represents a credit balance (e.g. an overpayment).
 
         Credit balances are printed either enclosed in parentheses (``(412.16)``)
-        or with a trailing ``CR``/``-`` polarity, both of which `strip_non_numeric`
+        or with a trailing ``CR``/``-`` direction, both of which `strip_non_numeric`
         discards. Without this, a credit balance would be reported as a positive
         amount owed instead of a negative one.
         """
         if amount.strip().startswith("("):
             return True
-        if "polarity" in match.re.groupindex:
-            return match.group("polarity") in ("CR", "-")
+        if "direction" in match.re.groupindex:
+            return match.group("direction") in ("CR", "-")
         return False
 
     def _extract_date(self, pattern) -> date | None:

@@ -88,9 +88,10 @@ stable per-transaction `id`):
 ```sh
 monopoly path/to/file.pdf --output ./out --format json
 ```
-The JSON schema also carries `currency` (the statement's settlement currency),
-`posting_date`, and nullable `account` slots. Per-transaction FX/original-currency
-and account last-4 extraction are a planned follow-up (currently `null`).
+Each transaction also carries `currency` (the statement's settlement currency),
+`posting_date`, a normalized `direction` (`"credit"`/`"debit"`), and a nullable
+`account` slot. Per-transaction FX/original-currency and account last-4 extraction
+are a planned follow-up (currently `null`).
 
 If you need to run monopoly on a password protected file, ensure that passwords are set in the .env file:
 ```sh

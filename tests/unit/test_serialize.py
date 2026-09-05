@@ -13,7 +13,7 @@ TRANSACTION_KEYS = {
     "currency",
     "account",
     "balance",
-    "polarity",
+    "direction",
 }
 
 
@@ -53,6 +53,20 @@ def test_payment_summary_none_for_non_credit(debit_statement):
     envelope = statement_to_dict(debit_statement, [])
     assert envelope["statement_type"] == "debit"
     assert envelope["payment_summary"] is None
+
+
+def test_direction_normalized_to_credit_debit(credit_statement):
+    credit_statement.statement_date = datetime(2023, 6, 30)
+    transactions = [
+        Transaction(transaction_date="2023-06-01", description="REFUND", amount="10.00", direction="CR"),
+        Transaction(transaction_date="2023-06-02", description="COFFEE", amount="4.50"),
+    ]
+    envelope = statement_to_dict(credit_statement, transactions)
+    directions = [tx["direction"] for tx in envelope["transactions"]]
+    # explicit CR -> credit; a plain purchase (auto-negated amount) -> debit
+    assert directions == ["credit", "debit"]
+    # closed value set, never null
+    assert all(d in ("credit", "debit") for d in directions)
 
 
 def test_balance_null_when_absent_float_when_present(credit_statement):

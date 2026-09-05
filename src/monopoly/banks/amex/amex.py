@@ -20,7 +20,7 @@ class Amex(BankBase):
             + SharedPatterns.DESCRIPTION
             + SharedPatterns.AMOUNT_EXTENDED
         ),
-        multiline_config=MultilineConfig(multiline_polarity=True),
+        multiline_config=MultilineConfig(multiline_direction=True),
     )
     identifiers = [
         [

@@ -37,9 +37,9 @@ def test_debit_safety_check(debit_statement: DebitStatement):
     debit_statement.document = document
 
     debit_statement.transactions = [
-        Transaction(transaction_date="23/01", description="foo", amount=10.0, polarity="CR"),
-        Transaction(transaction_date="24/01", description="bar", amount=20.0, polarity="CR"),
-        Transaction(transaction_date="25/01", description="baz", amount=-2.5, polarity="DR"),
+        Transaction(transaction_date="23/01", description="foo", amount=10.0, direction="CR"),
+        Transaction(transaction_date="24/01", description="bar", amount=20.0, direction="CR"),
+        Transaction(transaction_date="25/01", description="baz", amount=-2.5, direction="DR"),
     ]
 
     # the safety check should return True, since the credit sum matches
@@ -57,9 +57,9 @@ def test_debit_safety_check_failure(debit_statement: DebitStatement):
 
     debit_statement.document = document
     debit_statement.transactions = [
-        Transaction(transaction_date="23/01", description="foo", amount=10.0, polarity="CR"),
-        Transaction(transaction_date="24/01", description="bar", amount=20.0, polarity="CR"),
-        Transaction(transaction_date="25/01", description="baz", amount=-2.5, polarity="DR"),
+        Transaction(transaction_date="23/01", description="foo", amount=10.0, direction="CR"),
+        Transaction(transaction_date="24/01", description="bar", amount=20.0, direction="CR"),
+        Transaction(transaction_date="25/01", description="baz", amount=-2.5, direction="DR"),
     ]
 
     # the safety check should fail, since the debit sum and credit sum
@@ -86,8 +86,8 @@ def test_safety_check_does_not_pass_when_total_not_in_document(credit_statement:
 
     # Transactions sum to 30.00, but 30.00 is NOT in the document text.
     credit_statement.transactions = [
-        Transaction(transaction_date="01/01", description="A", amount=10.0, polarity="CR"),
-        Transaction(transaction_date="02/01", description="B", amount=20.0, polarity="CR"),
+        Transaction(transaction_date="01/01", description="A", amount=10.0, direction="CR"),
+        Transaction(transaction_date="02/01", description="B", amount=20.0, direction="CR"),
     ]
 
     # Old logic would wrongly return True — corrected logic should raise an error.

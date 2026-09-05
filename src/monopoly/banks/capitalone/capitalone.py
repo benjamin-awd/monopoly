@@ -19,7 +19,7 @@ class CapitalOneCanada(BankBase):
             rf"(?P<transaction_date>\b({DateFormats.MMM}\s+{DateFormats.D}))\s+"
             rf"(?P<posting_date>\b({DateFormats.MMM}\s+{DateFormats.D}))\s+"
             f"{SharedPatterns.DESCRIPTION}"
-            rf"(?P<polarity>-)?\s*\$"
+            rf"(?P<direction>-)?\s*\$"
             rf"(?P<amount>{SharedPatterns.COMMA_FORMAT})\s*$"
         ),
     )

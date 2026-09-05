@@ -23,7 +23,7 @@ class TDCanadaTrust(BankBase):
         ),
         transaction_date_format="%b%d",
         safety_check=False,  # total amounts are *per page*, not overall
-        transaction_auto_polarity=True,
+        transaction_auto_direction=True,
     )
 
     debit_business = StatementConfig(
@@ -39,7 +39,7 @@ class TDCanadaTrust(BankBase):
         ),
         transaction_date_format="%b%d",
         safety_check=False,  # total amounts are *per page*, not overall
-        transaction_auto_polarity=True,
+        transaction_auto_direction=True,
     )
 
     credit = StatementConfig(
@@ -58,8 +58,8 @@ class TDCanadaTrust(BankBase):
             + rf"(?P<amount>{SharedPatterns.OPTIONAL_NEGATIVE_SYMBOL}\$?{SharedPatterns.COMMA_FORMAT})\s*"
         ),
         transaction_date_format="%b %d",
-        multiline_config=MultilineConfig(multiline_descriptions=True, multiline_polarity=True),
-        transaction_auto_polarity=False,
+        multiline_config=MultilineConfig(multiline_descriptions=True, multiline_direction=True),
+        transaction_auto_direction=False,
     )
 
     identifiers = [
