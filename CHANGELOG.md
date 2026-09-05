@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.23.0](https://github.com/benjamin-awd/monopoly/compare/v0.22.0...v0.23.0) (2026-09-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* **serialize:** JSON `schema_version` is now 2. Balance carry-forward rows moved out of `transactions` into a new top-level `balances` list, so consumers that summed or listed transactions will no longer see them there.
+
+### Features
+
+* **fixtures:** render synthetic PDFs so perf CI needs no real statements ([4521a54](https://github.com/benjamin-awd/monopoly/commit/4521a54e87faea4799021b87afcbaa1b4c7d9d40))
+* **serialize:** split balance rows into top-level `balances` ([8ae80ca](https://github.com/benjamin-awd/monopoly/commit/8ae80ca75415e5f3fd42b8d48b78b342c82a1f80))
+
+
+### Bug Fixes
+
+* **serialize:** give duplicate transactions distinct JSON ids ([6377447](https://github.com/benjamin-awd/monopoly/commit/63774479dce52c9f98b3fefa299bf71ebd43a44b))
+* **statements:** centralise direction markers and column geometry ([dfff2fa](https://github.com/benjamin-awd/monopoly/commit/dfff2fa2a835dcb49ff0f39016a5c04304f68fcc))
+* **statements:** centralise direction markers and column geometry ([691d38e](https://github.com/benjamin-awd/monopoly/commit/691d38e9c99d778850ef1ba543768b84d5f1e163))
+
+
+### Documentation
+
+* **adr:** track ADRs in git and record JSON Schema deferral ([d08341f](https://github.com/benjamin-awd/monopoly/commit/d08341f0ed29f20e346fe6094dd4e41453409c4f))
+* **constants:** tighten TransactionKind docstring ([96ea8ab](https://github.com/benjamin-awd/monopoly/commit/96ea8ab7e1f2856ed6fbc338115094d27a4f9aaf))
+* drop removed /commit skill from CLAUDE.md skills table ([fef1edd](https://github.com/benjamin-awd/monopoly/commit/fef1edd8d2d03d76e9161e10aca99c069999524c))
+* drop the detection aside from CONTRIBUTING ([ebee2e6](https://github.com/benjamin-awd/monopoly/commit/ebee2e67ccbb05ec6c493782ec8b1f921f1d3ab7))
+* note ADRs are version-controlled in docs/adr ([e0c6983](https://github.com/benjamin-awd/monopoly/commit/e0c698342873bfcd08897f7cc884b04edfb44ebd))
+* trim CONTRIBUTING (drop perf-corpus section and dump CSV note) ([8c3f050](https://github.com/benjamin-awd/monopoly/commit/8c3f0506277cc4cc7bbc390986a3287f9e82b6d0))
+
 ## [0.22.0](https://github.com/benjamin-awd/monopoly/compare/v0.21.7...v0.22.0) (2026-09-05)
 
 
