@@ -1,6 +1,98 @@
 {
-  "bank": "ZurcherKantonalBank",
+  "schema_version": 1,
+  "bank": "zkb",
   "statement_type": "debit",
-  "total": 2251.0,
-  "statement_date": "2025-09-05T00:00:00"
+  "period_start": null,
+  "period_end": "2025-09-05",
+  "payment_summary": null,
+  "transactions": [
+    {
+      "id": "8cf3a8c941c3c07f30e2924c08d29d95f9b3bfb08afc5e5ad98ee4a3e3b743e1",
+      "transaction_date": "2025-09-03",
+      "posting_date": null,
+      "description": "Credit originator: LUMEN RETAIL GMBH, HAUPTGASSE 12, 8180 Buelach",
+      "amount": 75.0,
+      "currency": "CHF",
+      "account": null,
+      "balance": 8500.0,
+      "direction": "credit"
+    },
+    {
+      "id": "14f3afb591fcd552f537be6f03fe236286db1c245fbfdee3eac9da1c6293dbac",
+      "transaction_date": "2025-09-03",
+      "posting_date": null,
+      "description": "Payment transaction prices",
+      "amount": -12.0,
+      "currency": "CHF",
+      "account": null,
+      "balance": 8425.0,
+      "direction": "debit"
+    },
+    {
+      "id": "e0e8f0ec4febd963716bd8316bb8cc2221da533139d39ed6c50254931725234e",
+      "transaction_date": "2025-09-02",
+      "posting_date": null,
+      "description": "Credit TWINT: Rossi, Marco 0041790001122",
+      "amount": 48.5,
+      "currency": "CHF",
+      "account": null,
+      "balance": 8437.0,
+      "direction": "credit"
+    },
+    {
+      "id": "eb23c6dc01b99277ded6c9f296776bab448f5b9ac20870cd94bb3188fa95e215",
+      "transaction_date": "2025-09-01",
+      "posting_date": null,
+      "description": "Debit eBanking Mobile: Alex Muster Jordan, Belgium, Antwerp 2000",
+      "amount": -250.0,
+      "currency": "CHF",
+      "account": null,
+      "balance": 8388.5,
+      "direction": "debit"
+    },
+    {
+      "id": "5004f856368a88a78fed2521230281b2a30eeb4e35544b28483fa166bf81aa6d",
+      "transaction_date": "2025-08-30",
+      "posting_date": null,
+      "description": "Credit salary: NORDPOL INSTITUTE, Ringstrasse 4, CH-3011 Bern",
+      "amount": 5200.0,
+      "currency": "CHF",
+      "account": null,
+      "balance": 8638.5,
+      "direction": "credit"
+    },
+    {
+      "id": "e9475b051dfacfde4635e6ab0b4b70f261716ab00d05cb63d625b8e18bbd129e",
+      "transaction_date": "2025-08-29",
+      "posting_date": null,
+      "description": "Debit eBill: Helvetia Insurance AG, CH-9001 St. Gallen",
+      "amount": -1320.75,
+      "currency": "CHF",
+      "account": null,
+      "balance": 3438.5,
+      "direction": "debit"
+    },
+    {
+      "id": "5b5d71d6515fbbcdf77a9b3d44e4d004f4c7547a61891856bcce62d6310a652a",
+      "transaction_date": "2025-08-28",
+      "posting_date": null,
+      "description": "Debit eBanking: BrightWave Ltd, London, UK",
+      "amount": -2480.0,
+      "currency": "CHF",
+      "account": null,
+      "balance": 4759.25,
+      "direction": "debit"
+    },
+    {
+      "id": "61ae1a44a192797a9d6f3bd182f9691f4834546dade17e45b3938a423db7fddc",
+      "transaction_date": "2025-08-27",
+      "posting_date": null,
+      "description": "Credit originator: Aurora Freelance Collective, 66/67 Bahnhofstrasse",
+      "amount": 990.25,
+      "currency": "CHF",
+      "account": null,
+      "balance": 7239.25,
+      "direction": "credit"
+    }
+  ]
 }

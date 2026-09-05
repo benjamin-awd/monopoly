@@ -1,3 +1,4 @@
+import json
 from datetime import date, datetime
 from pathlib import Path
 
@@ -8,6 +9,7 @@ from monopoly.banks import BankOfAmerica, Citibank, Dbs, Hsbc, Maybank, Ocbc, St
 from monopoly.banks.base import BankBase
 from monopoly.pdf import PdfParser
 from monopoly.pipeline import Pipeline
+from monopoly.serialize import statement_to_dict
 from monopoly.statements import CreditStatement, PaymentSummary
 
 # These run against committed, synthetic, plain-text fixtures (page_NN.txt) - no
@@ -69,3 +71,7 @@ def test_bank_credit_statements(
     # check the extracted payment summary, for banks that configure one
     if expected_summary := expected_payment_summaries.get(bank.name):
         assert statement.payment_summary == expected_summary
+
+    # the fixture pins the exact `--format json` envelope the CLI would emit
+    expected_envelope = json.loads((test_directory / "expected.json").read_text())
+    assert statement_to_dict(statement, transformed_transactions) == expected_envelope

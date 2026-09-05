@@ -12,6 +12,7 @@ from click.testing import CliRunner
 
 from monopoly.cli.fixtures import fixtures
 from monopoly.examples.example_bank import ExampleBank
+from monopoly.serialize import SCHEMA_VERSION
 
 # ExampleBank credit config: statement date, header, two transactions, and a
 # printed total (12.34 + 56.78 = 69.12) so the safety check passes.
@@ -45,11 +46,14 @@ def test_build_writes_three_fixture_files(tmp_path, _register_example_bank):
         transformed_rows = list(csv.DictReader(file))
     assert [row["date"] for row in transformed_rows] == ["2024-01-12", "2024-01-13"]
 
+    # expected.json is the canonical `--format json` envelope
     expected = json.loads((tmp_path / "expected.json").read_text())
-    assert expected["bank"] == "ExampleBank"
+    assert expected["schema_version"] == SCHEMA_VERSION
+    assert expected["bank"] == ExampleBank.name
     assert expected["statement_type"] == "credit"
-    assert abs(expected["total"]) == 69.12
-    assert expected["statement_date"].startswith("2024-02-01")
+    assert expected["period_end"] == "2024-02-01"
+    assert [tx["description"] for tx in expected["transactions"]] == ["COFFEE SHOP", "BOOK STORE"]
+    assert abs(round(sum(tx["amount"] for tx in expected["transactions"]), 2)) == 69.12
 
 
 def test_build_safety_check_catches_broken_total(tmp_path, _register_example_bank):

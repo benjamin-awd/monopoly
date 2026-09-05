@@ -8,9 +8,11 @@ lives in `tests/integration/text_fixtures/<bank>/<type>/` and contains:
     metadata.json                   (optional) PDF metadata identifier fields
     raw.csv                         expected pre-transform transactions
     transformed.csv                 expected ISO-date transactions
-    expected.json                   {bank, statement_type, total, statement_date}
+    expected.json                   the canonical `--format json` envelope
+                                    (see monopoly.serialize.statement_to_dict)
 
-Regenerate a fixture's CSVs from redacted text with `monopoly-fixture build`.
+Regenerate a fixture's CSVs and envelope from redacted text with
+`monopoly-fixture build`.
 """
 
 import json
@@ -24,6 +26,7 @@ from monopoly.generic import GenericBank
 from monopoly.identifiers import MetadataIdentifier
 from monopoly.pdf import PdfParser
 from monopoly.pipeline import Pipeline
+from monopoly.serialize import statement_to_dict
 
 TEXT_FIXTURES_DIR = Path(__file__).parent.parent / "text_fixtures"
 
@@ -35,8 +38,9 @@ def _discover_fixtures() -> list[Path]:
 
 
 def _bank_by_name(name: str):
-    by_name = {bank.__name__: bank for bank in banks}
-    by_name[GenericBank.__name__] = GenericBank
+    # `name` is the envelope's `bank` field, i.e. statement.bank_name == bank.name
+    by_name = {bank.name: bank for bank in banks}
+    by_name[GenericBank.name] = GenericBank
     return by_name[name]
 
 
@@ -64,8 +68,9 @@ def test_text_fixture(fixture_dir: Path):
 
     # raw transactions, captured before transform() mutates dates in place
     assert get_transactions_as_dict(statement.transactions) == read_transactions_from_csv(fixture_dir, "raw.csv")
-    assert round(sum(tx.amount for tx in statement.transactions), 2) == expected["total"]
-    assert statement.statement_date.isoformat() == expected["statement_date"]
 
     transformed = pipeline.transform(statement)
     assert get_transactions_as_dict(transformed) == read_transactions_from_csv(fixture_dir, "transformed.csv")
+
+    # the fixture pins the exact `--format json` envelope the CLI would emit
+    assert statement_to_dict(statement, transformed) == expected

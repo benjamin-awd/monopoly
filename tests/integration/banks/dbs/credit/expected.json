@@ -1,6 +1,124 @@
 {
-  "bank": "Dbs",
+  "schema_version": 1,
+  "bank": "dbs",
   "statement_type": "credit",
-  "total": -550.0,
-  "statement_date": "2023-11-20T00:00:00"
+  "period_start": null,
+  "period_end": "2023-11-20",
+  "payment_summary": {
+    "payment_due_date": "2023-12-15",
+    "total_amount_due": 550.0,
+    "minimum_payment": 50.0
+  },
+  "transactions": [
+    {
+      "id": "e3508e126c2a409319f66165ecf5798129704572d498366c0d2c0b260d02f272",
+      "transaction_date": "2023-11-05",
+      "posting_date": null,
+      "description": "PREVIOUS BALANCE",
+      "amount": -1200.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "b25ad417c7dbbc2dd72118e232b8a3ea7946b96b35e850747565be01eeab6fa1",
+      "transaction_date": "2023-11-05",
+      "posting_date": null,
+      "description": "PAYMENT - DBS INTERNET/WIRELESS",
+      "amount": 1200.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "credit"
+    },
+    {
+      "id": "afa34d8ede4bdcfa09e6f059084afa8b6e005d1e3e34d9bb64f9620017a791f6",
+      "transaction_date": "2023-10-14",
+      "posting_date": null,
+      "description": "MERIDIAN BOOKSHOP",
+      "amount": -12.5,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "046cd8788d0423bf8efcd9c803fd0767b3c7622ab1e6cf430780426e1a4609ad",
+      "transaction_date": "2023-10-17",
+      "posting_date": null,
+      "description": "HARBOUR TEAHOUSE",
+      "amount": -45.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "3ce430c45df4de0e0d0a933a4bee71e48cb497abfb78afc8711a19edcdd2260f",
+      "transaction_date": "2023-10-21",
+      "posting_date": null,
+      "description": "SUMMIT ELECTRONICS",
+      "amount": -33.25,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "370857ead390eecdea07b7ec28cad980a695fa25db7cb80c9b22be7bae588d06",
+      "transaction_date": "2023-10-24",
+      "posting_date": null,
+      "description": "DAYBREAK BAKERY",
+      "amount": -8.75,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "3d688d3479f81206bd02a4c61c7e35b91ff865afe292fdd0e27992c6b8a3869e",
+      "transaction_date": "2023-10-28",
+      "posting_date": null,
+      "description": "RIVERSIDE PHARMACY",
+      "amount": -120.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "7757ffb58b4e2f037d0c801ded76837c4c3709511fa9952d3c88a20b554e7df0",
+      "transaction_date": "2023-11-02",
+      "posting_date": null,
+      "description": "GRANITE HARDWARE",
+      "amount": -60.5,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "21e02c215102842bc745e6c07610c89d9e249ee3e8522abcae5608b82ad683b5",
+      "transaction_date": "2023-11-06",
+      "posting_date": null,
+      "description": "WILLOW STATIONERS",
+      "amount": -19.99,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "73bea558b1fc7d5a0a86d6d4ae41655c836835acedc67f1b045bf6d61b195a04",
+      "transaction_date": "2023-11-09",
+      "posting_date": null,
+      "description": "ARBOR FINE FOODS",
+      "amount": -250.01,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    }
+  ]
 }

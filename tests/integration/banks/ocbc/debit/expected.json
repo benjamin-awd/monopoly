@@ -1,6 +1,98 @@
 {
-  "bank": "Ocbc",
+  "schema_version": 1,
+  "bank": "ocbc",
   "statement_type": "debit",
-  "total": 2074.15,
-  "statement_date": "2024-09-30T00:00:00"
+  "period_start": null,
+  "period_end": "2024-09-30",
+  "payment_summary": null,
+  "transactions": [
+    {
+      "id": "e4d6c968c554a5f76cac8c663076de0ab661576327121ccab0aa8a9a5aded269",
+      "transaction_date": "2024-09-03",
+      "posting_date": "2024-09-03",
+      "description": "FAST PAYMENT via PayNow-Mobile to Corner Bakery OTHR - OTHR",
+      "amount": -12.5,
+      "currency": "SGD",
+      "account": null,
+      "balance": 9987.5,
+      "direction": "debit"
+    },
+    {
+      "id": "8cceb91d71a5eeac3e880ad51a8aef340f09bc8c46887f7edb4081cd988d9044",
+      "transaction_date": "2024-09-05",
+      "posting_date": "2024-09-05",
+      "description": "SALARY CREDIT MONTHLY PAYROLL",
+      "amount": 3500.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": 13487.5,
+      "direction": "credit"
+    },
+    {
+      "id": "f8f4d3d57ccf112adf93458abcf9fa87984ac29835e5b2b914ae6eef4fbee5ff",
+      "transaction_date": "2024-09-08",
+      "posting_date": "2024-09-08",
+      "description": "BILL PAYMENT INB 9876987698769876987 INTERNET BANKING",
+      "amount": -250.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": 13237.5,
+      "direction": "debit"
+    },
+    {
+      "id": "86b032021f2090ebebbb2e78a30e6615be20a9df788d97e36cd2dcfdedd8f9c6",
+      "transaction_date": "2024-09-12",
+      "posting_date": "2024-09-12",
+      "description": "FUND TRANSFER via PayNow-UEN to Harbour Rentals",
+      "amount": -1200.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": 12037.5,
+      "direction": "debit"
+    },
+    {
+      "id": "4b8e21304ddea2fa6cd9a125084f1cd047f2543f0069e8abfee1530047b79056",
+      "transaction_date": "2024-09-15",
+      "posting_date": "2024-09-16",
+      "description": "REFUND MERCHANT REVERSAL",
+      "amount": 150.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": 12187.5,
+      "direction": "credit"
+    },
+    {
+      "id": "8175166bcb9cae9a0e3b1ac764e4e97ffc6c311dfdc73a29a458f7986090d623",
+      "transaction_date": "2024-09-20",
+      "posting_date": "2024-09-20",
+      "description": "NETS QR 998877665 NETS QR PURCHASE GREEN GROCER",
+      "amount": -45.6,
+      "currency": "SGD",
+      "account": null,
+      "balance": 12141.9,
+      "direction": "debit"
+    },
+    {
+      "id": "cdf6df6e5aa11045785deac0a23d191c41f3a78095ea4d781151146212cba628",
+      "transaction_date": "2024-09-25",
+      "posting_date": "2024-09-25",
+      "description": "IBG GIRO UTILITY BILL",
+      "amount": -88.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": 12053.9,
+      "direction": "debit"
+    },
+    {
+      "id": "eb809e5e166ab8c0d8a5d897f9034142ceb9c96f48e2290a7f3d6c7268840241",
+      "transaction_date": "2024-09-30",
+      "posting_date": "2024-09-30",
+      "description": "INTEREST CREDIT",
+      "amount": 20.25,
+      "currency": "SGD",
+      "account": null,
+      "balance": 12074.15,
+      "direction": "credit"
+    }
+  ]
 }

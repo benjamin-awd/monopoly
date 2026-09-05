@@ -22,6 +22,7 @@ from monopoly.generic import GenericBank
 from monopoly.identifiers import MetadataIdentifier
 from monopoly.pdf import PdfDocument, PdfParser
 from monopoly.pipeline import Pipeline
+from monopoly.serialize import statement_to_dict
 
 
 def _page_filename(index: int, total: int) -> str:
@@ -205,12 +206,9 @@ def build(directory: Path, bank_name: str | None, generic: bool, safety_check: b
     transformed = pipeline.transform(statement)
     _write_csv(directory / "transformed.csv", transformed)
 
-    expected = {
-        "bank": bank.__name__,
-        "statement_type": str(statement.statement_type),
-        "total": total,
-        "statement_date": statement.statement_date.isoformat(),
-    }
+    # expected.json is the canonical `--format json` envelope (see serialize.py), so
+    # the fixture asserts the real shipped output shape, not a bespoke mini-schema.
+    expected = statement_to_dict(statement, transformed)
     (directory / "expected.json").write_text(json.dumps(expected, indent=2), encoding="utf8")
 
     click.secho(f"Extracted {len(statement.transactions)} transaction(s); total {total}", fg="green")
