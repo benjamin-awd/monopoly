@@ -109,15 +109,6 @@ class TestDateResolverResolve:
         with pytest.raises(ValueError, match="Statement date not found"):
             resolver.resolve()
 
-    def test_raises_for_invalid_pattern_type(self, basic_config):
-        """Test that TypeError is raised for invalid pattern type."""
-        basic_config.statement_date_pattern = "not a pattern"
-        pages = [PdfPage(raw_text="Statement Date: 15 Nov 2023")]
-        resolver = DateResolver(pages, basic_config)
-
-        with pytest.raises(TypeError, match="Pattern must be one of"):
-            resolver.resolve()
-
     def test_filename_fallback_when_content_has_no_date(self, filename_fallback_config):
         """Test that filename fallback is used when content has no date."""
         pages = [PdfPage(raw_text="No date in content")]

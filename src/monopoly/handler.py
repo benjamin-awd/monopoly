@@ -8,6 +8,11 @@ from monopoly.statements import BaseStatement, CreditStatement, DebitStatement, 
 
 logger = logging.getLogger(__name__)
 
+STATEMENT_CLASSES: dict[EntryType, type[BaseStatement]] = {
+    EntryType.DEBIT: DebitStatement,
+    EntryType.CREDIT: CreditStatement,
+}
+
 
 class StatementHandler:
     """
@@ -20,6 +25,11 @@ class StatementHandler:
         self.bank = parser.bank
         self.pages = parser.pages
         self.file_path = parser.file_path
+
+    @property
+    def statement_configs(self) -> list[StatementConfig]:
+        """The configs to try, in order. Subclasses may synthesise their own."""
+        return self.bank.statement_configs
 
     def get_header(self, config: StatementConfig) -> str | None:
         pattern = config.header_pattern
@@ -35,18 +45,11 @@ class StatementHandler:
         return self._get_statement()
 
     def _get_statement(self) -> BaseStatement:
-        pages = self.pages
-        bank_name = self.bank.name
-
-        for config in self.bank.statement_configs:
+        for config in self.statement_configs:
             if header := self.get_header(config):
-                match config.statement_type:
-                    case EntryType.DEBIT:
-                        logger.debug("Statement type detected: %s", EntryType.DEBIT)
-                        return DebitStatement(pages, bank_name, config, header, self.file_path)
-                    case EntryType.CREDIT:
-                        logger.debug("Statement type detected: %s", EntryType.CREDIT)
-                        return CreditStatement(pages, bank_name, config, header, self.file_path)
+                logger.debug("Statement type detected: %s", config.statement_type)
+                statement_class = STATEMENT_CLASSES[config.statement_type]
+                return statement_class(self.pages, self.bank.name, config, header, self.file_path)
 
         msg = "Could not find header in statement"
         raise MissingHeaderError(msg)

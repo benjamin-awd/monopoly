@@ -1,6 +1,6 @@
 import re
 from monopoly.config import MultilineConfig, StatementConfig, EntryType
-from monopoly.statements.base import BaseStatement
+from test_utils.statements import StubStatement
 from monopoly.statements.transaction import RawTransaction
 
 
@@ -21,7 +21,7 @@ def test_carry_forward_date_when_multiline_is_enabled():
         header_pattern=".*",
         transaction_auto_direction=True,
     )
-    statement = BaseStatement(pages=[], bank_name="Test Bank", config=config, header="")
+    statement = StubStatement(pages=[], bank_name="Test Bank", config=config, header="")
 
     # SCENARIO: Process a sequence of transactions
     first_date = "24 FEB 2025"
@@ -67,7 +67,7 @@ def test_date_is_not_carried_forward_when_multiline_is_disabled():
         statement_type=EntryType.CREDIT,
         transaction_auto_direction=True,
     )
-    statement = BaseStatement(pages=[], bank_name="Test Bank", config=config, header="")
+    statement = StubStatement(pages=[], bank_name="Test Bank", config=config, header="")
     dummy_match = re.search("foo", "foo")
 
     # SCENARIO: Process two transactions

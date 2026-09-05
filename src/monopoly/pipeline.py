@@ -1,26 +1,20 @@
 import csv
 import json
 import logging
-import re
-from datetime import datetime
 from functools import cached_property
 from pathlib import Path
 
 from pydantic import SecretStr
 
-from monopoly.constants.date import DateFormats
 from monopoly.generic import GenericBank, GenericStatementHandler
 from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfParser
 from monopoly.serialize import statement_to_dict
 from monopoly.statements import BaseStatement, NoTransactionsFoundError, Transaction
+from monopoly.statements.date_transformer import DateTransformer
 from monopoly.write import generate_name
 
 logger = logging.getLogger(__name__)
-
-START_OF_YEAR_MONTHS = (1, 2)
-YEAR_CUTOFF_MONTH = 2
-_YYYY_RE = re.compile(DateFormats.YYYY)
 
 
 class Pipeline:
@@ -84,64 +78,18 @@ class Pipeline:
 
     @staticmethod
     def transform(statement: BaseStatement) -> list[Transaction]:
-        logger.debug("Running transformation functions on DataFrame")
-
-        transactions = statement.transactions
-        statement_date = statement.statement_date
-        date_order = statement.config.transaction_date_order
-        date_format = statement.config.transaction_date_format
-
-        def convert_date(date_str: str) -> str:
-            """
-            Convert a date string to ISO 8601 format with cross-year logic.
-
-            Applies the following logic:
-            - If the date does not include a year, append the year from the statement date.
-            - Attempts to parse the date using a specified format (for performance).
-            - Falls back to a flexible date parser if format-based parsing fails.
-            - Applies cross-year adjustment: if the statement is from early in the year and
-            the date appears to be from a late-month (e.g., December), it may belong
-            to the previous year and is adjusted accordingly.
-            """
-            has_year = bool(_YYYY_RE.search(date_str))
-            needs_year = not has_year and "y" not in date_format.lower()
-            fmt = date_format
-            parsed_date = None
-
-            if needs_year:
-                date_str = f"{date_str} {statement_date.year}"
-                fmt += " %Y"
-
-            try:
-                parsed_date = datetime.strptime(date_str, fmt).astimezone()
-            except ValueError:
-                logger.debug("strptime failed for %s with format %s", date_str, fmt)
-                from dateparser import parse
-
-                parsed_date = parse(date_str, settings=date_order.settings)
-
-            if not parsed_date:
-                msg = f"Could not convert date: {date_str}"
-                raise RuntimeError(msg)
-
-            # Detect cross-year case: e.g., statement is from Jan/Feb, but tx is Dec
-            is_cross_year = statement_date.month in START_OF_YEAR_MONTHS and parsed_date.month > YEAR_CUTOFF_MONTH
-
-            if is_cross_year and needs_year:
-                parsed_date = parsed_date.replace(year=parsed_date.year - 1)
-
-            return parsed_date.date().isoformat()
-
+        """Normalise every transaction date to ISO 8601."""
         logger.debug("Transforming dates to ISO 8601")
+        transformer = DateTransformer(statement.config, statement.statement_date)
 
-        for tx in transactions:
-            tx.date = convert_date(tx.date)
+        for tx in statement.transactions:
+            tx.date = transformer.to_iso8601(tx.date)
             # posting_date shares the transaction date format; normalize it too so
             # both dates in the JSON output are ISO 8601.
             if tx.posting_date:
-                tx.posting_date = convert_date(tx.posting_date)
+                tx.posting_date = transformer.to_iso8601(tx.posting_date)
 
-        return transactions
+        return statement.transactions
 
     @staticmethod
     def load(

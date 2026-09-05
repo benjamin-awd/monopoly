@@ -4,6 +4,7 @@ from functools import cached_property
 
 from monopoly.constants import Direction, EntryType
 from monopoly.statements.column_layout import ColumnLayout
+from monopoly.statements.safety import sums_reconcile
 from monopoly.statements.transaction import RawTransaction
 
 from .base import BaseStatement, SafetyCheckError
@@ -12,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class DebitStatement(BaseStatement):
-    """A dataclass representation of a debit statement."""
+    """A debit statement."""
 
     statement_type = EntryType.DEBIT
     minus_direction = Direction.DEBIT
@@ -104,24 +105,12 @@ class DebitStatement(BaseStatement):
         logger.debug("Debit header %s cannot be found on page %s", column_name, page_number)
         return None
 
-    def perform_safety_check(self: BaseStatement) -> bool:
+    def perform_safety_check(self) -> bool:
         """Check that debit and credit transaction sums exist as a number within the statement."""
-        transactions = self.transactions
+        # zero covers statements that are entirely debits or entirely credits
+        numbers = self.get_all_numbers_from_document() | {0.0}
 
-        numbers = self.get_all_numbers_from_document()
-
-        # add a zero, for cases where the debit statement
-        # either is completely debit or credit transactions
-        numbers.update([0])
-
-        debit_amounts = [transaction.amount for transaction in transactions if transaction.amount > 0]
-        credit_amounts = [transaction.amount for transaction in transactions if transaction.amount < 0]
-
-        debit_sum = round(abs(sum(debit_amounts)), 2)
-        credit_sum = round(abs(sum(credit_amounts)), 2)
-
-        result = all([debit_sum in numbers, credit_sum in numbers])
-        if not result:
+        if not sums_reconcile(self.transactions, numbers):
             raise SafetyCheckError(self.failed_safety_message)
 
-        return result
+        return True
