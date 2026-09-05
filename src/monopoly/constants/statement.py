@@ -14,14 +14,11 @@ class EntryType(AutoEnum):
 
 class TransactionKind(Enum):
     """
-    What a parsed row represents, and how it surfaces in the JSON envelope.
+    What a parsed row is, and how it serializes.
 
-    Each member owns its own serialization: ``balance_type`` is ``None`` for
-    real activity (which stays in ``transactions``) and the public ``type``
-    string for a carried-forward balance row (which ``serialize.py`` lifts into
-    the top-level ``balances`` list). Adding a new balance kind means adding a
-    member with its own type here - there is no separate lookup table to keep in
-    sync, and no way for an internal marker to leak out unmapped.
+    ``balance_type`` is ``None`` for real activity (stays in ``transactions``)
+    or the JSON ``type`` string for a balance row (lifted into ``balances``).
+    New balance kinds add a member here - no separate lookup table to sync.
     """
 
     TRANSACTION = ("transaction", None)
