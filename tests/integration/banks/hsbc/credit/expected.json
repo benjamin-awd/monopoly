@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "bank": "hsbc",
+  "statement_type": "credit",
+  "period_start": null,
+  "period_end": "2024-09-24",
+  "payment_summary": {
+    "payment_due_date": null,
+    "total_amount_due": 575.94,
+    "minimum_payment": 50.0
+  },
+  "transactions": [
+    {
+      "id": "61ede948544a819b60f0bfbe5c4cc5e2a11c3b8bce6e4a84e66734e6b362baab",
+      "transaction_date": "2024-09-02",
+      "posting_date": null,
+      "description": "Previous Statement Balance",
+      "amount": -850.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "1ca39b5b438a8a2868213d53688a227a77925b366f825a3d621064b92075e64a",
+      "transaction_date": "2024-09-02",
+      "posting_date": "2024-09-05",
+      "description": "COFFEE HOUSE CENTRAL SINGAPORE SG",
+      "amount": -12.5,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "ebb1e37dbb00faee4d9ce606bb0850ebada07fd0334893e85af3b9759580b2f4",
+      "transaction_date": "2024-09-04",
+      "posting_date": "2024-09-07",
+      "description": "ONLINE BOOKSTORE INTL LONDON GB",
+      "amount": -88.3,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "4bdc2f2ff6520252b1c9add2c65d3d0fa4d606887c17adf92764e3d7916c9fe6",
+      "transaction_date": "2024-09-06",
+      "posting_date": "2024-09-09",
+      "description": "GROCERY MART EAST SINGAPORE SG",
+      "amount": -145.75,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "6733b69e9882ad8ccfc39f9b329bec8a4c6ff8a8816e312205d6fd2c2745664f",
+      "transaction_date": "2024-09-08",
+      "posting_date": "2024-09-11",
+      "description": "REFUND MERCHANT ADJUSTMENT SINGAPORE SG",
+      "amount": 60.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "credit"
+    },
+    {
+      "id": "0a1ffc5a263c4f06e8e0edf1e8ce66f5f97fd4d97a23877ed2b705f931e041e8",
+      "transaction_date": "2024-09-12",
+      "posting_date": "2024-09-14",
+      "description": "RIDE SHARE TRIP SINGAPORE SG",
+      "amount": -23.4,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "90c771779a2618b5fa6918ba5a51d26801101051a35ef1d7109cd846e906d482",
+      "transaction_date": "2024-09-15",
+      "posting_date": "2024-09-18",
+      "description": "STREAMING SERVICE MONTHLY DUBLIN IE",
+      "amount": -15.99,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "bc40c01b9ef9d362b3cae54bd25aad4f7bb12abecc1ee138c5e555ef28a42b8c",
+      "transaction_date": "2024-09-18",
+      "posting_date": "2024-09-21",
+      "description": "PAYMENT RECEIVED THANK YOU SINGAPORE SG",
+      "amount": 500.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "credit"
+    }
+  ]
+}

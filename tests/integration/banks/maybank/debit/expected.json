@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "bank": "maybank",
+  "statement_type": "debit",
+  "period_start": null,
+  "period_end": "2023-08-31",
+  "payment_summary": null,
+  "transactions": [
+    {
+      "id": "1760a3f29eea0bb42590a5d28dfc156ef9bbf3db89c7c85a53187557e8e61fb1",
+      "transaction_date": "2023-08-01",
+      "posting_date": null,
+      "description": "CASH WITHDRAWAL",
+      "amount": -120.0,
+      "currency": "MYR",
+      "account": null,
+      "balance": 380.0,
+      "direction": "debit"
+    },
+    {
+      "id": "0be32c079a42950c8902ebb6bc4a8df4983daa221ed05711ec63cfa185621a07",
+      "transaction_date": "2023-08-03",
+      "posting_date": null,
+      "description": "IBK FUND TFR TO A/C MICHAEL RIVERS* salary",
+      "amount": 300.0,
+      "currency": "MYR",
+      "account": null,
+      "balance": 680.0,
+      "direction": "credit"
+    },
+    {
+      "id": "6e29256bdaba37cf355490bcf509dcda7255e6763b38ce780f81cd7050c939e1",
+      "transaction_date": "2023-08-05",
+      "posting_date": null,
+      "description": "SALE DEBIT NASI CAFE * SHAH ALAM , MY",
+      "amount": -45.5,
+      "currency": "MYR",
+      "account": null,
+      "balance": 634.5,
+      "direction": "debit"
+    },
+    {
+      "id": "263d8f124a2fe9b3447afcc9e120ec69d68ca8c01c770069b5454d51bad104f3",
+      "transaction_date": "2023-08-08",
+      "posting_date": null,
+      "description": "CASH DEPOSIT",
+      "amount": 150.0,
+      "currency": "MYR",
+      "account": null,
+      "balance": 784.5,
+      "direction": "credit"
+    },
+    {
+      "id": "a091812471a0d5dd3aefc362193b218d5db391c0a9db553f88b56355861a4c10",
+      "transaction_date": "2023-08-12",
+      "posting_date": null,
+      "description": "FPX PAYMENT FR A/ 9988776 * GADGET SUPPLY 2308120811330099",
+      "amount": -88.3,
+      "currency": "MYR",
+      "account": null,
+      "balance": 696.2,
+      "direction": "debit"
+    },
+    {
+      "id": "f940b23b41e48dc656b01ab33f14b871c5332479185187c62e2dc988f3177b2a",
+      "transaction_date": "2023-08-15",
+      "posting_date": null,
+      "description": "FUND TRANSFER TO A/ PRIYA NAIR* refund",
+      "amount": 75.25,
+      "currency": "MYR",
+      "account": null,
+      "balance": 771.45,
+      "direction": "credit"
+    },
+    {
+      "id": "79adf604757e9d7e14dd26ddd6c991684e10dfa9ed0e44d040522f43ef3bf538",
+      "transaction_date": "2023-08-20",
+      "posting_date": null,
+      "description": "TRANSFER FROM A/C BUILDER HSE SDN. B*",
+      "amount": -210.2,
+      "currency": "MYR",
+      "account": null,
+      "balance": 561.25,
+      "direction": "debit"
+    }
+  ]
+}

@@ -19,7 +19,7 @@ class StatementHandler:
     def __init__(self, parser: PdfParser):
         self.bank = parser.bank
         self.pages = parser.pages
-        self.file_path = parser.document.file_path
+        self.file_path = parser.file_path
 
     def get_header(self, config: StatementConfig) -> str | None:
         pattern = config.header_pattern

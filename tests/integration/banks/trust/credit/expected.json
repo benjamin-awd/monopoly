@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "bank": "trust",
+  "statement_type": "credit",
+  "period_start": null,
+  "period_end": "2025-03-15",
+  "payment_summary": {
+    "payment_due_date": "2025-04-05",
+    "total_amount_due": 27.0,
+    "minimum_payment": 25.0
+  },
+  "transactions": [
+    {
+      "id": "747a2e62fb1d5333d1342b98b375a2fae9b85ca474e1dd3966d204e092eb0b0b",
+      "transaction_date": "2025-03-03",
+      "posting_date": null,
+      "description": "Kopitiam Breakfast",
+      "amount": -5.4,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "799b2396b16c97c61b539a0e3b2a6fc6c61d31a875565e9a1a33caaa760b6309",
+      "transaction_date": "2025-03-04",
+      "posting_date": null,
+      "description": "Island Market Grocer",
+      "amount": -32.15,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "3b49a264d6415e9a0a651687808477ed49a15db7c093b25c732ccdbf3b975f79",
+      "transaction_date": "2025-03-05",
+      "posting_date": null,
+      "description": "Bus / MRT",
+      "amount": -2.2,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "5a340ea55af7ffab962fb717b2a6ff627ed76c9ce4e53a98b241d250da031751",
+      "transaction_date": "2025-03-06",
+      "posting_date": null,
+      "description": "Ramen Bar SG",
+      "amount": -18.9,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "b191c82c29ad5e35049c0544e7710e04b6caaaf826af4a2716af61e05ca63063",
+      "transaction_date": "2025-03-07",
+      "posting_date": null,
+      "description": "Cinema Downtown SG",
+      "amount": -27.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "b7b7df35934f3fafc21b3ca847d1e663bd0394ba122831d1439d7414824111bd",
+      "transaction_date": "2025-03-08",
+      "posting_date": null,
+      "description": "Cloud Bookstore",
+      "amount": -21.35,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "4aa7b218593e1f5385924a9b060960b568c61569024323c69c390d04f1a4287b",
+      "transaction_date": "2025-03-09",
+      "posting_date": null,
+      "description": "Payment received - thank you",
+      "amount": 80.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "credit"
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "bank": "maybank",
+  "statement_type": "credit",
+  "period_start": null,
+  "period_end": "2024-11-08",
+  "payment_summary": {
+    "payment_due_date": null,
+    "total_amount_due": null,
+    "minimum_payment": null
+  },
+  "transactions": [
+    {
+      "id": "6b95d8718fb49b0ec6085b4e474ea6b077bd480ff3fecfa6a62f819b0e19b5f3",
+      "transaction_date": "2024-10-11",
+      "posting_date": null,
+      "description": "YOUR PREVIOUS STATEMENT BALANCE",
+      "amount": -1200.0,
+      "currency": "MYR",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "a9fdd79cf51145aa498ec147192e19946d5debc75a7cd48dc1f4f9c1d0d985de",
+      "transaction_date": "2024-10-11",
+      "posting_date": "2024-10-12",
+      "description": "GROCERY MART KUALA LUMPUR",
+      "amount": -152.3,
+      "currency": "MYR",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "fbdcd8f0a31449f67a68c42747b48a54c44dc91d3d1ece71b76bd35c294c2eea",
+      "transaction_date": "2024-10-14",
+      "posting_date": "2024-10-15",
+      "description": "PETRONAS SHAH ALAM",
+      "amount": -80.0,
+      "currency": "MYR",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "4fa2b0b41cc7b121101a4651d7a525ddca1ecf7edb8a4202f69dc8bd3a7c8239",
+      "transaction_date": "2024-10-17",
+      "posting_date": "2024-10-18",
+      "description": "SHOPEE ONLINE PURCHASE",
+      "amount": -240.5,
+      "currency": "MYR",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "99299e9c124ed2c470c1b8421794b31730f24891b4a8513a9b41ae516c3346f9",
+      "transaction_date": "2024-10-21",
+      "posting_date": "2024-10-22",
+      "description": "RESTORAN NASI KANDAR PENANG",
+      "amount": -45.2,
+      "currency": "MYR",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "acfc15d56143cdaa534d7908d1d02fd63e1d7813639bae2a2ba3f61f2367b890",
+      "transaction_date": "2024-10-27",
+      "posting_date": "2024-10-28",
+      "description": "GRAB TRANSPORT SDN BHD",
+      "amount": -32.0,
+      "currency": "MYR",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "63277e37c260e17913838693b0d3333a2af12ca769c27fe35c4cb6fb69b2e3d2",
+      "transaction_date": "2024-11-04",
+      "posting_date": "2024-11-05",
+      "description": "PAYMENT VIA MAYBANK2U THANK YOU",
+      "amount": 500.0,
+      "currency": "MYR",
+      "account": null,
+      "balance": null,
+      "direction": "credit"
+    },
+    {
+      "id": "55d032b757a9a7dec163e9daaddf2ab711413dab787f9a7a2ca8790411282ddd",
+      "transaction_date": "2024-11-06",
+      "posting_date": "2024-11-08",
+      "description": "REFUND SHOPEE ONLINE",
+      "amount": 40.5,
+      "currency": "MYR",
+      "account": null,
+      "balance": null,
+      "direction": "credit"
+    }
+  ]
+}

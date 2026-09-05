@@ -1,0 +1,29 @@
+                                                                            Contact               Betreuung Privatkunden
+                                                                            Account no.           2233-5566.001
+                                                                            IBAN                  CH9300700223355660011
+                                                                            Product               Private account
+                                                                            In name of            Muster Jordan Alex
+
+Friday, 05.09.2025/09:14
+
+Account statement
+                                                                                                                   Balance preview
+Date         Booking text                                              Debit CHF         Credit CHF Value date                CHF
+03.09.2025 Credit originator: LUMEN RETAIL GMBH, HAUPTGASSE 12,                            75.00 03.09.2025           8'500.00
+             8180 Buelach
+03.09.2025 Payment transaction prices                                  12.00                     03.09.2025           8'425.00
+02.09.2025 Credit TWINT: Rossi, Marco 0041790001122                                        48.50 02.09.2025           8'437.00
+01.09.2025 Debit eBanking Mobile: Alex Muster Jordan, Belgium,        250.00                     01.09.2025           8'388.50
+             Antwerp 2000
+30.08.2025 Credit salary: NORDPOL INSTITUTE, Ringstrasse 4, CH-3011                     5'200.00 30.08.2025           8'638.50
+             Bern
+29.08.2025 Debit eBill: Helvetia Insurance AG, CH-9001 St. Gallen   1'320.75                     29.08.2025           3'438.50
+28.08.2025 Debit eBanking: BrightWave Ltd, London, UK               2'480.00                     28.08.2025           4'759.25
+27.08.2025 Credit originator: Aurora Freelance Collective, 66/67                          990.25 27.08.2025           7'239.25
+             Bahnhofstrasse
+Additions                                                           4'062.75            6'313.75
+Balance as of: 05.09.2025 09:03                                                                                       8'500.00
+Available amount                                                                                                      8'500.00
+
+OY0000 0.000.000-0 00000                                                                                     Zuercher Kantonalbank
+202509050000000000000000000000                                                                                                1/1

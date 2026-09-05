@@ -1,0 +1,44 @@
+DBS Bank Ltd
+12 Marina Boulevard, Marina Bay Financial Centre Tower 3, Singapore 018982
+www.dbs.com
+
+                                                                                                                                  Page 1 of 1
+
+                MARCUS LIM WEI
+                88 KESTREL AVENUE
+                MAPLE HEIGHTS
+                SINGAPORE 559120
+
+                                                                                                                                         As at 30 Nov 2024
+
+ Details of Your DBS Savings Plus Account                                                                                        Account No.: 098-7-654321
+
+ DATE                     DETAILS OF TRANSACTIONS                                                 WITHDRAWAL($)             DEPOSIT($)           BALANCE($)
+
+                          Balance Brought Forward                                                                                                 2,000.00
+ 02 Nov                   Salary Credit                                                                                    1,250.00               3,250.00
+                            GIRO SALARY REF SLR8842
+
+ 04 Nov                   Cash Withdrawal                                                              210.00                                     3,040.00
+                            ATM CASH KESTREL AVE
+
+ 07 Nov                   Grocery Purchase                                                              45.30                                     2,994.70
+                            NTUC FAIRPRICE MAPLE
+
+ 09 Nov                   Refund Received                                                                                     88.20               3,082.90
+                            PayNow Incoming Ref 553201
+
+ 12 Nov                   Utility Bill Payment                                                         128.75                                     2,954.15
+                            SP UTILITIES ACCT 77120
+
+ 15 Nov                   Incoming Transfer                                                                                  300.00               3,254.15
+                            PayNow Incoming Ref 771902
+
+ 20 Nov                   Coffee Shop                                                                   12.60                                     3,241.55
+                            PayNow Transfer To Kopitiam
+
+ 30 Nov                   Interest Earned                                                                                     15.45               3,257.00
+                            Credit Interest
+
+                          Total                                                                        396.65              1,653.65
+                          Balance Carried Forward                                                                                                 3,257.00

@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "bank": "uob",
+  "statement_type": "debit",
+  "period_start": null,
+  "period_end": "2025-03-31",
+  "payment_summary": null,
+  "transactions": [
+    {
+      "id": "1b58cdbf22afff592f7952d2d9ebe599ac3d1742010cd2aa4c9ebb3674149aea",
+      "transaction_date": "2025-03-02",
+      "posting_date": null,
+      "description": "NETS PURCHASE-Debit Card 01 MAR 6021 4453107 FAIRPRICE FINEST-KOVAN SINGAPORE SG",
+      "amount": -24.8,
+      "currency": "SGD",
+      "account": null,
+      "balance": 475.2,
+      "direction": "debit"
+    },
+    {
+      "id": "c95abc849a503b8c64f2abfb340bc0415e9b791a33033f594445bf6cfa51cce1",
+      "transaction_date": "2025-03-04",
+      "posting_date": null,
+      "description": "PAYNOW-FAST PIB2503041188220049 HELENA MARSH OTHR Transfer - Mobile",
+      "amount": 120.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": 595.2,
+      "direction": "credit"
+    },
+    {
+      "id": "46abacb23e8997bae9092432b9905154556615babcac5939314bf2f77f9d7066",
+      "transaction_date": "2025-03-06",
+      "posting_date": null,
+      "description": "Cash Withdrawal-ATM 6021991025063738",
+      "amount": -200.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": 395.2,
+      "direction": "debit"
+    },
+    {
+      "id": "17efe88a9a324fb7ba441623a8d8921bfc17d73c7de89fdff8538e62e4658bc5",
+      "transaction_date": "2025-03-09",
+      "posting_date": null,
+      "description": "Misc DR-Debit Card 07 MAR 6021 8890142 GRAB RIDES-EC SINGAPORE SG",
+      "amount": -15.6,
+      "currency": "SGD",
+      "account": null,
+      "balance": 379.6,
+      "direction": "debit"
+    },
+    {
+      "id": "5c8885d6605b4ccd0034ea6be3289fce248397573f23000f9e642eec6460d325",
+      "transaction_date": "2025-03-12",
+      "posting_date": null,
+      "description": "GIRO-SALARY NORDLING ANALYTICS PTE LTD SALARY MAR 2025",
+      "amount": 3200.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": 3579.6,
+      "direction": "credit"
+    },
+    {
+      "id": "fd6614b241e2ba30033ca84c6850f965e42c763dcd7600288546e6e0d33d068b",
+      "transaction_date": "2025-03-15",
+      "posting_date": null,
+      "description": "Misc DR-Debit Card 13 MAR 6021 5567390 KOPITIAM-TAMPINES SINGAPORE SG",
+      "amount": -8.4,
+      "currency": "SGD",
+      "account": null,
+      "balance": 3571.2,
+      "direction": "debit"
+    },
+    {
+      "id": "99e4f0c9670bcf38372934d4b9dab0aef928999e2743a3bb8c77507ff243716c",
+      "transaction_date": "2025-03-20",
+      "posting_date": null,
+      "description": "PAYNOW-FAST PIB2503206620517744 quek wei liang OTHR Transfer - Mobile",
+      "amount": -150.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": 3421.2,
+      "direction": "debit"
+    },
+    {
+      "id": "92fd037520552912775da71ebfe606d18a093f535e3fb46672a6cde37a728f4f",
+      "transaction_date": "2025-03-25",
+      "posting_date": null,
+      "description": "Interest Credit CREDIT INTEREST",
+      "amount": 0.45,
+      "currency": "SGD",
+      "account": null,
+      "balance": 3421.65,
+      "direction": "credit"
+    }
+  ]
+}

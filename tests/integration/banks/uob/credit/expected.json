@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "bank": "uob",
+  "statement_type": "credit",
+  "period_start": null,
+  "period_end": "2025-02-28",
+  "payment_summary": {
+    "payment_due_date": "2025-03-20",
+    "total_amount_due": 382.45,
+    "minimum_payment": 50.0
+  },
+  "transactions": [
+    {
+      "id": "48400d67b165b86be203dde4debb97318621b91a5ac7988f7b42844bd0e8d59c",
+      "transaction_date": "2025-02-01",
+      "posting_date": null,
+      "description": "PREVIOUS BALANCE",
+      "amount": 0.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "credit"
+    },
+    {
+      "id": "7c345973dd2ea34f95c1c30eaaa09831e336b7fdceb7d391f303c968a9c99419",
+      "transaction_date": "2025-02-01",
+      "posting_date": "2025-02-03",
+      "description": "TESSERACT COFFEE ROASTERS SINGAPORE Ref No. : 74051920330001820045566",
+      "amount": -18.5,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "eab38b872e613a8b096dba0694a4b550f7182c7465d750743965be1733cfe5ac",
+      "transaction_date": "2025-02-03",
+      "posting_date": "2025-02-05",
+      "description": "LUMOS BOOKSTORE ONLINE 800 555 0100 Ref No. : 74051920340009930067712",
+      "amount": -62.3,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "f3789d72330fa00c5bcbb53dfec6ed916690cde65496be229c5fb27e944c732f",
+      "transaction_date": "2025-02-07",
+      "posting_date": "2025-02-09",
+      "description": "NIMBUS GROCERS 04 12 SINGAPORE",
+      "amount": -145.75,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "930159ed343372661fe4820edadf0ae6ac6750b77f69babd6730ff68b8a801b7",
+      "transaction_date": "2025-02-10",
+      "posting_date": "2025-02-12",
+      "description": "HELIOS PETROL KIOSK SINGAPORE",
+      "amount": -90.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "ecfc78e76da214b123c06daf3de3ec9e8a001d326978e7028eef6c18e1937880",
+      "transaction_date": "2025-02-16",
+      "posting_date": "2025-02-18",
+      "description": "ORCHARD TELECOM MONTHLY PLAN",
+      "amount": -55.9,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "18a6094ccf9131a3cd3ab07d552a6a511b19969f3dd68a3f289e994a795bcb71",
+      "transaction_date": "2025-02-20",
+      "posting_date": "2025-02-22",
+      "description": "AURELIA SPA AND WELLNESS SINGAPORE",
+      "amount": -210.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "d903af9b477206f7869f74b2c6c0b0d259e399690861f79d0a608b7ce8e640dd",
+      "transaction_date": "2025-02-24",
+      "posting_date": "2025-02-25",
+      "description": "PAYMENT - THANK YOU",
+      "amount": 200.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "credit"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "bank": "amex",
+  "statement_type": "credit",
+  "period_start": null,
+  "period_end": "2025-01-20",
+  "payment_summary": {
+    "payment_due_date": null,
+    "total_amount_due": null,
+    "minimum_payment": null
+  },
+  "transactions": [
+    {
+      "id": "657adbf8f9917798642a577ffb2568249892abb59a46fc64798890e83c339ab5",
+      "transaction_date": "2025-01-05",
+      "posting_date": null,
+      "description": "PAYMENT BY TELEPHONE/INTERNET BANKING",
+      "amount": 5.0,
+      "currency": null,
+      "account": null,
+      "balance": null,
+      "direction": "credit"
+    },
+    {
+      "id": "d4c000b70a64e8cf3d22338759e62922c418dd2b0dbc48e1be8c2150abc922b6",
+      "transaction_date": "2025-01-07",
+      "posting_date": null,
+      "description": "CAFE AURORA CENTRAL",
+      "amount": -40.0,
+      "currency": null,
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "d404920bbad095449acb7ce7da249a973fe442d816cdd41660d5f41c18e4ea9a",
+      "transaction_date": "2025-01-12",
+      "posting_date": null,
+      "description": "METRO GROCERS OUTLET",
+      "amount": -25.5,
+      "currency": null,
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "c66f972534bf64622867542afdf3ba57ccef504e1a181b18b33e8e518df16de5",
+      "transaction_date": "2025-01-19",
+      "posting_date": null,
+      "description": "HARBOUR BOOKS AND GIFTS",
+      "amount": -34.5,
+      "currency": null,
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    }
+  ]
+}

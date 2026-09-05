@@ -1,0 +1,27 @@
+  DIANA CALLOWAY ! Account # 4417 88XX XXXX 2031 ! Statement Closing Date 08/22/2023
+
+
+  Payments and Other Credits
+  Transaction  Posting                                                       Reference    Account
+  Date         Date         Description                                      Number       Number       Amount     Total
+
+  08/01        08/01        PAYMENT - THANK YOU                              6789         8830         -400.00
+
+  TOTAL PAYMENTS AND OTHER CREDITS FOR THIS PERIOD                                                     -$400.00
+
+
+  Purchases and Adjustments
+  Transaction  Posting                                                       Reference    Account
+  Date         Date         Description                                      Number       Number       Amount     Total
+
+  07/26        07/27        BLUE BOTTLE COFFEE PORTLAND OR                   1042         8830           12.75
+  07/29        07/30        SUMMIT HARDWARE SUPPLY DENVER CO                 2271         8830           84.30
+  08/03        08/04        RIVERSIDE BOOKSHOP AUSTIN TX                     3390         8830           26.40
+  08/09        08/10        NORTHWIND AIRLINES SEATTLE WA                    4415         8830          312.60
+  08/15        08/16        LUNA CAFE AND BAKERY MADISON WI                  5560         8830           18.95
+  08/18        08/19        CITY TRANSIT AUTHORITY CHICAGO IL                6034         8830           34.00
+
+  TOTAL PURCHASES AND ADJUSTMENTS FOR THIS PERIOD                                                       $489.00
+
+
+                                                                                          Page 2 of 2

@@ -47,6 +47,7 @@ includes = ["src/monopoly", "tests/test_utils"]
 
 [project.scripts]
 monopoly = "monopoly.cli:monopoly"
+monopoly-fixture = "monopoly.cli.fixtures:fixtures"
 
 [dependency-groups]
 dev = [

@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "bank": "dbs",
+  "statement_type": "debit",
+  "period_start": null,
+  "period_end": "2024-11-30",
+  "payment_summary": null,
+  "transactions": [
+    {
+      "id": "138a44f8db7c581d50d7d7c6ea815b4fd551e9d6eb858040e2fe9fe4aaab7095",
+      "transaction_date": "2024-11-02",
+      "posting_date": null,
+      "description": "Salary Credit GIRO SALARY REF SLR8842",
+      "amount": 1250.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "credit"
+    },
+    {
+      "id": "701223781978e417db19f1d84af204c2754c1f4fc753b837617a979cf21428b9",
+      "transaction_date": "2024-11-04",
+      "posting_date": null,
+      "description": "Cash Withdrawal ATM CASH KESTREL AVE",
+      "amount": -210.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "f477598459efafbd304fe8d68ba1aeb236ecd202550392a25bb003a34e6c544f",
+      "transaction_date": "2024-11-07",
+      "posting_date": null,
+      "description": "Grocery Purchase NTUC FAIRPRICE MAPLE",
+      "amount": -45.3,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "debc1e54ad675f46e1f68b93b0baca4c71b80f6e696181e17636314f67934938",
+      "transaction_date": "2024-11-09",
+      "posting_date": null,
+      "description": "Refund Received PayNow Incoming Ref 553201",
+      "amount": 88.2,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "credit"
+    },
+    {
+      "id": "9c572635080a8402a95aecf878ee66f849785aa1f471bc69e2c1cf9ea4637021",
+      "transaction_date": "2024-11-12",
+      "posting_date": null,
+      "description": "Utility Bill Payment SP UTILITIES ACCT 77120",
+      "amount": -128.75,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "9a8e4339ef08b201f17f00cc103c6d77e0d65fd80b83ab1b374bbe84a981b058",
+      "transaction_date": "2024-11-15",
+      "posting_date": null,
+      "description": "Incoming Transfer PayNow Incoming Ref 771902",
+      "amount": 300.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "credit"
+    },
+    {
+      "id": "27f57f675e740a8a00fa39bbf93a948f661f6c37142ba5718ad5b0ce05a8126a",
+      "transaction_date": "2024-11-20",
+      "posting_date": null,
+      "description": "Coffee Shop PayNow Transfer To Kopitiam",
+      "amount": -12.6,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "cedd49ff4108e2e83a0fc3407f365b5a11c5beba20cec0129ff7651395118e73",
+      "transaction_date": "2024-11-30",
+      "posting_date": null,
+      "description": "Interest Earned Credit Interest",
+      "amount": 15.45,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "credit"
+    }
+  ]
+}
