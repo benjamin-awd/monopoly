@@ -163,15 +163,25 @@ class Transaction:
         return json.dumps(self.as_raw_dict(show_direction=True))
 
     @property
-    def transaction_id(self) -> str:
+    def content_hash(self) -> str:
         """
-        Stable content hash identifying this transaction across statements.
+        Content fingerprint of this transaction — NOT a unique per-row id.
 
         Hashes the transaction's *identity* — date, description, amount, currency,
         and account — deliberately excluding the running `balance`, which is
-        statement-position-dependent. This is separate from `write.generate_hash`
-        (the per-statement filename UUID) and is kept out of `__str__`/`as_raw_dict`
-        so the filename hash stays byte-stable.
+        statement-position-dependent. Because it is a pure content hash, two
+        genuinely-distinct transactions with identical fields (e.g. two identical
+        same-day transfers) produce the *same* fingerprint. This is intentional:
+        the fingerprint is a dedup/identity signal, not a primary key.
+
+        The unique per-row `id` emitted in the JSON schema is derived from this
+        fingerprint plus an occurrence ordinal by `serialize.assign_ids`; that is
+        the only sanctioned source of unique ids. Do not use `content_hash`
+        directly as a per-transaction id — that reintroduces collisions.
+
+        This is separate from `write.generate_hash` (the per-statement filename
+        UUID) and is kept out of `__str__`/`as_raw_dict` so the filename hash
+        stays byte-stable.
 
         Computed fresh on each access (not cached) so it can't freeze a stale
         value if read before the pipeline stamps currency or normalizes the date.

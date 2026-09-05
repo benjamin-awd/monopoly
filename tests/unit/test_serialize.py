@@ -1,7 +1,8 @@
 import json
+import re
 from datetime import datetime
 
-from monopoly.serialize import SCHEMA_VERSION, statement_to_dict
+from monopoly.serialize import SCHEMA_VERSION, assign_ids, statement_to_dict
 from monopoly.statements import Transaction
 
 TRANSACTION_KEYS = {
@@ -78,3 +79,67 @@ def test_balance_null_when_absent_float_when_present(credit_statement):
     envelope = statement_to_dict(credit_statement, transactions)
     assert envelope["transactions"][0]["balance"] is None
     assert envelope["transactions"][1]["balance"] == 100.0
+
+
+def _dup(**overrides):
+    """A transaction whose identity fields collide by default (a real duplicate)."""
+    base = {"transaction_date": "2023-06-01", "description": "SHOPEE", "amount": "100.00", "currency": "SGD"}
+    base.update(overrides)
+    return Transaction(**base)
+
+
+def test_assign_ids_disambiguates_two_identical_rows():
+    txs = [_dup(), _dup()]
+    # sanity: the two rows genuinely collide at the content-hash level
+    assert txs[0].content_hash == txs[1].content_hash
+    ids = assign_ids(txs)
+    assert len(set(ids)) == 2
+    # first occurrence keeps the bare content hash (byte stability)
+    assert ids[0] == txs[0].content_hash
+    assert ids[1] != txs[1].content_hash
+
+
+def test_assign_ids_disambiguates_three_identical_rows():
+    txs = [_dup(), _dup(), _dup()]
+    ids = assign_ids(txs)
+    # guards off-by-one / non-monotonic ordinal
+    assert len(set(ids)) == 3
+    assert ids[0] == txs[0].content_hash
+
+
+def test_assign_ids_leaves_unique_rows_as_content_hash():
+    a = _dup(description="A")
+    b = _dup(description="B")
+    assert assign_ids([a, b]) == [a.content_hash, b.content_hash]
+
+
+def test_assign_ids_is_deterministic():
+    txs = [_dup(), _dup(), _dup(description="OTHER")]
+    assert assign_ids(txs) == assign_ids(txs)
+
+
+def test_envelope_gives_duplicate_rows_distinct_ids(credit_statement):
+    credit_statement.statement_date = datetime(2023, 6, 30)
+    envelope = statement_to_dict(credit_statement, [_dup(), _dup()])
+    ids = [tx["id"] for tx in envelope["transactions"]]
+    assert len(set(ids)) == 2
+
+
+def test_credit_prev_balance_prepend_preserves_duplicate_ordinals(credit_statement, monkeypatch):
+    """`post_process_transactions` prepends a synthetic prev-balance row via
+    insert(0, ...). Ensure the reorder doesn't break ordinal assignment for a
+    real duplicate pair, and the synthetic row isn't content-identical to them."""
+    match = re.compile(r"(?P<description>PREV BAL) (?P<amount>[\d.]+)").search("PREV BAL 500.00")
+    monkeypatch.setattr(credit_statement, "get_prev_month_balances", lambda: [match])
+
+    processed = credit_statement.post_process_transactions([_dup(), _dup()])
+
+    # synthetic row prepended
+    assert len(processed) == 3
+    # not content-identical to the real duplicates (would otherwise steal an ordinal)
+    assert processed[0].content_hash != processed[1].content_hash
+
+    ids = assign_ids(processed)
+    assert len(set(ids)) == 3
+    # the real duplicate pair (now at indices 1, 2) is still disambiguated
+    assert ids[1] != ids[2]
