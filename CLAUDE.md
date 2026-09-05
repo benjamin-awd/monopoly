@@ -14,6 +14,11 @@ improvising a workflow:
 | `/verify` | Run the full gate and report what passed, failed, or **skipped** |
 | `/add-bank` | Add a bank or statement type from a sample PDF |
 | `/debug-statement` | Diagnose a single PDF that fails to parse |
+| `/adr` | Record an architectural decision as a committed ADR in `docs/adr/` |
+
+The skills and their output are local-only *except* ADRs: `docs/adr/` is
+version-controlled (see `docs/adr/README.md`), so architectural decisions travel
+with the repo.
 
 `dev-guide` (auto-loaded) is the reference for test/lint/type commands.
 The `statement-debugger` subagent investigates a failing PDF without pulling
