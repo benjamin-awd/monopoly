@@ -208,8 +208,22 @@ The JSON schema carries `currency` (per-`StatementConfig` settlement currency),
 `posting_date`, a normalized `direction` (`"credit"`/`"debit"`, replacing the old
 raw `polarity` marker), and a nullable `account` slot. `Transaction.direction` is
 normalized in the model; the internal parser still captures raw markers into
-`RawTransaction.direction`. Known follow-ups (currently `None`): per-transaction
-original/FX currency + amount, account last-4, and `period_start`.
+`RawTransaction.direction`.
+
+`account` (per-transaction last-4) and `period_start` (envelope) are populated by
+opt-in, per-config regex patterns — `StatementConfig.account_pattern` (named
+`account` group) and `StatementConfig.period_start_pattern` — added per bank/vintage
+the same way identifiers are (see #308). `account` is resolved once per statement
+via `BaseStatement.account` (last-4 derived by `statements.base.extract_last4`) and
+stamped onto every transaction in `Pipeline.extract`, mirroring `currency`;
+`period_start` is resolved by `DateResolver.resolve_period_start` (content-only, no
+filename fallback, never raises). Both stay `None` where no pattern is configured,
+so this is backward-compatible (no `SCHEMA_VERSION` bump). Coverage is incremental:
+banks without a pattern still emit `null`. Some statements resist a simple
+value-only regex — e.g. Amex's Membership Number prints in the same shape as the
+Customer Services phone on the page, so its `account_pattern` is deliberately left
+unset pending a label-anchored approach — those are open follow-ups. Remaining
+known follow-up (currently `None`): per-transaction original/FX currency + amount.
 
 A previous-balance row is not a transaction, so it goes in a separate top-level
 `balances` list (`{type, amount, date, direction, currency}`) rather than in
@@ -234,9 +248,10 @@ fingerprint that deliberately collides* for identical content; never use it
 directly as a per-row id (that reintroduces collisions). Two caveats: (1) the
 occurrence ordinal is stable within one statement's row order but cannot
 guarantee cross-statement stability if a bank re-sorts identical same-day rows
-in an overlapping statement — inherent to a stateless parser; (2) populating the
-`account` follow-up (issue #308) folds a new field into `content_hash` and will
-rotate *every* `id`, not just duplicates.
+in an overlapping statement — inherent to a stateless parser; (2) `account` is one
+of the `content_hash` inputs, so configuring an `account_pattern` for a bank (#308)
+rotates *every* `id` for that bank's statements, not just duplicates — expected, and
+why the integration `expected.json` fixtures were regenerated when patterns landed.
 
 ## Important Implementation Notes
 

@@ -30,23 +30,8 @@ class DateResolver:
 
     def resolve(self) -> datetime:
         """Find statement date from content, falling back to filename."""
-        pattern = self.config.statement_date_pattern
-
-        for page in self.pages:
-            lines = page.lines
-
-            for i, line in enumerate(lines):
-                text = self._get_search_text(lines, i, line)
-
-                if match := pattern.search(text):
-                    date_string = self._construct_date_string(match)
-                    statement_date = parse(
-                        date_string=date_string,
-                        settings=self.config.statement_date_order.settings,
-                    )
-                    if statement_date:
-                        return statement_date
-                    logger.info("Unable to parse statement date %s", date_string)
+        if statement_date := self._search_pages(self.config.statement_date_pattern):
+            return statement_date
 
         # Fallback: Try extracting date from filename
         if filename_date := self._extract_date_from_filename():
@@ -55,6 +40,39 @@ class DateResolver:
 
         msg = "Statement date not found"
         raise MissingStatementDateError(msg)
+
+    def resolve_period_start(self) -> datetime | None:
+        """
+        Find the statement's period-start date from content, or None.
+
+        Unlike `resolve`, this is optional: it has no filename fallback and never
+        raises. Returns None when no `period_start_pattern` is configured or no
+        match parses.
+        """
+        pattern = self.config.period_start_pattern
+        if pattern is None:
+            return None
+        return self._search_pages(pattern)
+
+    def _search_pages(self, pattern: re.Pattern[str]) -> datetime | None:
+        """Search every page for the first line that yields a parseable date."""
+        for page in self.pages:
+            lines = page.lines
+
+            for i, line in enumerate(lines):
+                text = self._get_search_text(lines, i, line)
+
+                if match := pattern.search(text):
+                    date_string = self._construct_date_string(match)
+                    parsed = parse(
+                        date_string=date_string,
+                        settings=self.config.statement_date_order.settings,
+                    )
+                    if parsed:
+                        return parsed
+                    logger.info("Unable to parse date %s", date_string)
+
+        return None
 
     def _get_search_text(self, lines: list[str], i: int, line: str) -> str:
         """Get text to search, optionally combining multiple lines and removing whitespace."""

@@ -20,6 +20,8 @@ class Trust(BankBase):
             r".*?"
             r"(?P<year>20\d{2}\b)"
         ),
+        # statement cycle line, e.g. "Statement cycle   1 Mar 2025 - 15 Mar 2025"
+        period_start_pattern=re.compile(r"Statement cycle\s+(\d{1,2} \w{3} \d{4})"),
         header_pattern=re.compile(
             r"(Posting date.*Description.*Amount in SGD"
             r"|Transaction\s+Posting.*Amount in\s+Amount in)"

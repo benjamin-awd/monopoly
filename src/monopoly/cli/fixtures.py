@@ -209,7 +209,7 @@ def build(directory: Path, bank_name: str | None, generic: bool, safety_check: b
     # expected.json is the canonical `--format json` envelope (see serialize.py), so
     # the fixture asserts the real shipped output shape, not a bespoke mini-schema.
     expected = statement_to_dict(statement, transformed)
-    (directory / "expected.json").write_text(json.dumps(expected, indent=2), encoding="utf8")
+    (directory / "expected.json").write_text(json.dumps(expected, indent=2) + "\n", encoding="utf8")
 
     click.secho(f"Extracted {len(statement.transactions)} transaction(s); total {total}", fg="green")
     click.secho(f"Wrote raw.csv, transformed.csv, expected.json to {directory}", fg="green")

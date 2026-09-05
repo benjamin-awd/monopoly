@@ -22,6 +22,21 @@ from monopoly.statements.transaction import (
 logger = logging.getLogger(__name__)
 
 MIN_BREAK_GAP = 20  # Minimum gap between words and numbers to trigger break
+ACCOUNT_LAST_N = 4  # number of trailing account/card digits stamped onto transactions
+
+
+def extract_last4(account_token: str | None) -> str | None:
+    """
+    Derive the last 4 digits from a matched account/card number token.
+
+    Masked tokens are fine because only trailing digits matter:
+    "4417 88XX XXXX 2031" -> "2031", "098-7-654321" -> "4321". Returns None when
+    fewer than 4 digits are present (nothing meaningful to stamp).
+    """
+    if account_token is None:
+        return None
+    digits = re.sub(r"\D", "", account_token)
+    return digits[-ACCOUNT_LAST_N:] if len(digits) >= ACCOUNT_LAST_N else None
 
 
 @dataclass
@@ -252,6 +267,30 @@ class BaseStatement(ABC):
     def statement_date(self) -> datetime:
         resolver = DateResolver(self.pages, self.config, self.file_path)
         return resolver.resolve()
+
+    @cached_property
+    def period_start(self) -> datetime | None:
+        """The statement's period-start date, or None if not configured/found."""
+        resolver = DateResolver(self.pages, self.config, self.file_path)
+        return resolver.resolve_period_start()
+
+    @cached_property
+    def account(self) -> str | None:
+        """
+        The account/card last 4 digits, or None if not configured/found.
+
+        Located once per statement via `config.account_pattern` (named `account`
+        group) and stamped onto every transaction in `Pipeline.extract`, the same
+        way `currency` is. See `config.StatementConfig.account_pattern`.
+        """
+        pattern = self.config.account_pattern
+        if pattern is None:
+            return None
+        for page in self.pages:
+            for line in page.lines:
+                if match := pattern.search(line):
+                    return extract_last4(match.group("account"))
+        return None
 
     @abstractmethod
     def perform_safety_check(self) -> bool:

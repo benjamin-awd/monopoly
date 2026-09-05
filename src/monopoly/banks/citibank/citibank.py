@@ -14,6 +14,8 @@ class Citibank(BankBase):
         currency="SGD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(r"Statement\sDate\s+(.*)"),
+        # card number under the "ACCOUNT NUMBER" column, e.g. "4111 2233 4455 6677"
+        account_pattern=re.compile(r"\b(?P<account>\d{4} \d{4} \d{4} \d{4})\b"),
         header_pattern=re.compile(r"(DATE.*DESCRIPTION.*AMOUNT)"),
         transaction_date_format="%d %b",
         prev_balance_pattern=re.compile(

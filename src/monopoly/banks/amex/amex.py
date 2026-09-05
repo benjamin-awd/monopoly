@@ -13,6 +13,8 @@ class Amex(BankBase):
     platinum = StatementConfig(
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(rf"From .* to {ISO8601.DD_MM_YYYY}"),
+        # "Statement Period   From 21.12.2024 to 20.01.2025": start is the "From" date
+        period_start_pattern=re.compile(r"From (\d{2}\.\d{2}\.\d{4}) to"),
         transaction_date_format="%d.%m.%y",
         header_pattern=re.compile(r"(Details.*Foreign Spending.*Amount)"),
         transaction_pattern=re.compile(
