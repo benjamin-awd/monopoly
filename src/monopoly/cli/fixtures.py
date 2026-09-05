@@ -12,14 +12,15 @@ import csv
 import json
 from dataclasses import asdict
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 import click
 
-if TYPE_CHECKING:
-    from monopoly.banks.base import BankBase
-    from monopoly.identifiers import MetadataIdentifier
-    from monopoly.pdf import PdfDocument
+from monopoly.banks import BankDetector, banks
+from monopoly.banks.base import BankBase
+from monopoly.generic import GenericBank
+from monopoly.identifiers import MetadataIdentifier
+from monopoly.pdf import PdfDocument, PdfParser
+from monopoly.pipeline import Pipeline
 
 
 def _page_filename(index: int, total: int) -> str:
@@ -32,12 +33,9 @@ def _resolve_bank(
     *,
     bank_name: str | None,
     generic: bool,
-    document: "PdfDocument | None" = None,
-) -> "type[BankBase]":
+    document: PdfDocument | None = None,
+) -> type[BankBase]:
     """Pick the bank: explicit --bank, --generic, or (with a document) auto-detection."""
-    from monopoly.banks import BankDetector, banks
-    from monopoly.generic import GenericBank
-
     if generic:
         return GenericBank
     if bank_name:
@@ -64,9 +62,7 @@ def _read_pages(directory: Path) -> list[str]:
     return [path.read_text(encoding="utf8") for path in page_files]
 
 
-def _read_metadata(directory: Path) -> "MetadataIdentifier | None":
-    from monopoly.identifiers import MetadataIdentifier
-
+def _read_metadata(directory: Path) -> MetadataIdentifier | None:
     metadata_path = directory / "metadata.json"
     if not metadata_path.exists():
         return None
@@ -112,8 +108,6 @@ def dump(file: Path, output_directory: Path | None, bank_name: str | None, gener
     metadata.json. No CSV is produced. Redact PII in the page files before
     sharing, then run `monopoly-fixture build` on the redacted directory.
     """
-    from monopoly.pdf import PdfDocument, PdfParser
-
     document = PdfDocument(file)
     document.unlock_document()
 
@@ -161,9 +155,6 @@ def build(directory: Path, bank_name: str | None, generic: bool, safety_check: b
     transformed.csv and expected.json into DIRECTORY. Because the CSVs are
     derived from the redacted text, they cannot disagree with it.
     """
-    from monopoly.pdf import PdfParser
-    from monopoly.pipeline import Pipeline
-
     bank = _resolve_bank(bank_name=bank_name, generic=generic)
     pages = _read_pages(directory)
     metadata = _read_metadata(directory)

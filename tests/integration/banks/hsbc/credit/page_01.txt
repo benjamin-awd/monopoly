@@ -1,0 +1,51 @@
+HSBC VISA REVOLUTION
+HSBC Bank (Singapore) Limited (Company Registration No. 209900000Z)
+Robinson Road PO Box 896, Singapore 901746
+GST REG NO.: 9000001
+
+PAT SAMPLETON
+Statement From 25 AUG 2024 to 24 SEP 2024
+Please examine this statement immediately. Transaction details are now printed on both sides of the statement. If no
+discrepancy is reported within 14 days from the statement date, the account will be considered as correct.
+
+Please settle this statement promptly. If the minimum payment is not received by the due date, a late payment charge will
+be charged to your card account. In addition, if payment is not made in full by the due date, finance charges will be levied
+on your card account.
+POST              TRAN
+DATE              DATE          DESCRIPTION                                           AMOUNT(SGD)
+ Pat Sampleton 4400-XXXX-XXXX-9021
+
+                                Previous Statement Balance                                                  850.00
+
+ 05 Sep          02 Sep         COFFEE HOUSE CENTRAL                                                          12.50
+                                SINGAPORE SG
+
+ 07 Sep          04 Sep         ONLINE BOOKSTORE INTL                                                         88.30
+                                LONDON GB
+
+ 09 Sep          06 Sep         GROCERY MART EAST                                                            145.75
+                                SINGAPORE SG
+
+ 11 Sep          08 Sep         REFUND MERCHANT ADJUSTMENT                                                    60.00CR
+                                SINGAPORE SG
+
+ 14 Sep          12 Sep         RIDE SHARE TRIP                                                               23.40
+                                SINGAPORE SG
+
+ 18 Sep          15 Sep         STREAMING SERVICE MONTHLY                                                      15.99
+                                DUBLIN IE
+
+ 21 Sep          18 Sep         PAYMENT RECEIVED THANK YOU                                                   500.00CR
+                                SINGAPORE SG
+
+                                Total Debit Transactions                                                   1,135.94
+                                Total Credit Transactions                                                    560.00
+
+
+
+
+                                                                                    HSBC VISA REVOLUTION
+                                                                                    Total Due                    Minimum
+HSBC Bank (Singapore) Limited
+Robinson Road PO Box 896                                                            575.94                       50.00
+Singapore 901746

@@ -46,13 +46,6 @@ jobs:
           wget https://github.com/sharkdp/hyperfine/releases/download/v1.19.0/hyperfine_1.19.0_amd64.deb
           sudo dpkg -i hyperfine_1.19.0_amd64.deb
 
-      - name: Install git-crypt
-        uses: Flydiverny/setup-git-crypt@v5
-
-      - name: Unlock files
-        continue-on-error: true
-        run: echo "${{ secrets.GIT_CRYPT_KEY }}" | base64 --decode | git-crypt unlock -
-
       - name: Install dependencies
         run: uv sync --all-extras
 

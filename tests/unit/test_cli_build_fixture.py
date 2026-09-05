@@ -24,7 +24,7 @@ BROKEN_PAGE = "01-02-2024\nDATE DESCRIPTION AMOUNT\n12/01 COFFEE SHOP 12.34\n13/
 
 @pytest.fixture
 def _register_example_bank(monkeypatch):
-    monkeypatch.setattr("monopoly.banks.banks", [ExampleBank])
+    monkeypatch.setattr("monopoly.cli.fixtures.banks", [ExampleBank])
 
 
 def _write_fixture_dir(directory, page_text):

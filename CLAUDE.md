@@ -24,10 +24,17 @@ Two repo-specific rules that override normal instincts:
 
 - **Real statements are PII.** `*.pdf` and `*.csv` are gitignored, and a
   PreToolUse hook blocks force-adding them. Never work around it. `.env` and
-  `*.key` are denied to the Read tool by design.
-- **A green test run can be a lie.** Bank integration tests are guarded by
-  `skip_if_encrypted` and skip silently when the git-crypt fixtures are locked.
-  Always report skip counts, never just passes.
+  `*.key` are denied to the Read tool by design. Your own statements live only
+  in `Statements/` (gitignored) — never commit them.
+- **Bank fixtures are synthetic.** Integration tests run against committed,
+  hand-authored `page_NN.txt` text fixtures under
+  `tests/integration/banks/<bank>/<type>/` (no encrypted PDFs, no encryption).
+  They prove the parser handles each bank's *layout*, not that a specific real
+  statement extracts correctly — so a regex change that breaks a real statement
+  can still pass CI. Spot-check against a real file in `Statements/` with
+  `uv run monopoly <file> --pprint` when changing extraction. Regenerate a
+  fixture's CSVs from redacted text with `monopoly-fixture build` (see
+  `CONTRIBUTING.md`).
 
 ## Project Overview
 

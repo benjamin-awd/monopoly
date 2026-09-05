@@ -2,14 +2,13 @@
 
 ## Add a bank without sharing a statement
 
-Bank support is normally tested against a real PDF (`tests/integration/banks/`),
-which is git-crypt encrypted because a real statement is PII. That is a barrier
-if you don't have commit access or don't want to hand over a statement.
-
-The alternative is a **text fixture**: the extracted, redacted page text of a
-statement, checked in as plain text under
-`tests/integration/text_fixtures/<bank>/<type>/`. These are not encrypted and
-run in every CI job (they have no dependency on the git-crypt key).
+Every bank is tested against a **text fixture**: the extracted, redacted (or
+synthetic) page text of a statement, checked in as plain `page_NN.txt` files.
+The repo commits no real statements and uses no encryption — a real statement
+is PII, so it never leaves your machine. Fixtures live under
+`tests/integration/banks/<bank>/<type>/` (maintainer set, full assertions) and
+`tests/integration/text_fixtures/<bank>/<type>/` (community-contributed); both
+run in every CI job.
 
 The `monopoly-fixture` command builds one for you, using the *real* parser so
 the fixture text matches exactly what extraction sees (cropbox, vertical-text
@@ -59,6 +58,5 @@ with the `tests/integration/text_fixtures/<bank>/<type>/` directory. Do **not**
 commit the original PDF.
 
 > A text fixture exercises extraction and transformation, but not bank
-> *detection* (the loader selects the bank from `expected.json`). For full
-> detection coverage a maintainer can still add an encrypted PDF fixture later;
-> the two coexist.
+> *detection* (the bank is selected explicitly, not sniffed from PDF metadata).
+> Detection is covered separately via the unencrypted `example_statement.pdf`.

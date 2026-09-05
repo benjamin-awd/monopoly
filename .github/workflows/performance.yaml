@@ -29,19 +29,12 @@ jobs:
           wget https://github.com/sharkdp/hyperfine/releases/download/v1.19.0/hyperfine_1.19.0_amd64.deb
           sudo dpkg -i hyperfine_1.19.0_amd64.deb
 
-      - name: Install git-crypt
-        uses: Flydiverny/setup-git-crypt@v5
-
-      - name: Unlock files
-        continue-on-error: true
-        run: echo "${{ secrets.GIT_CRYPT_KEY }}" | base64 --decode | git-crypt unlock -
-
       - name: Build current and main environments
         run: |
           # Current PR head is the primary checkout.
           UV_PROJECT_ENVIRONMENT="$GITHUB_WORKSPACE/.venv-current" uv sync --all-extras
 
-          # main lives in a linked worktree that shares .git (and the unlocked git-crypt state).
+          # main lives in a linked worktree that shares .git.
           git worktree add "$RUNNER_TEMP/main-checkout" origin/main
           cd "$RUNNER_TEMP/main-checkout"
           UV_PROJECT_ENVIRONMENT="$RUNNER_TEMP/main-checkout/.venv-main" uv sync --all-extras

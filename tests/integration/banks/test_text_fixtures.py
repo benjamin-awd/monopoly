@@ -1,9 +1,8 @@
-"""Integration tests driven by shareable, redacted text fixtures.
+"""Integration tests driven by community-contributed text fixtures.
 
-Unlike the PDF-based bank tests, these carry no real statement and are NOT
-git-crypt'd, so they run in every CI job - including when the encrypted
-fixtures are locked. Each fixture lives in
-`tests/integration/text_fixtures/<bank>/<type>/` and contains:
+These carry no real statement - just committed, redacted (or synthetic) page
+text - so they run in every CI job with no encryption involved. Each fixture
+lives in `tests/integration/text_fixtures/<bank>/<type>/` and contains:
 
     page_01.txt, page_02.txt, ...   redacted extracted page text
     metadata.json                   (optional) PDF metadata identifier fields
@@ -18,7 +17,7 @@ import json
 from pathlib import Path
 
 import pytest
-from test_utils.transactions import get_transactions_as_dict, read_transactions_from_csv
+from test_utils.transactions import get_transactions_as_dict, read_pages, read_transactions_from_csv
 
 from monopoly.banks import banks
 from monopoly.generic import GenericBank
@@ -53,7 +52,7 @@ def test_text_fixture(fixture_dir: Path):
     expected = json.loads((fixture_dir / "expected.json").read_text())
     bank = _bank_by_name(expected["bank"])
 
-    pages = [path.read_text(encoding="utf8") for path in sorted(fixture_dir.glob("page_*.txt"))]
+    pages = read_pages(fixture_dir)
     metadata = None
     metadata_path = fixture_dir / "metadata.json"
     if metadata_path.exists():

@@ -2,22 +2,21 @@ from datetime import datetime
 from pathlib import Path
 
 import pytest
-from test_utils.skip import skip_if_encrypted
-from test_utils.transactions import get_transactions_as_dict, read_transactions_from_csv
+from test_utils.transactions import get_transactions_as_dict, read_pages, read_transactions_from_csv
 
 from monopoly.banks import BankBase, Dbs, Maybank, Ocbc
-from monopoly.pdf import PdfDocument, PdfParser
+from monopoly.pdf import PdfParser
 from monopoly.pipeline import Pipeline
 from monopoly.statements import DebitStatement
 
+# Synthetic, plain-text fixtures (page_NN.txt) - no real statements, no encryption.
 test_cases = [
-    (Dbs, 2222.68, 1302.88, datetime(2023, 10, 31)),
-    (Maybank, 5275.61, 4093.7, datetime(2023, 8, 31)),
-    (Ocbc, 6630.79, 5049.55, datetime(2023, 10, 31)),
+    (Dbs, 1653.65, 396.65, datetime(2024, 11, 30)),
+    (Maybank, 525.25, 464.0, datetime(2023, 8, 31)),
+    (Ocbc, 3670.25, 1596.1, datetime(2024, 9, 30)),
 ]
 
 
-@skip_if_encrypted
 @pytest.mark.parametrize(
     "bank, expected_debit_sum, expected_credit_sum, statement_date",
     test_cases,
@@ -30,8 +29,7 @@ def test_bank_debit_statements(
 ):
     test_directory = Path(__file__).parent / bank.name / "debit"
 
-    document = PdfDocument(test_directory / "input.pdf")
-    parser = PdfParser(bank, document)
+    parser = PdfParser.from_pages(bank, read_pages(test_directory))
     pipeline = Pipeline(parser)
     statement: DebitStatement = pipeline.extract()
 
