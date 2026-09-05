@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788617466082,
+  "lastUpdate": 1788619056931,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -467,6 +467,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 2.2307352864200003,
             "range": "± 0.09377934148791023",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ab277275aebb3e458e8f8377cd5fb9aec029819f",
+          "message": "Merge pull request #317 from benjamin-awd/execute/pipeline-and-dispatch\n\nrefactor: extract DateTransformer, split extraction, dedupe dispatch",
+          "timestamp": "2026-09-05T22:35:42+08:00",
+          "tree_id": "3380b6525d0ca35424da5c24e5de81ce801fe37c",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/ab277275aebb3e458e8f8377cd5fb9aec029819f"
+        },
+        "date": 1788619056112,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.8843550179600002,
+            "range": "± 0.008956405359731115",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 4.13266383564,
+            "range": "± 0.015388779788093554",
             "unit": "s"
           }
         ]
