@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788612135049,
+  "lastUpdate": 1788614902140,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -395,6 +395,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 3.0740030906999998,
             "range": "± 0.038903696347718966",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dfff2fa2a835dcb49ff0f39016a5c04304f68fcc",
+          "message": "Merge pull request #314 from benjamin-awd/execute/direction-enum-column-layout\n\nfix(statements): centralise direction markers and column geometry",
+          "timestamp": "2026-09-05T21:26:37+08:00",
+          "tree_id": "82496cedee393791737d4144d490e8a45abf3702",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/dfff2fa2a835dcb49ff0f39016a5c04304f68fcc"
+        },
+        "date": 1788614901368,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.86672545782,
+            "range": "± 0.008774339770793959",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 4.0638492608000005,
+            "range": "± 0.037929366730433324",
             "unit": "s"
           }
         ]
