@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class CreditStatement(BaseStatement):
-    """A dataclass representation of a credit statement."""
+    """A credit statement."""
 
     statement_type = EntryType.CREDIT
     minus_direction = Direction.CREDIT

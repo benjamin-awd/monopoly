@@ -120,7 +120,7 @@ class DescriptionBuilder:
 
 class BaseStatement(ABC):
     """
-    A dataclass representation of a bank statement.
+    Abstract base for a bank statement.
 
     Contains PDF pages (their raw text representation in a list), and specific bank config.
     """

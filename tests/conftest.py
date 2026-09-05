@@ -9,7 +9,7 @@ from monopoly.config import DateOrder, PdfConfig, StatementConfig
 from monopoly.constants import EntryType
 from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfDocument, PdfPage, PdfParser
-from test_utils.statements import ConcreteStatement
+from test_utils.statements import StubStatement
 from monopoly.statements import BaseStatement, CreditStatement, DebitStatement
 
 
@@ -88,7 +88,7 @@ def debit_statement(statement_config):
 
 @pytest.fixture(scope="function")
 def statement(statement_config):
-    yield from setup_statement_fixture(ConcreteStatement, statement_config)
+    yield from setup_statement_fixture(StubStatement, statement_config)
 
 
 @pytest.fixture(scope="session")

@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class DebitStatement(BaseStatement):
-    """A dataclass representation of a debit statement."""
+    """A debit statement."""
 
     statement_type = EntryType.DEBIT
     minus_direction = Direction.DEBIT
