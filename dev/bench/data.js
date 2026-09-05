@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788614902140,
+  "lastUpdate": 1788617466082,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -431,6 +431,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 4.0638492608000005,
             "range": "± 0.037929366730433324",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "748a90c3f8fe0cb439e37b6ca1cddae7a85acc58",
+          "message": "Merge pull request #315 from benjamin-awd/execute/normalise-pattern-union\n\nrefactor(config): compile statement patterns once, at construction",
+          "timestamp": "2026-09-05T22:09:19+08:00",
+          "tree_id": "f1087712438fd71fa55e8f527e3cf3297ac58269",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/748a90c3f8fe0cb439e37b6ca1cddae7a85acc58"
+        },
+        "date": 1788617465613,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.48696084400000006,
+            "range": "± 0.01863860648920868",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 2.2307352864200003,
+            "range": "± 0.09377934148791023",
             "unit": "s"
           }
         ]
