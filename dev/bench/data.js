@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788595257566,
+  "lastUpdate": 1788595933572,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -179,6 +179,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 0.98874821672,
             "range": "± 0.019186325869698758",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "distinct": true,
+          "id": "ebeef07fb8143f7bb688e31bd30fd3daf08071b7",
+          "message": "chore(dev): harden worktree uv provisioning\n\n- pre-commit pytest: uv run --locked (fail on stale lockfile, not silent)\n- .envrc: idiomatic uv+direnv (watch_file + uv sync --locked + PATH_add)\n  instead of source .venv/bin/activate\n- new-worktree.sh: drop uv sync (now .envrc's job), reuse existing\n  branches, and run 'direnv allow' after creation",
+          "timestamp": "2026-09-05T16:11:01+08:00",
+          "tree_id": "fddbcd37f4bfb90829e06d7c85e2b60cdd1121d6",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/ebeef07fb8143f7bb688e31bd30fd3daf08071b7"
+        },
+        "date": 1788595933026,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.85406824952,
+            "range": "± 0.005562195125113322",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 1.69025868058,
+            "range": "± 0.02931495170300121",
             "unit": "s"
           }
         ]
