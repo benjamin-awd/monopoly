@@ -1,6 +1,6 @@
 """Store statement-related enums and constants."""
 
-from enum import auto
+from enum import Enum, auto
 
 from strenum import StrEnum
 
@@ -10,6 +10,28 @@ from monopoly.enums import AutoEnum
 class EntryType(AutoEnum):
     CREDIT = auto()
     DEBIT = auto()
+
+
+class TransactionKind(Enum):
+    """
+    What a parsed row is, and how it serializes.
+
+    ``balance_type`` is ``None`` for real activity (stays in ``transactions``)
+    or the JSON ``type`` string for a balance row (lifted into ``balances``).
+    New balance kinds add a member here - no separate lookup table to sync.
+    """
+
+    TRANSACTION = ("transaction", None)
+    PREVIOUS_BALANCE = ("previous_balance", "previous")
+
+    def __init__(self, marker: str, balance_type: str | None) -> None:
+        self._value_ = marker
+        self.balance_type = balance_type
+
+    @property
+    def is_balance(self) -> bool:
+        """True if this row is a balance carry-forward rather than real activity."""
+        return self.balance_type is not None
 
 
 class Columns(AutoEnum):

@@ -25,9 +25,6 @@ from monopoly.statements.credit_statement import CreditStatement
 #     balance rows.
 SCHEMA_VERSION = 2
 
-# Turns the internal `kind` marker into the `type` value used in the JSON output.
-_BALANCE_KIND_TO_TYPE = {"previous_balance": "previous"}
-
 
 def _iso(value: date | datetime | None) -> str | None:
     """Coerce a date/datetime to an ISO date string, passing through None."""
@@ -48,9 +45,9 @@ def _payment_summary_to_dict(statement: BaseStatement) -> dict[str, Any] | None:
 
 
 def _balance_to_dict(transaction: Transaction) -> dict[str, Any]:
-    """Serialize a balance carry-forward row (kind != "transaction")."""
+    """Serialize a balance carry-forward row (kind.is_balance is True)."""
     return {
-        "type": _BALANCE_KIND_TO_TYPE.get(transaction.kind, transaction.kind),
+        "type": transaction.kind.balance_type,
         "amount": transaction.amount,
         "date": transaction.date,
         "direction": transaction.direction,
@@ -115,8 +112,8 @@ def statement_to_dict(statement: BaseStatement, transactions: list[Transaction])
     `transactions`, so `transactions` only holds real spending. The row still
     stays in the list internally; only the output separates them.
     """
-    activity = [tx for tx in transactions if tx.kind == "transaction"]
-    balances = [tx for tx in transactions if tx.kind != "transaction"]
+    activity = [tx for tx in transactions if not tx.kind.is_balance]
+    balances = [tx for tx in transactions if tx.kind.is_balance]
     return {
         "schema_version": SCHEMA_VERSION,
         "bank": statement.bank_name,

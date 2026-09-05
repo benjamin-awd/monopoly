@@ -8,7 +8,7 @@ from pydantic import Field, field_validator, model_validator
 from pydantic.dataclasses import dataclass as pydantic_dataclass
 from pydantic_core import ArgsKwargs
 
-from monopoly.constants import Columns
+from monopoly.constants import Columns, TransactionKind
 
 
 def strip_non_numeric(value: str) -> str:
@@ -84,7 +84,7 @@ class Transaction:
     posting_date: str | None = None
     currency: str | None = None
     account: str | None = None
-    kind: str = "transaction"
+    kind: TransactionKind = TransactionKind.TRANSACTION
     # avoid storing config logic, since the Transaction object is used to create
     # a single unique hash which should not change
     auto_direction: bool = Field(default=True, init=True, repr=False)

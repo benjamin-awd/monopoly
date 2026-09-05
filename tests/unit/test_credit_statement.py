@@ -2,6 +2,7 @@ import re
 from dataclasses import dataclass
 from unittest.mock import MagicMock, patch
 
+from monopoly.constants import TransactionKind
 from monopoly.statements import CreditStatement, Transaction
 
 
@@ -78,14 +79,14 @@ def test_inject_prev_month_balance(credit_statement):
             description="bar",
             amount=-123.12,
             direction=None,
-            kind="previous_balance",
+            kind=TransactionKind.PREVIOUS_BALANCE,
         ),
         Transaction(
             transaction_date="2024-01-01",
             description="foo",
             amount=-99.99,
             direction=None,
-            kind="previous_balance",
+            kind=TransactionKind.PREVIOUS_BALANCE,
         ),
     ]
     assert result[0] in expected

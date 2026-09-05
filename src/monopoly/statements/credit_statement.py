@@ -2,7 +2,7 @@ import logging
 import re
 from functools import cached_property
 
-from monopoly.constants import EntryType
+from monopoly.constants import EntryType, TransactionKind
 from monopoly.statements.debit_statement import DebitStatement
 from monopoly.statements.payment_summary import PaymentSummary, PaymentSummaryExtractor
 from monopoly.statements.transaction import RawTransaction, Transaction
@@ -30,7 +30,7 @@ class CreditStatement(BaseStatement):
                 groupdict = prev_month_balance.groupdict()
                 groupdict["transaction_date"] = first_transaction_date
                 raw_transaction = RawTransaction(**groupdict)
-                prev_month_transaction = Transaction(**raw_transaction.as_dict(), kind="previous_balance")
+                prev_month_transaction = Transaction(**raw_transaction.as_dict(), kind=TransactionKind.PREVIOUS_BALANCE)
                 transactions.insert(0, prev_month_transaction)
         return transactions
 
