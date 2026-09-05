@@ -30,7 +30,7 @@ class Maybank(BankBase):
     my_credit = StatementConfig(
         currency="MYR",
         statement_type=EntryType.CREDIT,
-        statement_date_pattern=ISO8601.DD_MMM_YY,
+        statement_date_pattern=ISO8601.DD_MMM_YY.regex,
         header_pattern=re.compile(r"(Date.*Description.*Amount)"),
         transaction_date_format="%d/%m",
         transaction_pattern=re.compile(

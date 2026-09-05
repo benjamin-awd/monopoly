@@ -146,12 +146,9 @@ class BaseStatement:
         self.header = header
         self.file_path = file_path
 
-    @cached_property
-    def pattern(self):
-        pattern = self.config.transaction_pattern
-        if isinstance(pattern, str):
-            pattern = re.compile(pattern)
-        return pattern
+    @property
+    def pattern(self) -> re.Pattern[str]:
+        return self.config.transaction_pattern
 
     def get_transactions(self) -> list[Transaction] | None:
         transactions: list[Transaction] = []
