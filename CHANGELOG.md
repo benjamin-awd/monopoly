@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.23.1](https://github.com/benjamin-awd/monopoly/compare/v0.23.0...v0.23.1) (2026-09-05)
+
+
+### Features
+
+* add Python 3.14 support ([6ace36f](https://github.com/benjamin-awd/monopoly/commit/6ace36fdbd81579500708f6c6098ccf2e844407c))
+* **gemini:** set TransactionKind on the vision path ([c231a76](https://github.com/benjamin-awd/monopoly/commit/c231a7685d0b3b8dded52ac16f8bd87b3b8d0c3f))
+* **gemini:** set TransactionKind on the vision path ([51a66d7](https://github.com/benjamin-awd/monopoly/commit/51a66d7f9a9f90ee892fb6de0b15c8073c6eb56d)), closes [#323](https://github.com/benjamin-awd/monopoly/issues/323)
+* **json:** add Chase account last-4 and period_start ([#308](https://github.com/benjamin-awd/monopoly/issues/308)) ([51ba170](https://github.com/benjamin-awd/monopoly/commit/51ba1706f1f4fc4e9663e782eaeae457a3143397))
+* **json:** add ZKB account last-4 ([#308](https://github.com/benjamin-awd/monopoly/issues/308)) ([9176820](https://github.com/benjamin-awd/monopoly/commit/9176820be14669298a1fd04de361a54195b25516))
+* **json:** populate account last-4 and period_start ([#308](https://github.com/benjamin-awd/monopoly/issues/308)) ([ade1b79](https://github.com/benjamin-awd/monopoly/commit/ade1b799ea010a583ad2b96fa0a76234eaef7265))
+* **json:** populate account last-4 and period_start ([#308](https://github.com/benjamin-awd/monopoly/issues/308)) ([618cea1](https://github.com/benjamin-awd/monopoly/commit/618cea18240052c8d4d29419b787256066946e56))
+
+
+### Bug Fixes
+
+* **gemini:** resolve kind via marker lookup dict ([c7573cf](https://github.com/benjamin-awd/monopoly/commit/c7573cf19d76607e953da3f46e2f3baf70fcfeae))
+* **statements:** initialise carried date, drop dead and unreachable code ([1d315bd](https://github.com/benjamin-awd/monopoly/commit/1d315bd8eecca1791fa08029a9d6888444ed7981))
+* **statements:** initialise carried date, drop dead and unreachable code ([f356b35](https://github.com/benjamin-awd/monopoly/commit/f356b3556065db5b2f1a8e1ad22ec0db6571cb4c))
+
 ## [0.23.0](https://github.com/benjamin-awd/monopoly/compare/v0.22.0...v0.23.0) (2026-09-05)
 
 
