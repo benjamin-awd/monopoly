@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788600219782,
+  "lastUpdate": 1788605386144,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -323,6 +323,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 3.77038023154,
             "range": "± 0.02025475537056594",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3c8677dc7e9676f26898ee0cb8583a50679ac18b",
+          "message": "Merge pull request #312 from benjamin-awd/worktree-json-prev-balance\n\nfeat(serialize)!: split balance rows into top-level balances",
+          "timestamp": "2026-09-05T18:47:51+08:00",
+          "tree_id": "cb1323f498f793a91033da1afbaa61a5d161f608",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/3c8677dc7e9676f26898ee0cb8583a50679ac18b"
+        },
+        "date": 1788605385497,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.87359479388,
+            "range": "± 0.004587719428780245",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 4.090559856920001,
+            "range": "± 0.04099835876637752",
             "unit": "s"
           }
         ]
