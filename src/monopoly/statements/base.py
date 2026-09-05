@@ -1,6 +1,7 @@
 import logging
 import re
 from abc import ABC, abstractmethod
+from collections.abc import Iterator
 from dataclasses import dataclass
 from datetime import datetime
 from functools import cached_property
@@ -154,31 +155,25 @@ class BaseStatement(ABC):
     def pattern(self) -> re.Pattern[str]:
         return self.config.transaction_pattern
 
-    def get_transactions(self) -> list[Transaction] | None:
-        transactions: list[Transaction] = []
-
+    def _iter_matches(self) -> Iterator[tuple[RawTransaction, MatchContext]]:
+        """Yield one raw transaction and its line context per in-bounds match."""
         for page_num, page in enumerate(self.pages):
-            lines = page.lines
-            for line_num, line in enumerate(lines):
+            for line_num, line in enumerate(page.lines):
                 raw_match = self.pattern.search(line)
-                if not raw_match:
-                    continue
-
-                if self._check_bound(raw_match):
+                if not raw_match or self._check_bound(raw_match):
                     continue
 
                 groupdict = raw_match.groupdict()
                 raw_transaction = RawTransaction(
                     match=raw_match,
                     page_number=page_num,
-                    description=groupdict["description"],
-                    amount=groupdict["amount"],
+                    description=groupdict[Columns.DESCRIPTION],
+                    amount=groupdict[Columns.AMOUNT],
                     transaction_date=groupdict.get("transaction_date"),
                     posting_date=groupdict.get("posting_date"),
-                    direction=groupdict.get("direction"),
-                    balance=groupdict.get("balance"),
+                    direction=groupdict.get(Columns.DIRECTION),
+                    balance=groupdict.get(Columns.BALANCE),
                 )
-                raw_transaction = self.pre_process_match(raw_transaction)
                 context = MatchContext(
                     line=line,
                     lines=page.lines,
@@ -186,16 +181,18 @@ class BaseStatement(ABC):
                     description=raw_transaction.description,
                     multiline_config=self.config.multiline_config,
                 )
-                processed_match = self.process_match(raw_transaction, context)
-                transaction = Transaction(
-                    **processed_match.as_dict(),
-                    auto_direction=self.config.transaction_auto_direction,
-                )
-                transactions.append(transaction)
+                yield raw_transaction, context
 
-        if not transactions:
-            return None
+    def _build_transaction(self, raw_transaction: RawTransaction, context: MatchContext) -> Transaction:
+        """Run the pre/post-processing hooks and construct the Transaction."""
+        processed = self.process_match(self.pre_process_match(raw_transaction), context)
+        return Transaction(
+            **processed.as_dict(),
+            auto_direction=self.config.transaction_auto_direction,
+        )
 
+    def get_transactions(self) -> list[Transaction]:
+        transactions = [self._build_transaction(raw, ctx) for raw, ctx in self._iter_matches()]
         return self.post_process_transactions(transactions)
 
     def _check_bound(self, match: re.Match):
@@ -258,7 +255,7 @@ class BaseStatement(ABC):
         return "Safety check failed - transactions may be inaccurate"
 
     @cached_property
-    def transactions(self):
+    def transactions(self) -> list[Transaction]:
         return self.get_transactions()
 
     @cached_property
