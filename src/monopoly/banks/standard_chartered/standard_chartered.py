@@ -40,7 +40,15 @@ class StandardChartered(BankBase):
                 producer="iText",
             ),
             TextIdentifier("Standard Chartered"),
-        ]
+        ],
+        [
+            # 2026 onwards: SC switched its PDF generator from iText to OpenPDF
+            MetadataIdentifier(
+                title="eStatement",
+                producer="OpenPDF",
+            ),
+            TextIdentifier("Standard Chartered"),
+        ],
     ]
 
     statement_configs = [credit]
