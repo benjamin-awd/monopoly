@@ -16,8 +16,7 @@ _PREV_BALANCE_RE = re.compile(
     r"""(?ix)
       last\s+month'?s\s+balance
     | previous\s+(statement\s+)?balance
-    | balance\s+(previous\s+statement|from\s+previous\s+statement|brought\s+forward)
-    | outstanding\s+balance\s+brought\s+forward
+    | balance\s+((from\s+)?previous\s+statement|brought\s+forward)
     """
 )
 
