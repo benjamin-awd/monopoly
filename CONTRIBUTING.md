@@ -56,7 +56,3 @@ pytest tests/integration/banks/test_text_fixtures.py -k <bank>
 Confirm your case is collected and passes (not `0 selected`). Then open a PR
 with the `tests/integration/text_fixtures/<bank>/<type>/` directory. Do **not**
 commit the original PDF.
-
-> A text fixture exercises extraction and transformation, but not bank
-> *detection* (the bank is selected explicitly, not sniffed from PDF metadata).
-> Detection is covered separately via the unencrypted `example_statement.pdf`.
