@@ -14,6 +14,10 @@ class Chase(BankBase):
         currency="USD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(r"Statement Date:\s+(.*)"),
+        # "Opening/Closing Date  12/18/18 - 01/17/19": opening date is the period start
+        period_start_pattern=re.compile(r"Opening/Closing Date\s+(\d{2}/\d{2}/\d{2})\s*-"),
+        # "Account Number: 1234 5678 9012 2037" in the account summary block
+        account_pattern=re.compile(r"(?i)Account Number:\s+(?P<account>\d{4} \d{4} \d{4} \d{4})"),
         statement_date_order=DateOrder("MDY"),
         transaction_date_order=DateOrder("MDY"),
         header_pattern=re.compile(r"(.*Transaction.*Merchant Name .*\$ Amount)"),
