@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788605386144,
+  "lastUpdate": 1788612135049,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -359,6 +359,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 4.090559856920001,
             "range": "± 0.04099835876637752",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "91a33e42ef0463bf7013693ed1bc29b31703186e",
+          "message": "Merge pull request #313 from benjamin-awd/refactor/kind-enum-and-parser-source\n\nrefactor: model transaction kind as an enum; bundle parser fixture inputs",
+          "timestamp": "2026-09-05T20:40:19+08:00",
+          "tree_id": "8b92039ff4143f692a32e3c3fc33e211350aa3cc",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/91a33e42ef0463bf7013693ed1bc29b31703186e"
+        },
+        "date": 1788612134406,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.6724974750200001,
+            "range": "± 0.009242320957874174",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 3.0740030906999998,
+            "range": "± 0.038903696347718966",
             "unit": "s"
           }
         ]
