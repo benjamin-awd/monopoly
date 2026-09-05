@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788591999441,
+  "lastUpdate": 1788592845815,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -107,6 +107,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 1.73427053978,
             "range": "± 0.051659340399575475",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "distinct": true,
+          "id": "565c8488d939a3bdf47224b1cb0236f15828d3c1",
+          "message": "fix(standard_chartered): detect OpenPDF-generated statements\n\nSC switched its PDF generator from iText to OpenPDF, changing the\nproducer metadata from \"iText\" to \"OpenPDF 2.0.2\". The single\nidentifier group required producer=\"iText\", so newer statements failed\ndetection and fell back to the generic handler.\n\nAdd a second identifier group for the OpenPDF producer rather than\nloosening the existing one, per the repo convention.",
+          "timestamp": "2026-09-05T15:19:39+08:00",
+          "tree_id": "df6e9c96fd2afe3af24702825fa200bdfcde47ea",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/565c8488d939a3bdf47224b1cb0236f15828d3c1"
+        },
+        "date": 1788592845182,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.7803547047400002,
+            "range": "± 0.01335364438837055",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 1.4870803372399999,
+            "range": "± 0.028883033788090682",
             "unit": "s"
           }
         ]
