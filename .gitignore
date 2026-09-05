@@ -4,6 +4,7 @@
 # financial documents
 *.pdf
 *.csv
+*.json
 
 # dev
 *.ipynb
@@ -21,6 +22,10 @@ dist
 !tests/integration/banks/**/*.pdf
 !tests/integration/test_cli/**/*.pdf
 !**/examples/*.pdf
+
+# allowed json config
+!.release-please-manifest.json
+!release-please-config.json
 
 .claude
 docs/adr
