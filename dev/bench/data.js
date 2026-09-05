@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788622272469,
+  "lastUpdate": 1788622883433,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -719,6 +719,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 3.9796108027800003,
             "range": "± 0.04952118975840343",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ade1b799ea010a583ad2b96fa0a76234eaef7265",
+          "message": "Merge pull request #325 from benjamin-awd/worktree-json-follow-up\n\nfeat(json): populate account last-4 and period_start (#308)",
+          "timestamp": "2026-09-05T23:39:43+08:00",
+          "tree_id": "360a1e3da95c4ed3d57835509144d09f1da644ac",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/ade1b799ea010a583ad2b96fa0a76234eaef7265"
+        },
+        "date": 1788622882927,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.6394973135,
+            "range": "± 0.012798616229890177",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 2.8790344158800005,
+            "range": "± 0.019591427504665436",
             "unit": "s"
           }
         ]
