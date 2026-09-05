@@ -160,3 +160,17 @@ def test_db_marker_signs_the_amount_negative(debit_statement: BaseStatement):
 
     assert transaction.direction is Direction.DEBIT
     assert transaction.amount == -3.20
+
+
+def test_get_transactions_returns_an_empty_list_when_nothing_matches(statement: BaseStatement):
+    """
+    No transactions is an empty list, not None.
+
+    The optional return bought nothing — its only consumer tested falsiness,
+    which handles [] identically — while forcing `| None` through every
+    downstream signature.
+    """
+    statement.pages = [PdfPage("nothing here that looks like a transaction\n")]
+
+    assert statement.get_transactions() == []
+    assert statement.transactions == []
