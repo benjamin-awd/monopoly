@@ -1,5 +1,6 @@
 import logging
 import re
+from abc import ABC, abstractmethod
 from collections.abc import Iterator
 from dataclasses import dataclass
 from datetime import datetime
@@ -118,9 +119,9 @@ class DescriptionBuilder:
         return abs(pos1 - pos2) <= margin
 
 
-class BaseStatement:
+class BaseStatement(ABC):
     """
-    A dataclass representation of a bank statement.
+    Abstract base for a bank statement.
 
     Contains PDF pages (their raw text representation in a list), and specific bank config.
     """
@@ -262,10 +263,9 @@ class BaseStatement:
         resolver = DateResolver(self.pages, self.config, self.file_path)
         return resolver.resolve()
 
+    @abstractmethod
     def perform_safety_check(self) -> bool:
-        """Mandate the perform_safety_check method, which should exist in any child class of Statement."""
-        msg = "Subclasses must implement perform_safety_check method"
-        raise NotImplementedError(msg)
+        """Validate that the extracted transactions reconcile against the statement."""
 
     def get_all_numbers_from_document(self) -> set[float]:
         """
