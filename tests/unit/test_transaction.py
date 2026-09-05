@@ -71,3 +71,11 @@ def test_transaction_id_differs_on_amount_or_description():
 def test_transaction_id_not_in_str():
     tx = _tx(currency="SGD")
     assert tx.transaction_id not in str(tx)
+
+
+def test_transaction_id_reflects_later_mutation():
+    # not cached: reading the id early must not freeze a stale value
+    tx = _tx()
+    early = tx.transaction_id
+    tx.currency = "SGD"
+    assert tx.transaction_id != early
