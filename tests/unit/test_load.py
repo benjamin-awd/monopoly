@@ -82,3 +82,16 @@ def test_load_json(credit_statement: BaseStatement, tmp_path: Path):
     assert len(data["transactions"]) == 1
     assert data["transactions"][0]["id"]
     assert data["transactions"][0]["currency"] == "SGD"
+
+
+@pytest.mark.usefixtures("mock_generate_name")
+def test_load_rejects_unknown_format(credit_statement: BaseStatement, tmp_path: Path):
+    credit_statement.statement_date = datetime(2023, 1, 1)
+    with pytest.raises(ValueError, match="Unsupported output format"):
+        Pipeline.load(
+            transactions=[],
+            statement=credit_statement,
+            output_directory=tmp_path,
+            preserve_filename=False,
+            format_type="xml",
+        )
