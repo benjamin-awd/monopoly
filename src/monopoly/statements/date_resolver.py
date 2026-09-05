@@ -8,7 +8,6 @@ from pathlib import Path
 from dateparser import parse
 
 from monopoly.config import StatementConfig
-from monopoly.constants.date import ISO8601
 from monopoly.exceptions import MissingStatementDateError
 from monopoly.pdf import PdfPage
 
@@ -32,11 +31,6 @@ class DateResolver:
     def resolve(self) -> datetime:
         """Find statement date from content, falling back to filename."""
         pattern = self.config.statement_date_pattern
-        allowed_patterns = (re.Pattern, ISO8601)
-
-        if not isinstance(pattern, allowed_patterns):
-            msg = f"Pattern must be one of {allowed_patterns}, not {type(pattern)}"
-            raise TypeError(msg)
 
         for page in self.pages:
             lines = page.lines

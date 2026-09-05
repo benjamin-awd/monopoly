@@ -13,7 +13,7 @@ class Dbs(BankBase):
     credit = StatementConfig(
         currency="SGD",
         statement_type=EntryType.CREDIT,
-        statement_date_pattern=ISO8601.DD_MMM_YYYY,
+        statement_date_pattern=ISO8601.DD_MMM_YYYY.regex,
         header_pattern=re.compile(r"(DATE.*DESCRIPTION.*AMOUNT)"),
         transaction_date_format="%d %b",
         transaction_pattern=re.compile(
@@ -42,7 +42,7 @@ class Dbs(BankBase):
     debit = StatementConfig(
         currency="SGD",
         statement_type=EntryType.DEBIT,
-        statement_date_pattern=ISO8601.DD_MMM_YYYY,
+        statement_date_pattern=ISO8601.DD_MMM_YYYY.regex,
         multiline_config=MultilineConfig(
             multiline_descriptions=True,
             description_margin=10,  # Allow for indented PayNow/transaction details

@@ -63,8 +63,6 @@ class PaymentSummaryExtractor:
         """Return the first match of `pattern` across all page lines."""
         if not pattern:
             return None
-        if isinstance(pattern, str):
-            pattern = re.compile(pattern)
         for page in self.pages:
             for line in page.lines:
                 if match := pattern.search(line):

@@ -73,11 +73,7 @@ class BankBase:
                 raise TypeError(msg)
 
             pattern = config.transaction_pattern
-            actual_pattern = getattr(pattern, "regex", pattern)
-            group_index = getattr(actual_pattern, "groupindex", None)
-            if group_index is None:
-                continue
-            missing = required_groups - group_index.keys()
+            missing = required_groups - pattern.groupindex.keys()
             if missing:
                 msg = (
                     f"{cls.__name__}: transaction pattern {pattern!r} is missing "
