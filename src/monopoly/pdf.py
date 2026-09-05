@@ -1,6 +1,6 @@
 import logging
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import cached_property
 from io import BytesIO
 from pathlib import Path
@@ -124,38 +124,51 @@ class PdfDocument(Document):
         return "".join(page.get_text() for page in self)
 
 
+@dataclass
+class TextFixtureSource:
+    """
+    Pre-extracted page text standing in for a source PDF.
+
+    Backs `PdfParser.from_pages`: the text-fixture path has no PDF - and no PII -
+    so the pages, metadata and originating path (a fixture directory) that a
+    `PdfDocument` would otherwise supply are carried together here instead.
+    """
+
+    pages: list[PdfPage]
+    metadata: MetadataIdentifier = field(default_factory=MetadataIdentifier)
+    file_path: Path | None = None
+
+
 class PdfParser:
-    def __init__(  # noqa: PLR0913
+    def __init__(
         self,
         bank: type["BankBase"],
         document: PdfDocument | None = None,
         ocr_engine: str | None = None,
         *,
-        pages: list[PdfPage] | None = None,
-        metadata: MetadataIdentifier | None = None,
-        file_path: Path | None = None,
+        text_source: TextFixtureSource | None = None,
     ):
         """
         Class responsible for parsing PDFs and returning raw text.
 
-        The page_range variable determines which pages are extracted.
-        All pages are extracted by default.
-
-        A parser can also be built from pre-extracted page text (see
-        `from_pages`), in which case `document` is None and `pages` is
-        supplied directly. This backs the text-based fixture path, where the
-        source PDF - and its PII - is unavailable.
+        Supply a page source: a `document` (the normal path, which extracts text
+        and metadata from the PDF), or a `text_source` built from pre-extracted
+        page text (see `from_pages`). The page_range determines which pages are
+        extracted; all pages are extracted by default.
         """
+        if document is not None:
+            metadata_identifier = document.metadata_identifier
+        elif text_source is not None:
+            metadata_identifier = text_source.metadata
+        else:
+            msg = "provide either a document or text_source"
+            raise ValueError(msg)
+
         self.bank = bank
         self.document = document
         self.ocr_engine = ocr_engine
-        self._injected_pages = pages
-        self._file_path = file_path
-
-        if document is not None:
-            self.metadata_identifier = document.metadata_identifier
-        else:
-            self.metadata_identifier = metadata or MetadataIdentifier()
+        self._text_source = text_source
+        self.metadata_identifier = metadata_identifier
 
     @classmethod
     def from_pages(
@@ -174,14 +187,17 @@ class PdfParser:
         extracted (and redacted) text is available - not the original PDF.
         """
         pdf_pages = [page if isinstance(page, PdfPage) else PdfPage(page) for page in pages]
-        return cls(bank, document=None, pages=pdf_pages, metadata=metadata, file_path=file_path)
+        source = TextFixtureSource(pdf_pages, metadata or MetadataIdentifier(), file_path)
+        return cls(bank, text_source=source)
 
     @property
     def file_path(self) -> Path | None:
-        """Path of the source PDF, if the parser was built from one."""
+        """Path of the source PDF (or fixture directory), if one was supplied."""
         if self.document is not None:
             return self.document.file_path
-        return self._file_path
+        if self._text_source is not None:
+            return self._text_source.file_path
+        return None
 
     @property
     def pdf_config(self):
@@ -205,8 +221,8 @@ class PdfParser:
 
     @cached_property
     def pages(self):
-        if self._injected_pages is not None:
-            return self._injected_pages
+        if self._text_source is not None:
+            return self._text_source.pages
         return self._get_pages()
 
     def _get_pages(self) -> list[PdfPage]:
