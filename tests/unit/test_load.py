@@ -85,6 +85,26 @@ def test_load_json(credit_statement: BaseStatement, tmp_path: Path):
 
 
 @pytest.mark.usefixtures("mock_generate_name")
+def test_load_csv_bytes_identical(credit_statement: BaseStatement, tmp_path: Path):
+    # golden-file guard: lock the 4-column CSV output byte-for-byte
+    credit_statement.statement_date = datetime(2023, 1, 1)
+    transactions = [
+        Transaction(transaction_date="2023-01-01", description="foo", amount=100.0),
+        Transaction(transaction_date="2023-01-01", description="bar", amount=123.12),
+    ]
+
+    output_path = Pipeline.load(
+        transactions=transactions,
+        statement=credit_statement,
+        output_directory=tmp_path,
+        preserve_filename=False,
+    )
+
+    expected = b"date,description,amount,balance\r\n2023-01-01,foo,-100.0,0\r\n2023-01-01,bar,-123.12,0\r\n"
+    assert output_path.read_bytes() == expected
+
+
+@pytest.mark.usefixtures("mock_generate_name")
 def test_load_rejects_unknown_format(credit_statement: BaseStatement, tmp_path: Path):
     credit_statement.statement_date = datetime(2023, 1, 1)
     with pytest.raises(ValueError, match="Unsupported output format"):
