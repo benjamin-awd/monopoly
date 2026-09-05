@@ -2,7 +2,7 @@ import logging
 import re
 from functools import cached_property
 
-from monopoly.constants import EntryType, TransactionKind
+from monopoly.constants import Direction, EntryType, TransactionKind
 from monopoly.statements.debit_statement import DebitStatement
 from monopoly.statements.payment_summary import PaymentSummary, PaymentSummaryExtractor
 from monopoly.statements.transaction import RawTransaction, Transaction
@@ -16,6 +16,7 @@ class CreditStatement(BaseStatement):
     """A dataclass representation of a credit statement."""
 
     statement_type = EntryType.CREDIT
+    minus_direction = Direction.CREDIT
 
     @cached_property
     def payment_summary(self) -> PaymentSummary:
@@ -33,13 +34,6 @@ class CreditStatement(BaseStatement):
                 prev_month_transaction = Transaction(**raw_transaction.as_dict(), kind=TransactionKind.PREVIOUS_BALANCE)
                 transactions.insert(0, prev_month_transaction)
         return transactions
-
-    def pre_process_match(self, raw_transaction: RawTransaction) -> RawTransaction:
-        """Pre-process transactions by adding a debit or credit direction identifier to the group dict."""
-        raw_transaction = super().pre_process_match(raw_transaction)
-        if raw_transaction.direction == "-":
-            raw_transaction.direction = "CR"
-        return raw_transaction
 
     def get_prev_month_balances(self) -> list[re.Match]:
         """

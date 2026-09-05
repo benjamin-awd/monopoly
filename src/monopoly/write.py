@@ -10,9 +10,16 @@ def generate_hash(statement: BaseStatement) -> str:
 
     Hashes an explicit list of the core transaction fields rather than the
     dataclass repr, so adding new fields to Transaction never churns filenames.
+
+    `direction` is coerced to a plain string: it is a `Direction` enum member,
+    whose repr is `<Direction.CREDIT: 'credit'>` rather than `'credit'`, and
+    letting that reach `repr()` would rewrite every generated filename.
     """
     hash_object = sha256()
-    identities = [(tx.date, tx.description, tx.amount, tx.direction, tx.balance) for tx in statement.transactions]
+    identities = [
+        (tx.date, tx.description, tx.amount, str(tx.direction) if tx.direction else None, tx.balance)
+        for tx in statement.transactions
+    ]
     hash_object.update(repr(identities).encode("utf-8"))
     return hash_object.hexdigest()[0:6]
 

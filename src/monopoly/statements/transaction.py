@@ -8,7 +8,7 @@ from pydantic import Field, field_validator, model_validator
 from pydantic.dataclasses import dataclass as pydantic_dataclass
 from pydantic_core import ArgsKwargs
 
-from monopoly.constants import Columns, TransactionKind
+from monopoly.constants import Columns, Direction, TransactionKind
 
 
 def strip_non_numeric(value: str) -> str:
@@ -72,7 +72,7 @@ class Transaction:
     description: str
     amount: float
     date: str = Field(alias="transaction_date")
-    direction: str | None = None
+    direction: Direction | None = None
     # None means the statement has no balance column; distinct from a real 0.00
     # balance. The CSV writer still collapses None to 0; the JSON schema keeps null.
     balance: float | None = Field(default=None)
@@ -123,6 +123,19 @@ class Transaction:
             return strip_non_numeric(value)
         return str(value)
 
+    @field_validator(Columns.DIRECTION, mode="before")
+    def parse_direction_marker(cls, value: "str | Direction | None") -> Direction | None:
+        """
+        Coerce a raw marker to a `Direction`.
+
+        Statements normally parse the marker in `pre_process_match`, but
+        `CreditStatement.post_process_transactions` builds a `Transaction`
+        straight from the prev-balance groupdict and bypasses that. `minus` is
+        `DEBIT` here to preserve how a bare "-" has always been read at this
+        layer; statements resolve it against their own statement type first.
+        """
+        return Direction.parse(value, minus=Direction.DEBIT)
+
     # pylint: disable=bad-classmethod-argument
     @model_validator(mode="before")
     def treat_parenthesis_enclosure_as_credit(self: ArgsKwargs | Any) -> "ArgsKwargs":
@@ -130,25 +143,20 @@ class Transaction:
         if self.kwargs:
             amount: str = self.kwargs[Columns.AMOUNT]
             if isinstance(amount, str) and amount.startswith("(") and amount.endswith(")"):
-                self.kwargs[Columns.DIRECTION] = "CR"
+                self.kwargs[Columns.DIRECTION] = Direction.CREDIT
         return self
 
     @model_validator(mode="after")
     def normalize_direction_and_sign_amount(self: "Transaction") -> "Transaction":
         """
-        Sign the amount from the raw direction marker, then normalize the marker.
+        Sign the amount from the parsed direction, filling it in when absent.
 
-        `direction` arrives as a raw marker (CR/DR/DB/+/-/None). Credits are made
-        positive and debits negative (when auto_direction is on); the stored
-        direction is then rewritten to "credit"/"debit" so downstream consumers
-        (e.g. the JSON schema) never see raw, bank-specific markers.
+        `direction` has already been coerced to a `Direction` (or `None`) by
+        `parse_direction_marker`. Credits are made positive and debits negative
+        when `auto_direction` is on; an absent direction is then inferred from
+        the resulting sign so the field is never left unset.
         """
-        if self.direction in ("CR", "+"):
-            is_credit = True
-        elif self.direction in ("DR", "DB", "-"):
-            is_credit = False
-        else:
-            is_credit = None
+        is_credit = None if self.direction is None else self.direction is Direction.CREDIT
 
         # sign the amount (skip zero to avoid negative zero, and when disabled)
         if self.auto_direction and self.amount != 0:
@@ -157,7 +165,7 @@ class Transaction:
         # no explicit marker: fall back to the sign of the amount
         if is_credit is None:
             is_credit = self.amount >= 0
-        self.direction = "credit" if is_credit else "debit"
+        self.direction = Direction.CREDIT if is_credit else Direction.DEBIT
         return self
 
     def __str__(self):

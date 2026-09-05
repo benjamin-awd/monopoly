@@ -1,7 +1,9 @@
 import logging
 import re
+from functools import cached_property
 
-from monopoly.constants import EntryType
+from monopoly.constants import Direction, EntryType
+from monopoly.statements.column_layout import ColumnLayout
 from monopoly.statements.transaction import RawTransaction
 
 from .base import BaseStatement, SafetyCheckError
@@ -13,87 +15,68 @@ class DebitStatement(BaseStatement):
     """A dataclass representation of a debit statement."""
 
     statement_type = EntryType.DEBIT
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._column_pos_cache: dict[tuple[str, int], int | None] = {}
+    minus_direction = Direction.DEBIT
 
     def pre_process_match(self, raw_transaction: RawTransaction) -> RawTransaction:
         """Pre-process transactions by adding a debit or credit direction identifier to the group dict."""
         raw_transaction = super().pre_process_match(raw_transaction)
-        page_number = raw_transaction.page_number
-        withdrawal_pos = self.get_withdrawal_pos(page_number)
-        deposit_pos = self.get_deposit_pos(page_number)
         direction = raw_transaction.direction
 
-        # If the transaction doesn't have an explicit direction, attempt to infer from column positions
-        if not direction and withdrawal_pos and deposit_pos:
-            direction = self.get_debit_direction(raw_transaction, withdrawal_pos, deposit_pos)
+        # No explicit marker: infer from which amount column the value sits under
+        if direction is None and (layout := self.column_layouts[raw_transaction.page_number]):
+            direction = layout.classify(self._amount_end_pos(raw_transaction))
 
-        match direction:
-            case "-" | "DR":
-                direction = "DR"
-            case "+" | "CR":
-                direction = "CR"
-            case None:
-                direction = "CR"  # default to credit
-            case _:
-                error = f"Unsupported direction type {direction}"
-                raise RuntimeError(error)
-
-        raw_transaction.direction = direction
+        raw_transaction.direction = direction or Direction.CREDIT  # default to credit
         return raw_transaction
 
-    def get_debit_direction(self, raw_transaction: RawTransaction, withdrawal_pos: int, deposit_pos: int) -> str:
+    @cached_property
+    def column_layouts(self) -> list[ColumnLayout | None]:
         """
-        Get the accounting direction for debit card statements.
+        The withdrawal/deposit geometry of each page, indexed by page number.
 
-        Attempts to identify whether a transaction is a debit
-        or credit entry based on the distance from the withdrawal
-        or deposit columns.
+        Computed once per statement. A page is `None` when either column is
+        missing from it, which is the same thing as having no usable geometry —
+        the two positions are only meaningful together.
         """
+        layouts: list[ColumnLayout | None] = []
+        for page_number in range(len(self.pages)):
+            withdrawal = self.get_withdrawal_pos(page_number)
+            deposit = self.get_deposit_pos(page_number)
+            layouts.append(None if withdrawal is None or deposit is None else ColumnLayout(withdrawal, deposit))
+        return layouts
+
+    @staticmethod
+    def _amount_end_pos(raw_transaction: RawTransaction) -> int:
+        """Amounts are right-aligned, so the final character is what locates the column."""
         if raw_transaction.match is None:
             msg = "RawTransaction.match is required for direction detection"
             raise ValueError(msg)
-        amount = raw_transaction.amount
         line = raw_transaction.match.string
-        start_pos = line.find(amount)
-        # assume that numbers are right aligned
-        end_pos = start_pos + len(amount) - 1
-        withdrawal_diff = abs(end_pos - withdrawal_pos)
-        deposit_diff = abs(end_pos - deposit_pos)
-        return "CR" if withdrawal_diff > deposit_diff else "DR"
+        return line.find(raw_transaction.amount) + len(raw_transaction.amount) - 1
 
     def get_withdrawal_pos(self, page_number: int) -> int | None:
         common_names = ["withdraw", "debit", r"from\ your\ account"]
         for name in common_names:
-            if pos := self.get_column_pos(name, page_number=page_number):
+            if (pos := self.get_column_pos(name, page_number=page_number)) is not None:
                 return pos
         logger.debug("%s column not found in header on page %s", common_names, page_number)
-        return False
+        return None
 
     def get_deposit_pos(self, page_number: int) -> int | None:
         common_names = ["deposit", "credit", r"to\ your\ account"]
         for name in common_names:
-            if pos := self.get_column_pos(name, page_number=page_number):
+            if (pos := self.get_column_pos(name, page_number=page_number)) is not None:
                 return pos
         logger.debug("%s column not found in header on page %s", common_names, page_number)
-        return False
+        return None
 
     def get_column_pos(self, column_type: str, page_number: int) -> int | None:
-        cache_key = (column_type, page_number)
-        if cache_key in self._column_pos_cache:
-            return self._column_pos_cache[cache_key]
-
         pattern = re.compile(rf"{column_type}[\w()$]*", re.IGNORECASE)
-        result = None
         if match := pattern.search(self.header):
-            result = self.get_header_pos(match.group(), page_number)
+            return self.get_header_pos(match.group(), page_number)
+        return None
 
-        self._column_pos_cache[cache_key] = result
-        return result
-
-    def get_header_pos(self, column_name: str, page_number: int) -> int:
+    def get_header_pos(self, column_name: str, page_number: int) -> int | None:
         """
         Return position of the 'WITHDRAWAL' or 'DEPOSIT' header for a particular page.
 
@@ -119,7 +102,7 @@ class DebitStatement(BaseStatement):
                 return header_start_pos + len(column_name)
 
         logger.debug("Debit header %s cannot be found on page %s", column_name, page_number)
-        return -1
+        return None
 
     def perform_safety_check(self: BaseStatement) -> bool:
         """Check that debit and credit transaction sums exist as a number within the statement."""

@@ -6,6 +6,7 @@ from datetime import date
 from dateparser import parse
 
 from monopoly.config import StatementConfig
+from monopoly.constants import Direction
 from monopoly.pdf import PdfPage
 from monopoly.statements.transaction import strip_non_numeric
 
@@ -88,11 +89,15 @@ class PaymentSummaryExtractor:
         or with a trailing ``CR``/``-`` direction, both of which `strip_non_numeric`
         discards. Without this, a credit balance would be reported as a positive
         amount owed instead of a negative one.
+
+        A payment summary belongs to a credit statement, so a bare ``-`` here
+        reads as a credit.
         """
         if amount.strip().startswith("("):
             return True
         if "direction" in match.re.groupindex:
-            return match.group("direction") in ("CR", "-")
+            marker = Direction.parse(match.group("direction"), minus=Direction.CREDIT)
+            return marker is Direction.CREDIT
         return False
 
     def _extract_date(self, pattern) -> date | None:
