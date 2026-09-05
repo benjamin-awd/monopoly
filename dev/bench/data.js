@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788599763461,
+  "lastUpdate": 1788600219782,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -287,6 +287,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 1.25738004288,
             "range": "± 0.014104641241081382",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4157b8500c7a2a7d482f79899283295ee7af989b",
+          "message": "Merge pull request #309 from benjamin-awd/execute/community-scalable-bank-coverage\n\nRemove git-crypt: test banks with synthetic text fixtures",
+          "timestamp": "2026-09-05T17:22:07+08:00",
+          "tree_id": "05ed1cb6ceebd53061e4880a674347569cdb29ee",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/4157b8500c7a2a7d482f79899283295ee7af989b"
+        },
+        "date": 1788600219266,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.7952972383000001,
+            "range": "± 0.004451326200283481",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 3.77038023154,
+            "range": "± 0.02025475537056594",
             "unit": "s"
           }
         ]
