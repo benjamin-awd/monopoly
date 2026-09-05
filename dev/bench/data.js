@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788592845815,
+  "lastUpdate": 1788595257566,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -143,6 +143,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 1.4870803372399999,
             "range": "± 0.028883033788090682",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "distinct": true,
+          "id": "154055034bd3cd4245ba1e17e7c46d545d48f2ab",
+          "message": "feat!: rename polarity to direction with normalized credit/debit values\n\nRename the credit/debit indicator from `polarity` to `direction` throughout\n(field, config flags, regex groups, Columns, SharedPatterns, methods) and\nnormalize the JSON value to \"credit\"/\"debit\" instead of the raw bank markers\n(CR/DR/+/-). Harden generate_hash to hash an explicit field list rather than the\ndataclass repr, so future Transaction fields never churn filenames; add a pinned\ntest (the mocked fixture could not catch this).\n\nBREAKING CHANGE: JSON field `polarity` is now `direction` with values\n\"credit\"/\"debit\"; StatementConfig.transaction_auto_polarity and\nMultilineConfig.multiline_polarity are renamed to *_direction; and the statement\nfilename hash changes once (generate_hash no longer uses the dataclass repr).",
+          "timestamp": "2026-09-05T15:59:16+08:00",
+          "tree_id": "ec849bf00be133415e3cd7c5c935755f77432b46",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/154055034bd3cd4245ba1e17e7c46d545d48f2ab"
+        },
+        "date": 1788595256996,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.56994998142,
+            "range": "± 0.033989323091303404",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 0.98874821672,
+            "range": "± 0.019186325869698758",
             "unit": "s"
           }
         ]
