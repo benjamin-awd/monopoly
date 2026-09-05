@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788619468185,
+  "lastUpdate": 1788619743727,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -539,6 +539,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 4.303298497959999,
             "range": "± 0.035103385543316414",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e46781cbb186a9cae9a88485f09b89ab76544536",
+          "message": "Merge pull request #318 from benjamin-awd/execute/safety-check-abc\n\nrefactor(statements): share safety reconciliation, make BaseStatement abstract",
+          "timestamp": "2026-09-05T22:47:17+08:00",
+          "tree_id": "487b4a9355bca07f19854a867b652047fb7e922f",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/e46781cbb186a9cae9a88485f09b89ab76544536"
+        },
+        "date": 1788619743165,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.9134575006600002,
+            "range": "± 0.024423768554233918",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 4.13992487586,
+            "range": "± 0.0739392913226659",
             "unit": "s"
           }
         ]
