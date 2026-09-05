@@ -1,0 +1,54 @@
+                                                                            Maybank Islamic Berhad (000000-X)
+                                                         88th Floor, Menara Contoh, 8, Lorong Fiktif, 40000 Shah Alam
+
+000042               SAMPLE STORE 88, SHAH                                                                                MUKA/   頁 /PAGE     :                              1
+                     ALIA BINTI RASHDAN                                                                                   TARIKH PENYATA
+
+                     NO 8, LORONG DAHLIA, TAMAN CONTOH, 40000,                                                              結單日期             :                   31/08/23
+                     SELANGOR, MYS                                                                                       STATEMENT DATE
+
+                                                                                                                          NOMBOR AKAUN
+
+                                                                                                                               戶號            :           555012-334789
+                                                                                                                             ACCOUNT
+                                                                                                                             NUMBER
+
+
+
+PROTECTED BY PIDM UP TO RM250,000 FOR EACH DEPOSITOR                                                                                                  SAVINGS ACCOUNT-I
+                                              URUSNIAGA AKAUN/ 戶口進支項 /ACCOUNT TRANSACTIONS
+      TARIKH MASUK                                        BUTIR URUSNIAGA                                                    JUMLAH URUSNIAGA            BAKI PENYATA
+
+       進支日期                                                    進支項說明                                                                 银碼                    結單存餘
+      ENTRY DATE                                     TRANSACTION DESCRIPTION                                               TRANSACTION AMOUNT          STATEMENT BALANCE
+
+                         BEGINNING BALANCE                                                                                                                         500.00
+         01/08/23        CASH WITHDRAWAL                                                                                                   120.00-                 380.00
+         03/08/23        IBK FUND TFR TO A/C                                                                                               300.00+                 680.00
+                           MICHAEL RIVERS*
+                           salary
+         05/08/23        SALE DEBIT                                                                                                         45.50-                 634.50
+                           NASI CAFE      *
+                           SHAH ALAM , MY
+         08/08/23        CASH DEPOSIT                                                                                                      150.00+                 784.50
+         12/08/23        FPX PAYMENT FR A/                                                                                                  88.30-                 696.20
+                         9988776      *
+                         GADGET       SUPPLY
+                         2308120811330099
+         15/08/23        FUND TRANSFER TO A/                                                                                               75.25+                 771.45
+                           PRIYA NAIR*
+                           refund
+         20/08/23        TRANSFER FROM A/C                                                                                                 210.20-                 561.25
+                           BUILDER HSE SDN. B*
+
+                         TOTAL DEBIT                                                                                                       464.00
+                         TOTAL CREDIT                                                                                                      525.25
+
+Perhation / Note
+(1) Semua maklumat dan baki yang dinyatakan di sini akan dianggap betul melainkan Bank telah dimaklumkan secara bertulis tentang sebarang ketidaktepatan dalam
+    tempoh 21 hari.
+       若银行在21天内未获得书面通知于任何差异，所有显示的账项及余额将被视为正确。
+       All items and balances shown will be considered correct unless the Bank is notified in writing of any discrepancies within 21 days.
+(2)    Sila beritahu kami sebarang pertukaran alamat secara bertulis.
+       請通知本行在何地址更换。
+       Please notify us of any change of address in writing.

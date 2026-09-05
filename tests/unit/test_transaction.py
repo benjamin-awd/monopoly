@@ -56,30 +56,30 @@ def _tx(**overrides):
     return Transaction(**base)
 
 
-def test_transaction_id_stable_across_identical_transactions():
-    assert _tx().transaction_id == _tx().transaction_id
+def test_content_hash_stable_across_identical_transactions():
+    assert _tx().content_hash == _tx().content_hash
     # balance is excluded from identity: same id despite differing running balance
-    assert _tx(balance="100.00").transaction_id == _tx(balance="999.00").transaction_id
+    assert _tx(balance="100.00").content_hash == _tx(balance="999.00").content_hash
 
 
-def test_transaction_id_differs_on_amount_or_description():
-    baseline = _tx().transaction_id
-    assert _tx(amount="10.01").transaction_id != baseline
-    assert _tx(description="bar").transaction_id != baseline
-    assert _tx(currency="SGD").transaction_id != baseline
+def test_content_hash_differs_on_amount_or_description():
+    baseline = _tx().content_hash
+    assert _tx(amount="10.01").content_hash != baseline
+    assert _tx(description="bar").content_hash != baseline
+    assert _tx(currency="SGD").content_hash != baseline
 
 
-def test_transaction_id_not_in_str():
+def test_content_hash_not_in_str():
     tx = _tx(currency="SGD")
-    assert tx.transaction_id not in str(tx)
+    assert tx.content_hash not in str(tx)
 
 
-def test_transaction_id_reflects_later_mutation():
+def test_content_hash_reflects_later_mutation():
     # not cached: reading the id early must not freeze a stale value
     tx = _tx()
-    early = tx.transaction_id
+    early = tx.content_hash
     tx.currency = "SGD"
-    assert tx.transaction_id != early
+    assert tx.content_hash != early
 
 
 def test_balance_none_when_absent_float_when_present():

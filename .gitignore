@@ -16,12 +16,20 @@ __pycache__
 _ignore*
 dist
 
-# allowed pdf files/fixtures
+# allowed fixtures (synthetic text + generated CSVs; no real PDFs committed)
+!tests/integration/banks/**/*.txt
 !tests/integration/banks/**/raw.csv
 !tests/integration/banks/**/transformed.csv
-!tests/integration/banks/**/*.pdf
 !tests/integration/test_cli/**/*.pdf
 !**/examples/*.pdf
+
+# redacted text fixtures
+!tests/integration/text_fixtures/**/*.txt
+!tests/integration/text_fixtures/**/*.csv
+
+# fixture expectations/metadata (json is otherwise ignored)
+!tests/integration/banks/**/*.json
+!tests/integration/text_fixtures/**/*.json
 
 # allowed json config
 !.release-please-manifest.json

@@ -1,0 +1,92 @@
+{
+  "schema_version": 2,
+  "bank": "bank_of_america",
+  "statement_type": "credit",
+  "period_start": null,
+  "period_end": "2023-08-22",
+  "payment_summary": {
+    "payment_due_date": null,
+    "total_amount_due": null,
+    "minimum_payment": null
+  },
+  "balances": [],
+  "transactions": [
+    {
+      "id": "41abad464dc1fa51058e585ceed14681e2466dae9145820e03fa6092b1527c7f",
+      "transaction_date": "2023-08-01",
+      "posting_date": "2023-08-01",
+      "description": "PAYMENT - THANK YOU",
+      "amount": 400.0,
+      "currency": "USD",
+      "account": null,
+      "balance": null,
+      "direction": "credit"
+    },
+    {
+      "id": "95c055ef8fe462bf036ef78c122b4374f630066e80a1f3b1cff366af68f79d1c",
+      "transaction_date": "2023-07-26",
+      "posting_date": "2023-07-27",
+      "description": "BLUE BOTTLE COFFEE PORTLAND OR",
+      "amount": -12.75,
+      "currency": "USD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "016d486ad8b6c3b3ae5324cc3c3ab3d4455ad021f65869816930a134b10fd859",
+      "transaction_date": "2023-07-29",
+      "posting_date": "2023-07-30",
+      "description": "SUMMIT HARDWARE SUPPLY DENVER CO",
+      "amount": -84.3,
+      "currency": "USD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "c40dc76a1c4da3e1612ce2a6d99e11ae71d98daff5fb4319d536a0ff399ee551",
+      "transaction_date": "2023-08-03",
+      "posting_date": "2023-08-04",
+      "description": "RIVERSIDE BOOKSHOP AUSTIN TX",
+      "amount": -26.4,
+      "currency": "USD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "4cb936726eeabb7d1a5eccf0cba8cb33c695586a2ce4330fd1f8266e3ac947c4",
+      "transaction_date": "2023-08-09",
+      "posting_date": "2023-08-10",
+      "description": "NORTHWIND AIRLINES SEATTLE WA",
+      "amount": -312.6,
+      "currency": "USD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "b82e52570ba0e901b568caafffc23cdb731fb584b0d9932858b960e0ff44cc10",
+      "transaction_date": "2023-08-15",
+      "posting_date": "2023-08-16",
+      "description": "LUNA CAFE AND BAKERY MADISON WI",
+      "amount": -18.95,
+      "currency": "USD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "ddeed5e178750daef63cda1c1cfef9792e112fc230ef95a1f47ba4d5f7ba5ca7",
+      "transaction_date": "2023-08-18",
+      "posting_date": "2023-08-19",
+      "description": "CITY TRANSIT AUTHORITY CHICAGO IL",
+      "amount": -34.0,
+      "currency": "USD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    }
+  ]
+}

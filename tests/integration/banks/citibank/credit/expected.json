@@ -1,0 +1,122 @@
+{
+  "schema_version": 2,
+  "bank": "citibank",
+  "statement_type": "credit",
+  "period_start": null,
+  "period_end": "2022-03-12",
+  "payment_summary": {
+    "payment_due_date": "2022-04-06",
+    "total_amount_due": 310.8,
+    "minimum_payment": 50.0
+  },
+  "balances": [
+    {
+      "type": "previous",
+      "amount": -420.0,
+      "date": "2022-02-03",
+      "direction": "debit",
+      "currency": "SGD"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "0850c23e920453447733a88cdcc51ae0a916b42c98eff0918de40c5b93a090a9",
+      "transaction_date": "2022-02-03",
+      "posting_date": null,
+      "description": "Riverside Diner CENTERVILLE US",
+      "amount": -18.5,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "6ef3dac376c1f1ad2f72b00ce20d43ad6bd28aab8b7497dfe24cff939b2ae57d",
+      "transaction_date": "2022-02-05",
+      "posting_date": null,
+      "description": "Metro Transit Card CENTERVILLE US",
+      "amount": -24.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "b8dbc8be5a3f0915e733ab67c6bbef69da52ae0ee00670e423d4b1abaedd56e2",
+      "transaction_date": "2022-02-08",
+      "posting_date": null,
+      "description": "Blue Harbor Grocers CENTERVILLE US",
+      "amount": -62.35,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "de31c44ce84fbb3f31b8883807e6b385cfa1420068ade505637c4764cf99c5dc",
+      "transaction_date": "2022-02-11",
+      "posting_date": null,
+      "description": "Lumen Bookshop CENTERVILLE US",
+      "amount": -33.9,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "ebb9cb5a92199186bfbd5886fb2f41e8392ef88c1d1f996238d1deacb2eed1fd",
+      "transaction_date": "2022-02-15",
+      "posting_date": null,
+      "description": "Cloudpeak Software Online CENTERVILLE US",
+      "amount": -45.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "e77197eb2f14fb8f9715d49c459666e5df20ce4d2faa5605fd6cc6b395432222",
+      "transaction_date": "2022-02-19",
+      "posting_date": null,
+      "description": "Sunny Side Cafe CENTERVILLE US",
+      "amount": -12.25,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "c791bd1214fd8caeb6478a452f326cdf43b3fae429911cc17af33efa550913b3",
+      "transaction_date": "2022-02-20",
+      "posting_date": null,
+      "description": "ONLINE PAYMENT THANK YOU",
+      "amount": 300.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "credit"
+    },
+    {
+      "id": "588f14a616d1b8ad5e4037fada60dadb1f45ff78773d6279d82d6691722f0663",
+      "transaction_date": "2022-02-22",
+      "posting_date": null,
+      "description": "Northgate Pharmacy CENTERVILLE US",
+      "amount": -9.8,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "e2e893e06b9532baf0ec39899cd6353926b7565351e164eee59f7d1bde5afbc9",
+      "transaction_date": "2022-02-24",
+      "posting_date": null,
+      "description": "MERCHANDISE REBATE ADJUSTMENT",
+      "amount": 15.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "credit"
+    }
+  ]
+}

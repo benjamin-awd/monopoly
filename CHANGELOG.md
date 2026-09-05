@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.22.0](https://github.com/benjamin-awd/monopoly/compare/v0.21.7...v0.22.0) (2026-09-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* JSON field `polarity` is now `direction` with values "credit"/"debit"; StatementConfig.transaction_auto_polarity and MultilineConfig.multiline_polarity are renamed to *_direction; and the statement filename hash changes once (generate_hash no longer uses the dataclass repr).
+
+### Features
+
+* **cli:** add JSON output format with richer versioned schema ([446d296](https://github.com/benjamin-awd/monopoly/commit/446d2968db0d92e9bd3c846f4a5bc2b3b85a7d24))
+* **pipeline:** add ExtractionError taxonomy and make handler lazy ([6b024d8](https://github.com/benjamin-awd/monopoly/commit/6b024d841c35d5eb7da168b76d3372dc92d5baa4))
+* rename polarity to direction with normalized credit/debit values ([1540550](https://github.com/benjamin-awd/monopoly/commit/154055034bd3cd4245ba1e17e7c46d545d48f2ab))
+* **transaction:** make balance nullable so JSON distinguishes absent from zero ([ff2bcb8](https://github.com/benjamin-awd/monopoly/commit/ff2bcb873133af0d479af52475444a6a411082b7))
+
+
+### Bug Fixes
+
+* **dbs:** raise consolidated transaction_bound to 230 ([13898d3](https://github.com/benjamin-awd/monopoly/commit/13898d39710d94b05c95e6d914554141d6fd4ef0))
+* **pipeline:** validate format_type in load ([f4387e8](https://github.com/benjamin-awd/monopoly/commit/f4387e8de76ff8a0f0de3964c51e830921b261fc))
+* **standard_chartered:** detect OpenPDF-generated statements ([565c848](https://github.com/benjamin-awd/monopoly/commit/565c8488d939a3bdf47224b1cb0236f15828d3c1))
+* **transaction:** compute transaction_id fresh, not cached ([2d17eaa](https://github.com/benjamin-awd/monopoly/commit/2d17eaa32dc95c2b95c13b95c897979f2b7773e1))
+
 ## [0.21.7](https://github.com/benjamin-awd/monopoly/compare/v0.21.6...v0.21.7) (2026-08-30)
 
 

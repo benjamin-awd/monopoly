@@ -1,0 +1,88 @@
+{
+  "schema_version": 2,
+  "bank": "bank_of_america",
+  "statement_type": "debit",
+  "period_start": null,
+  "period_end": "2023-07-25",
+  "payment_summary": null,
+  "balances": [],
+  "transactions": [
+    {
+      "id": "ef61211dad1904ddb14daf2466a0f1b24ccff36ea509d21e638fcfb9de340fd6",
+      "transaction_date": "2023-06-28",
+      "posting_date": null,
+      "description": "Payroll Direct Deposit ACME WIDGETS DES:PAYROLL INDN:MARCUS ELLISON",
+      "amount": 2450.0,
+      "currency": "USD",
+      "account": null,
+      "balance": null,
+      "direction": "credit"
+    },
+    {
+      "id": "969953687f8d5cd3e4f9d406643b8d92b6a48f125e1e8405b98fdbcf8e99b259",
+      "transaction_date": "2023-07-05",
+      "posting_date": null,
+      "description": "Interest Earned",
+      "amount": 0.15,
+      "currency": "USD",
+      "account": null,
+      "balance": null,
+      "direction": "credit"
+    },
+    {
+      "id": "7a6f81376c66449271f2144f0cbaf9746d0371e788f0c88d7746af0d961ec445",
+      "transaction_date": "2023-07-12",
+      "posting_date": null,
+      "description": "Mobile Check Deposit",
+      "amount": 320.0,
+      "currency": "USD",
+      "account": null,
+      "balance": null,
+      "direction": "credit"
+    },
+    {
+      "id": "2b3d1a514b4c904c5e9654923fbb3bdf0358a281ded3247371c7008024eea5bb",
+      "transaction_date": "2023-06-27",
+      "posting_date": null,
+      "description": "Online Banking transfer to CHK 1122 Confirmation# 7781234501",
+      "amount": -600.0,
+      "currency": "USD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "d7d8b146cd7a06282290d305ba7df3914a55fb8f6f9a16e4bdcd0420a4a56b35",
+      "transaction_date": "2023-07-03",
+      "posting_date": null,
+      "description": "Zelle Transfer Conf# qa71bd2mv; Dana",
+      "amount": -125.5,
+      "currency": "USD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "23af17aa128456e16d3ab2117fbcb22e79a13c9a22f2aaa84ce45ae53142a016",
+      "transaction_date": "2023-07-10",
+      "posting_date": null,
+      "description": "GREENLEAF GROCERS DES:PURCHASE ID:889201 INDN:MARCUS ELLISON CO ID:6620113344 PPD",
+      "amount": -84.05,
+      "currency": "USD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "a058fb997297922e9391b1f5246788e2c057557e7696f1d7d51167e0ae0cd150",
+      "transaction_date": "2023-07-18",
+      "posting_date": null,
+      "description": "CITY POWER CO DES:BILLPAY ID:445120 INDN:MARCUS ELLISON",
+      "amount": -145.0,
+      "currency": "USD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    }
+  ]
+}

@@ -1,38 +1,44 @@
+import json
 from datetime import date, datetime
 from pathlib import Path
 
 import pytest
-from test_utils.skip import skip_if_encrypted
-from test_utils.transactions import get_transactions_as_dict, read_transactions_from_csv
+from test_utils.transactions import get_transactions_as_dict, read_pages, read_transactions_from_csv
 
-from monopoly.banks import Citibank, Dbs, Hsbc, Maybank, Ocbc, StandardChartered, Trust
+from monopoly.banks import BankOfAmerica, Citibank, Dbs, Hsbc, Maybank, Ocbc, StandardChartered, Trust, Uob
 from monopoly.banks.base import BankBase
-from monopoly.pdf import PdfDocument, PdfParser
+from monopoly.pdf import PdfParser
 from monopoly.pipeline import Pipeline
+from monopoly.serialize import statement_to_dict
 from monopoly.statements import CreditStatement, PaymentSummary
 
+# These run against committed, synthetic, plain-text fixtures (page_NN.txt) - no
+# real statements, no encryption. Totals/dates below are the synthetic values.
 test_cases = [
-    (Citibank, -1414.07, datetime(2022, 11, 15)),
-    (Dbs, -16969.17, datetime(2023, 10, 15)),
-    (Hsbc, -1218.2, datetime(2023, 8, 20)),
-    (Maybank, -1259.28, datetime(2024, 11, 8)),
-    (Ocbc, -702.1, datetime(2023, 8, 1)),
-    (StandardChartered, -82.45, datetime(2023, 5, 16)),
-    (Trust, -681.27, datetime(2024, 8, 18)),
+    (BankOfAmerica, -89.0, datetime(2023, 8, 22)),
+    (Citibank, -310.8, datetime(2022, 3, 12)),
+    (Dbs, -550.0, datetime(2023, 11, 20)),
+    (Hsbc, -575.94, datetime(2024, 9, 24)),
+    (Maybank, -1209.5, datetime(2024, 11, 8)),
+    (Ocbc, -210.0, datetime(2023, 9, 1)),
+    (StandardChartered, -194.75, datetime(2024, 6, 18)),
+    (Trust, -27.0, datetime(2025, 3, 15)),
+    (Uob, -382.45, datetime(2025, 2, 28)),
 ]
 
 # expected payment summary per bank that configures one, keyed by bank name
 expected_payment_summaries = {
-    "citibank": PaymentSummary(date(2022, 12, 10), 1414.07, 50.00),
-    "dbs": PaymentSummary(date(2023, 11, 9), 16969.17, 509.08),
+    "citibank": PaymentSummary(date(2022, 4, 6), 310.8, 50.00),
+    "dbs": PaymentSummary(date(2023, 12, 15), 550.0, 50.00),
     # HSBC prints no payment due date, so it stays None
-    "hsbc": PaymentSummary(None, 1218.20, 50.00),
-    "standard_chartered": PaymentSummary(date(2023, 6, 7), 82.45, 50.00),
-    "trust": PaymentSummary(date(2024, 9, 2), 681.27, 50.00),
+    "hsbc": PaymentSummary(None, 575.94, 50.00),
+    "ocbc": PaymentSummary(date(2023, 9, 22), 210.0, 50.00),
+    "standard_chartered": PaymentSummary(date(2024, 7, 10), 194.75, 50.00),
+    "trust": PaymentSummary(date(2025, 4, 5), 27.0, 25.00),
+    "uob": PaymentSummary(date(2025, 3, 20), 382.45, 50.00),
 }
 
 
-@skip_if_encrypted
 @pytest.mark.parametrize(
     "bank, total_amount, statement_date",
     test_cases,
@@ -44,8 +50,7 @@ def test_bank_credit_statements(
 ):
     test_directory = Path(__file__).parent / bank.name / "credit"
 
-    document = PdfDocument(test_directory / "input.pdf")
-    parser = PdfParser(bank, document)
+    parser = PdfParser.from_pages(bank, read_pages(test_directory))
     pipeline = Pipeline(parser)
     statement: CreditStatement = pipeline.extract()
 
@@ -66,3 +71,7 @@ def test_bank_credit_statements(
     # check the extracted payment summary, for banks that configure one
     if expected_summary := expected_payment_summaries.get(bank.name):
         assert statement.payment_summary == expected_summary
+
+    # the fixture pins the exact `--format json` envelope the CLI would emit
+    expected_envelope = json.loads((test_directory / "expected.json").read_text())
+    assert statement_to_dict(statement, transformed_transactions) == expected_envelope

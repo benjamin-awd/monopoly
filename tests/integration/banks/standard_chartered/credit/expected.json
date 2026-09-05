@@ -1,0 +1,100 @@
+{
+  "schema_version": 2,
+  "bank": "standard_chartered",
+  "statement_type": "credit",
+  "period_start": null,
+  "period_end": "2024-06-18",
+  "payment_summary": {
+    "payment_due_date": "2024-07-10",
+    "total_amount_due": 194.75,
+    "minimum_payment": 50.0
+  },
+  "balances": [
+    {
+      "type": "previous",
+      "amount": -120.0,
+      "date": "2024-05-03",
+      "direction": "debit",
+      "currency": "SGD"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "d88c691573eb7fb6a38ac861d1a10fd1c7a97b12fe998554ed25c96ffb70f786",
+      "transaction_date": "2024-05-03",
+      "posting_date": "2024-05-08",
+      "description": "COFFEE HAVEN 100112 SINGAPORE SG",
+      "amount": -25.5,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "5b0b6e288ba264083c7f87adc96de3c7d5f89f73c0354c41d717a6aaf84c7b26",
+      "transaction_date": "2024-05-06",
+      "posting_date": "2024-05-10",
+      "description": "GROCERWORLD MART 200233 SINGAPORE SG",
+      "amount": -42.3,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "a24747721487781edd8094d21cbef8510b60af5f19d73ba91fd53f03430c9b7b",
+      "transaction_date": "2024-05-11",
+      "posting_date": "2024-05-15",
+      "description": "BOOKNOOK ONLINE 300455 SINGAPORE SG",
+      "amount": -18.75,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "0e751cfed750bc3592e5b46fef02fd6bd211ec3b37442131b5c56195d75608e4",
+      "transaction_date": "2024-05-15",
+      "posting_date": "2024-05-15",
+      "description": "PAYMENT - THANK YOU",
+      "amount": 120.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "credit"
+    },
+    {
+      "id": "dae1853a20f3c5230f37fead2de05cdcf90f31090c364a5eef345942384865bb",
+      "transaction_date": "2024-05-18",
+      "posting_date": "2024-05-22",
+      "description": "PIZZA PALACE 400566 SINGAPORE SG",
+      "amount": -60.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "2e032dcc065b5a4f9a5e9afe599cf523a2c3819a12d8ec579774b4812704e314",
+      "transaction_date": "2024-05-22",
+      "posting_date": "2024-05-26",
+      "description": "FITZONE GYM 500677 SINGAPORE SG",
+      "amount": -33.2,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "c635794246fe2162cdd8db148c60d65f35af95d66a9e518d2250fcebc0fae1df",
+      "transaction_date": "2024-05-27",
+      "posting_date": "2024-05-31",
+      "description": "STREAMFLIX SUBSCRIPTION 600788 SINGAPORE SG",
+      "amount": -15.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    }
+  ]
+}

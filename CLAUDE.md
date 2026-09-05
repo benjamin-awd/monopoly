@@ -14,7 +14,6 @@ improvising a workflow:
 | `/verify` | Run the full gate and report what passed, failed, or **skipped** |
 | `/add-bank` | Add a bank or statement type from a sample PDF |
 | `/debug-statement` | Diagnose a single PDF that fails to parse |
-| `/commit` | Conventional Commits, as release-please and git-cliff expect |
 
 `dev-guide` (auto-loaded) is the reference for test/lint/type commands.
 The `statement-debugger` subagent investigates a failing PDF without pulling
@@ -24,10 +23,17 @@ Two repo-specific rules that override normal instincts:
 
 - **Real statements are PII.** `*.pdf` and `*.csv` are gitignored, and a
   PreToolUse hook blocks force-adding them. Never work around it. `.env` and
-  `*.key` are denied to the Read tool by design.
-- **A green test run can be a lie.** Bank integration tests are guarded by
-  `skip_if_encrypted` and skip silently when the git-crypt fixtures are locked.
-  Always report skip counts, never just passes.
+  `*.key` are denied to the Read tool by design. Your own statements live only
+  in `Statements/` (gitignored) — never commit them.
+- **Bank fixtures are synthetic.** Integration tests run against committed,
+  hand-authored `page_NN.txt` text fixtures under
+  `tests/integration/banks/<bank>/<type>/` (no encrypted PDFs, no encryption).
+  They prove the parser handles each bank's *layout*, not that a specific real
+  statement extracts correctly — so a regex change that breaks a real statement
+  can still pass CI. Spot-check against a real file in `Statements/` with
+  `uv run monopoly <file> --pprint` when changing extraction. Regenerate a
+  fixture's CSVs from redacted text with `monopoly-fixture build` (see
+  `CONTRIBUTING.md`).
 
 ## Project Overview
 
@@ -183,7 +189,7 @@ The CLI (`src/monopoly/cli/cli.py`) supports:
 - Output format with `--format csv|json` (`-f`). CSV stays a fixed 4-column
   contract; JSON emits the versioned richer schema built by
   `src/monopoly/serialize.py` (`SCHEMA_VERSION`, statement metadata, payment
-  summary, top-level `balances`, and a stable per-transaction `id`).
+  summary, top-level `balances`, and a unique per-transaction `id`).
   `SCHEMA_VERSION` is a single integer that bumps **only on a breaking change**
   (removing/renaming a field, changing a value's type/meaning/units, or
   restructuring nesting — e.g. v2 moved balance rows out of `transactions`).
@@ -212,6 +218,20 @@ This v1→v2 change is a breaking one: the balance row moved out of `transaction
 so an old reader that lists or sums transactions would silently miss it. That is
 why `SCHEMA_VERSION` was bumped. Consumers should check `schema_version` and
 refuse anything newer than they understand.
+
+Per-transaction `id`: the JSON `"id"` is *unique within an envelope* and is the
+only sanctioned per-row identifier, produced by `serialize.assign_ids`. It is a
+transaction's `Transaction.content_hash` for the first occurrence of a given
+fingerprint and a re-hash of `(content_hash, n)` for the nth duplicate — so two
+genuinely-distinct transactions with identical fields (e.g. two identical
+same-day transfers) still get distinct ids. `content_hash` itself is a *content
+fingerprint that deliberately collides* for identical content; never use it
+directly as a per-row id (that reintroduces collisions). Two caveats: (1) the
+occurrence ordinal is stable within one statement's row order but cannot
+guarantee cross-statement stability if a bank re-sorts identical same-day rows
+in an overlapping statement — inherent to a stateless parser; (2) populating the
+`account` follow-up (issue #308) folds a new field into `content_hash` and will
+rotate *every* `id`, not just duplicates.
 
 ## Important Implementation Notes
 

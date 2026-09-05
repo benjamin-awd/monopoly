@@ -1,0 +1,52 @@
+                                                                                                OCBC Bank
+                                                                                                65 Chulia Street, OCBC Centre
+                                                                                                Singapore 049513
+
+
+            JANE TAN                                                                            STATEMENT OF ACCOUNT
+            12 MAPLE AVENUE                                                                                                                 Page 1 of 1
+            #08-21
+            SINGAPORE 456789
+
+          360 ACCOUNT                                                                                               01 SEP 2024 TO 30 SEP 2024
+
+          Account No. 987654321098
+          Transaction      Value
+          Date             Date             Description                         Cheque                              Withdrawal                       Deposit                            Balance
+
+                                            BALANCE B/F                                                                                                                                        10,000.00
+
+          03 SEP           03 SEP           FAST PAYMENT                                                                       12.50                                                            9,987.50
+                                            via PayNow-Mobile
+                                            to Corner Bakery
+                                            OTHR - OTHR
+
+          05 SEP           05 SEP           SALARY CREDIT                                                                                                   3,500.00                           13,487.50
+                                            MONTHLY PAYROLL
+
+          08 SEP           08 SEP           BILL PAYMENT          INB                                                         250.00                                                           13,237.50
+                                            9876987698769876987
+                                            INTERNET BANKING
+
+          12 SEP           12 SEP           FUND TRANSFER                                                                   1,200.00                                                           12,037.50
+                                            via PayNow-UEN
+                                            to Harbour Rentals
+
+          15 SEP           16 SEP           REFUND                                                                                                            150.00                           12,187.50
+                                            MERCHANT REVERSAL
+
+          20 SEP           20 SEP           NETS QR                                                                            45.60                                                           12,141.90
+                                            998877665
+                                            NETS QR PURCHASE
+                                            GREEN GROCER
+
+          25 SEP           25 SEP           IBG GIRO                                                                           88.00                                                           12,053.90
+                                            UTILITY BILL
+
+          30 SEP           30 SEP           INTEREST CREDIT                                                                                                    20.25                           12,074.15
+
+                                            BALANCE C/F                                                                                                                                        12,074.15
+
+                                            Total Withdrawals/Deposits                                                      1,596.10                        3,670.25
+                                            Total Interest Paid This Year                                                                                      20.25
+                                            Average Balance                                                                                                11,800.00

@@ -33,12 +33,5 @@ jobs:
           uv venv
           uv sync --all-extras --locked
 
-      - name: Install git-crypt
-        uses: Flydiverny/setup-git-crypt@v5
-
-      - name: Unlock files
-        continue-on-error: true
-        run: echo "${{ secrets.GIT_CRYPT_KEY }}" | base64 --decode | git-crypt unlock -
-
       - name: Run tests
         run: uv run task test

@@ -29,22 +29,33 @@ jobs:
           wget https://github.com/sharkdp/hyperfine/releases/download/v1.19.0/hyperfine_1.19.0_amd64.deb
           sudo dpkg -i hyperfine_1.19.0_amd64.deb
 
-      - name: Install git-crypt
-        uses: Flydiverny/setup-git-crypt@v5
-
-      - name: Unlock files
-        continue-on-error: true
-        run: echo "${{ secrets.GIT_CRYPT_KEY }}" | base64 --decode | git-crypt unlock -
-
       - name: Build current and main environments
         run: |
           # Current PR head is the primary checkout.
           UV_PROJECT_ENVIRONMENT="$GITHUB_WORKSPACE/.venv-current" uv sync --all-extras
 
-          # main lives in a linked worktree that shares .git (and the unlocked git-crypt state).
+          # main lives in a linked worktree that shares .git.
           git worktree add "$RUNNER_TEMP/main-checkout" origin/main
           cd "$RUNNER_TEMP/main-checkout"
           UV_PROJECT_ENVIRONMENT="$RUNNER_TEMP/main-checkout/.venv-main" uv sync --all-extras
+
+      - name: Render synthetic corpus
+        run: |
+          set -euo pipefail
+          # The multi-file benchmark runs over PDFs rendered from the committed page_*.txt
+          # fixtures. Render once with the current checkout's tool (main's binary only has to
+          # *open* these PDFs), so the current-vs-main comparison stays fair.
+          FIXTURE="$GITHUB_WORKSPACE/.venv-current/bin/monopoly-fixture"
+          CORPUS="$RUNNER_TEMP/perf-corpus"
+          mkdir -p "$CORPUS"
+          for dir in "$GITHUB_WORKSPACE"/tests/integration/banks/*/*/; do
+            [ -f "${dir}page_01.txt" ] || continue
+            bank=$(basename "$(dirname "$dir")")
+            type=$(basename "$dir")
+            "$FIXTURE" render "$dir" -o "$CORPUS/${bank}_${type}.pdf"
+          done
+          echo "Rendered synthetic corpus:"
+          ls -1 "$CORPUS"
 
       - name: Run performance tests
         run: |
@@ -56,16 +67,8 @@ jobs:
           # results are interleaved on identical hardware — no cross-machine variance.
           SINGLE="$GITHUB_WORKSPACE/src/monopoly/examples/example_statement.pdf"
 
-          MULTI="$GITHUB_WORKSPACE/tests/integration/banks/citibank/credit/input.pdf \
-          $GITHUB_WORKSPACE/tests/integration/banks/dbs/credit/input.pdf \
-          $GITHUB_WORKSPACE/tests/integration/banks/dbs/debit/input.pdf \
-          $GITHUB_WORKSPACE/tests/integration/banks/hsbc/credit/input.pdf \
-          $GITHUB_WORKSPACE/tests/integration/banks/maybank/credit/input.pdf \
-          $GITHUB_WORKSPACE/tests/integration/banks/maybank/debit/input.pdf \
-          $GITHUB_WORKSPACE/tests/integration/banks/ocbc/credit/input.pdf \
-          $GITHUB_WORKSPACE/tests/integration/banks/ocbc/debit/input.pdf \
-          $GITHUB_WORKSPACE/tests/integration/banks/standard_chartered/credit/input.pdf \
-          $GITHUB_WORKSPACE/tests/integration/banks/trust/credit/input.pdf"
+          # Synthetic corpus rendered from the committed text fixtures (see previous step).
+          MULTI="$RUNNER_TEMP/perf-corpus/*.pdf"
 
           hyperfine --warmup 3 --runs 10 \
             --command-name current "$CURRENT $SINGLE" \

@@ -1,0 +1,100 @@
+{
+  "schema_version": 2,
+  "bank": "ocbc",
+  "statement_type": "credit",
+  "period_start": null,
+  "period_end": "2023-09-01",
+  "payment_summary": {
+    "payment_due_date": "2023-09-22",
+    "total_amount_due": 210.0,
+    "minimum_payment": 50.0
+  },
+  "balances": [
+    {
+      "type": "previous",
+      "amount": -500.0,
+      "date": "2023-07-02",
+      "direction": "debit",
+      "currency": "SGD"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "cb625c815b823ddb280344536f809394b586ae1c45df94ecc36aceb1aa7bd74e",
+      "transaction_date": "2023-07-02",
+      "posting_date": null,
+      "description": "PAYMENT BY INTERNET",
+      "amount": 500.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "credit"
+    },
+    {
+      "id": "c33f1e15670197a45ca9594a2bb50f067650f8f431c8e927efd82386aebef427",
+      "transaction_date": "2023-07-03",
+      "posting_date": null,
+      "description": "SAMPLE COFFEE HOUSE SINGAPORE SG",
+      "amount": -10.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "23b96e33fa1bededd56f325b66ddf99b0128463b257be50ce56fa0f6fbc56327",
+      "transaction_date": "2023-07-05",
+      "posting_date": null,
+      "description": "EXAMPLE GROCER SINGAPORE SG",
+      "amount": -20.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "a730601b7ef3e03156cec2db0f2cdfcb139267921a77db64016d47c20cf200ef",
+      "transaction_date": "2023-07-08",
+      "posting_date": null,
+      "description": "PLACEHOLDER TRANSIT SINGAPORE SG",
+      "amount": -30.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "f38c1cf7417635f4591efa6a8aca3b78ba40b8f80eccda46972fa31ec2d6e7ec",
+      "transaction_date": "2023-07-12",
+      "posting_date": null,
+      "description": "DEMO BOOKSTORE SINGAPORE SG",
+      "amount": -40.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "a850712129039d0447f41e5e2bb3190b69b26c7540a8935042e2397e6b5bfab0",
+      "transaction_date": "2023-07-15",
+      "posting_date": null,
+      "description": "FICTION PHARMACY SINGAPORE SG",
+      "amount": -50.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "f7eafe42f0d0690b5c13766171a6ee6587b507bb725757804836741aa67d3a87",
+      "transaction_date": "2023-07-20",
+      "posting_date": null,
+      "description": "MOCK ELECTRONICS SINGAPORE SG",
+      "amount": -60.0,
+      "currency": "SGD",
+      "account": null,
+      "balance": null,
+      "direction": "debit"
+    }
+  ]
+}

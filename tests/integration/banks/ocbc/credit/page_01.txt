@@ -1,0 +1,54 @@
+                                                                                                      OCBC Bank
+                                                                                                      65 Chulia Street, OCBC Centre
+                                                                                                      Singapore 049513
+
+                                                                                                      Contact Us
+                                                                                                      1800 363 3333
+                                                                                                      (65) 6363 3333 when overseas
+
+
+
+
+                                             hold ref.no: Y
+                                             00000
+SAMPLE CARDHOLDER
+1 EXAMPLE AVENUE
+#01-01
+SINGAPORE 000000
+
+
+
+
+ STATEMENT DATE            PAYMENT DUE DATE           TOTAL CREDIT LIMIT         TOTAL AVAILABLE CREDIT LIMIT            TOTAL MINIMUM DUE
+
+    01-09-2023                 22-09-2023                     S$15,000                     S$14,790.00                         S$50.00
+
+Please examine this statement and advise us of any discrepancy within 7 days.
+
+PAYMENT DUE DATE : 22 SEP 23
+
+TRANSACTION DATE                          DESCRIPTION                                                                            AMOUNT (SGD)
+
+OCBC 365 CREDIT CARD
+SAMPLE CARDHOLDER                         0000-0000-0000-0000
+
+                                          LAST MONTH'S BALANCE                                                                            500.00
+ 02/07                                    PAYMENT BY INTERNET                                                                            (500.00)
+ 03/07                                    SAMPLE COFFEE HOUSE                    SINGAPORE            SG                                   10.00
+ 05/07                                    EXAMPLE GROCER                         SINGAPORE            SG                                   20.00
+ 08/07                                    PLACEHOLDER TRANSIT                    SINGAPORE            SG                                   30.00
+ 12/07                                    DEMO BOOKSTORE                         SINGAPORE            SG                                   40.00
+ 15/07                                    FICTION PHARMACY                       SINGAPORE            SG                                   50.00
+ 20/07                                    MOCK ELECTRONICS                       SINGAPORE            SG                                   60.00
+
+TOTAL NEW TRANSACTIONS                                                                                                                   710.00
+
+TOTAL AMOUNT DUE                                                                                                                         210.00
+
+PLEASE PAY THIS PORTION
+01-09-2023  22-09-2023  S$15,000  S$210.00  S$50.00
+
+
+
+
+                       HCBS00000(00000)                                                                                      00000 - PAGE 1 OF 1
