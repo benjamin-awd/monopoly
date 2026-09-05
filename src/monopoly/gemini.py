@@ -1,12 +1,25 @@
 import json
 import logging
+import re
 from datetime import datetime
 
+from monopoly.constants import TransactionKind
 from monopoly.llm import GeminiSettings, MissingApiKeyError
 from monopoly.pdf import PdfDocument
 from monopoly.statements.transaction import Transaction
 
 logger = logging.getLogger(__name__)
+
+# Safety net for when the model omits the "kind" marker: the wordings the native
+# parsers' per-bank ``prev_balance_pattern`` use for carried-over prior balances.
+_PREV_BALANCE_RE = re.compile(
+    r"""(?ix)
+      last\s+month'?s\s+balance
+    | previous\s+(statement\s+)?balance
+    | balance\s+(previous\s+statement|from\s+previous\s+statement|brought\s+forward)
+    | outstanding\s+balance\s+brought\s+forward
+    """
+)
 
 EXTRACTION_PROMPT = """\
 Extract all transactions from this bank statement image.
@@ -20,7 +33,8 @@ Return a JSON object with exactly this structure:
     {
       "date": "YYYY-MM-DD",
       "description": "merchant or description",
-      "amount": -12.34
+      "amount": -12.34,
+      "kind": "transaction"
     }
   ]
 }
@@ -31,11 +45,32 @@ Rules:
 - statement_type: "credit" for credit card statements, "debit" for bank account/savings/current account statements
 - amount: negative for debits/purchases, positive for credits/payments/refunds
 - date: the transaction date (not the posting date)
-- Include "Previous Statement Balance" or similar balance carry-forward lines as transactions \
+- kind: "transaction" for normal activity, or "previous_balance" for a carried-over prior \
+statement balance line (e.g. "Previous Statement Balance", "Last Month's Balance", \
+"Balance Brought Forward"). Default to "transaction" when unsure.
+- Include the carried-over prior balance line as a row with "kind": "previous_balance" \
 (use the statement start date as the date). These are needed for totals to balance.
 - Ignore other non-transaction lines (headers, footers, summaries, fine print)
 - Return ONLY the JSON object, no markdown fences or commentary
 """
+
+
+def _resolve_kind(description: str, raw_kind: str | None) -> TransactionKind:
+    """
+    Map the model's ``kind`` marker to a :class:`TransactionKind`.
+
+    Trusts an explicit marker, but falls back to matching the description against
+    the known carry-forward wordings so a model miss doesn't silently regress a
+    previous-balance row into ordinary activity.
+    """
+    if raw_kind:
+        try:
+            return TransactionKind(raw_kind)
+        except ValueError:
+            logger.warning("Unknown transaction kind %r from Gemini; treating as transaction", raw_kind)
+    if _PREV_BALANCE_RE.search(description or ""):
+        return TransactionKind.PREVIOUS_BALANCE
+    return TransactionKind.TRANSACTION
 
 
 class GeminiResult:
@@ -109,6 +144,7 @@ class GeminiParser:
                 description=tx["description"],
                 amount=float(tx["amount"]),
                 auto_direction=False,
+                kind=_resolve_kind(tx["description"], tx.get("kind")),
             )
             transactions.append(transaction)
 
