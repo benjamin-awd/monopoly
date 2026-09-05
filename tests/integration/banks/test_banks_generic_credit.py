@@ -21,6 +21,7 @@ test_cases = [
     ("maybank", -1209.5, datetime(2024, 11, 8)),
     ("ocbc", 710.0, datetime(2023, 9, 1)),
     ("standard_chartered", -194.75, datetime(2024, 6, 18)),
+    ("uob", -382.45, datetime(2025, 2, 28)),
 ]
 
 

@@ -1,0 +1,51 @@
+                                                                                                                                                                     Page 1 of 1
+   Statement of Account
+   Period: 01 Mar 2025 to 31 Mar 2025
+              MR JORAN VILDE                                                                        Contact Us
+              88 SENGKANG SQUARE
+              #12-31 RIVERGATE VIEW                                                         Email     customer.service@uobgroup.com
+              SINGAPORE 540888
+
+     Account Transaction Details
+     UOB One Account 375-908-221-6
+
+     Date                     Description                                                                        Withdrawals                      Deposits                       Balance
+                                                                                                                     SGD                             SGD                            SGD
+
+                              BALANCE B/F                                                                                                                                         500.00
+
+     02 Mar                   NETS PURCHASE-Debit Card                                                                    24.80                                                   475.20
+                              01 MAR 6021 4453107
+                              FAIRPRICE FINEST-KOVAN    SINGAPORE   SG
+
+     04 Mar                   PAYNOW-FAST                                                                                                            120.00                       595.20
+                              PIB2503041188220049
+                              HELENA MARSH
+                              OTHR Transfer - Mobile
+
+     06 Mar                   Cash Withdrawal-ATM                                                                        200.00                                                   395.20
+                              6021991025063738
+
+     09 Mar                   Misc DR-Debit Card                                                                          15.60                                                   379.60
+                              07 MAR 6021 8890142
+                              GRAB RIDES-EC       SINGAPORE         SG
+
+     12 Mar                   GIRO-SALARY                                                                                                          3,200.00                     3,579.60
+                              NORDLING ANALYTICS PTE LTD
+                              SALARY MAR 2025
+
+     15 Mar                   Misc DR-Debit Card                                                                           8.40                                                 3,571.20
+                              13 MAR 6021 5567390
+                              KOPITIAM-TAMPINES   SINGAPORE         SG
+
+     20 Mar                   PAYNOW-FAST                                                                                150.00                                                 3,421.20
+                              PIB2503206620517744
+                              quek wei liang
+                              OTHR Transfer - Mobile
+
+     25 Mar                   Interest Credit                                                                                                          0.45                     3,421.65
+                              CREDIT INTEREST
+
+                              Total (SGD)                                                                                398.80                    3,320.45                     3,421.65
+
+    ----------------------------------------------------------------- End of Transaction Details ------------------------------------------------

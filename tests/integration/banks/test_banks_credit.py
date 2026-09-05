@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 from test_utils.transactions import get_transactions_as_dict, read_pages, read_transactions_from_csv
 
-from monopoly.banks import Citibank, Dbs, Hsbc, Maybank, Ocbc, StandardChartered, Trust
+from monopoly.banks import BankOfAmerica, Citibank, Dbs, Hsbc, Maybank, Ocbc, StandardChartered, Trust, Uob
 from monopoly.banks.base import BankBase
 from monopoly.pdf import PdfParser
 from monopoly.pipeline import Pipeline
@@ -13,6 +13,7 @@ from monopoly.statements import CreditStatement, PaymentSummary
 # These run against committed, synthetic, plain-text fixtures (page_NN.txt) - no
 # real statements, no encryption. Totals/dates below are the synthetic values.
 test_cases = [
+    (BankOfAmerica, -89.0, datetime(2023, 8, 22)),
     (Citibank, -310.8, datetime(2022, 3, 12)),
     (Dbs, -550.0, datetime(2023, 11, 20)),
     (Hsbc, -575.94, datetime(2024, 9, 24)),
@@ -20,6 +21,7 @@ test_cases = [
     (Ocbc, -210.0, datetime(2023, 9, 1)),
     (StandardChartered, -194.75, datetime(2024, 6, 18)),
     (Trust, -27.0, datetime(2025, 3, 15)),
+    (Uob, -382.45, datetime(2025, 2, 28)),
 ]
 
 # expected payment summary per bank that configures one, keyed by bank name
@@ -31,6 +33,7 @@ expected_payment_summaries = {
     "ocbc": PaymentSummary(date(2023, 9, 22), 210.0, 50.00),
     "standard_chartered": PaymentSummary(date(2024, 7, 10), 194.75, 50.00),
     "trust": PaymentSummary(date(2025, 4, 5), 27.0, 25.00),
+    "uob": PaymentSummary(date(2025, 3, 20), 382.45, 50.00),
 }
 
 
