@@ -102,6 +102,10 @@ python3 src/monopoly/examples/single_statement.py
 
 ## Development
 
+Want to add a bank but can't share a real statement? See
+[CONTRIBUTING.md](CONTRIBUTING.md) for the redacted text-fixture path
+(`monopoly-fixture dump` / `build`).
+
 Clone the repo
 ```bash
 git clone https://github.com/benjamin-awd/monopoly.git

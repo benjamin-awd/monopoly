@@ -1,4 +1,5 @@
 import logging
+from collections.abc import Sequence
 from dataclasses import dataclass
 from functools import cached_property
 from io import BytesIO
@@ -124,22 +125,63 @@ class PdfDocument(Document):
 
 
 class PdfParser:
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         bank: type["BankBase"],
-        document: PdfDocument,
+        document: PdfDocument | None = None,
         ocr_engine: str | None = None,
+        *,
+        pages: list[PdfPage] | None = None,
+        metadata: MetadataIdentifier | None = None,
+        file_path: Path | None = None,
     ):
         """
         Class responsible for parsing PDFs and returning raw text.
 
         The page_range variable determines which pages are extracted.
         All pages are extracted by default.
+
+        A parser can also be built from pre-extracted page text (see
+        `from_pages`), in which case `document` is None and `pages` is
+        supplied directly. This backs the text-based fixture path, where the
+        source PDF - and its PII - is unavailable.
         """
         self.bank = bank
         self.document = document
-        self.metadata_identifier = document.metadata_identifier
         self.ocr_engine = ocr_engine
+        self._injected_pages = pages
+        self._file_path = file_path
+
+        if document is not None:
+            self.metadata_identifier = document.metadata_identifier
+        else:
+            self.metadata_identifier = metadata or MetadataIdentifier()
+
+    @classmethod
+    def from_pages(
+        cls,
+        bank: type["BankBase"],
+        pages: Sequence["str | PdfPage"],
+        *,
+        metadata: MetadataIdentifier | None = None,
+        file_path: Path | None = None,
+    ) -> "PdfParser":
+        """
+        Build a parser from pre-extracted page text, bypassing PDF loading.
+
+        Each item in `pages` may be a raw text string or an existing PdfPage.
+        Used by text-based fixtures and the `build-fixture` CLI, where only the
+        extracted (and redacted) text is available - not the original PDF.
+        """
+        pdf_pages = [page if isinstance(page, PdfPage) else PdfPage(page) for page in pages]
+        return cls(bank, document=None, pages=pdf_pages, metadata=metadata, file_path=file_path)
+
+    @property
+    def file_path(self) -> Path | None:
+        """Path of the source PDF, if the parser was built from one."""
+        if self.document is not None:
+            return self.document.file_path
+        return self._file_path
 
     @property
     def pdf_config(self):
@@ -163,11 +205,16 @@ class PdfParser:
 
     @cached_property
     def pages(self):
+        if self._injected_pages is not None:
+            return self._injected_pages
         return self._get_pages()
 
     def _get_pages(self) -> list[PdfPage]:
         logger.debug("Extracting text from PDF")
         document = self.document
+        if document is None:
+            msg = "Cannot extract pages: parser was built without a PDF document"
+            raise RuntimeError(msg)
 
         if self.ocr_engine == "gemini":
             from monopoly.ocr import GeminiOcr

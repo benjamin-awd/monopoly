@@ -22,5 +22,9 @@ dist
 !tests/integration/test_cli/**/*.pdf
 !**/examples/*.pdf
 
+# redacted text fixtures
+!tests/integration/text_fixtures/**/*.txt
+!tests/integration/text_fixtures/**/*.csv
+
 .claude
 docs/adr
