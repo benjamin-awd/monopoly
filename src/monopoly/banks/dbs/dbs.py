@@ -69,7 +69,12 @@ class Dbs(BankBase):
             + SharedPatterns.DESCRIPTION
             + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
         ),
-        transaction_bound=220,
+        # Later pages of a consolidated statement indent the table further right
+        # than the first page (Balance column drifts 210 -> 223 -> 234), pushing
+        # the withdrawal/deposit amount column to col 223 on some pages. 230 keeps
+        # those real amounts while still rejecting balance-only summary lines,
+        # whose amounts land at col 239+.
+        transaction_bound=230,
     )
 
     identifiers = [
