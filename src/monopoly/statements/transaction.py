@@ -73,7 +73,9 @@ class Transaction:
     amount: float
     date: str = Field(alias="transaction_date")
     polarity: str | None = None
-    balance: float = Field(default=0)
+    # None means the statement has no balance column; distinct from a real 0.00
+    # balance. The CSV writer still collapses None to 0; the JSON schema keeps null.
+    balance: float | None = Field(default=None)
     # Richer, nullable slots surfaced only in the JSON schema (not the CSV, not
     # __str__/as_raw_dict). posting_date comes from the bank regex; currency is
     # stamped in Pipeline.extract from the matched StatementConfig; account is a
@@ -96,7 +98,7 @@ class Transaction:
         if show_polarity and self.polarity is not None:
             items[Columns.POLARITY.value] = self.polarity
         if show_balance:
-            items[Columns.BALANCE.value] = str(self.balance)
+            items[Columns.BALANCE.value] = str(self.balance) if self.balance is not None else "0"
         return items
 
     @field_validator("description", mode="after")
@@ -104,7 +106,7 @@ class Transaction:
         return " ".join(value.split())
 
     @field_validator(Columns.AMOUNT, Columns.BALANCE, mode="before")
-    def prepare_for_float_coercion(cls, value: str | None) -> str:
+    def prepare_for_float_coercion(cls, value: str | None, info) -> str | None:
         """
         Replace commas, whitespaces, apostrophes and parentheses for string representation of floats.
 
@@ -114,7 +116,8 @@ class Transaction:
         (-1.56 ) -> -1.56.
         """
         if value is None:
-            return "0"
+            # a missing balance stays null (no balance column); amount is always present
+            return None if info.field_name == Columns.BALANCE.value else "0"
         if isinstance(value, str):
             return strip_non_numeric(value)
         return str(value)

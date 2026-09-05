@@ -53,3 +53,14 @@ def test_payment_summary_none_for_non_credit(debit_statement):
     envelope = statement_to_dict(debit_statement, [])
     assert envelope["statement_type"] == "debit"
     assert envelope["payment_summary"] is None
+
+
+def test_balance_null_when_absent_float_when_present(credit_statement):
+    credit_statement.statement_date = datetime(2023, 6, 30)
+    transactions = [
+        Transaction(transaction_date="2023-06-01", description="A", amount="1.00"),
+        Transaction(transaction_date="2023-06-02", description="B", amount="2.00", balance="100.00"),
+    ]
+    envelope = statement_to_dict(credit_statement, transactions)
+    assert envelope["transactions"][0]["balance"] is None
+    assert envelope["transactions"][1]["balance"] == 100.0
