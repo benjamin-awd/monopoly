@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788620995953,
+  "lastUpdate": 1788621556803,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -647,6 +647,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 4.379614586820001,
             "range": "± 0.02395682994493495",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1d315bd8eecca1791fa08029a9d6888444ed7981",
+          "message": "Merge pull request #322 from benjamin-awd/execute/appendix-cleanups\n\nfix(statements): initialise carried date, drop dead and unreachable code",
+          "timestamp": "2026-09-05T23:17:27+08:00",
+          "tree_id": "37f0386efa2a06688b5dc2af9a15a8fe92dd8e23",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/1d315bd8eecca1791fa08029a9d6888444ed7981"
+        },
+        "date": 1788621556332,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.5846481374800001,
+            "range": "± 0.012927163605783552",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 2.54090591098,
+            "range": "± 0.1526317917398248",
             "unit": "s"
           }
         ]
