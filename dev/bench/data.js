@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788598480031,
+  "lastUpdate": 1788599763461,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -251,6 +251,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 1.75356878472,
             "range": "± 0.02398528174575492",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "distinct": true,
+          "id": "fef1edd8d2d03d76e9161e10aca99c069999524c",
+          "message": "docs: drop removed /commit skill from CLAUDE.md skills table",
+          "timestamp": "2026-09-05T17:14:43+08:00",
+          "tree_id": "d6f4ac354b93d29f77f2a55a4e9d4cd140062cf5",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/fef1edd8d2d03d76e9161e10aca99c069999524c"
+        },
+        "date": 1788599762699,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.6630888649200001,
+            "range": "± 0.00343785218369185",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 1.25738004288,
+            "range": "± 0.014104641241081382",
             "unit": "s"
           }
         ]
