@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import ClassVar
 
 from monopoly.config import MultilineConfig, StatementConfig
-from monopoly.constants import Columns, SharedPatterns
+from monopoly.constants import Columns, Direction, SharedPatterns
 from monopoly.pdf import PdfPage
 from monopoly.statements.date_resolver import DateResolver
 from monopoly.statements.number_extractor import NumberExtractor
@@ -125,6 +125,9 @@ class BaseStatement:
     """
 
     statement_type = "base"
+    #: How a bare "-" marker reads for this statement type. Debit statements
+    #: print it on withdrawals, credit statements on refunds.
+    minus_direction: ClassVar[Direction] = Direction.DEBIT
     columns: ClassVar[list[str]] = [
         Columns.DATE,
         Columns.DESCRIPTION,
@@ -209,6 +212,8 @@ class BaseStatement:
                 self.previous_transaction_date = raw_transaction.transaction_date
             else:
                 raw_transaction.transaction_date = self.previous_transaction_date
+
+        raw_transaction.direction = Direction.parse(raw_transaction.direction, minus=self.minus_direction)
         return raw_transaction
 
     def post_process_transactions(self, transactions: list[Transaction]) -> list[Transaction]:
@@ -240,11 +245,14 @@ class BaseStatement:
         24.02.25                       PAYMENT RECEIVED - THANK YOU            79.99
                                                                                   CR
 
-        In this case, the direction will resolve to CR.
+        In this case, the direction will resolve to Direction.CREDIT.
+
+        The next line must consist *only* of a marker; anything else is a
+        continuation of the statement body and leaves the direction unset.
         """
-        next_line = ctx.lines[ctx.idx + 1]
-        if re.match(SharedPatterns.DIRECTION, next_line):
-            return next_line.strip()
+        next_line = ctx.lines[ctx.idx + 1].strip()
+        if match := re.fullmatch(SharedPatterns.DIRECTION, next_line):
+            return Direction.parse(match.group("direction"), minus=self.minus_direction)
         return None
 
     @property

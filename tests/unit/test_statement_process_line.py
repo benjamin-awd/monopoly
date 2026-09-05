@@ -2,6 +2,7 @@ import re
 
 from monopoly.banks import Hsbc, Ocbc
 from monopoly.config import MultilineConfig
+from monopoly.constants import Direction
 from monopoly.pdf import PdfPage
 from monopoly.statements import BaseStatement
 from monopoly.statements.base import MatchContext
@@ -117,3 +118,45 @@ def test_process_match_multiline_description(statement: BaseStatement):
         "balance": None,
     }
     assert match.as_dict() == groupdict
+
+
+def test_db_marker_resolves_to_debit(debit_statement: BaseStatement):
+    """
+    A `DB` marker must parse, not crash.
+
+    `SharedPatterns.DIRECTION` has always captured `DB`, but the old `match`
+    block in `DebitStatement.pre_process_match` had no arm for it and fell
+    through to `RuntimeError` — before `Transaction`, which does understand it,
+    ever saw the value.
+    """
+    raw = RawTransaction(
+        match=re.search("foo", "foo"),
+        page_number=0,
+        transaction_date="04 Aug",
+        description="SHOPEE",
+        amount="3.20",
+        direction="DB",
+        balance=None,
+    )
+
+    processed = debit_statement.pre_process_match(raw)
+
+    assert processed.direction is Direction.DEBIT
+
+
+def test_db_marker_signs_the_amount_negative(debit_statement: BaseStatement):
+    """The parsed direction must still drive the sign through to Transaction."""
+    raw = RawTransaction(
+        match=re.search("foo", "foo"),
+        page_number=0,
+        transaction_date="04 Aug",
+        description="SHOPEE",
+        amount="3.20",
+        direction="DB",
+        balance=None,
+    )
+
+    transaction = Transaction(**debit_statement.pre_process_match(raw).as_dict())
+
+    assert transaction.direction is Direction.DEBIT
+    assert transaction.amount == -3.20
