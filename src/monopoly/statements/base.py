@@ -43,19 +43,15 @@ class DescriptionBuilder:
     WORDS_PATTERN: ClassVar[re.Pattern] = re.compile(r"\s[A-Za-z]+")
     NUMBERS_PATTERN: ClassVar[re.Pattern] = re.compile(SharedPatterns.AMOUNT)
 
-    def __init__(self, ctx: MatchContext, pattern: re.Pattern):
+    def __init__(self, ctx: MatchContext, pattern: re.Pattern, cfg: MultilineConfig):
         self.pattern = pattern
         self.ctx = ctx
-        self.cfg = ctx.multiline_config
+        self.cfg = cfg
         self.description = ctx.description
         self.desc_pos = ctx.line.find(ctx.description)
-        self.previous_transaction_date = None
 
     def build(self) -> str:
         """Build the final description string by iterating forward through lines."""
-        if not self.cfg:
-            return self.description
-
         # Handle previous line
         if self.cfg.include_prev_margin and self.ctx.idx > 0:
             self._include_previous_line()
@@ -70,10 +66,6 @@ class DescriptionBuilder:
 
     def _should_break(self, line: str) -> bool:
         """Determine if processing should stop at the current line."""
-        # cfg is guaranteed to be not None here because build() returns early if cfg is None
-        if self.cfg is None:
-            return True
-
         if not line.strip() or self.pattern.search(line):
             return True
 
@@ -95,10 +87,6 @@ class DescriptionBuilder:
 
     def _include_previous_line(self) -> None:
         """Attempt to prepend the previous line."""
-        # cfg is guaranteed to be not None here because build() returns early if cfg is None
-        if self.cfg is None:
-            return
-
         prev_line = self.ctx.lines[self.ctx.idx - 1].strip()
         if not prev_line or self.pattern.search(prev_line):
             return
@@ -150,6 +138,8 @@ class BaseStatement(ABC):
         self.pages = pages
         self.header = header
         self.file_path = file_path
+        # carried across lines when multiline_transaction_date is enabled
+        self.previous_transaction_date: str | None = None
 
     @property
     def pattern(self) -> re.Pattern[str]:
@@ -226,7 +216,7 @@ class BaseStatement(ABC):
             match.direction = self.get_multiline_direction(context)
 
         if config.multiline_descriptions:
-            match.description = DescriptionBuilder(context, self.pattern).build()
+            match.description = DescriptionBuilder(context, self.pattern, config).build()
 
         return match
 

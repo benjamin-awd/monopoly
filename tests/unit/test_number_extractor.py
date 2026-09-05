@@ -3,7 +3,12 @@
 import pytest
 
 from monopoly.pdf import PdfPage
-from monopoly.statements.number_extractor import NumberExtractor
+from monopoly.statements.number_extractor import (
+    _DECIMAL_RE,
+    _NUMBER_RE,
+    _SUBTOTAL_RE,
+    NumberExtractor,
+)
 
 
 class TestNumberExtractorGetDecimalNumbers:
@@ -158,12 +163,11 @@ class TestNumberExtractorGetAllNumbers:
 
 
 class TestNumberExtractorPatterns:
-    """Tests for NumberExtractor regex pattern properties."""
+    """Tests for the module-level regex constants."""
 
     def test_number_pattern_matches_digits_and_separators(self):
         """Test that number pattern matches expected formats."""
-        extractor = NumberExtractor(pages=[])
-        pattern = extractor._number_pattern
+        pattern = _NUMBER_RE
 
         assert pattern.search("123.45")
         assert pattern.search("1,234.56")
@@ -171,8 +175,7 @@ class TestNumberExtractorPatterns:
 
     def test_decimal_pattern_requires_decimal_point(self):
         """Test that decimal pattern requires decimal point at end."""
-        extractor = NumberExtractor(pages=[])
-        pattern = extractor._decimal_pattern
+        pattern = _DECIMAL_RE
 
         assert pattern.match("123.45")
         assert pattern.match("0.5")
@@ -181,8 +184,7 @@ class TestNumberExtractorPatterns:
 
     def test_subtotal_pattern_matches_subtotal_lines(self):
         """Test that subtotal pattern matches 'sub total' lines."""
-        extractor = NumberExtractor(pages=[])
-        pattern = extractor._subtotal_pattern
+        pattern = _SUBTOTAL_RE
 
         assert pattern.search("sub total 100.00")
         assert pattern.search("SUB TOTAL 1,234.56")

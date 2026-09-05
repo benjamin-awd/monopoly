@@ -56,10 +56,6 @@ class RawTransaction:
             "balance": self.balance,
         }
 
-    def span(self):
-        """Return the span of the regex match."""
-        return self.match.span()
-
 
 @pydantic_dataclass
 class Transaction:
