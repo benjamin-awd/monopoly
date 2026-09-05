@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788620436385,
+  "lastUpdate": 1788620995953,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -611,6 +611,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 4.257296923299999,
             "range": "± 0.09162504666052758",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6ace36fdbd81579500708f6c6098ccf2e844407c",
+          "message": "Merge pull request #320 from benjamin-awd/feat/python-314-support\n\nfeat: add Python 3.14 support",
+          "timestamp": "2026-09-05T23:08:12+08:00",
+          "tree_id": "e9bec003ad167e76980145d1ce25c832f024dc8a",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/6ace36fdbd81579500708f6c6098ccf2e844407c"
+        },
+        "date": 1788620995453,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.9286915087799998,
+            "range": "± 0.017352030910176796",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 4.379614586820001,
+            "range": "± 0.02395682994493495",
             "unit": "s"
           }
         ]
