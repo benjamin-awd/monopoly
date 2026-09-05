@@ -20,6 +20,8 @@ _PREV_BALANCE_RE = re.compile(
     """
 )
 
+_KIND_BY_MARKER = {kind.value: kind for kind in TransactionKind}
+
 EXTRACTION_PROMPT = """\
 Extract all transactions from this bank statement image.
 
@@ -63,10 +65,9 @@ def _resolve_kind(description: str, raw_kind: str | None) -> TransactionKind:
     previous-balance row into ordinary activity.
     """
     if raw_kind:
-        try:
-            return TransactionKind(raw_kind)
-        except ValueError:
-            logger.warning("Unknown transaction kind %r from Gemini; treating as transaction", raw_kind)
+        if kind := _KIND_BY_MARKER.get(raw_kind):
+            return kind
+        logger.warning("Unknown transaction kind %r from Gemini; treating as transaction", raw_kind)
     if _PREV_BALANCE_RE.search(description or ""):
         return TransactionKind.PREVIOUS_BALANCE
     return TransactionKind.TRANSACTION
