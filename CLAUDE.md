@@ -14,7 +14,6 @@ improvising a workflow:
 | `/verify` | Run the full gate and report what passed, failed, or **skipped** |
 | `/add-bank` | Add a bank or statement type from a sample PDF |
 | `/debug-statement` | Diagnose a single PDF that fails to parse |
-| `/commit` | Conventional Commits, as release-please and git-cliff expect |
 
 `dev-guide` (auto-loaded) is the reference for test/lint/type commands.
 The `statement-debugger` subagent investigates a failing PDF without pulling
