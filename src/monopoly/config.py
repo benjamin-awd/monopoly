@@ -1,10 +1,33 @@
+import re
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 from re import Pattern
+from typing import ClassVar
 
 from monopoly.constants import EntryType
 from monopoly.enums import RegexEnum
 from monopoly.identifiers import IdentifierGroup
+
+
+def compile_pattern(value: "Pattern[str] | RegexEnum | str | None") -> "Pattern[str] | None":
+    """
+    Collapse any accepted spelling of a pattern to a compiled pattern.
+
+    Config authors may write a compiled pattern, a `RegexEnum` member, or a
+    bare regex string. Normalising here means every consumer downstream can
+    assume `re.Pattern` and just call `.search()`, rather than each re-deriving
+    the type with its own `isinstance` or `getattr` dance.
+    """
+    if value is None:
+        return None
+    if isinstance(value, RegexEnum):
+        return value.regex
+    if isinstance(value, str):
+        return re.compile(value)
+    if isinstance(value, Pattern):
+        return value
+    msg = f"Expected a compiled pattern, regex string or RegexEnum, got {type(value).__name__}: {value!r}"
+    raise TypeError(msg)
 
 
 @dataclass
@@ -49,9 +72,19 @@ class PaymentSummaryConfig:
     `amount` group, e.g. r"TOTAL AMOUNT DUE\s+(?P<amount>[\d,]+\.\d{2})".
     """
 
-    payment_due_date: Pattern[str] | RegexEnum | None = None
-    total_amount_due: Pattern[str] | RegexEnum | None = None
-    minimum_payment: Pattern[str] | RegexEnum | None = None
+    payment_due_date: Pattern[str] | None = None
+    total_amount_due: Pattern[str] | None = None
+    minimum_payment: Pattern[str] | None = None
+
+    PATTERN_FIELDS: ClassVar[tuple[str, ...]] = (
+        "payment_due_date",
+        "total_amount_due",
+        "minimum_payment",
+    )
+
+    def __post_init__(self) -> None:
+        for name in self.PATTERN_FIELDS:
+            setattr(self, name, compile_pattern(getattr(self, name)))
 
 
 # pylint: disable=too-many-instance-attributes
@@ -107,19 +140,32 @@ class StatementConfig:
     """
 
     statement_type: EntryType
-    transaction_pattern: Pattern[str] | RegexEnum
-    statement_date_pattern: Pattern[str] | RegexEnum
-    header_pattern: Pattern[str] | RegexEnum
+    transaction_pattern: Pattern[str]
+    statement_date_pattern: Pattern[str]
+    header_pattern: Pattern[str]
     transaction_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
     statement_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
     transaction_date_format: str = ""
     multiline_config: MultilineConfig = field(default_factory=MultilineConfig)
     transaction_bound: int | None = None
-    prev_balance_pattern: Pattern[str] | RegexEnum | None = None
+    prev_balance_pattern: Pattern[str] | None = None
     safety_check: bool = True
     transaction_auto_direction: bool = True
     filename_fallback_pattern: Pattern[str] | None = None
     payment_summary_config: PaymentSummaryConfig | None = None
+
+    PATTERN_FIELDS: ClassVar[tuple[str, ...]] = (
+        "transaction_pattern",
+        "statement_date_pattern",
+        "header_pattern",
+        "prev_balance_pattern",
+        "filename_fallback_pattern",
+    )
+
+    def __post_init__(self) -> None:
+        for name in self.PATTERN_FIELDS:
+            setattr(self, name, compile_pattern(getattr(self, name)))
+
     currency: str | None = None
 
 

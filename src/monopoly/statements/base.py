@@ -150,12 +150,9 @@ class BaseStatement:
         self.header = header
         self.file_path = file_path
 
-    @cached_property
-    def pattern(self):
-        pattern = self.config.transaction_pattern
-        if isinstance(pattern, str):
-            pattern = re.compile(pattern)
-        return pattern
+    @property
+    def pattern(self) -> re.Pattern[str]:
+        return self.config.transaction_pattern
 
     def _iter_matches(self) -> Iterator[tuple[RawTransaction, MatchContext]]:
         """Yield one raw transaction and its line context per in-bounds match."""
