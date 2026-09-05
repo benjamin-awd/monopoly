@@ -21,7 +21,7 @@ monopoly-fixture dump path/to/statement.pdf -o tests/integration/text_fixtures/<
 ```
 
 This detects the bank (or pass `--bank <ClassName>` / `--generic`) and writes
-one `page_NN.txt` per page plus a `metadata.json`. **No CSV is produced.**
+one `page_NN.txt` per page plus a `metadata.json`.
 
 ### 2. Redact the page files
 
@@ -60,23 +60,3 @@ commit the original PDF.
 > A text fixture exercises extraction and transformation, but not bank
 > *detection* (the bank is selected explicitly, not sniffed from PDF metadata).
 > Detection is covered separately via the unencrypted `example_statement.pdf`.
-
-## Performance benchmarks run over a synthetic corpus
-
-The performance workflows (`.github/workflows/performance.yaml` and
-`performance-history.yaml`) benchmark the `monopoly` CLI end-to-end. Since the
-repo commits no real PDFs, they don't run over real statements — at CI time they
-render each committed text fixture back into an ephemeral PDF and benchmark
-those.
-
-```bash
-monopoly-fixture render tests/integration/banks/<bank>/<type> -o corpus/<bank>_<type>.pdf
-```
-
-`render` is the inverse of `dump`: it lays each `page_NN.txt` out on a
-fixed-pitch Courier grid so `pdftotext --physical` reconstructs the same columns
-the parser reads, producing a PII-free PDF that the pipeline still parses. The
-workflows render every `tests/integration/banks/*/*/` fixture into
-`$RUNNER_TEMP/perf-corpus/` and point the multi-file benchmark at it; nothing
-binary is committed. `tests/integration/test_render_roundtrip.py` gates that the
-round-trip still yields transactions (including debit column classification).
