@@ -112,7 +112,7 @@ ignore = [
 "src/monopoly/generic/patterns.py" = ["PLC0415"]
 "src/monopoly/ocr.py" = ["PLC0415"]
 "src/monopoly/pdf.py" = ["PLC0415"]
-"src/monopoly/pipeline.py" = ["PLC0415"]
+"src/monopoly/statements/date_transformer.py" = ["PLC0415"]
 
 [tool.taskipy.tasks]
 format = "ruff format ."
