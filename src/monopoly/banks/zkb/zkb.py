@@ -14,6 +14,9 @@ class ZurcherKantonalBank(BankBase):
         currency="CHF",
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"Balance as of: ({ISO8601.DD_MM_YYYY})"),
+        # account number in the header block, e.g. "Account no.  2233-5566.001"
+        # (distinct from the per-transaction "Visa Debit card no. xxxx ####" lines)
+        account_pattern=re.compile(r"Account no\.\s+(?P<account>[\d.\-]+)"),
         header_pattern=re.compile(r"(Date.*Booking text.*Debit CHF.*Credit CHF)"),
         transaction_pattern=re.compile(
             rf"(?P<transaction_date>{ISO8601.DD_MM_YYYY})\s+"
