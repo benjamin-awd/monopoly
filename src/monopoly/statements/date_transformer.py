@@ -1,7 +1,6 @@
 """Transaction date normalisation, including cross-year resolution."""
 
 import logging
-import re
 from datetime import datetime
 
 from monopoly.config import StatementConfig
@@ -11,7 +10,6 @@ logger = logging.getLogger(__name__)
 
 START_OF_YEAR_MONTHS = (1, 2)
 YEAR_CUTOFF_MONTH = 2
-_YYYY_RE = re.compile(DateFormats.YYYY)
 
 
 class DateTransformer:
@@ -45,7 +43,7 @@ class DateTransformer:
         `strptime` is tried first because it is markedly faster; `dateparser`
         is the fallback for the formats it cannot handle.
         """
-        needs_year = not _YYYY_RE.search(date_str) and "y" not in self.date_format.lower()
+        needs_year = not DateFormats.YYYY.search(date_str) and "y" not in self.date_format.lower()
         fmt = self.date_format
 
         if needs_year:

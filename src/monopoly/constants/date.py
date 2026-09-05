@@ -1,6 +1,8 @@
 """Store date-related regex patterns and constants."""
 
 import logging
+import re
+from functools import cached_property
 
 from strenum import StrEnum
 
@@ -21,6 +23,14 @@ class DateFormats(StrEnum):
     MMMM = r"(?i:January|February|March|April|May|June|July|August|September|October|November|December)"
     YY = r"([2-5][0-9]\b)"
     YYYY = r"(20\d{2}\b)"
+
+    @cached_property
+    def regex(self) -> re.Pattern:
+        """Compile this format fragment once, on first use."""
+        return re.compile(self.value)
+
+    def search(self, value: str) -> re.Match | None:
+        return self.regex.search(value)
 
 
 class ISO8601(RegexEnum):
