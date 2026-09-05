@@ -14,6 +14,10 @@ class BankOfAmerica(BankBase):
         currency="USD",
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"for .* to {ISO8601.MMMM_DD_YYYY}"),
+        # period end is the "to" date above; period start is the preceding date
+        period_start_pattern=re.compile(rf"for {ISO8601.MMMM_DD_YYYY} to"),
+        # masked account number, e.g. "Account number: 5108 2276 3391"
+        account_pattern=re.compile(r"(?i)Account number:\s+(?P<account>[\dX]{4}(?:[ -][\dX]{2,4})+)"),
         statement_date_order=DateOrder("MDY"),
         transaction_date_order=DateOrder("MDY"),
         header_pattern=re.compile(r"(Date\s+Description\s+Amount)"),
@@ -32,6 +36,8 @@ class BankOfAmerica(BankBase):
         currency="USD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(rf"Statement Closing Date\s+{ISO8601.MM_DD_YYYY}"),
+        # masked account number, e.g. "Account Number  4417 88XX XXXX 2031"
+        account_pattern=re.compile(r"(?i)Account Number\s+(?P<account>[\dX]{4}(?:[ -][\dX]{2,4})+)"),
         statement_date_order=DateOrder("MDY"),
         transaction_date_order=DateOrder("MDY"),
         header_pattern=re.compile(r"(Date\s+Date\s+Description\s+Number\s+Number\s+Amount\s+Total)"),

@@ -14,6 +14,10 @@ class Hsbc(BankBase):
         currency="SGD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(rf"From \d{{2}} \w{{3}} \d{{4}} to {ISO8601.DD_MMM_YYYY}"),
+        # period end is the "to" date above; period start is the "From" date
+        period_start_pattern=re.compile(r"From\s+(\d{1,2} \w{3} \d{4})\s+to"),
+        # masked card number in the addressee block, e.g. "4400-XXXX-XXXX-9021"
+        account_pattern=re.compile(r"\b(?P<account>\d{4}-[\dX]{4}-[\dX]{4}-\d{4})"),
         header_pattern=re.compile(r"(DATE.*DESCRIPTION.*AMOUNT)"),
         prev_balance_pattern=re.compile(
             r"(?P<description>Previous Statement Balance?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL

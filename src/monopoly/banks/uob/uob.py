@@ -14,6 +14,8 @@ class Uob(BankBase):
         currency="SGD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(rf"Statement Date.*{ISO8601.DD_MMM_YYYY}"),
+        # card number in the summary block, e.g. "4931-2288-0175-6042"
+        account_pattern=re.compile(r"\b(?P<account>\d{4}-\d{4}-\d{4}-\d{4})"),
         header_pattern=re.compile(r"(Description of Transaction.*Transaction Amount)"),
         prev_balance_pattern=re.compile(
             r"(?P<description>PREVIOUS BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
@@ -36,6 +38,8 @@ class Uob(BankBase):
         currency="SGD",
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"Period: .* to {ISO8601.DD_MMM_YYYY}"),
+        # period end is the "to" date above; period start is the first "Period:" date
+        period_start_pattern=re.compile(r"Period:\s+(\d{1,2} \w{3} \d{4})"),
         header_pattern=re.compile(r"(Date.*Description.*Withdrawals.*Deposits.*Balance)"),
         transaction_pattern=re.compile(
             rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"

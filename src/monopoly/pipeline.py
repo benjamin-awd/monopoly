@@ -74,6 +74,14 @@ class Pipeline:
             for tx in statement.transactions:
                 tx.currency = currency
 
+        # Stamp the account's last-4 onto every transaction, same shape as currency.
+        # Resolved once from the statement content via `config.account_pattern`; folds
+        # into `content_hash` (and thus the JSON `id`), so it is set here in extract,
+        # before transform/serialize compute ids. None where the bank has no pattern.
+        if account := statement.account:
+            for tx in statement.transactions:
+                tx.account = account
+
         return statement
 
     @staticmethod

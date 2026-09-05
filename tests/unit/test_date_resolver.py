@@ -135,6 +135,46 @@ class TestDateResolverResolve:
         assert result.day == 15
 
 
+@pytest.fixture
+def period_start_config():
+    """Config with an optional period-start pattern alongside the statement date."""
+    return StatementConfig(
+        statement_type=EntryType.CREDIT,
+        header_pattern=re.compile(r"DATE.*AMOUNT"),
+        transaction_pattern=re.compile(r"\d{2} \w{3}.*\d+\.\d+"),
+        statement_date_pattern=re.compile(r"to (\d{1,2} \w{3} \d{4})"),
+        period_start_pattern=re.compile(r"From (\d{1,2} \w{3} \d{4}) to"),
+        statement_date_order=DateOrder("DMY"),
+    )
+
+
+class TestDateResolverResolvePeriodStart:
+    """Tests for DateResolver.resolve_period_start() method."""
+
+    def test_returns_none_when_no_pattern_configured(self, basic_config):
+        pages = [PdfPage(raw_text="From 01 Sep 2024 to 30 Sep 2024")]
+        resolver = DateResolver(pages, basic_config)
+
+        assert resolver.resolve_period_start() is None
+
+    def test_extracts_period_start_from_content(self, period_start_config):
+        pages = [PdfPage(raw_text="Statement From 01 Sep 2024 to 30 Sep 2024")]
+        resolver = DateResolver(pages, period_start_config)
+
+        result = resolver.resolve_period_start()
+
+        assert result.year == 2024
+        assert result.month == 9
+        assert result.day == 1
+
+    def test_returns_none_when_configured_but_no_match(self, period_start_config):
+        """Unlike resolve(), a missing period start is not an error."""
+        pages = [PdfPage(raw_text="No period information here")]
+        resolver = DateResolver(pages, period_start_config)
+
+        assert resolver.resolve_period_start() is None
+
+
 class TestDateResolverGetSearchText:
     """Tests for DateResolver._get_search_text() method."""
 

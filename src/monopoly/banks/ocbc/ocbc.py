@@ -14,6 +14,10 @@ class Ocbc(BankBase):
         currency="SGD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=ISO8601.DD_MM_YYYY.regex,
+        # 16-digit card number, e.g. "1234-5678-9012-2605" (next to the cardholder
+        # name and again on the summary row). A consolidated statement lists several
+        # cards; the first match (primary card) is stamped on all rows.
+        account_pattern=re.compile(r"\b(?P<account>\d{4}-\d{4}-\d{4}-\d{4})\b"),
         header_pattern=re.compile(r"(TRANSACTION DATE.*DESCRIPTION.*AMOUNT)"),
         prev_balance_pattern=re.compile(
             r"(?P<description>LAST MONTH'S BALANCE?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
@@ -35,6 +39,10 @@ class Ocbc(BankBase):
         currency="SGD",
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"\s{ISO8601.DD_MMM_YYYY}$"),
+        # statement period line, e.g. "01 SEP 2024 TO 30 SEP 2024" (start is period end - 1 cycle)
+        period_start_pattern=re.compile(r"(?i)(\d{1,2} \w{3} \d{4})\s+TO\s+\d{1,2} \w{3} \d{4}"),
+        # account number in the header block, e.g. "Account No. 987654321098"
+        account_pattern=re.compile(r"(?i)Account No\.?\s+(?P<account>\d{6,})"),
         header_pattern=re.compile(r"(Withdrawal.*Deposit.*Balance)"),
         transaction_pattern=re.compile(
             rf"(?P<transaction_date>{ISO8601.DD_MMM})\s+"

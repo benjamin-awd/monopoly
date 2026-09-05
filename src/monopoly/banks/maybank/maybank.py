@@ -31,6 +31,8 @@ class Maybank(BankBase):
         currency="MYR",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=ISO8601.DD_MMM_YY.regex,
+        # masked card number in the header block, e.g. "Card Number  5412 34XX XXXX 8890"
+        account_pattern=re.compile(r"(?i)Card Number\s+(?P<account>[\dX]{4}(?:[ -][\dX]{2,4})+)"),
         header_pattern=re.compile(r"(Date.*Description.*Amount)"),
         transaction_date_format="%d/%m",
         transaction_pattern=re.compile(

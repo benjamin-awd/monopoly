@@ -108,6 +108,20 @@ class StatementConfig:
     Defaults to DMY.
     - `statement_date_format` represents the datetime format that a specific bank uses
     to represent a statement date.
+    - `statement_date_pattern` locates the statement date, which is the *period end*
+    surfaced as `period_end` in the JSON schema.
+    - `period_start_pattern` is an optional regex that locates the statement's *period
+    start* date, surfaced as the nullable `period_start` in the JSON schema. Parsed
+    with the same date-order settings and named-group convention as
+    `statement_date_pattern` (either a single capture group, or `day`/`month`/`year`
+    groups). Content-only (no filename fallback); left None where unknown.
+    - `account_pattern` is an optional regex that locates the statement's account or
+    card number so its last 4 digits can be stamped onto every Transaction and
+    surfaced as the nullable per-transaction `account` in the JSON schema (analogous
+    to `currency`). It must expose a named `account` group capturing the account/card
+    number token (masked digits like `4417 88XX XXXX 2031` are fine); the last 4
+    digits are derived from it. Set per config/vintage, same shape as identifiers.
+    Left None where unknown.
     - `multiline_config` determines whether Monopoly tries to concatenate
     transactions that are split across two lines
     - `header_pattern` is a regex pattern that is used to find the 'header' line
@@ -143,6 +157,8 @@ class StatementConfig:
     transaction_pattern: Pattern[str]
     statement_date_pattern: Pattern[str]
     header_pattern: Pattern[str]
+    period_start_pattern: Pattern[str] | None = None
+    account_pattern: Pattern[str] | None = None
     transaction_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
     statement_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
     transaction_date_format: str = ""
@@ -158,6 +174,8 @@ class StatementConfig:
         "transaction_pattern",
         "statement_date_pattern",
         "header_pattern",
+        "period_start_pattern",
+        "account_pattern",
         "prev_balance_pattern",
         "filename_fallback_pattern",
     )

@@ -2,7 +2,7 @@
   "schema_version": 2,
   "bank": "amex",
   "statement_type": "credit",
-  "period_start": null,
+  "period_start": "2024-12-21",
   "period_end": "2025-01-20",
   "payment_summary": {
     "payment_due_date": null,

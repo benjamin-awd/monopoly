@@ -106,7 +106,8 @@ def statement_to_dict(statement: BaseStatement, transactions: list[Transaction])
     Build the versioned output envelope for a statement and its transactions.
 
     `period_end` is the statement date (period end); `period_start` is a nullable
-    follow-up. `payment_summary` is populated for credit statements, else None.
+    field populated from `config.period_start_pattern` where a bank configures one.
+    `payment_summary` is populated for credit statements, else None.
 
     A previous-balance row is put in the top-level `balances` list instead of
     `transactions`, so `transactions` only holds real spending. The row still
@@ -118,7 +119,7 @@ def statement_to_dict(statement: BaseStatement, transactions: list[Transaction])
         "schema_version": SCHEMA_VERSION,
         "bank": statement.bank_name,
         "statement_type": str(statement.statement_type),
-        "period_start": None,
+        "period_start": _iso(statement.period_start),
         "period_end": _iso(statement.statement_date),
         "payment_summary": _payment_summary_to_dict(statement),
         "balances": [_balance_to_dict(tx) for tx in balances],

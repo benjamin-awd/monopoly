@@ -48,6 +48,24 @@ def test_envelope_shape_and_json_roundtrip(credit_statement):
     assert json.loads(json.dumps(envelope)) == envelope
 
 
+def test_period_start_surfaced_when_present(credit_statement):
+    credit_statement.statement_date = datetime(2023, 6, 30)
+    # cached_property is pre-seeded via the instance __dict__, like statement_date above
+    credit_statement.period_start = datetime(2023, 6, 1)
+    envelope = statement_to_dict(credit_statement, [_tx()])
+
+    assert envelope["period_start"] == "2023-06-01"
+    assert envelope["period_end"] == "2023-06-30"
+
+
+def test_account_surfaced_per_transaction(credit_statement):
+    credit_statement.statement_date = datetime(2023, 6, 30)
+    tx = Transaction(transaction_date="2023-06-01", description="COFFEE", amount="4.50", currency="SGD", account="2031")
+    envelope = statement_to_dict(credit_statement, [tx])
+
+    assert envelope["transactions"][0]["account"] == "2031"
+
+
 def test_schema_version_is_2():
     # v2 introduced the top-level `balances` split; guard against silent regression
     assert SCHEMA_VERSION == 2

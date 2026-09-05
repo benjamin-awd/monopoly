@@ -14,6 +14,8 @@ class Dbs(BankBase):
         currency="SGD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=ISO8601.DD_MMM_YYYY.regex,
+        # card number in the header block, e.g. "... CARD NO.: 4111 2222 3333 4444"
+        account_pattern=re.compile(r"(?i)CARD NO\.:\s*(?P<account>\d{4}(?:\s+\d{4}){3})"),
         header_pattern=re.compile(r"(DATE.*DESCRIPTION.*AMOUNT)"),
         transaction_date_format="%d %b",
         transaction_pattern=re.compile(
@@ -43,6 +45,8 @@ class Dbs(BankBase):
         currency="SGD",
         statement_type=EntryType.DEBIT,
         statement_date_pattern=ISO8601.DD_MMM_YYYY.regex,
+        # account number in the header block, e.g. "Account No.: 098-7-654321"
+        account_pattern=re.compile(r"(?i)Account No\.:\s*(?P<account>[\d-]+)"),
         multiline_config=MultilineConfig(
             multiline_descriptions=True,
             description_margin=10,  # Allow for indented PayNow/transaction details

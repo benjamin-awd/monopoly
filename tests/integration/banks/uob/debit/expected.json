@@ -2,7 +2,7 @@
   "schema_version": 2,
   "bank": "uob",
   "statement_type": "debit",
-  "period_start": null,
+  "period_start": "2025-03-01",
   "period_end": "2025-03-31",
   "payment_summary": null,
   "balances": [],
