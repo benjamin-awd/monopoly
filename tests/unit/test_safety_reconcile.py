@@ -48,7 +48,10 @@ class TestBaseStatementIsAbstract:
             statement_date_pattern=re.compile("bar"),
             header_pattern=re.compile("baz"),
         )
-        with pytest.raises(TypeError, match="abstract method 'perform_safety_check'"):
+        # Message wording differs across Python versions (3.11 omits the quotes
+        # and says "with abstract method"; 3.12+ says "without an implementation
+        # for abstract method '...'"), so match only the stable substring.
+        with pytest.raises(TypeError, match="abstract method '?perform_safety_check'?"):
             BaseStatement(pages=[], bank_name="bank", config=config, header="")
 
 
