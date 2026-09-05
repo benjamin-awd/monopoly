@@ -37,6 +37,9 @@ ocr = [
 gemini = [
     "google-genai>=2.9.0",
 ]
+crf = [
+    "sklearn-crfsuite>=0.5.0",
+]
 
 [build-system]
 requires = ["pdm-backend"]
@@ -109,6 +112,7 @@ ignore = [
 # than ignored globally so stray function-level imports elsewhere still fail.
 "src/monopoly/cli/cli.py" = ["PLC0415"]
 "src/monopoly/gemini.py" = ["PLC0415"]
+"src/monopoly/generic/crf/__init__.py" = ["PLC0415"]
 "src/monopoly/generic/patterns.py" = ["PLC0415"]
 "src/monopoly/ocr.py" = ["PLC0415"]
 "src/monopoly/pdf.py" = ["PLC0415"]
@@ -137,5 +141,7 @@ module = [
     "google",
     "google.genai",
     "google.genai.types",
+    "sklearn_crfsuite",
+    "sklearn_crfsuite.metrics",
 ]
 ignore_missing_imports = true
