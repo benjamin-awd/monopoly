@@ -2,6 +2,7 @@ import json
 import re
 from datetime import datetime
 
+from monopoly.constants import TransactionKind
 from monopoly.serialize import SCHEMA_VERSION, assign_ids, statement_to_dict
 from monopoly.statements import Transaction
 
@@ -61,7 +62,7 @@ def test_previous_balance_routed_to_balances(credit_statement):
             amount="100.00",
             direction="DR",
             currency="SGD",
-            kind="previous_balance",
+            kind=TransactionKind.PREVIOUS_BALANCE,
         ),
         _tx(),
     ]

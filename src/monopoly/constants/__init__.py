@@ -3,6 +3,7 @@ from .statement import (
     Columns,
     EntryType,
     SharedPatterns,
+    TransactionKind,
 )
 
 __all__ = [
@@ -10,4 +11,5 @@ __all__ = [
     "Columns",
     "EntryType",
     "SharedPatterns",
+    "TransactionKind",
 ]
