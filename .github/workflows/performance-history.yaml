@@ -49,21 +49,31 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras
 
+      - name: Render synthetic corpus
+        run: |
+          set -euo pipefail
+          # The multi-file benchmark runs over PDFs rendered from the committed page_*.txt
+          # fixtures. This synthetic corpus has its own absolute times, so read the gh-pages
+          # history as a series in its own right rather than comparing across corpora.
+          FIXTURE="$(pwd)/.venv/bin/monopoly-fixture"
+          CORPUS="$RUNNER_TEMP/perf-corpus"
+          mkdir -p "$CORPUS"
+          for dir in tests/integration/banks/*/*/; do
+            [ -f "${dir}page_01.txt" ] || continue
+            bank=$(basename "$(dirname "$dir")")
+            type=$(basename "$dir")
+            "$FIXTURE" render "$dir" -o "$CORPUS/${bank}_${type}.pdf"
+          done
+          echo "Rendered synthetic corpus:"
+          ls -1 "$CORPUS"
+
       - name: Run performance tests
         run: |
           BIN="$(pwd)/.venv/bin/monopoly"
           SINGLE="src/monopoly/examples/example_statement.pdf"
 
-          MULTI="tests/integration/banks/citibank/credit/input.pdf \
-          tests/integration/banks/dbs/credit/input.pdf \
-          tests/integration/banks/dbs/debit/input.pdf \
-          tests/integration/banks/hsbc/credit/input.pdf \
-          tests/integration/banks/maybank/credit/input.pdf \
-          tests/integration/banks/maybank/debit/input.pdf \
-          tests/integration/banks/ocbc/credit/input.pdf \
-          tests/integration/banks/ocbc/debit/input.pdf \
-          tests/integration/banks/standard_chartered/credit/input.pdf \
-          tests/integration/banks/trust/credit/input.pdf"
+          # Synthetic corpus rendered from the committed text fixtures (see previous step).
+          MULTI="$RUNNER_TEMP/perf-corpus/*.pdf"
 
           hyperfine --warmup 3 --runs 10 "$BIN $SINGLE" --export-json single-file-perf.json
           hyperfine --warmup 3 --runs 5  "$BIN $MULTI"  --export-json multiple-file-perf.json

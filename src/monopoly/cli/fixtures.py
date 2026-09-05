@@ -14,6 +14,7 @@ from dataclasses import asdict
 from pathlib import Path
 
 import click
+import pymupdf
 
 from monopoly.banks import BankDetector, banks
 from monopoly.banks.base import BankBase
@@ -60,6 +61,40 @@ def _read_pages(directory: Path) -> list[str]:
         msg = f"No page_*.txt files found in {directory}"
         raise click.ClickException(msg)
     return [path.read_text(encoding="utf8") for path in page_files]
+
+
+# Fixed-pitch (Courier) grid used by `render`. Courier is a monospace Base-14
+# font whose glyph advance is ~0.6 * fontsize, so every character - including
+# leading spaces - occupies one fixed-width cell. Laying each page_NN.txt line
+# out on this grid lets `pdftotext --physical` reconstruct the exact columns the
+# bank regexes (and debit withdrawal/deposit classification) depend on.
+_RENDER_FONT = "courier"
+_RENDER_FONT_SIZE = 10.0
+_RENDER_CHAR_WIDTH = _RENDER_FONT_SIZE * 0.6
+_RENDER_LINE_HEIGHT = _RENDER_FONT_SIZE * 1.5
+_RENDER_MARGIN = 20.0
+
+
+def _render_pages_to_pdf(pages: list[str]) -> pymupdf.Document:
+    """Render page text onto a fixed-pitch Courier grid, one PDF page per text page."""
+    document = pymupdf.open()
+    for text in pages:
+        lines = text.split("\n")
+        columns = max((len(line) for line in lines), default=1)
+        width = 2 * _RENDER_MARGIN + max(columns, 1) * _RENDER_CHAR_WIDTH
+        height = 2 * _RENDER_MARGIN + max(len(lines), 1) * _RENDER_LINE_HEIGHT
+        page = document.new_page(width=width, height=height)
+        for row, line in enumerate(lines):
+            if not line:
+                continue
+            baseline = _RENDER_MARGIN + (row + 1) * _RENDER_LINE_HEIGHT
+            page.insert_text(
+                (_RENDER_MARGIN, baseline),
+                line,
+                fontname=_RENDER_FONT,
+                fontsize=_RENDER_FONT_SIZE,
+            )
+    return document
 
 
 def _read_metadata(directory: Path) -> MetadataIdentifier | None:
@@ -180,3 +215,37 @@ def build(directory: Path, bank_name: str | None, generic: bool, safety_check: b
 
     click.secho(f"Extracted {len(statement.transactions)} transaction(s); total {total}", fg="green")
     click.secho(f"Wrote raw.csv, transformed.csv, expected.json to {directory}", fg="green")
+
+
+@fixtures.command()
+@click.argument(
+    "directory",
+    type=click.Path(exists=True, file_okay=False, resolve_path=True, path_type=Path),
+)
+@click.option(
+    "-o",
+    "--output",
+    "output_path",
+    type=click.Path(dir_okay=False, resolve_path=True, path_type=Path),
+    default=None,
+    help="Destination PDF path (defaults to <directory>/rendered.pdf).",
+)
+def render(directory: Path, output_path: Path | None) -> None:
+    """
+    Render redacted page_*.txt files back into a synthetic PDF.
+
+    Each page is laid out on a fixed-pitch Courier grid so that
+    `pdftotext --physical` reconstructs the same columns the real pipeline
+    parses. The result carries no real-statement PII (it is built from the
+    committed text) and is used to benchmark `monopoly` end-to-end without
+    committing binary PDFs. This is the inverse of `dump` (PDF -> text).
+    """
+    pages = _read_pages(directory)
+    output_path = output_path or directory / "rendered.pdf"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    document = _render_pages_to_pdf(pages)
+    document.save(str(output_path))
+    document.close()
+
+    click.secho(f"Rendered {len(pages)} page(s) to {output_path}", fg="green")
