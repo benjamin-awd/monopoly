@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788621556803,
+  "lastUpdate": 1788622272469,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -683,6 +683,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 2.54090591098,
             "range": "± 0.1526317917398248",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c231a7685d0b3b8dded52ac16f8bd87b3b8d0c3f",
+          "message": "Merge pull request #324 from benjamin-awd/feat/gemini-transaction-kind\n\nfeat(gemini): set TransactionKind on the vision path",
+          "timestamp": "2026-09-05T23:29:37+08:00",
+          "tree_id": "e046eed8d3d3be1ed0284bb40d1d3a81c83c6260",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/c231a7685d0b3b8dded52ac16f8bd87b3b8d0c3f"
+        },
+        "date": 1788622272089,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.8564774694199999,
+            "range": "± 0.0071227063810784755",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 3.9796108027800003,
+            "range": "± 0.04952118975840343",
             "unit": "s"
           }
         ]
