@@ -1,8 +1,8 @@
-"""Integration tests driven by community-contributed text fixtures.
+"""Integration tests driven by the committed bank text fixtures.
 
 These carry no real statement - just committed, redacted (or synthetic) page
 text - so they run in every CI job with no encryption involved. Each fixture
-lives in `tests/integration/text_fixtures/<bank>/<type>/` and contains:
+lives in `tests/integration/banks/<bank>/<type>/` and contains:
 
     page_01.txt, page_02.txt, ...   redacted extracted page text
     metadata.json                   (optional) PDF metadata identifier fields
@@ -10,6 +10,11 @@ lives in `tests/integration/text_fixtures/<bank>/<type>/` and contains:
     transformed.csv                 expected ISO-date transactions
     expected.json                   the canonical `--format json` envelope
                                     (see monopoly.serialize.statement_to_dict)
+
+Every fixture directory is discovered automatically, so contributing a bank
+needs no change to any test file. This module owns the envelope assertion for
+all of them; `test_banks_credit.py` and `test_banks_debit.py` layer the
+bank-specific total, statement-date and payment-summary checks on top.
 
 Regenerate a fixture's CSVs and envelope from redacted text with
 `monopoly-fixture build`.
@@ -28,13 +33,11 @@ from monopoly.pdf import PdfParser
 from monopoly.pipeline import Pipeline
 from monopoly.serialize import statement_to_dict
 
-TEXT_FIXTURES_DIR = Path(__file__).parent.parent / "text_fixtures"
+FIXTURES_DIR = Path(__file__).parent
 
 
 def _discover_fixtures() -> list[Path]:
-    if not TEXT_FIXTURES_DIR.exists():
-        return []
-    return sorted(path.parent for path in TEXT_FIXTURES_DIR.glob("*/*/expected.json"))
+    return sorted(path.parent for path in FIXTURES_DIR.glob("*/*/expected.json"))
 
 
 def _bank_by_name(name: str):
@@ -52,7 +55,7 @@ FIXTURE_DIRS = _discover_fixtures()
     FIXTURE_DIRS,
     ids=[f"{path.parent.name}-{path.name}" for path in FIXTURE_DIRS],
 )
-def test_text_fixture(fixture_dir: Path):
+def test_bank_fixture(fixture_dir: Path):
     expected = json.loads((fixture_dir / "expected.json").read_text())
     bank = _bank_by_name(expected["bank"])
 

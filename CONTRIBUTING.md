@@ -5,10 +5,9 @@
 Every bank is tested against a **text fixture**: the extracted, redacted (or
 synthetic) page text of a statement, checked in as plain `page_NN.txt` files.
 The repo commits no real statements and uses no encryption — a real statement
-is PII, so it never leaves your machine. Fixtures live under
-`tests/integration/banks/<bank>/<type>/` (maintainer set, full assertions) and
-`tests/integration/text_fixtures/<bank>/<type>/` (community-contributed); both
-run in every CI job.
+is PII, so it never leaves your machine. Fixtures all live under
+`tests/integration/banks/<bank>/<type>/` and are discovered automatically, so
+adding one needs no change to any test file.
 
 The `monopoly-fixture` command builds one for you, using the *real* parser so
 the fixture text matches exactly what extraction sees (cropbox, vertical-text
@@ -17,7 +16,7 @@ removal, `pdftotext` layout).
 ### 1. Dump the page text
 
 ```bash
-monopoly-fixture dump path/to/statement.pdf -o tests/integration/text_fixtures/<bank>/<type>
+monopoly-fixture dump path/to/statement.pdf -o tests/integration/banks/<bank>/<type>
 ```
 
 This detects the bank (or pass `--bank <ClassName>` / `--generic`) and writes
@@ -37,7 +36,7 @@ CSVs because the next step regenerates them from the redacted text.
 ### 3. Build the CSV fixtures
 
 ```bash
-monopoly-fixture build tests/integration/text_fixtures/<bank>/<type> --bank <ClassName>
+monopoly-fixture build tests/integration/banks/<bank>/<type> --bank <ClassName>
 ```
 
 This parses the **redacted** text through the real pipeline, re-runs the safety
@@ -50,9 +49,9 @@ If the statement genuinely has no total to check against, use `--nosafe`.
 ### 4. Verify and submit
 
 ```bash
-pytest tests/integration/banks/test_text_fixtures.py -k <bank>
+pytest tests/integration/banks/test_bank_fixtures.py -k <bank>
 ```
 
 Confirm your case is collected and passes (not `0 selected`). Then open a PR
-with the `tests/integration/text_fixtures/<bank>/<type>/` directory. Do **not**
+with the `tests/integration/banks/<bank>/<type>/` directory. Do **not**
 commit the original PDF.

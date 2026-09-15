@@ -1,4 +1,3 @@
-import json
 from datetime import datetime
 from pathlib import Path
 
@@ -8,10 +7,10 @@ from test_utils.transactions import get_transactions_as_dict, read_pages, read_t
 from monopoly.banks import BankBase, BankOfAmerica, Dbs, Maybank, Ocbc, Uob, ZurcherKantonalBank
 from monopoly.pdf import PdfParser
 from monopoly.pipeline import Pipeline
-from monopoly.serialize import statement_to_dict
 from monopoly.statements import DebitStatement
 
 # Synthetic, plain-text fixtures (page_NN.txt) - no real statements, no encryption.
+# The `--format json` envelope is asserted in test_bank_fixtures.py.
 test_cases = [
     (BankOfAmerica, 2770.15, 954.55, datetime(2023, 7, 25)),
     (Dbs, 1653.65, 396.65, datetime(2024, 11, 30)),
@@ -61,7 +60,3 @@ def test_bank_debit_statements(
     transformed_transactions = pipeline.transform(statement)
     transformed_transactions_as_dict = get_transactions_as_dict(transformed_transactions)
     assert expected_transformed_transactions == transformed_transactions_as_dict
-
-    # the fixture pins the exact `--format json` envelope the CLI would emit
-    expected_envelope = json.loads((test_directory / "expected.json").read_text())
-    assert statement_to_dict(statement, transformed_transactions) == expected_envelope
