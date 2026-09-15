@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789386837462,
+  "lastUpdate": 1789450586003,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -859,6 +859,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 3.63416065412,
             "range": "± 0.06806481451988954",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ef028c5ee45c93d129b7df5ac257b2d605766236",
+          "message": "Merge pull request #326 from benjamin-awd/consolidate-bank-fixtures\n\ntest(fixtures): consolidate text fixtures into tests/integration/banks",
+          "timestamp": "2026-09-15T13:34:45+08:00",
+          "tree_id": "8a72b1effa0d4a9f4f5f9a86c8b79162642fe70c",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/ef028c5ee45c93d129b7df5ac257b2d605766236"
+        },
+        "date": 1789450585512,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.8926580228000001,
+            "range": "± 0.006998377128520293",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 4.20219519252,
+            "range": "± 0.02593291772202542",
             "unit": "s"
           }
         ]
