@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789450586003,
+  "lastUpdate": 1789801530974,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -895,6 +895,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 4.20219519252,
             "range": "± 0.02593291772202542",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6a1055035c1c6ec7c0ed54727d114277ebe16bcc",
+          "message": "Merge pull request #327 from benjamin-awd/dependabot/uv/anyio-4.14.2\n\nbuild(deps): bump anyio from 4.14.0 to 4.14.2",
+          "timestamp": "2026-09-19T15:03:43+08:00",
+          "tree_id": "83874603180262e53264986ffbaf2655c8015c54",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/6a1055035c1c6ec7c0ed54727d114277ebe16bcc"
+        },
+        "date": 1789801530286,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.8879059851800001,
+            "range": "± 0.006336759764709467",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 4.150601207459999,
+            "range": "± 0.06261799648000939",
             "unit": "s"
           }
         ]
