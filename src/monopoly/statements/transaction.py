@@ -124,11 +124,10 @@ class Transaction:
         """
         Coerce a raw marker to a `Direction`.
 
-        Statements normally parse the marker in `pre_process_match`, but
-        `CreditStatement.post_process_transactions` builds a `Transaction`
-        straight from the prev-balance groupdict and bypasses that. `minus` is
-        `DEBIT` here to preserve how a bare "-" has always been read at this
-        layer; statements resolve it against their own statement type first.
+        Statements always parse the marker in `pre_process_match`, so this only
+        does work for callers that construct a `Transaction` directly (library
+        users, tests). `minus` is `DEBIT` here to preserve how a bare "-" has
+        always been read at this layer.
         """
         return Direction.parse(value, minus=Direction.DEBIT)
 

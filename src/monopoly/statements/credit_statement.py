@@ -30,7 +30,8 @@ class CreditStatement(BaseStatement):
             for prev_month_balance in previous_month_balances:
                 groupdict = prev_month_balance.groupdict()
                 groupdict["transaction_date"] = first_transaction_date
-                raw_transaction = RawTransaction(**groupdict)
+                raw_transaction = self.pre_process_match(RawTransaction(**groupdict))
+                # keep the default auto_direction: TDCT/CIBC turn it off for activity rows, not for this balance
                 prev_month_transaction = Transaction(**raw_transaction.as_dict(), kind=TransactionKind.PREVIOUS_BALANCE)
                 transactions.insert(0, prev_month_transaction)
         return transactions
@@ -39,7 +40,8 @@ class CreditStatement(BaseStatement):
         """
         Return the previous month's statement balance as a transaction, if it exists in the statement.
 
-        The date is later replaced with a more accurate date by the statement handler.
+        The row has no date of its own; `post_process_transactions` gives it the
+        date of the first transaction.
         """
         prev_balances: list[re.Match] = []
 
