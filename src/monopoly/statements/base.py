@@ -193,6 +193,8 @@ class BaseStatement(ABC):
         processed = self.process_match(self.pre_process_match(raw_transaction), context)
         return Transaction(
             **processed.as_dict(),
+            currency=self.config.currency,
+            account=self.account,
             auto_direction=self.config.transaction_auto_direction,
         )
 
@@ -264,15 +266,17 @@ class BaseStatement(ABC):
         return self.get_transactions()
 
     @cached_property
+    def date_resolver(self) -> DateResolver:
+        return DateResolver(self.pages, self.config, self.file_path)
+
+    @cached_property
     def statement_date(self) -> datetime:
-        resolver = DateResolver(self.pages, self.config, self.file_path)
-        return resolver.resolve()
+        return self.date_resolver.resolve()
 
     @cached_property
     def period_start(self) -> datetime | None:
         """The statement's period-start date, or None if not configured/found."""
-        resolver = DateResolver(self.pages, self.config, self.file_path)
-        return resolver.resolve_period_start()
+        return self.date_resolver.resolve_period_start()
 
     @cached_property
     def account(self) -> str | None:
@@ -280,8 +284,8 @@ class BaseStatement(ABC):
         The account/card last 4 digits, or None if not configured/found.
 
         Located once per statement via `config.account_pattern` (named `account`
-        group) and stamped onto every transaction in `Pipeline.extract`, the same
-        way `currency` is. See `config.StatementConfig.account_pattern`.
+        group) and set on every transaction when it is built, the same way
+        `currency` is. See `config.StatementConfig.account_pattern`.
         """
         pattern = self.config.account_pattern
         if pattern is None:

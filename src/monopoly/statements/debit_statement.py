@@ -56,15 +56,13 @@ class DebitStatement(BaseStatement):
         return line.find(raw_transaction.amount) + len(raw_transaction.amount) - 1
 
     def get_withdrawal_pos(self, page_number: int) -> int | None:
-        common_names = ["withdraw", "debit", r"from\ your\ account"]
-        for name in common_names:
-            if (pos := self.get_column_pos(name, page_number=page_number)) is not None:
-                return pos
-        logger.debug("%s column not found in header on page %s", common_names, page_number)
-        return None
+        return self._first_column_pos(["withdraw", "debit", r"from\ your\ account"], page_number)
 
     def get_deposit_pos(self, page_number: int) -> int | None:
-        common_names = ["deposit", "credit", r"to\ your\ account"]
+        return self._first_column_pos(["deposit", "credit", r"to\ your\ account"], page_number)
+
+    def _first_column_pos(self, common_names: list[str], page_number: int) -> int | None:
+        """Return the position of the first of `common_names` found in the header."""
         for name in common_names:
             if (pos := self.get_column_pos(name, page_number=page_number)) is not None:
                 return pos

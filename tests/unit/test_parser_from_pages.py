@@ -47,9 +47,9 @@ def test_from_pages_carries_file_path_and_metadata():
     assert parser.file_path == Path("redacted.txt")
     assert parser.metadata_identifier.producer == "Redacted Producer"
 
-    # the handler picks up the file path from the parser, not a live document
+    # the statement picks up the file path from the parser, not a live document
     pipeline = Pipeline(parser)
-    assert pipeline.handler.file_path == Path("redacted.txt")
+    assert pipeline.statement.file_path == Path("redacted.txt")
 
 
 def test_from_pages_defaults_file_path_and_metadata_to_none():

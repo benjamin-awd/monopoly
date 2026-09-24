@@ -31,6 +31,7 @@ def test_trust_single_line_transaction(statement: BaseStatement):
             description="SP Services",
             amount=-225.77,
             direction=None,
+            currency="SGD",
         )
     ]
     assert transactions == expected
@@ -52,6 +53,7 @@ def test_trust_transaction_with_fcy(statement: BaseStatement):
             description="Google 9.99 USD",
             amount=-12.96,
             direction=None,
+            currency="SGD",
         )
     ]
     assert transactions == expected
@@ -76,6 +78,7 @@ def test_trust_multiline_transaction_no_fcy(statement: BaseStatement):
             description="NEX FJ-ZHEN SHI KOREAN SINGAPORE SG",
             amount=-7.20,
             direction=None,
+            currency="SGD",
         )
     ]
     assert transactions == expected
@@ -98,18 +101,21 @@ def test_trust_multiple_transactions(statement: BaseStatement):
             description="SP Services",
             amount=-225.77,
             direction=None,
+            currency="SGD",
         ),
         Transaction(
             transaction_date="20 Oct",
             description="Google 9.99 USD",
             amount=-12.96,
             direction=None,
+            currency="SGD",
         ),
         Transaction(
             transaction_date="19 Oct",
             description="NEX FJ-ZHEN SHI KOREAN SINGAPORE SG",
             amount=-7.20,
             direction=None,
+            currency="SGD",
         ),
     ]
     assert transactions == expected
@@ -130,6 +136,7 @@ def test_trust_transaction_with_refund(statement: BaseStatement):
             description="REFUND",
             amount=50.0,
             direction="+",
+            currency="SGD",
         )
     ]
     assert transactions == expected
@@ -150,6 +157,7 @@ def test_trust_transaction_with_decimal_fcy(statement: BaseStatement):
             description="Amazon 49.99 USD",
             amount=-64.85,
             direction=None,
+            currency="SGD",
         )
     ]
     assert transactions == expected

@@ -126,7 +126,9 @@ The ETL (Extract, Transform, Load) pipeline follows this flow:
      - Safety check settings (validates totals)
 
 3. **Statement Handling** (`handler.py`, `statements/`)
-   - `StatementHandler` determines if statement is debit or credit by matching header patterns
+   - `select_statement()` picks the first of the bank's `statement_candidates()` (config +
+     matched header) and builds a debit or credit statement; `GenericBank` synthesises its
+     candidate via `GenericConfigBuilder`
    - `BaseStatement` (parent of `DebitStatement` and `CreditStatement`) extracts transactions:
      - Matches transaction patterns line-by-line
      - Handles multiline descriptions using `DescriptionExtractor`
@@ -215,7 +217,7 @@ opt-in, per-config regex patterns — `StatementConfig.account_pattern` (named
 `account` group) and `StatementConfig.period_start_pattern` — added per bank/vintage
 the same way identifiers are (see #308). `account` is resolved once per statement
 via `BaseStatement.account` (last-4 derived by `statements.base.extract_last4`) and
-stamped onto every transaction in `Pipeline.extract`, mirroring `currency`;
+set on every transaction when the statement builds it, mirroring `currency`;
 `period_start` is resolved by `DateResolver.resolve_period_start` (content-only, no
 filename fallback, never raises). Both stay `None` where no pattern is configured,
 so this is backward-compatible (no `SCHEMA_VERSION` bump). Coverage is incremental:

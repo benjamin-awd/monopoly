@@ -73,10 +73,10 @@ class Transaction:
     # balance. The CSV writer still collapses None to 0; the JSON schema keeps null.
     balance: float | None = Field(default=None)
     # Richer, nullable slots surfaced only in the JSON schema, not the CSV.
-    # posting_date comes from the bank regex; currency is stamped in
-    # Pipeline.extract from the matched StatementConfig; account is a follow-up
-    # placeholder. They don't affect the filename hash: write.generate_hash
-    # hashes an explicit field list, not the dataclass repr.
+    # posting_date comes from the bank regex; currency and account are set by
+    # the statement when it builds each transaction. They don't affect the
+    # filename hash: write.generate_hash hashes an explicit field list, not the
+    # dataclass repr.
     posting_date: str | None = None
     currency: str | None = None
     account: str | None = None
@@ -124,11 +124,10 @@ class Transaction:
         """
         Coerce a raw marker to a `Direction`.
 
-        Statements normally parse the marker in `pre_process_match`, but
-        `CreditStatement.post_process_transactions` builds a `Transaction`
-        straight from the prev-balance groupdict and bypasses that. `minus` is
-        `DEBIT` here to preserve how a bare "-" has always been read at this
-        layer; statements resolve it against their own statement type first.
+        Statements always parse the marker in `pre_process_match`, so this only
+        does work for callers that construct a `Transaction` directly (library
+        users, tests). `minus` is `DEBIT` here to preserve how a bare "-" has
+        always been read at this layer.
         """
         return Direction.parse(value, minus=Direction.DEBIT)
 
@@ -189,7 +188,7 @@ class Transaction:
         stays byte-stable.
 
         Computed fresh on each access (not cached) so it can't freeze a stale
-        value if read before the pipeline stamps currency or normalizes the date.
+        value if read before `Pipeline.transform` normalizes the date.
         """
         identity = (self.date, self.description, self.amount, self.currency, self.account)
         return sha256(repr(identity).encode("utf-8")).hexdigest()

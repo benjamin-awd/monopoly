@@ -1,8 +1,12 @@
 import logging
-from typing import ClassVar
+from collections.abc import Iterable
+from typing import TYPE_CHECKING, ClassVar
 
-from monopoly.config import PdfConfig, StatementConfig
+from monopoly.config import Candidate, PdfConfig, StatementConfig
 from monopoly.identifiers import Identifier, IdentifierGroup
+
+if TYPE_CHECKING:
+    from monopoly.pdf import PdfParser
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +37,12 @@ class BankBase:
             cls._validate_statement_configs()
 
         return super().__init_subclass__(**kwargs)
+
+    @classmethod
+    def statement_candidates(cls, parser: "PdfParser") -> Iterable[Candidate]:
+        """Yield each statement config, in order, with the header it matched."""
+        for config in cls.statement_configs:
+            yield config, config.find_header(parser.pages)
 
     @classmethod
     def _validate_identifiers(cls) -> None:

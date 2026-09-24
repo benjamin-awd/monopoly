@@ -1,12 +1,12 @@
 import logging
 import re
+from collections.abc import Iterable
 from functools import cached_property
 from typing import ClassVar
 
 from monopoly.banks import BankBase
-from monopoly.config import DateOrder, MultilineConfig, PdfConfig, StatementConfig
+from monopoly.config import Candidate, DateOrder, MultilineConfig, PdfConfig, StatementConfig
 from monopoly.constants import EntryType
-from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfParser
 
 from .generic import DatePatternAnalyzer
@@ -19,23 +19,23 @@ class GenericBank(BankBase):
     statement_configs: ClassVar[list[StatementConfig]] = []
     name = "generic"
     pdf_config = PdfConfig(remove_vertical_text=True)
-    """Empty bank class used by GenericStatementHandler."""
+    """Bank with no fixed config: it is synthesised per document by GenericConfigBuilder."""
+
+    @classmethod
+    def statement_candidates(cls, parser: PdfParser) -> Iterable[Candidate]:
+        return GenericConfigBuilder(parser).candidates()
 
 
-class GenericStatementHandler(StatementHandler):
+class GenericConfigBuilder:
+    """Synthesise a statement config, and its header, from the detected date pattern."""
+
     def __init__(self, parser: PdfParser):
         self.analyzer = DatePatternAnalyzer(parser.pages, parser.metadata_identifier)
-        super().__init__(parser)
 
-    @cached_property
-    def statement_configs(self) -> list[StatementConfig]:
-        """Synthesised from the detected date pattern, not read off a bank class."""
-        return [config for config in (self.debit, self.credit) if config]
-
-    # override get_header and ignore passed config, since
-    # the header line has already been found
-    def get_header(self, _: StatementConfig):
-        return self._raw_header
+    def candidates(self) -> list[Candidate]:
+        # the header line was already found while analysing the document, so it
+        # is paired with the config directly rather than searched for again
+        return [(config, self._raw_header) for config in (self.debit, self.credit) if config]
 
     @cached_property
     def _date_order(self):
