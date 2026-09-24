@@ -124,10 +124,9 @@ class Transaction:
         """
         Coerce a raw marker to a `Direction`.
 
-        Statements always parse the marker in `pre_process_match`, so this only
-        does work for callers that construct a `Transaction` directly (library
-        users, tests). `minus` is `DEBIT` here to preserve how a bare "-" has
-        always been read at this layer.
+        Statements parse the marker in `pre_process_match`, so this only does
+        work for callers that construct a `Transaction` directly (library users,
+        tests). At this layer a bare "-" reads as `DEBIT`.
         """
         return Direction.parse(value, minus=Direction.DEBIT)
 
