@@ -126,7 +126,9 @@ The ETL (Extract, Transform, Load) pipeline follows this flow:
      - Safety check settings (validates totals)
 
 3. **Statement Handling** (`handler.py`, `statements/`)
-   - `StatementHandler` determines if statement is debit or credit by matching header patterns
+   - `select_statement()` picks the first of the bank's `statement_candidates()` (config +
+     matched header) and builds a debit or credit statement; `GenericBank` synthesises its
+     candidate via `GenericConfigBuilder`
    - `BaseStatement` (parent of `DebitStatement` and `CreditStatement`) extracts transactions:
      - Matches transaction patterns line-by-line
      - Handles multiline descriptions using `DescriptionExtractor`

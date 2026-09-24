@@ -7,7 +7,6 @@ from pymupdf import Document
 from monopoly.banks.detector import BankDetector
 from monopoly.config import DateOrder, PdfConfig, StatementConfig
 from monopoly.constants import EntryType
-from monopoly.handler import StatementHandler
 from monopoly.pdf import PdfDocument, PdfPage, PdfParser
 from test_utils.statements import StubStatement
 from monopoly.statements import BaseStatement, CreditStatement, DebitStatement
@@ -35,13 +34,6 @@ def mock_get_pages():
     with patch.object(PdfParser, "get_pages") as mock_get_pages:
         mock_get_pages.return_value = MagicMock()
         yield mock_get_pages
-
-
-@pytest.fixture(scope="function")
-def handler(parser):
-    with patch.object(StatementHandler, "get_statement") as _:
-        handler = StatementHandler(parser)
-        yield handler
 
 
 @pytest.fixture(scope="function")

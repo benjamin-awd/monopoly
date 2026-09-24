@@ -6,8 +6,7 @@ from pathlib import Path
 
 from pydantic import SecretStr
 
-from monopoly.generic import GenericBank, GenericStatementHandler
-from monopoly.handler import StatementHandler
+from monopoly.handler import select_statement
 from monopoly.pdf import PdfParser
 from monopoly.serialize import statement_to_dict
 from monopoly.statements import BaseStatement, NoTransactionsFoundError, Transaction
@@ -29,19 +28,10 @@ class Pipeline:
         self.passwords = passwords
 
     @cached_property
-    def handler(self) -> StatementHandler:
-        # Constructed lazily so tier-1 failures (which can occur during handler
-        # construction, e.g. GenericParserError) surface inside extract() rather
-        # than in __init__ — a prerequisite for the extraction cascade.
-        return self.create_handler(self.parser)
-
-    @staticmethod
-    def create_handler(parser: PdfParser) -> StatementHandler:
-        if issubclass(parser.bank, GenericBank):
-            logger.debug("Using generic statement handler")
-            return GenericStatementHandler(parser)
-        logger.debug("Using statement handler with bank: %s", parser.bank.__name__)
-        return StatementHandler(parser)
+    def statement(self) -> BaseStatement:
+        # Built lazily so parse errors come from extract(), not Pipeline(), letting callers catch them and fall back.
+        logger.debug("Selecting statement for bank: %s", self.parser.bank.__name__)
+        return select_statement(self.parser)
 
     def extract(self, *_, safety_check=True) -> BaseStatement:
         """
@@ -49,7 +39,7 @@ class Pipeline:
 
         Perform a safety check to make sure that total transactions add up.
         """
-        statement = self.handler.statement
+        statement = self.statement
 
         if not statement.transactions:
             msg = "No transactions found - statement extraction failed"

@@ -1,12 +1,15 @@
 import re
-from collections.abc import Sequence
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
 from re import Pattern
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from monopoly.constants import EntryType
 from monopoly.enums import RegexEnum
 from monopoly.identifiers import IdentifierGroup
+
+if TYPE_CHECKING:
+    from monopoly.pdf import PdfPage
 
 
 def compile_pattern(value: "Pattern[str] | RegexEnum | str | None") -> "Pattern[str] | None":
@@ -185,6 +188,18 @@ class StatementConfig:
             setattr(self, name, compile_pattern(getattr(self, name)))
 
     currency: str | None = None
+
+    def find_header(self, pages: "Iterable[PdfPage]") -> str | None:
+        """Return the first line matching `header_pattern`, lowercased."""
+        for page in pages:
+            for line in page.lines:
+                if match := self.header_pattern.search(line):
+                    return match.group().lower()
+        return None
+
+
+#: A config to try, paired with the header line it matched (None if it matched nothing).
+Candidate = tuple[StatementConfig, str | None]
 
 
 @dataclass

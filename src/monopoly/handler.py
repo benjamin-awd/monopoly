@@ -1,10 +1,11 @@
 import logging
-from functools import cached_property
+from typing import TYPE_CHECKING
 
-from monopoly.config import StatementConfig
 from monopoly.constants import EntryType
-from monopoly.pdf import PdfParser
 from monopoly.statements import BaseStatement, CreditStatement, DebitStatement, MissingHeaderError
+
+if TYPE_CHECKING:
+    from monopoly.pdf import PdfParser
 
 logger = logging.getLogger(__name__)
 
@@ -14,42 +15,19 @@ STATEMENT_CLASSES: dict[EntryType, type[BaseStatement]] = {
 }
 
 
-class StatementHandler:
+def select_statement(parser: "PdfParser") -> BaseStatement:
     """
-    Retrieve statement information like transactions from the PDF.
+    Build the statement for the first candidate config whose header was found.
 
-    Identifies the statement as either a debit or credit statement based on the debit and credit config.
+    Candidates come from the bank itself (`BankBase.statement_candidates`), so
+    the generic bank can synthesise its config without a special case here.
     """
+    bank = parser.bank
+    for config, header in bank.statement_candidates(parser):
+        if header:
+            logger.debug("Statement type detected: %s", config.statement_type)
+            statement_class = STATEMENT_CLASSES[config.statement_type]
+            return statement_class(parser.pages, bank.name, config, header, parser.file_path)
 
-    def __init__(self, parser: PdfParser):
-        self.bank = parser.bank
-        self.pages = parser.pages
-        self.file_path = parser.file_path
-
-    @property
-    def statement_configs(self) -> list[StatementConfig]:
-        """The configs to try, in order. Subclasses may synthesise their own."""
-        return self.bank.statement_configs
-
-    def get_header(self, config: StatementConfig) -> str | None:
-        pattern = config.header_pattern
-
-        for page in self.pages:
-            for line in page.lines:
-                if match := pattern.search(line):
-                    return match.group().lower()
-        return None
-
-    @cached_property
-    def statement(self):
-        return self._get_statement()
-
-    def _get_statement(self) -> BaseStatement:
-        for config in self.statement_configs:
-            if header := self.get_header(config):
-                logger.debug("Statement type detected: %s", config.statement_type)
-                statement_class = STATEMENT_CLASSES[config.statement_type]
-                return statement_class(self.pages, self.bank.name, config, header, self.file_path)
-
-        msg = "Could not find header in statement"
-        raise MissingHeaderError(msg)
+    msg = "Could not find header in statement"
+    raise MissingHeaderError(msg)
