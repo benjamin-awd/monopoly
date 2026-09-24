@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789992300437,
+  "lastUpdate": 1790245120640,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -965,6 +965,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 4.48928326568,
             "range": "± 0.04421252058195372",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1aafbd91290f41f60d85559fe51bca268e099957",
+          "message": "Merge pull request #328 from benjamin-awd/simplify-architecture\n\nrefactor: simplify statement dispatch and transaction construction",
+          "timestamp": "2026-09-24T18:16:58+08:00",
+          "tree_id": "ca2339862a67a52892648810f999219ea5f5f573",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/1aafbd91290f41f60d85559fe51bca268e099957"
+        },
+        "date": 1790245120013,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.66770265884,
+            "range": "± 0.0067187975746202935",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 3.04316222086,
+            "range": "± 0.08499355261051637",
             "unit": "s"
           }
         ]
