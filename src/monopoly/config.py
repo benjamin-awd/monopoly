@@ -145,8 +145,8 @@ class StatementConfig:
     total amount due, minimum payment). See `CreditStatement.payment_summary`. Disabled by
     default (None).
     - `currency` is the ISO 4217 settlement currency this statement type is denominated
-    in (what totals, balances and the safety check are in). It is stamped onto every
-    Transaction in `Pipeline.extract` and surfaced in the JSON schema. Set per config
+    in (what totals, balances and the safety check are in). It is set on every
+    Transaction when the statement builds it and surfaced in the JSON schema. Set per config
     (not per bank) so multi-country banks work: e.g. Maybank's MY configs are MYR while
     its SG config is SGD. Left None for the generic handler and where the currency is
     unknown. This is the account/settlement currency, distinct from a transaction's

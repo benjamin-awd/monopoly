@@ -73,10 +73,10 @@ class Transaction:
     # balance. The CSV writer still collapses None to 0; the JSON schema keeps null.
     balance: float | None = Field(default=None)
     # Richer, nullable slots surfaced only in the JSON schema, not the CSV.
-    # posting_date comes from the bank regex; currency is stamped in
-    # Pipeline.extract from the matched StatementConfig; account is a follow-up
-    # placeholder. They don't affect the filename hash: write.generate_hash
-    # hashes an explicit field list, not the dataclass repr.
+    # posting_date comes from the bank regex; currency and account are set by
+    # the statement when it builds each transaction. They don't affect the
+    # filename hash: write.generate_hash hashes an explicit field list, not the
+    # dataclass repr.
     posting_date: str | None = None
     currency: str | None = None
     account: str | None = None
@@ -188,7 +188,7 @@ class Transaction:
         stays byte-stable.
 
         Computed fresh on each access (not cached) so it can't freeze a stale
-        value if read before the pipeline stamps currency or normalizes the date.
+        value if read before `Pipeline.transform` normalizes the date.
         """
         identity = (self.date, self.description, self.amount, self.currency, self.account)
         return sha256(repr(identity).encode("utf-8")).hexdigest()

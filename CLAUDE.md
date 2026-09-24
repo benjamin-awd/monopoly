@@ -215,7 +215,7 @@ opt-in, per-config regex patterns — `StatementConfig.account_pattern` (named
 `account` group) and `StatementConfig.period_start_pattern` — added per bank/vintage
 the same way identifiers are (see #308). `account` is resolved once per statement
 via `BaseStatement.account` (last-4 derived by `statements.base.extract_last4`) and
-stamped onto every transaction in `Pipeline.extract`, mirroring `currency`;
+set on every transaction when the statement builds it, mirroring `currency`;
 `period_start` is resolved by `DateResolver.resolve_period_start` (content-only, no
 filename fallback, never raises). Both stay `None` where no pattern is configured,
 so this is backward-compatible (no `SCHEMA_VERSION` bump). Coverage is incremental:

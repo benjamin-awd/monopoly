@@ -32,7 +32,12 @@ class CreditStatement(BaseStatement):
                 groupdict["transaction_date"] = first_transaction_date
                 raw_transaction = self.pre_process_match(RawTransaction(**groupdict))
                 # keep the default auto_direction: TDCT/CIBC turn it off for activity rows, not for this balance
-                prev_month_transaction = Transaction(**raw_transaction.as_dict(), kind=TransactionKind.PREVIOUS_BALANCE)
+                prev_month_transaction = Transaction(
+                    **raw_transaction.as_dict(),
+                    currency=self.config.currency,
+                    account=self.account,
+                    kind=TransactionKind.PREVIOUS_BALANCE,
+                )
                 transactions.insert(0, prev_month_transaction)
         return transactions
 

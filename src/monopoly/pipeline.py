@@ -64,24 +64,6 @@ class Pipeline:
         if safety_check and statement.config.safety_check:
             statement.perform_safety_check()
 
-        # Stamp the statement's settlement currency onto every transaction. Read
-        # from the matched `StatementConfig` (not the bank class) so multi-country
-        # banks resolve correctly — the handler has already selected the one config
-        # for this statement. Done here rather than in the static `transform`
-        # because `extract` runs before `transform` in every real pipeline path.
-        # Configs with no known currency (generic handler, unset) leave it None.
-        if currency := statement.config.currency:
-            for tx in statement.transactions:
-                tx.currency = currency
-
-        # Stamp the account's last-4 onto every transaction, same shape as currency.
-        # Resolved once from the statement content via `config.account_pattern`; folds
-        # into `content_hash` (and thus the JSON `id`), so it is set here in extract,
-        # before transform/serialize compute ids. None where the bank has no pattern.
-        if account := statement.account:
-            for tx in statement.transactions:
-                tx.account = account
-
         return statement
 
     @staticmethod

@@ -193,6 +193,8 @@ class BaseStatement(ABC):
         processed = self.process_match(self.pre_process_match(raw_transaction), context)
         return Transaction(
             **processed.as_dict(),
+            currency=self.config.currency,
+            account=self.account,
             auto_direction=self.config.transaction_auto_direction,
         )
 
@@ -280,8 +282,8 @@ class BaseStatement(ABC):
         The account/card last 4 digits, or None if not configured/found.
 
         Located once per statement via `config.account_pattern` (named `account`
-        group) and stamped onto every transaction in `Pipeline.extract`, the same
-        way `currency` is. See `config.StatementConfig.account_pattern`.
+        group) and set on every transaction when it is built, the same way
+        `currency` is. See `config.StatementConfig.account_pattern`.
         """
         pattern = self.config.account_pattern
         if pattern is None:
