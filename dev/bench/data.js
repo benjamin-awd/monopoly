@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1790245120640,
+  "lastUpdate": 1790247671722,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -1001,6 +1001,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 3.04316222086,
             "range": "± 0.08499355261051637",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "121a983c499114615fa2b381f3abbd517c6ac11e",
+          "message": "Merge pull request #329 from benjamin-awd/timeless-comments\n\ndocs: describe current behaviour in two comments",
+          "timestamp": "2026-09-24T18:59:10+08:00",
+          "tree_id": "525aeebc184df8c77d218f677f13c5c164ee0215",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/121a983c499114615fa2b381f3abbd517c6ac11e"
+        },
+        "date": 1790247671147,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.5390965136400001,
+            "range": "± 0.008671384353287263",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 2.37604019328,
+            "range": "± 0.05638539523379741",
             "unit": "s"
           }
         ]
