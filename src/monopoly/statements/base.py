@@ -266,15 +266,17 @@ class BaseStatement(ABC):
         return self.get_transactions()
 
     @cached_property
+    def date_resolver(self) -> DateResolver:
+        return DateResolver(self.pages, self.config, self.file_path)
+
+    @cached_property
     def statement_date(self) -> datetime:
-        resolver = DateResolver(self.pages, self.config, self.file_path)
-        return resolver.resolve()
+        return self.date_resolver.resolve()
 
     @cached_property
     def period_start(self) -> datetime | None:
         """The statement's period-start date, or None if not configured/found."""
-        resolver = DateResolver(self.pages, self.config, self.file_path)
-        return resolver.resolve_period_start()
+        return self.date_resolver.resolve_period_start()
 
     @cached_property
     def account(self) -> str | None:
