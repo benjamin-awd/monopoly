@@ -16,7 +16,7 @@ SAMPLE_PAGE = "01-02-2024\nDATE DESCRIPTION AMOUNT\n12/01 COFFEE SHOP 12.34\n13/
 
 
 def test_pipeline_accepts_passwords_and_deferred_safety_check():
-    # passwords is unused but still accepted; the caller runs the safety check itself
+    # passwords is accepted but unused; the caller runs the safety check itself
     parser = PdfParser.from_pages(ExampleBank, [SAMPLE_PAGE])
     pipeline = Pipeline(parser, passwords=[SecretStr("secret")])
 
