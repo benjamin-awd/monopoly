@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.23.2](https://github.com/benjamin-awd/monopoly/compare/v0.23.1...v0.23.2) (2026-09-24)
+
+
+### Code Refactoring
+
+* **credit:** parse prev-balance direction via pre_process_match ([3469ddb](https://github.com/benjamin-awd/monopoly/commit/3469ddb68b4536e32c9d7be3e869fff3ca1e6d31))
+* **handler:** replace StatementHandler classes with select_statement() ([232b498](https://github.com/benjamin-awd/monopoly/commit/232b4984c128d06222a4e30fd9be931fc0b91204))
+* simplify statement dispatch and transaction construction ([1aafbd9](https://github.com/benjamin-awd/monopoly/commit/1aafbd91290f41f60d85559fe51bca268e099957))
+* small cleanups in statements ([ea8fc2d](https://github.com/benjamin-awd/monopoly/commit/ea8fc2dfcc0e75283fe9c1bd4a2ceaaaa7b402f2))
+* **statement:** set currency and account when building transactions ([28b69c8](https://github.com/benjamin-awd/monopoly/commit/28b69c831214ec2126a8d61f41c973edb9810ccc))
+
+
+### Documentation
+
+* describe current behaviour in two comments ([121a983](https://github.com/benjamin-awd/monopoly/commit/121a983c499114615fa2b381f3abbd517c6ac11e))
+* describe current behaviour in two comments ([bd5052a](https://github.com/benjamin-awd/monopoly/commit/bd5052ab332a6dc6b8d743fa14595d857e72f143))
+
 ## [0.23.1](https://github.com/benjamin-awd/monopoly/compare/v0.23.0...v0.23.1) (2026-09-05)
 
 
