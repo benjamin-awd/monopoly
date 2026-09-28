@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1790248102807,
+  "lastUpdate": 1790600407982,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -1073,6 +1073,40 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 4.19432652678,
             "range": "± 0.05359514588814953",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd",
+            "email": "benjamindornel@gmail.com"
+          },
+          "committer": {
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd",
+            "email": "benjamindornel@gmail.com"
+          },
+          "id": "277eef788af5947242d9dca516caa7b91ac6543c",
+          "message": "chore(release): list refactor commits in the changelog\n\nrelease-please hides refactor commits by default, so refactor-only work\n(such as #328) shipped without a changelog entry. Configure\nchangelog-sections to show them under \"Code Refactoring\". The other\nsections keep their current visibility.",
+          "timestamp": "2026-09-24T11:05:24Z",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/277eef788af5947242d9dca516caa7b91ac6543c"
+        },
+        "date": 1790600407150,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.9005181271200001,
+            "range": "± 0.00794611431110255",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 4.2301690637,
+            "range": "± 0.07405860156158652",
             "unit": "s"
           }
         ]
