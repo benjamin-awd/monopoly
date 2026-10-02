@@ -6,6 +6,10 @@ from monopoly.constants import EntryType, SharedPatterns
 from monopoly.constants.date import ISO8601, DateFormats
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
+# personal debit statements print days both zero-padded ("Jan 07") and unpadded ("Jan 7")
+DAY = r"(0?[1-9]|[12]\d|3[01])"
+MMM_DAY = rf"\b({DateFormats.MMM}[\/\-\s.]{DAY})"
+
 
 class Scotiabank(BankBase):
     name = "scotiabank"
@@ -15,12 +19,12 @@ class Scotiabank(BankBase):
         statement_type=EntryType.DEBIT,
         header_pattern=re.compile(r"\s+Date\s+Transactions\s+withdrawn\ \(\$\)\s+deposited\ \(\$\)\s+Balance\ \(\$\)"),
         statement_date_pattern=re.compile(
-            rf"Closing Balance on (?P<date>{DateFormats.MMMM}\s+{DateFormats.DD},\s+{DateFormats.YYYY})"
+            rf"Closing Balance on (?P<date>{DateFormats.MMMM}\s+{DAY},\s+{DateFormats.YYYY})"
         ),
         transaction_date_format="%b %d",
         transaction_pattern=re.compile(
             rf"^(?!.*(?:Opening Balance)).*?"  # avoid matching opening balance as a "transaction"
-            rf"(?P<transaction_date>{ISO8601.MMM_DD})\s+"
+            rf"(?P<transaction_date>{MMM_DAY})\s+"
             + SharedPatterns.DESCRIPTION
             + SharedPatterns.AMOUNT
             + SharedPatterns.BALANCE
