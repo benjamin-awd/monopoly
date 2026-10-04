@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1790600407982,
+  "lastUpdate": 1791085522945,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -1107,6 +1107,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 4.2301690637,
             "range": "± 0.07405860156158652",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "distinct": true,
+          "id": "03fa9149cecfe746a6aac25f7cf437020f358828",
+          "message": "fix(scotiabank): accept unpadded days in personal debit dates",
+          "timestamp": "2026-10-04T11:43:32+08:00",
+          "tree_id": "48cfc2ff3cfcf08d90d867d3b588d98cc4e8ba29",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/03fa9149cecfe746a6aac25f7cf437020f358828"
+        },
+        "date": 1791085522607,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.88553962396,
+            "range": "± 0.007833954426235915",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 4.08538114592,
+            "range": "± 0.03859549837331889",
             "unit": "s"
           }
         ]
