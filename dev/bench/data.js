@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1791207710773,
+  "lastUpdate": 1791212552493,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -1249,6 +1249,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 4.17422713982,
             "range": "± 0.050516417856744184",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e4cd3791364da3203d1680849a9de6a8cad472ee",
+          "message": "build(deps): bump urllib3 from 2.7.0 to 2.8.0 (#336)\n\nBumps [urllib3](https://github.com/urllib3/urllib3) from 2.7.0 to 2.8.0.\n- [Release notes](https://github.com/urllib3/urllib3/releases)\n- [Changelog](https://github.com/urllib3/urllib3/blob/main/CHANGES.rst)\n- [Commits](https://github.com/urllib3/urllib3/compare/2.7.0...2.8.0)\n\n---\nupdated-dependencies:\n- dependency-name: urllib3\n  dependency-version: 2.8.0\n  dependency-type: indirect\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2026-10-05T22:59:39+08:00",
+          "tree_id": "c1794a1c6abd30e6eb6298bb933a02255e8d637d",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/e4cd3791364da3203d1680849a9de6a8cad472ee"
+        },
+        "date": 1791212552209,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.6676780911,
+            "range": "± 0.005964645770727854",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 3.00080148424,
+            "range": "± 0.021907836495579227",
             "unit": "s"
           }
         ]
