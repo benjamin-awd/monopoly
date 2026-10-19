@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1791815466205,
+  "lastUpdate": 1792412007634,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -1319,6 +1319,40 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 4.35041699362,
             "range": "± 0.0623571903395672",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]",
+            "email": "49699333+dependabot[bot]@users.noreply.github.com"
+          },
+          "committer": {
+            "name": "GitHub",
+            "username": "web-flow",
+            "email": "noreply@github.com"
+          },
+          "id": "e4cd3791364da3203d1680849a9de6a8cad472ee",
+          "message": "build(deps): bump urllib3 from 2.7.0 to 2.8.0 (#336)\n\nBumps [urllib3](https://github.com/urllib3/urllib3) from 2.7.0 to 2.8.0.\n- [Release notes](https://github.com/urllib3/urllib3/releases)\n- [Changelog](https://github.com/urllib3/urllib3/blob/main/CHANGES.rst)\n- [Commits](https://github.com/urllib3/urllib3/compare/2.7.0...2.8.0)\n\n---\nupdated-dependencies:\n- dependency-name: urllib3\n  dependency-version: 2.8.0\n  dependency-type: indirect\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2026-10-05T14:59:39Z",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/e4cd3791364da3203d1680849a9de6a8cad472ee"
+        },
+        "date": 1792412007010,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.8927560783399999,
+            "range": "± 0.041878638789136544",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 3.9856854335200005,
+            "range": "± 0.02820673272714595",
             "unit": "s"
           }
         ]
