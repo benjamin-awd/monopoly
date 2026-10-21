@@ -1,13 +1,15 @@
 """Unit tests for account (last-4) extraction: helper + BaseStatement.account."""
 
 import re
+from dataclasses import replace
 
 import pytest
 from test_utils.statements import StubStatement
 
 from monopoly.config import DateOrder, StatementConfig
-from monopoly.constants import EntryType
+from monopoly.constants import EntryType, TransactionKind
 from monopoly.pdf import PdfPage
+from monopoly.statements import CreditStatement
 from monopoly.statements.base import extract_last4
 
 
@@ -74,3 +76,89 @@ def test_account_none_when_pattern_configured_but_no_match():
     statement = _statement([PdfPage(raw_text="no account line present")], config)
 
     assert statement.account is None
+
+
+def _consolidated_config(per_section=True):
+    return StatementConfig(
+        statement_type=EntryType.CREDIT,
+        header_pattern=re.compile(r"DATE.*AMOUNT"),
+        transaction_pattern=re.compile(
+            r"(?P<transaction_date>\d{2} \w{3})\s+(?P<description>.*?)\s+(?P<amount>\d+\.\d{2})$"
+        ),
+        statement_date_pattern=re.compile(r"(\d{1,2} \w{3} \d{4})"),
+        account_pattern=re.compile(r"CARD NO\.:\s*(?P<account>\d{4}(?:\s+\d{4}){3})"),
+        account_per_section=per_section,
+        statement_date_order=DateOrder("DMY"),
+    )
+
+
+# A consolidated statement: one header per card, each card's rows under it, the second card's
+# section running onto the next page.
+CONSOLIDATED = [
+    PdfPage(
+        raw_text="\n".join(
+            [
+                "STATEMENT DATE 15 Oct 2026",
+                "DATE DESCRIPTION AMOUNT",
+                "CARD A CARD NO.: 1111 2222 3333 4444",
+                "01 Oct SHOP ONE 10.00",
+                "02 Oct SHOP TWO 20.00",
+                "CARD B CARD NO.: 5555 6666 7777 8888",
+                "03 Oct SHOP THREE 30.00",
+            ]
+        )
+    ),
+    PdfPage(raw_text="DATE DESCRIPTION AMOUNT\n04 Oct SHOP FOUR 40.00"),
+]
+
+
+def test_each_transaction_takes_the_account_of_its_own_section():
+    statement = _statement(CONSOLIDATED, _consolidated_config())
+
+    assert [(t.description, t.account) for t in statement.transactions] == [
+        ("SHOP ONE", "4444"),
+        ("SHOP TWO", "4444"),
+        ("SHOP THREE", "8888"),
+        ("SHOP FOUR", "8888"),
+    ]
+    # the statement-level account stays the first one
+    assert statement.account == "4444"
+
+
+def test_lines_above_the_first_header_take_the_first_account():
+    pages = [PdfPage(raw_text="01 Oct EARLY ROW 5.00\nCARD NO.: 1111 2222 3333 4444\n02 Oct LATER ROW 6.00")]
+    statement = _statement(pages, _consolidated_config())
+
+    assert [t.account for t in statement.transactions] == ["4444", "4444"]
+
+
+def test_without_per_section_every_transaction_keeps_the_first_account():
+    statement = _statement(CONSOLIDATED, _consolidated_config(per_section=False))
+
+    assert {t.account for t in statement.transactions} == {"4444"}
+
+
+def test_each_previous_balance_takes_the_account_of_its_own_section():
+    config = replace(
+        _consolidated_config(),
+        prev_balance_pattern=re.compile(r"(?P<description>PREVIOUS BALANCE)\s+(?P<amount>\d+\.\d{2})"),
+    )
+    pages = [
+        PdfPage(
+            raw_text="\n".join(
+                [
+                    "STATEMENT DATE 15 Oct 2026",
+                    "CARD A CARD NO.: 1111 2222 3333 4444",
+                    "PREVIOUS BALANCE 100.00",
+                    "01 Oct SHOP ONE 10.00",
+                    "CARD B CARD NO.: 5555 6666 7777 8888",
+                    "PREVIOUS BALANCE 200.00",
+                    "02 Oct SHOP TWO 20.00",
+                ]
+            )
+        )
+    ]
+    statement = CreditStatement(pages=pages, bank_name="example", config=config, header="foo")
+
+    balances = {t.amount: t.account for t in statement.transactions if t.kind == TransactionKind.PREVIOUS_BALANCE}
+    assert {abs(amount): account for amount, account in balances.items()} == {100.0: "4444", 200.0: "8888"}

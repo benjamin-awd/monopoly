@@ -16,6 +16,8 @@ class Dbs(BankBase):
         statement_date_pattern=ISO8601.DD_MMM_YYYY.regex,
         # card number in the header block, e.g. "... CARD NO.: 4111 2222 3333 4444"
         account_pattern=re.compile(r"(?i)CARD NO\.:\s*(?P<account>\d{4}(?:\s+\d{4}){3})"),
+        # a consolidated statement has one section per card, each under its own "CARD NO.:" header
+        account_per_section=True,
         header_pattern=re.compile(r"(DATE.*DESCRIPTION.*AMOUNT)"),
         transaction_date_format="%d %b",
         transaction_pattern=re.compile(

@@ -186,20 +186,22 @@ class BaseStatement(ABC):
                     description=raw_transaction.description,
                     multiline_config=self.config.multiline_config,
                 )
-                yield raw_transaction, context
+                yield raw_transaction, context, self.account_at(page_num, line_num)
 
-    def _build_transaction(self, raw_transaction: RawTransaction, context: MatchContext) -> Transaction:
+    def _build_transaction(
+        self, raw_transaction: RawTransaction, context: MatchContext, account: str | None
+    ) -> Transaction:
         """Run the pre/post-processing hooks and construct the Transaction."""
         processed = self.process_match(self.pre_process_match(raw_transaction), context)
         return Transaction(
             **processed.as_dict(),
             currency=self.config.currency,
-            account=self.account,
+            account=account,
             auto_direction=self.config.transaction_auto_direction,
         )
 
     def get_transactions(self) -> list[Transaction]:
-        transactions = [self._build_transaction(raw, ctx) for raw, ctx in self._iter_matches()]
+        transactions = [self._build_transaction(raw, ctx, account) for raw, ctx, account in self._iter_matches()]
         return self.post_process_transactions(transactions)
 
     def _check_bound(self, match: re.Match):
@@ -279,22 +281,51 @@ class BaseStatement(ABC):
         return self.date_resolver.resolve_period_start()
 
     @cached_property
-    def account(self) -> str | None:
+    def account_headers(self) -> list[tuple[int, int, str]]:
         """
-        The account/card last 4 digits, or None if not configured/found.
+        Every `config.account_pattern` match in reading order, as (page, line, last 4).
 
-        Located once per statement via `config.account_pattern` (named `account`
-        group) and set on every transaction when it is built, the same way
-        `currency` is. See `config.StatementConfig.account_pattern`.
+        A consolidated statement prints one header per card or account, each opening
+        its own section, so a transaction belongs to the nearest header above it.
         """
         pattern = self.config.account_pattern
         if pattern is None:
-            return None
-        for page in self.pages:
-            for line in page.lines:
-                if match := pattern.search(line):
-                    return extract_last4(match.group("account"))
-        return None
+            return []
+        headers = []
+        for page_num, page in enumerate(self.pages):
+            for line_num, line in enumerate(page.lines):
+                if (match := pattern.search(line)) and (last4 := extract_last4(match.group("account"))):
+                    headers.append((page_num, line_num, last4))
+        return headers
+
+    @cached_property
+    def account(self) -> str | None:
+        """
+        The statement's first account/card last 4 digits, or None if not configured/found.
+
+        Located via `config.account_pattern` (named `account` group). Transactions
+        take the account of their own section instead (`account_at`), which is
+        this one on a statement for a single account. See
+        `config.StatementConfig.account_pattern`.
+        """
+        return self.account_headers[0][2] if self.account_headers else None
+
+    def account_at(self, page_num: int, line_num: int) -> str | None:
+        """
+        Return the account/card for a line.
+
+        With `config.account_per_section`, that is the section's: the nearest account
+        header at or above it (a line before the first header, e.g. a summary at the
+        top, takes the first account). Otherwise the statement's first.
+        """
+        current = self.account
+        if not self.config.account_per_section:
+            return current
+        for header_page, header_line, last4 in self.account_headers:
+            if (header_page, header_line) > (page_num, line_num):
+                break
+            current = last4
+        return current
 
     @abstractmethod
     def perform_safety_check(self) -> bool:

@@ -35,7 +35,7 @@ class CreditStatement(BaseStatement):
                 prev_month_transaction = Transaction(
                     **raw_transaction.as_dict(),
                     currency=self.config.currency,
-                    account=self.account,
+                    account=self.account_of_match(prev_month_balance),
                     kind=TransactionKind.PREVIOUS_BALANCE,
                 )
                 transactions.insert(0, prev_month_transaction)
@@ -55,6 +55,15 @@ class CreditStatement(BaseStatement):
                 prev_balances.extend(match for line in page.lines if (match := pattern.search(line)))
 
         return prev_balances
+
+    def account_of_match(self, match: re.Match) -> str | None:
+        """Return the account of the section a match's line is in (`account_at`), else the first one."""
+        line = getattr(match, "string", None)
+        for page_num, page in enumerate(self.pages):
+            for line_num, text in enumerate(page.lines):
+                if text == line:
+                    return self.account_at(page_num, line_num)
+        return self.account
 
     def perform_safety_check(self) -> bool:
         """
