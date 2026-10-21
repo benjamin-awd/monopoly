@@ -89,6 +89,32 @@ class Dbs(BankBase):
         transaction_bound=230,
     )
 
+    # DBS/POSB consolidated statements issued before mid-2021 were rendered by StreamServe: each account's
+    # table has a "Date Description Withdrawal Deposit Balance" header (no "(-)"/"(+)" markers) and "03 Jun"
+    # dates. They also carry a debit card summary whose "DATE DESCRIPTION ... AMOUNT" header would match the
+    # credit config, so this config is tried first; its header doesn't occur in any other DBS layout.
+    consolidated_legacy = StatementConfig(
+        currency="SGD",
+        statement_type=EntryType.DEBIT,
+        statement_date_pattern=re.compile(rf"As at {ISO8601.DD_MMM_YYYY}"),
+        # each account's table opens with "<account name>   Account No. 123-456789-0"
+        account_pattern=re.compile(r"Account No\.\s*(?P<account>\d{3}-\d{1,6}-\d{1,6})"),
+        account_per_section=True,
+        multiline_config=MultilineConfig(
+            multiline_descriptions=True,
+            description_margin=10,
+        ),
+        header_pattern=re.compile(r"(Date\s+Description\s+Withdrawal\s+Deposit\s+Balance)"),
+        transaction_date_format="%d %b",
+        # Account rows are dated in title case ("03 Jun"); the debit card summary that follows the accounts
+        # prints its months in capitals ("31 MAY") and lists card spending already in the accounts, so
+        # matching title-case months only keeps it out.
+        transaction_pattern=re.compile(
+            r"(?P<transaction_date>\b\d{2}\s(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec))\s+"
+            r"(?P<description>\S.*?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+        ),
+    )
+
     identifiers = [
         [
             TextIdentifier("DBS"),
@@ -103,6 +129,12 @@ class Dbs(BankBase):
             TextIdentifier("DBS"),
             MetadataIdentifier(creator="DBS", producer="StreamServe"),
         ],
+        # ...and DBS/POSB consolidated statements of that time, whose creator is empty
+        [
+            TextIdentifier("DBS Bank Ltd"),
+            TextIdentifier("CONSOLIDATED STATEMENT"),
+            MetadataIdentifier(producer="StreamServe"),
+        ],
     ]
 
-    statement_configs = [credit, consolidated, debit]
+    statement_configs = [consolidated_legacy, credit, consolidated, debit]

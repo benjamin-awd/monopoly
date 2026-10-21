@@ -33,5 +33,27 @@ def test_dbs_detected_for_legacy_streamserve_statements(mock_raw_text, metadata_
 def test_streamserve_alone_is_not_dbs(mock_raw_text, metadata_analyzer: BankDetector):
     # StreamServe renders statements for other issuers too: the creator and the text must both say DBS
     mock_raw_text.return_value = "Some Other Bank"
-    metadata_analyzer.metadata_identifier = MetadataIdentifier(creator="Other", producer="StreamServe Communication Server")
+    metadata_analyzer.metadata_identifier = MetadataIdentifier(
+        creator="Other", producer="StreamServe Communication Server"
+    )
+    assert metadata_analyzer.detect_bank([Dbs]) is None
+
+
+@patch.object(PdfDocument, "raw_text", new_callable=PropertyMock)
+def test_dbs_detected_for_legacy_consolidated_deposit_statements(mock_raw_text, metadata_analyzer: BankDetector):
+    # DBS/POSB consolidated statements of the same period: StreamServe, but with an empty creator
+    mock_raw_text.return_value = "DBS Bank Ltd\nCONSOLIDATED STATEMENT\nACCOUNT SUMMARY"
+    metadata_analyzer.metadata_identifier = MetadataIdentifier(
+        format="PDF 1.4", producer="StreamServe Communication Server 5.6.2 GA Build 374 (64 bit)"
+    )
+    assert metadata_analyzer.detect_bank([Dbs]) is Dbs
+
+
+@patch.object(PdfDocument, "raw_text", new_callable=PropertyMock)
+def test_streamserve_with_a_passing_dbs_mention_is_not_dbs(mock_raw_text, metadata_analyzer: BankDetector):
+    # another issuer's StreamServe statement that mentions DBS (e.g. a transfer) is not a DBS statement
+    mock_raw_text.return_value = "Some Other Bank\nCONSOLIDATED STATEMENT\nFUNDS TRANSFER TO DBS"
+    metadata_analyzer.metadata_identifier = MetadataIdentifier(
+        format="PDF 1.4", producer="StreamServe Communication Server"
+    )
     assert metadata_analyzer.detect_bank([Dbs]) is None
