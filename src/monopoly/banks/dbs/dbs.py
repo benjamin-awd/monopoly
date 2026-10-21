@@ -67,15 +67,18 @@ class Dbs(BankBase):
         currency="SGD",
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"Details as at {ISO8601.DD_MMM_YYYY}"),
+        # the account summary row, e.g. "DBS Multiplier Account   123-4-567890   SGD   1,234.56"
+        account_pattern=re.compile(r"Account\s+(?P<account>\d{3}-\d{1,6}-\d{1,6})\s+SGD"),
         multiline_config=MultilineConfig(
             multiline_descriptions=True,
             description_margin=10,  # Allow for indented PayNow/transaction details
         ),
         header_pattern=re.compile(r"(\s*Date\s+Description\s+Withdrawal.*)"),
         transaction_date_format="%d/%m/%Y",
+        # The description must not be empty: the closing line of an account ("30/06/2023 ... 20.66")
+        # has a date and its balance only, which would otherwise read as a deposit of that balance.
         transaction_pattern=re.compile(
-            rf"(?P<transaction_date>{ISO8601.DD_MM_YYYY})\s+"
-            + SharedPatterns.DESCRIPTION
+            rf"(?P<transaction_date>{ISO8601.DD_MM_YYYY})\s+(?P<description>\S.*?)\s+"
             + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
         ),
         # Later pages of a consolidated statement indent the table further right
