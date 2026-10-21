@@ -93,6 +93,11 @@ class Dbs(BankBase):
             TextIdentifier("DBS"),
             MetadataIdentifier(creator="Quadient"),
         ],
+        # Statements issued before mid-2021 were rendered by StreamServe, with creator "DBS"
+        [
+            TextIdentifier("DBS"),
+            MetadataIdentifier(creator="DBS", producer="StreamServe"),
+        ],
     ]
 
     statement_configs = [credit, consolidated, debit]
