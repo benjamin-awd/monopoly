@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792412007634,
+  "lastUpdate": 1792575323587,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -1353,6 +1353,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 3.9856854335200005,
             "range": "± 0.02820673272714595",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5b4f5db59ecea09e23e770476ffd9e0837ce2712",
+          "message": "build(deps): bump certifi to 2026.10.19 and drop unused pdm.lock (#337)\n\npdm.lock has been unused since the switch to uv (June 2025); pdm-backend\nremains only as the build backend.\n\nCo-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-21T17:33:44+08:00",
+          "tree_id": "3f57d1daef5d98171e5b97c27acbd46e57a76c23",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/5b4f5db59ecea09e23e770476ffd9e0837ce2712"
+        },
+        "date": 1792575322895,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.7797771394,
+            "range": "± 0.004384114922696835",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 3.4996078804199997,
+            "range": "± 0.021777343908501584",
             "unit": "s"
           }
         ]
