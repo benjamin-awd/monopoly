@@ -1,6 +1,7 @@
 import logging
 import re
 from functools import cached_property
+from typing import NamedTuple
 
 from monopoly.constants import Direction, EntryType, TransactionKind
 from monopoly.statements.payment_summary import PaymentSummary, PaymentSummaryExtractor
@@ -10,6 +11,14 @@ from monopoly.statements.transaction import RawTransaction, Transaction
 from .base import BaseStatement, SafetyCheckError
 
 logger = logging.getLogger(__name__)
+
+
+class PrevBalanceMatch(NamedTuple):
+    """A previous-balance line, with its position so it takes the account of its own section."""
+
+    page_num: int
+    line_num: int
+    match: re.Match
 
 
 class CreditStatement(BaseStatement):
@@ -28,31 +37,33 @@ class CreditStatement(BaseStatement):
         if previous_month_balances:
             first_transaction_date = next(iter(transactions)).date
             for prev_month_balance in previous_month_balances:
-                groupdict = prev_month_balance.groupdict()
+                groupdict = prev_month_balance.match.groupdict()
                 groupdict["transaction_date"] = first_transaction_date
                 raw_transaction = self.pre_process_match(RawTransaction(**groupdict))
                 # keep the default auto_direction: TDCT/CIBC turn it off for activity rows, not for this balance
                 prev_month_transaction = Transaction(
                     **raw_transaction.as_dict(),
                     currency=self.config.currency,
-                    account=self.account,
+                    account=self.account_resolver.at(prev_month_balance.page_num, prev_month_balance.line_num),
                     kind=TransactionKind.PREVIOUS_BALANCE,
                 )
                 transactions.insert(0, prev_month_transaction)
         return transactions
 
-    def get_prev_month_balances(self) -> list[re.Match]:
+    def get_prev_month_balances(self) -> list[PrevBalanceMatch]:
         """
-        Return the previous month's statement balance as a transaction, if it exists in the statement.
+        Return the previous month's statement balances, if they exist in the statement.
 
         The row has no date of its own; `post_process_transactions` gives it the
         date of the first transaction.
         """
-        prev_balances: list[re.Match] = []
+        prev_balances: list[PrevBalanceMatch] = []
 
         if pattern := self.config.prev_balance_pattern:
-            for page in self.pages:
-                prev_balances.extend(match for line in page.lines if (match := pattern.search(line)))
+            for page_num, page in enumerate(self.pages):
+                for line_num, line in enumerate(page.lines):
+                    if match := pattern.search(line):
+                        prev_balances.append(PrevBalanceMatch(page_num, line_num, match))
 
         return prev_balances
 

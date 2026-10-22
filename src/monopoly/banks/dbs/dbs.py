@@ -6,6 +6,12 @@ from monopoly.constants import EntryType, SharedPatterns
 from monopoly.constants.date import ISO8601
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
+# Each account's table on a consolidated statement opens with "<account name>   Account No. 123-456789-0"
+CONSOLIDATED_ACCOUNT = re.compile(r"Account No\.\s*(?P<account>\d{3}-\d{1,6}-\d{1,6})")
+# A non-empty description: an account's closing line ("30/06/2023 ... 20.66") has a date and its balance
+# only, which would otherwise read as a deposit of that balance
+NONEMPTY_DESCRIPTION = r"(?P<description>\S.*?)\s+"
+
 
 class Dbs(BankBase):
     name = "dbs"
@@ -65,6 +71,9 @@ class Dbs(BankBase):
         currency="SGD",
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"Details as at {ISO8601.DD_MMM_YYYY}"),
+        # the account table headers repeat on every page; the account summary above them can print the
+        # number truncated, so it isn't used
+        account_pattern=CONSOLIDATED_ACCOUNT,
         multiline_config=MultilineConfig(
             multiline_descriptions=True,
             description_margin=10,  # Allow for indented PayNow/transaction details
@@ -73,7 +82,7 @@ class Dbs(BankBase):
         transaction_date_format="%d/%m/%Y",
         transaction_pattern=re.compile(
             rf"(?P<transaction_date>{ISO8601.DD_MM_YYYY})\s+"
-            + SharedPatterns.DESCRIPTION
+            + NONEMPTY_DESCRIPTION
             + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
         ),
         # Later pages of a consolidated statement indent the table further right
@@ -82,6 +91,32 @@ class Dbs(BankBase):
         # those real amounts while still rejecting balance-only summary lines,
         # whose amounts land at col 239+.
         transaction_bound=230,
+    )
+
+    # DBS/POSB consolidated statements issued before mid-2021 were rendered by StreamServe: each account's
+    # table has a "Date Description Withdrawal Deposit Balance" header (no "(-)"/"(+)" markers) and "03 Jun"
+    # dates. They also carry a debit card summary whose "DATE DESCRIPTION ... AMOUNT" header would match the
+    # credit config, so this config is tried first; its header doesn't occur in any other DBS layout.
+    consolidated_legacy = StatementConfig(
+        currency="SGD",
+        statement_type=EntryType.DEBIT,
+        statement_date_pattern=re.compile(rf"As at {ISO8601.DD_MMM_YYYY}"),
+        account_pattern=CONSOLIDATED_ACCOUNT,
+        multiline_config=MultilineConfig(
+            multiline_descriptions=True,
+            description_margin=10,
+        ),
+        header_pattern=re.compile(r"(Date\s+Description\s+Withdrawal\s+Deposit\s+Balance)"),
+        transaction_date_format="%d %b",
+        # Account rows are dated in title case ("03 Jun"); the debit card summary that follows the accounts
+        # prints its months in capitals ("31 MAY") and lists card spending already in the accounts, so
+        # matching title-case months only keeps it out.
+        transaction_pattern=re.compile(
+            r"\b"
+            + SharedPatterns.TRANSACTION_DATE_ABBREVIATED_PROPER_CASE
+            + NONEMPTY_DESCRIPTION
+            + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+        ),
     )
 
     identifiers = [
@@ -93,6 +128,17 @@ class Dbs(BankBase):
             TextIdentifier("DBS"),
             MetadataIdentifier(creator="Quadient"),
         ],
+        # Statements issued before mid-2021 were rendered by StreamServe, with creator "DBS"
+        [
+            TextIdentifier("DBS"),
+            MetadataIdentifier(creator="DBS", producer="StreamServe"),
+        ],
+        # ...and DBS/POSB consolidated statements of that time, whose creator is empty
+        [
+            TextIdentifier("DBS Bank Ltd"),
+            TextIdentifier("CONSOLIDATED STATEMENT"),
+            MetadataIdentifier(producer="StreamServe"),
+        ],
     ]
 
-    statement_configs = [credit, consolidated, debit]
+    statement_configs = [consolidated_legacy, credit, consolidated, debit]

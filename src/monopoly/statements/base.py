@@ -11,6 +11,7 @@ from typing import ClassVar
 from monopoly.config import MultilineConfig, StatementConfig
 from monopoly.constants import Columns, Direction, SharedPatterns
 from monopoly.pdf import PdfPage
+from monopoly.statements.account_resolver import AccountResolver
 from monopoly.statements.date_resolver import DateResolver
 from monopoly.statements.number_extractor import NumberExtractor
 from monopoly.statements.transaction import (
@@ -22,21 +23,6 @@ from monopoly.statements.transaction import (
 logger = logging.getLogger(__name__)
 
 MIN_BREAK_GAP = 20  # Minimum gap between words and numbers to trigger break
-ACCOUNT_LAST_N = 4  # number of trailing account/card digits stamped onto transactions
-
-
-def extract_last4(account_token: str | None) -> str | None:
-    """
-    Derive the last 4 digits from a matched account/card number token.
-
-    Masked tokens are fine because only trailing digits matter:
-    "4417 88XX XXXX 2031" -> "2031", "098-7-654321" -> "4321". Returns None when
-    fewer than 4 digits are present (nothing meaningful to stamp).
-    """
-    if account_token is None:
-        return None
-    digits = re.sub(r"\D", "", account_token)
-    return digits[-ACCOUNT_LAST_N:] if len(digits) >= ACCOUNT_LAST_N else None
 
 
 @dataclass
@@ -190,11 +176,12 @@ class BaseStatement(ABC):
 
     def _build_transaction(self, raw_transaction: RawTransaction, context: MatchContext) -> Transaction:
         """Run the pre/post-processing hooks and construct the Transaction."""
+        account = self.account_resolver.at(raw_transaction.page_number, context.idx)
         processed = self.process_match(self.pre_process_match(raw_transaction), context)
         return Transaction(
             **processed.as_dict(),
             currency=self.config.currency,
-            account=self.account,
+            account=account,
             auto_direction=self.config.transaction_auto_direction,
         )
 
@@ -279,22 +266,8 @@ class BaseStatement(ABC):
         return self.date_resolver.resolve_period_start()
 
     @cached_property
-    def account(self) -> str | None:
-        """
-        The account/card last 4 digits, or None if not configured/found.
-
-        Located once per statement via `config.account_pattern` (named `account`
-        group) and set on every transaction when it is built, the same way
-        `currency` is. See `config.StatementConfig.account_pattern`.
-        """
-        pattern = self.config.account_pattern
-        if pattern is None:
-            return None
-        for page in self.pages:
-            for line in page.lines:
-                if match := pattern.search(line):
-                    return extract_last4(match.group("account"))
-        return None
+    def account_resolver(self) -> AccountResolver:
+        return AccountResolver(self.pages, self.config)
 
     @abstractmethod
     def perform_safety_check(self) -> bool:

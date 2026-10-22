@@ -217,9 +217,10 @@ normalized in the model; the internal parser still captures raw markers into
 `account` (per-transaction last-4) and `period_start` (envelope) are populated by
 opt-in, per-config regex patterns — `StatementConfig.account_pattern` (named
 `account` group) and `StatementConfig.period_start_pattern` — added per bank/vintage
-the same way identifiers are (see #308). `account` is resolved once per statement
-via `BaseStatement.account` (last-4 derived by `statements.base.extract_last4`) and
-set on every transaction when the statement builds it, mirroring `currency`;
+the same way identifiers are. `AccountResolver` treats every `account_pattern` match
+as a section header: each transaction takes the last-4 of the nearest one above it,
+so consolidated statements tag each row with its own card/account. Patterns must
+match section headers, not summary tables;
 `period_start` is resolved by `DateResolver.resolve_period_start` (content-only, no
 filename fallback, never raises). Both stay `None` where no pattern is configured,
 so this is backward-compatible (no `SCHEMA_VERSION` bump). Coverage is incremental:
@@ -253,7 +254,7 @@ directly as a per-row id (that reintroduces collisions). Two caveats: (1) the
 occurrence ordinal is stable within one statement's row order but cannot
 guarantee cross-statement stability if a bank re-sorts identical same-day rows
 in an overlapping statement — inherent to a stateless parser; (2) `account` is one
-of the `content_hash` inputs, so configuring an `account_pattern` for a bank (#308)
+of the `content_hash` inputs, so configuring an `account_pattern` for a bank
 rotates *every* `id` for that bank's statements, not just duplicates — expected, and
 why the integration `expected.json` fixtures were regenerated when patterns landed.
 
