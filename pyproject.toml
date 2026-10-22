@@ -7,7 +7,7 @@ requires-python = "<3.15,>=3.10"
 dependencies = [
     "pydantic-settings>=2.9.1",
     "pymupdf>=1.26.0",
-    "pdftotext>=3.0.0",
+    "pdftotext>=4.0.0",
     "click>=8.2.1",
     "tqdm>=4.67.1",
     "tabulate>=0.9.0",

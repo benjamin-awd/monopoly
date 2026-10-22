@@ -3,7 +3,7 @@ UNAME := $(shell uname -s)
 setup:
 	# install system dependencies (poppler headers/libs + a C toolchain for pdftotext)
 ifeq ($(UNAME),Linux)
-	sudo apt-get install -y build-essential pkg-config libpoppler-cpp-dev
+	sudo apt-get install -y build-essential libpoppler-cpp-dev
 else
 	brew bundle --verbose
 endif
