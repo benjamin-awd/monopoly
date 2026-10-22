@@ -39,7 +39,9 @@ class AccountResolver:
             return
         for page_num, page in enumerate(pages):
             for line_num, line in enumerate(page.lines):
-                if (match := pattern.search(line)) and (last4 := extract_last4(match.group("account"))):
+                if not (match := pattern.search(line)):
+                    continue
+                if last4 := extract_last4(match["account"]):
                     self.headers.append(((page_num, line_num), last4))
 
     @property
