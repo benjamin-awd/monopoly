@@ -1,6 +1,12 @@
+UNAME := $(shell uname -s)
+
 setup:
-	# install brew dependencies
+	# install system dependencies (poppler headers/libs + a C toolchain for pdftotext)
+ifeq ($(UNAME),Linux)
+	sudo apt-get install -y build-essential libpoppler-cpp-dev
+else
 	brew bundle --verbose
+endif
 
 	# install uv dependencies
 	uv venv

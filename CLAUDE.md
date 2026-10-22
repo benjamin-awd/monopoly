@@ -48,10 +48,12 @@ Monopoly is a Python library & CLI that converts bank statement PDFs to CSV. It 
 
 ### Setup
 ```bash
-# Install dependencies (requires Homebrew on macOS)
-brew install make
+# Install system deps (apt on Linux, Homebrew elsewhere) + the uv env
 make setup
-brew bundle
+
+# Python comes from uv (.python-version, python-preference = "only-managed"),
+# not Homebrew: brew's Python builds pdftotext with a brew gcc and a RUNPATH to
+# an older libstdc++ that clashes with the system libpoppler.
 
 # Or using uv directly
 uv venv
