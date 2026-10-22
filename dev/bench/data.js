@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792660659432,
+  "lastUpdate": 1792661059612,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -1461,6 +1461,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 2.8923397690200003,
             "range": "± 0.03212744091539736",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "33e7878b78963bb6197d3b16db55058193daa7a6",
+          "message": "build(deps): bump pdftotext to 4.0.0 and drop pkg-config (#344)\n\n* chore: pin Python 3.13 for local development\n\nPython 3.14 has no prebuilt wheel for the locked regex==2024.11.6, so uv\nfalls back to compiling it from source and fails without a C compiler.\nStop ignoring .python-version so the pin is shared.\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* chore: drop python from Brewfile; uv provisions it via .python-version\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* build: use uv-managed Python so pdftotext builds with the system toolchain\n\nHomebrew's Python hardcodes CC=gcc-N in sysconfig, so pdftotext was built\nwith brew's gcc and a RUNPATH to its older libstdc++, which failed to load\nagainst the system libpoppler (GLIBCXX_3.4.32 not found). gcc@11 in the\nBrewfile only existed to satisfy that.\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* build: install system deps with apt on Linux, brew elsewhere\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* docs: update setup instructions for uv-managed Python and apt on Linux\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* build(deps): bump pdftotext to 4.0.0 and drop pkg-config\n\npdftotext 4.0.0 moved to pyproject.toml and no longer needs pkg-config at\nbuild time (it links -lpoppler-cpp directly). Extraction with physical=True\nis byte-identical to 3.0.0 across 89 real statements.\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* chore: drop redundant python-preference comment from pyproject\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-22T17:19:24+08:00",
+          "tree_id": "7e2a62ccd3d2e347e1d28e8e5eafadd47b273aa2",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/33e7878b78963bb6197d3b16db55058193daa7a6"
+        },
+        "date": 1792661058941,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.48487047606000006,
+            "range": "± 0.005540812694006881",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 2.04422461634,
+            "range": "± 0.06926065112813205",
             "unit": "s"
           }
         ]
