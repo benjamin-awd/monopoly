@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.23.3](https://github.com/benjamin-awd/monopoly/compare/v0.23.2...v0.23.3) (2026-10-22)
+
+
+### Bug Fixes
+
+* **dbs:** read DBS/POSB consolidated statements rendered by StreamServe (pre-2021) ([#342](https://github.com/benjamin-awd/monopoly/issues/342)) ([e2de73b](https://github.com/benjamin-awd/monopoly/commit/e2de73bd432b1e73527a4ccfeab8e775a45dc8fd))
+
 ## [0.23.2](https://github.com/benjamin-awd/monopoly/compare/v0.23.1...v0.23.2) (2026-10-04)
 
 
