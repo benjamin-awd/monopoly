@@ -142,7 +142,4 @@ module = [
 ignore_missing_imports = true
 
 [tool.uv]
-# Use uv's standalone Python, not Homebrew's: brew's sysconfig hardcodes
-# CC=gcc-N, so C extensions (pdftotext) get built with a brew gcc and a RUNPATH
-# to its older libstdc++, which then clashes with the system libpoppler.
 python-preference = "only-managed"
