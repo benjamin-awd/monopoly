@@ -156,3 +156,10 @@ def test_each_previous_balance_takes_the_account_of_its_own_section():
     balances = _statement_with_prev_balances(["100.00", "200.00"])
 
     assert {abs(t.amount): t.account for t in balances} == {100.0: "4444", 200.0: "8888"}
+
+
+def test_identical_previous_balance_lines_take_their_own_sections():
+    # the same text in two sections must not resolve to the first one's account
+    balances = _statement_with_prev_balances(["100.00", "100.00"])
+
+    assert sorted(t.account for t in balances) == ["4444", "8888"]

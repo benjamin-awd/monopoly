@@ -5,6 +5,7 @@ from datetime import datetime
 from monopoly.constants import TransactionKind
 from monopoly.serialize import SCHEMA_VERSION, assign_ids, statement_to_dict
 from monopoly.statements import Transaction
+from monopoly.statements.credit_statement import PrevBalanceMatch
 
 TRANSACTION_KEYS = {
     "id",
@@ -192,7 +193,7 @@ def test_credit_prev_balance_prepend_preserves_duplicate_ordinals(credit_stateme
     insert(0, ...). Ensure the reorder doesn't break ordinal assignment for a
     real duplicate pair, and the synthetic row isn't content-identical to them."""
     match = re.compile(r"(?P<description>PREV BAL) (?P<amount>[\d.]+)").search("PREV BAL 500.00")
-    monkeypatch.setattr(credit_statement, "get_prev_month_balances", lambda: [match])
+    monkeypatch.setattr(credit_statement, "get_prev_month_balances", lambda: [PrevBalanceMatch(0, 0, match)])
 
     processed = credit_statement.post_process_transactions([_dup(), _dup()])
 

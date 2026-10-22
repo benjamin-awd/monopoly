@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, patch
 
 from monopoly.constants import TransactionKind
 from monopoly.statements import CreditStatement, Transaction
+from monopoly.statements.credit_statement import PrevBalanceMatch
 
 
 def test_prev_month_balance_found(credit_statement: CreditStatement):
@@ -14,7 +15,8 @@ def test_prev_month_balance_found(credit_statement: CreditStatement):
     credit_statement.pages[0].lines = ["LAST MONTH'S BALANCE   84.89"]
 
     result = credit_statement.get_prev_month_balances()
-    assert result[0].group() == expected
+    assert result[0].match.group() == expected
+    assert (result[0].page_num, result[0].line_num) == (0, 0)
 
 
 def test_multiple_prev_month_balance(credit_statement: CreditStatement):
@@ -31,7 +33,7 @@ def test_multiple_prev_month_balance(credit_statement: CreditStatement):
         "LAST MONTH'S BALANCE  123.12",
     ]
 
-    results = [match.group() for match in credit_statement.get_prev_month_balances()]
+    results = [balance.match.group() for balance in credit_statement.get_prev_month_balances()]
     assert results == expected
 
 
@@ -58,8 +60,8 @@ def mock_get_prev_month_balances(transactions):
             }
 
     return [
-        MockRegexMatch(transaction_date="1900-01-01", description="foo", amount="99.99"),
-        MockRegexMatch(transaction_date="1900-01-01", description="bar", amount="123.12"),
+        PrevBalanceMatch(0, 0, MockRegexMatch(transaction_date="1900-01-01", description="foo", amount="99.99")),
+        PrevBalanceMatch(0, 1, MockRegexMatch(transaction_date="1900-01-01", description="bar", amount="123.12")),
     ]
 
 
