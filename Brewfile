@@ -1,6 +1,4 @@
-brew "gcc@11"
 brew "pkg-config"
 brew "uv"
 brew "poppler"
-brew "python@3.13"
 brew "pre-commit"

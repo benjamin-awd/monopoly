@@ -122,9 +122,8 @@ Clone the repo
 git clone https://github.com/benjamin-awd/monopoly.git
 ```
 
-Install dependencies using [Homebrew](https://brew.sh/)
+Install system dependencies and the Python environment
 ```bash
-brew install make
 make setup
-brew bundle
 ```
+On Linux this uses `apt` (`build-essential`, `pkg-config`, `libpoppler-cpp-dev`); elsewhere it uses [Homebrew](https://brew.sh/) (`brew bundle`). Python itself is provisioned by `uv` (pinned in `.python-version`), not Homebrew.

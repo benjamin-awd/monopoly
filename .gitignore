@@ -10,7 +10,6 @@
 *.ipynb
 *.txt
 .coverage
-.python-version
 Brewfile.*
 __pycache__
 _ignore*
