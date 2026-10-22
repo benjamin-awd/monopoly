@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792661059612,
+  "lastUpdate": 1792673905976,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -1497,6 +1497,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 2.04422461634,
             "range": "± 0.06926065112813205",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "82356519+bsaurusrex@users.noreply.github.com",
+            "name": "Brian Taylor",
+            "username": "bsaurusrex"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e2de73bd432b1e73527a4ccfeab8e775a45dc8fd",
+          "message": "fix(dbs): read DBS/POSB consolidated statements rendered by StreamServe (pre-2021) (#342)\n\n* fix(dbs): detect statements rendered by StreamServe (pre-2021)\n\nDBS credit card statements issued before mid-2021 carry creator \"DBS\" and a\nStreamServe producer instead of Quadient, so they fell through to the generic\nparser: rows lost their card number and some statements failed with\n\"Could not find any transactions\". The existing DBS credit config parses them\nunchanged once they're detected.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* feat: stamp each transaction with its own card on consolidated statements\n\nA consolidated statement (DBS prints one per customer) has one section per card,\neach opened by its own \"CARD NO.:\" header and with its own previous balance.\nThe account was located once per statement, so every row, and every previous\nbalance, carried the first card's number.\n\nAdd an opt-in StatementConfig.account_per_section: each transaction (and each\nprevious-balance row) takes the account of the nearest account_pattern match\nabove it. Enabled for the DBS credit config. Off by default, so other banks'\noutput is unchanged; Statement.account still returns the first account.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* fix(dbs): skip balance-only lines and read the account on consolidated statements\n\nThe last line of an account's transactions on a DBS/POSB consolidated statement\ncarries a date and the account's balance, with nothing withdrawn or deposited.\nOn pages where the table sits far enough right, it fell inside\ntransaction_bound and was read as a deposit of the balance, so the safety check\nfailed. Require a description, which that line never has.\n\nAlso read the account number from the account summary row, so transactions\ncarry the account's last 4 digits.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* fix(dbs): read DBS/POSB consolidated statements rendered by StreamServe (pre-2021)\n\nDBS/POSB consolidated (deposit) statements issued before mid-2021 have an empty\ncreator and a StreamServe producer, so they weren't detected as DBS. Under the\ngeneric parser, their debit card summary (\"DATE DESCRIPTION ... AMOUNT\") made\nthem look like credit statements, and the safety check failed.\n\n- New identifier group: \"DBS Bank Ltd\" and \"CONSOLIDATED STATEMENT\" in the text,\n  StreamServe producer.\n- New `consolidated_legacy` config, tried first: its \"Date Description\n  Withdrawal Deposit Balance\" header (no \"(-)\"/\"(+)\") occurs in no other DBS\n  layout. \"03 Jun\" dates, title-case months only (the card summary that follows\n  the accounts uses capitals and repeats spending already listed), the account\n  from each \"Account No.\" header (account_per_section), \"As at\" statement date.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* feat: resolve each transaction's account by section for every bank\n\nEvery account_pattern match now opens a section, and a transaction takes the\naccount of the nearest header above it. This replaces the opt-in\naccount_per_section flag: consolidated statements from several banks (OCBC,\nBank of America, DBS) need it, and Standard Chartered's rows were tagged with\nthe number from its summary table instead of the card above them.\n\nThe lookup moves into AccountResolver, which also fixes the _iter_matches\nreturn type that mypy flagged. The Standard Chartered fixture is regenerated:\nits rows now take the section's card, which also changes their ids.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* fix: give each previous balance the account of its own line\n\nA previous-balance row found its account by searching the statement for a line\nwith the same text, so identical balance lines in two sections both took the\nfirst section's account. get_prev_month_balances now returns each match with its\npage and line (PrevBalanceMatch), and the account is resolved from that position.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* fix(dbs): read the consolidated account from each section header\n\nThe account came from the account summary row, which is printed before every\nsection, so with section-based resolution every row would take the last summary\naccount. Some statements also print a truncated number there, leaving the\naccount empty. Each account's table opens with \"Account No. 123-456789-0\" on\nevery page, so that line is used instead.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* refactor(dbs): reuse the shared title-case date pattern for legacy consolidated rows\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* refactor(dbs): share the consolidated account and non-empty description patterns\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* refactor: build account headers once and bisect them by position\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* refactor: split the account header match into two readable steps\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* refactor: name the account header tuple\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* docs(ocbc): describe account_pattern as a per-card section header\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* refactor: drop the unused statement-level account\n\nTransactions and previous balances already read their account from\nAccountResolver.at, so BaseStatement.account and its account_at wrapper\nhad no callers outside tests.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>\nCo-authored-by: Benjamin Dornel <benjamindornel@gmail.com>",
+          "timestamp": "2026-10-22T20:56:56+08:00",
+          "tree_id": "cf03412cff84a2785b5e7ae5c0264df9c89075c3",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/e2de73bd432b1e73527a4ccfeab8e775a45dc8fd"
+        },
+        "date": 1792673905509,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.33825670976,
+            "range": "± 0.0037912497490475397",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 1.39749833642,
+            "range": "± 0.02939506773156323",
             "unit": "s"
           }
         ]
