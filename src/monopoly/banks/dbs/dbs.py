@@ -6,6 +6,12 @@ from monopoly.constants import EntryType, SharedPatterns
 from monopoly.constants.date import ISO8601
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
+# Each account's table on a consolidated statement opens with "<account name>   Account No. 123-456789-0"
+CONSOLIDATED_ACCOUNT = re.compile(r"Account No\.\s*(?P<account>\d{3}-\d{1,6}-\d{1,6})")
+# A non-empty description: an account's closing line ("30/06/2023 ... 20.66") has a date and its balance
+# only, which would otherwise read as a deposit of that balance
+NONEMPTY_DESCRIPTION = r"(?P<description>\S.*?)\s+"
+
 
 class Dbs(BankBase):
     name = "dbs"
@@ -65,19 +71,18 @@ class Dbs(BankBase):
         currency="SGD",
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"Details as at {ISO8601.DD_MMM_YYYY}"),
-        # each account's table opens with "DBS Multiplier Account   Account No. 123-456789-0" on every
-        # page. The account summary above the tables can print the number truncated, so it isn't used.
-        account_pattern=re.compile(r"Account No\.\s*(?P<account>\d{3}-\d{1,6}-\d{1,6})"),
+        # the account table headers repeat on every page; the account summary above them can print the
+        # number truncated, so it isn't used
+        account_pattern=CONSOLIDATED_ACCOUNT,
         multiline_config=MultilineConfig(
             multiline_descriptions=True,
             description_margin=10,  # Allow for indented PayNow/transaction details
         ),
         header_pattern=re.compile(r"(\s*Date\s+Description\s+Withdrawal.*)"),
         transaction_date_format="%d/%m/%Y",
-        # The description must not be empty: the closing line of an account ("30/06/2023 ... 20.66")
-        # has a date and its balance only, which would otherwise read as a deposit of that balance.
         transaction_pattern=re.compile(
-            rf"(?P<transaction_date>{ISO8601.DD_MM_YYYY})\s+(?P<description>\S.*?)\s+"
+            rf"(?P<transaction_date>{ISO8601.DD_MM_YYYY})\s+"
+            + NONEMPTY_DESCRIPTION
             + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
         ),
         # Later pages of a consolidated statement indent the table further right
@@ -96,8 +101,7 @@ class Dbs(BankBase):
         currency="SGD",
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"As at {ISO8601.DD_MMM_YYYY}"),
-        # each account's table opens with "<account name>   Account No. 123-456789-0"
-        account_pattern=re.compile(r"Account No\.\s*(?P<account>\d{3}-\d{1,6}-\d{1,6})"),
+        account_pattern=CONSOLIDATED_ACCOUNT,
         multiline_config=MultilineConfig(
             multiline_descriptions=True,
             description_margin=10,
@@ -110,7 +114,7 @@ class Dbs(BankBase):
         transaction_pattern=re.compile(
             r"\b"
             + SharedPatterns.TRANSACTION_DATE_ABBREVIATED_PROPER_CASE
-            + r"(?P<description>\S.*?)\s+"
+            + NONEMPTY_DESCRIPTION
             + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
         ),
     )
