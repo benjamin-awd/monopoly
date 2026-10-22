@@ -65,8 +65,9 @@ class Dbs(BankBase):
         currency="SGD",
         statement_type=EntryType.DEBIT,
         statement_date_pattern=re.compile(rf"Details as at {ISO8601.DD_MMM_YYYY}"),
-        # the account summary row, e.g. "DBS Multiplier Account   123-4-567890   SGD   1,234.56"
-        account_pattern=re.compile(r"Account\s+(?P<account>\d{3}-\d{1,6}-\d{1,6})\s+SGD"),
+        # each account's table opens with "DBS Multiplier Account   Account No. 123-456789-0" on every
+        # page. The account summary above the tables can print the number truncated, so it isn't used.
+        account_pattern=re.compile(r"Account No\.\s*(?P<account>\d{3}-\d{1,6}-\d{1,6})"),
         multiline_config=MultilineConfig(
             multiline_descriptions=True,
             description_margin=10,  # Allow for indented PayNow/transaction details

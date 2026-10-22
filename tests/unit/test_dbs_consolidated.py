@@ -35,8 +35,20 @@ def test_balance_only_closing_line_is_not_a_transaction():
     assert PATTERN.search("30/06/2023                                                                20.66") is None
 
 
-def test_account_comes_from_the_summary_row():
-    match = ACCOUNT.search("DBS Multiplier Account                           123-4-567890          SGD        1,234.56")
+def test_account_comes_from_each_account_header():
+    match = ACCOUNT.search("DBS Multiplier Account                      Account No. 123-456789-0")
     assert match
-    assert match.group("account") == "123-4-567890"
-    assert ACCOUNT.search("Balance Brought Forward                                        SGD 25.57") is None
+    assert match.group("account") == "123-456789-0"
+
+
+@pytest.mark.parametrize(
+    "line",
+    [
+        # the account summary row comes before every section, so it must not open one
+        "DBS Multiplier Account                           123-4-567890          SGD        1,234.56",
+        "Account                 Account No.              Balance             Balance",
+        "Balance Brought Forward                                        SGD 25.57",
+    ],
+)
+def test_summary_lines_are_not_account_headers(line):
+    assert ACCOUNT.search(line) is None
