@@ -2,7 +2,8 @@
 
 import re
 from bisect import bisect_right
-from operator import itemgetter
+from operator import attrgetter
+from typing import NamedTuple
 
 from monopoly.config import StatementConfig
 from monopoly.pdf import PdfPage
@@ -24,6 +25,13 @@ def extract_last4(account_token: str | None) -> str | None:
     return digits[-ACCOUNT_LAST_N:] if len(digits) >= ACCOUNT_LAST_N else None
 
 
+class AccountHeader(NamedTuple):
+    """An account/card header line: where it is, and the last 4 digits it opens a section for."""
+
+    position: tuple[int, int]  # (page, line)
+    last4: str
+
+
 class AccountResolver:
     """
     Resolves each line's account from `config.account_pattern` matches.
@@ -33,8 +41,7 @@ class AccountResolver:
     """
 
     def __init__(self, pages: list[PdfPage], config: StatementConfig):
-        # every account header in reading order, as ((page, line), last 4)
-        self.headers: list[tuple[tuple[int, int], str]] = []
+        self.headers: list[AccountHeader] = []  # in reading order
         if (pattern := config.account_pattern) is None:
             return
         for page_num, page in enumerate(pages):
@@ -42,14 +49,14 @@ class AccountResolver:
                 if not (match := pattern.search(line)):
                     continue
                 if last4 := extract_last4(match["account"]):
-                    self.headers.append(((page_num, line_num), last4))
+                    self.headers.append(AccountHeader((page_num, line_num), last4))
 
     @property
     def first(self) -> str | None:
         """The statement's first account, or None if not configured/found."""
-        return self.headers[0][1] if self.headers else None
+        return self.headers[0].last4 if self.headers else None
 
     def at(self, page_num: int, line_num: int) -> str | None:
         """Return the account of the section a line is in."""
-        idx = bisect_right(self.headers, (page_num, line_num), key=itemgetter(0))
-        return self.headers[idx - 1][1] if idx else self.first
+        idx = bisect_right(self.headers, (page_num, line_num), key=attrgetter("position"))
+        return self.headers[idx - 1].last4 if idx else self.first
