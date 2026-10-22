@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792659837845,
+  "lastUpdate": 1792660659432,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -1425,6 +1425,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 4.06402486308,
             "range": "± 0.02525793263890222",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dadc569b35b1dc617a4df3a1277a5da9e72410d3",
+          "message": "chore: pin Python 3.13 for local development (#343)\n\n* chore: pin Python 3.13 for local development\n\nPython 3.14 has no prebuilt wheel for the locked regex==2024.11.6, so uv\nfalls back to compiling it from source and fails without a C compiler.\nStop ignoring .python-version so the pin is shared.\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* chore: drop python from Brewfile; uv provisions it via .python-version\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* build: use uv-managed Python so pdftotext builds with the system toolchain\n\nHomebrew's Python hardcodes CC=gcc-N in sysconfig, so pdftotext was built\nwith brew's gcc and a RUNPATH to its older libstdc++, which failed to load\nagainst the system libpoppler (GLIBCXX_3.4.32 not found). gcc@11 in the\nBrewfile only existed to satisfy that.\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* build: install system deps with apt on Linux, brew elsewhere\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* docs: update setup instructions for uv-managed Python and apt on Linux\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-22T17:16:01+08:00",
+          "tree_id": "3851d065d6c0284880b8771cb7f4053f3529eda8",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/dadc569b35b1dc617a4df3a1277a5da9e72410d3"
+        },
+        "date": 1792660658918,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.69623174204,
+            "range": "± 0.005520986170661477",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 2.8923397690200003,
+            "range": "± 0.03212744091539736",
             "unit": "s"
           }
         ]
