@@ -108,8 +108,10 @@ class Dbs(BankBase):
         # prints its months in capitals ("31 MAY") and lists card spending already in the accounts, so
         # matching title-case months only keeps it out.
         transaction_pattern=re.compile(
-            r"(?P<transaction_date>\b\d{2}\s(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec))\s+"
-            r"(?P<description>\S.*?)\s+" + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
+            r"\b"
+            + SharedPatterns.TRANSACTION_DATE_ABBREVIATED_PROPER_CASE
+            + r"(?P<description>\S.*?)\s+"
+            + SharedPatterns.AMOUNT_EXTENDED_WITHOUT_EOL
         ),
     )
 
