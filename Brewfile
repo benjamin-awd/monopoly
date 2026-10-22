@@ -1,4 +1,3 @@
-brew "gcc@11"
 brew "pkg-config"
 brew "uv"
 brew "poppler"
