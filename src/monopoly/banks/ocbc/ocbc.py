@@ -14,9 +14,10 @@ class Ocbc(BankBase):
         currency="SGD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=ISO8601.DD_MM_YYYY.regex,
-        # 16-digit card number, e.g. "1234-5678-9012-2605" (next to the cardholder
-        # name and again on the summary row). A consolidated statement lists several
-        # cards; the first match (primary card) is stamped on all rows.
+        # 16-digit card number, e.g. "1234-5678-9012-2605", printed next to the
+        # cardholder name at the top of each card's section on a consolidated
+        # statement. It repeats on the closing summary row, which is harmless
+        # because no transactions follow it.
         account_pattern=re.compile(r"\b(?P<account>\d{4}-\d{4}-\d{4}-\d{4})\b"),
         header_pattern=re.compile(r"(TRANSACTION DATE.*DESCRIPTION.*AMOUNT)"),
         prev_balance_pattern=re.compile(
