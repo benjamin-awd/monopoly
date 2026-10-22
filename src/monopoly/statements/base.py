@@ -176,7 +176,7 @@ class BaseStatement(ABC):
 
     def _build_transaction(self, raw_transaction: RawTransaction, context: MatchContext) -> Transaction:
         """Run the pre/post-processing hooks and construct the Transaction."""
-        account = self.account_at(raw_transaction.page_number, context.idx)
+        account = self.account_resolver.at(raw_transaction.page_number, context.idx)
         processed = self.process_match(self.pre_process_match(raw_transaction), context)
         return Transaction(
             **processed.as_dict(),
@@ -268,22 +268,6 @@ class BaseStatement(ABC):
     @cached_property
     def account_resolver(self) -> AccountResolver:
         return AccountResolver(self.pages, self.config)
-
-    @cached_property
-    def account(self) -> str | None:
-        """
-        The statement's first account/card last 4 digits, or None if not configured/found.
-
-        Located via `config.account_pattern` (named `account` group). Transactions
-        take the account of their own section instead (`account_at`), which is
-        this one on a statement for a single account. See
-        `config.StatementConfig.account_pattern`.
-        """
-        return self.account_resolver.first
-
-    def account_at(self, page_num: int, line_num: int) -> str | None:
-        """Return the account/card of the section a line is in (see `AccountResolver`)."""
-        return self.account_resolver.at(page_num, line_num)
 
     @abstractmethod
     def perform_safety_check(self) -> bool:

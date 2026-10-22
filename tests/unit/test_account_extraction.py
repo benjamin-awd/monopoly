@@ -1,4 +1,4 @@
-"""Unit tests for account (last-4) extraction: helper + BaseStatement.account."""
+"""Unit tests for account (last-4) extraction: helper + AccountResolver."""
 
 import re
 from dataclasses import replace
@@ -50,14 +50,14 @@ def test_account_none_when_no_pattern_configured():
     config = _config_with_account_pattern(None)
     statement = _statement([PdfPage(raw_text="Account No. 987654321098")], config)
 
-    assert statement.account is None
+    assert statement.account_resolver.first is None
 
 
 def test_account_extracts_last4_from_content():
     config = _config_with_account_pattern(re.compile(r"Account No\.\s+(?P<account>\d+)"))
     statement = _statement([PdfPage(raw_text="Account No. 987654321098\nother line")], config)
 
-    assert statement.account == "1098"
+    assert statement.account_resolver.first == "1098"
 
 
 def test_account_searches_across_pages():
@@ -68,14 +68,14 @@ def test_account_searches_across_pages():
     ]
     statement = _statement(pages, config)
 
-    assert statement.account == "3333"
+    assert statement.account_resolver.first == "3333"
 
 
 def test_account_none_when_pattern_configured_but_no_match():
     config = _config_with_account_pattern(re.compile(r"Account No\.\s+(?P<account>\d+)"))
     statement = _statement([PdfPage(raw_text="no account line present")], config)
 
-    assert statement.account is None
+    assert statement.account_resolver.first is None
 
 
 def _consolidated_config():
@@ -120,8 +120,8 @@ def test_each_transaction_takes_the_account_of_its_own_section():
         ("SHOP THREE", "8888"),
         ("SHOP FOUR", "8888"),
     ]
-    # the statement-level account stays the first one
-    assert statement.account == "4444"
+    # the first account stays the fallback for lines above every header
+    assert statement.account_resolver.first == "4444"
 
 
 def test_lines_above_the_first_header_take_the_first_account():
