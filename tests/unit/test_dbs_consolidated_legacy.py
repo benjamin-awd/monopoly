@@ -51,7 +51,6 @@ def test_account_comes_from_each_account_header():
     match = CONFIG.account_pattern.search("DBS Multiplier Account                      Account No. 123-456789-0")
     assert match
     assert match.group("account") == "123-456789-0"
-    assert CONFIG.account_per_section
 
 
 def test_statement_date():

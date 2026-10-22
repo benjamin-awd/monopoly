@@ -11,6 +11,7 @@ from typing import ClassVar
 from monopoly.config import MultilineConfig, StatementConfig
 from monopoly.constants import Columns, Direction, SharedPatterns
 from monopoly.pdf import PdfPage
+from monopoly.statements.account_resolver import AccountResolver
 from monopoly.statements.date_resolver import DateResolver
 from monopoly.statements.number_extractor import NumberExtractor
 from monopoly.statements.transaction import (
@@ -22,21 +23,6 @@ from monopoly.statements.transaction import (
 logger = logging.getLogger(__name__)
 
 MIN_BREAK_GAP = 20  # Minimum gap between words and numbers to trigger break
-ACCOUNT_LAST_N = 4  # number of trailing account/card digits stamped onto transactions
-
-
-def extract_last4(account_token: str | None) -> str | None:
-    """
-    Derive the last 4 digits from a matched account/card number token.
-
-    Masked tokens are fine because only trailing digits matter:
-    "4417 88XX XXXX 2031" -> "2031", "098-7-654321" -> "4321". Returns None when
-    fewer than 4 digits are present (nothing meaningful to stamp).
-    """
-    if account_token is None:
-        return None
-    digits = re.sub(r"\D", "", account_token)
-    return digits[-ACCOUNT_LAST_N:] if len(digits) >= ACCOUNT_LAST_N else None
 
 
 @dataclass
@@ -186,12 +172,11 @@ class BaseStatement(ABC):
                     description=raw_transaction.description,
                     multiline_config=self.config.multiline_config,
                 )
-                yield raw_transaction, context, self.account_at(page_num, line_num)
+                yield raw_transaction, context
 
-    def _build_transaction(
-        self, raw_transaction: RawTransaction, context: MatchContext, account: str | None
-    ) -> Transaction:
+    def _build_transaction(self, raw_transaction: RawTransaction, context: MatchContext) -> Transaction:
         """Run the pre/post-processing hooks and construct the Transaction."""
+        account = self.account_at(raw_transaction.page_number, context.idx)
         processed = self.process_match(self.pre_process_match(raw_transaction), context)
         return Transaction(
             **processed.as_dict(),
@@ -201,7 +186,7 @@ class BaseStatement(ABC):
         )
 
     def get_transactions(self) -> list[Transaction]:
-        transactions = [self._build_transaction(raw, ctx, account) for raw, ctx, account in self._iter_matches()]
+        transactions = [self._build_transaction(raw, ctx) for raw, ctx in self._iter_matches()]
         return self.post_process_transactions(transactions)
 
     def _check_bound(self, match: re.Match):
@@ -281,22 +266,8 @@ class BaseStatement(ABC):
         return self.date_resolver.resolve_period_start()
 
     @cached_property
-    def account_headers(self) -> list[tuple[int, int, str]]:
-        """
-        Every `config.account_pattern` match in reading order, as (page, line, last 4).
-
-        A consolidated statement prints one header per card or account, each opening
-        its own section, so a transaction belongs to the nearest header above it.
-        """
-        pattern = self.config.account_pattern
-        if pattern is None:
-            return []
-        headers = []
-        for page_num, page in enumerate(self.pages):
-            for line_num, line in enumerate(page.lines):
-                if (match := pattern.search(line)) and (last4 := extract_last4(match.group("account"))):
-                    headers.append((page_num, line_num, last4))
-        return headers
+    def account_resolver(self) -> AccountResolver:
+        return AccountResolver(self.pages, self.config)
 
     @cached_property
     def account(self) -> str | None:
@@ -308,24 +279,11 @@ class BaseStatement(ABC):
         this one on a statement for a single account. See
         `config.StatementConfig.account_pattern`.
         """
-        return self.account_headers[0][2] if self.account_headers else None
+        return self.account_resolver.first
 
     def account_at(self, page_num: int, line_num: int) -> str | None:
-        """
-        Return the account/card for a line.
-
-        With `config.account_per_section`, that is the section's: the nearest account
-        header at or above it (a line before the first header, e.g. a summary at the
-        top, takes the first account). Otherwise the statement's first.
-        """
-        current = self.account
-        if not self.config.account_per_section:
-            return current
-        for header_page, header_line, last4 in self.account_headers:
-            if (header_page, header_line) > (page_num, line_num):
-                break
-            current = last4
-        return current
+        """Return the account/card of the section a line is in (see `AccountResolver`)."""
+        return self.account_resolver.at(page_num, line_num)
 
     @abstractmethod
     def perform_safety_check(self) -> bool:

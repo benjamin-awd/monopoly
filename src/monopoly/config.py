@@ -119,16 +119,13 @@ class StatementConfig:
     `statement_date_pattern` (either a single capture group, or `day`/`month`/`year`
     groups). Content-only (no filename fallback); left None where unknown.
     - `account_pattern` is an optional regex that locates the statement's account or
-    card number so its last 4 digits can be stamped onto every Transaction and
+    card number so its last 4 digits can be stamped onto each Transaction and
     surfaced as the nullable per-transaction `account` in the JSON schema (analogous
     to `currency`). It must expose a named `account` group capturing the account/card
     number token (masked digits like `4417 88XX XXXX 2031` are fine); the last 4
-    digits are derived from it. Set per config/vintage, same shape as identifiers.
-    Left None where unknown.
-    - `account_per_section`: for consolidated statements that print one header per
-    card or account (e.g. DBS), each transaction takes the account of the nearest
-    `account_pattern` match above it instead of the statement's first one. Off by
-    default.
+    digits are derived from it. Each match opens a section; a transaction takes the
+    nearest one above it, so match section headers, not summary tables. Set per
+    config/vintage, same shape as identifiers. Left None where unknown.
     - `multiline_config` determines whether Monopoly tries to concatenate
     transactions that are split across two lines
     - `header_pattern` is a regex pattern that is used to find the 'header' line
@@ -166,7 +163,6 @@ class StatementConfig:
     header_pattern: Pattern[str]
     period_start_pattern: Pattern[str] | None = None
     account_pattern: Pattern[str] | None = None
-    account_per_section: bool = False
     transaction_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
     statement_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
     transaction_date_format: str = ""

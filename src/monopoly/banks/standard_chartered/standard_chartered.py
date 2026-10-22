@@ -14,8 +14,8 @@ class StandardChartered(BankBase):
         currency="SGD",
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(rf": {ISO8601.DD_MMM_YYYY}$"),
-        # masked card number, e.g. "5555-98XX-XXXX-4321". A consolidated statement can
-        # list several cards; the first match (primary card) is stamped on all rows.
+        # masked card number, e.g. "5555-98XX-XXXX-4321". The account summary at the top can list
+        # a different number; rows take the card printed above their own section.
         account_pattern=re.compile(r"\b(?P<account>\d{4}-[\dX]{4}-[\dX]{4}-\d{4})"),
         header_pattern=re.compile(r"(Transaction.*Posting.*Amount)"),
         prev_balance_pattern=re.compile(

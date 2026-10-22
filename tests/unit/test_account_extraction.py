@@ -10,7 +10,7 @@ from monopoly.config import DateOrder, StatementConfig
 from monopoly.constants import EntryType, TransactionKind
 from monopoly.pdf import PdfPage
 from monopoly.statements import CreditStatement
-from monopoly.statements.base import extract_last4
+from monopoly.statements.account_resolver import extract_last4
 
 
 @pytest.mark.parametrize(
@@ -78,7 +78,7 @@ def test_account_none_when_pattern_configured_but_no_match():
     assert statement.account is None
 
 
-def _consolidated_config(per_section=True):
+def _consolidated_config():
     return StatementConfig(
         statement_type=EntryType.CREDIT,
         header_pattern=re.compile(r"DATE.*AMOUNT"),
@@ -87,7 +87,6 @@ def _consolidated_config(per_section=True):
         ),
         statement_date_pattern=re.compile(r"(\d{1,2} \w{3} \d{4})"),
         account_pattern=re.compile(r"CARD NO\.:\s*(?P<account>\d{4}(?:\s+\d{4}){3})"),
-        account_per_section=per_section,
         statement_date_order=DateOrder("DMY"),
     )
 
@@ -132,33 +131,28 @@ def test_lines_above_the_first_header_take_the_first_account():
     assert [t.account for t in statement.transactions] == ["4444", "4444"]
 
 
-def test_without_per_section_every_transaction_keeps_the_first_account():
-    statement = _statement(CONSOLIDATED, _consolidated_config(per_section=False))
+def test_header_repeated_on_each_page_keeps_one_account():
+    header = "CARD NO.: 1111 2222 3333 4444"
+    pages = [PdfPage(raw_text=f"{header}\n01 Oct SHOP ONE 10.00"), PdfPage(raw_text=f"{header}\n02 Oct SHOP TWO 20.00")]
+    statement = _statement(pages, _consolidated_config())
 
     assert {t.account for t in statement.transactions} == {"4444"}
 
 
-def test_each_previous_balance_takes_the_account_of_its_own_section():
+def _statement_with_prev_balances(amounts):
     config = replace(
         _consolidated_config(),
         prev_balance_pattern=re.compile(r"(?P<description>PREVIOUS BALANCE)\s+(?P<amount>\d+\.\d{2})"),
     )
-    pages = [
-        PdfPage(
-            raw_text="\n".join(
-                [
-                    "STATEMENT DATE 15 Oct 2026",
-                    "CARD A CARD NO.: 1111 2222 3333 4444",
-                    "PREVIOUS BALANCE 100.00",
-                    "01 Oct SHOP ONE 10.00",
-                    "CARD B CARD NO.: 5555 6666 7777 8888",
-                    "PREVIOUS BALANCE 200.00",
-                    "02 Oct SHOP TWO 20.00",
-                ]
-            )
-        )
-    ]
+    lines = ["STATEMENT DATE 15 Oct 2026"]
+    for card, amount, row in zip(("1111 2222 3333 4444", "5555 6666 7777 8888"), amounts, ("01", "02"), strict=True):
+        lines += [f"CARD NO.: {card}", f"PREVIOUS BALANCE {amount}", f"{row} Oct SHOP {row} 10.00"]
+    pages = [PdfPage(raw_text="\n".join(lines))]
     statement = CreditStatement(pages=pages, bank_name="example", config=config, header="foo")
+    return [t for t in statement.transactions if t.kind == TransactionKind.PREVIOUS_BALANCE]
 
-    balances = {t.amount: t.account for t in statement.transactions if t.kind == TransactionKind.PREVIOUS_BALANCE}
-    assert {abs(amount): account for amount, account in balances.items()} == {100.0: "4444", 200.0: "8888"}
+
+def test_each_previous_balance_takes_the_account_of_its_own_section():
+    balances = _statement_with_prev_balances(["100.00", "200.00"])
+
+    assert {abs(t.amount): t.account for t in balances} == {100.0: "4444", 200.0: "8888"}
