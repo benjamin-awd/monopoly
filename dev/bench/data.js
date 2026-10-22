@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792575323587,
+  "lastUpdate": 1792659837845,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -1389,6 +1389,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 3.4996078804199997,
             "range": "± 0.021777343908501584",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "distinct": true,
+          "id": "8149dd5293df324a111a60cbaff209e9588338b1",
+          "message": "chore: use python@3.13 in Brewfile to match .python-version\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-22T17:00:11+08:00",
+          "tree_id": "e7d2160b0e5541d9f18a06731971003fc8848880",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/8149dd5293df324a111a60cbaff209e9588338b1"
+        },
+        "date": 1792659837266,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.90557295874,
+            "range": "± 0.0626608933029336",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 4.06402486308,
+            "range": "± 0.02525793263890222",
             "unit": "s"
           }
         ]
