@@ -1,4 +1,3 @@
-brew "pkg-config"
 brew "uv"
 brew "poppler"
 brew "pre-commit"
