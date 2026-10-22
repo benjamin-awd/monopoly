@@ -2,7 +2,7 @@
 
 import re
 from bisect import bisect_right
-from functools import cached_property
+from operator import itemgetter
 
 from monopoly.config import StatementConfig
 from monopoly.pdf import PdfPage
@@ -33,24 +33,14 @@ class AccountResolver:
     """
 
     def __init__(self, pages: list[PdfPage], config: StatementConfig):
-        self.pages = pages
-        self.pattern = config.account_pattern
-
-    @cached_property
-    def headers(self) -> list[tuple[tuple[int, int], str]]:
-        """Every account header in reading order, as ((page, line), last 4)."""
-        if self.pattern is None:
-            return []
-        headers = []
-        for page_num, page in enumerate(self.pages):
+        # every account header in reading order, as ((page, line), last 4)
+        self.headers: list[tuple[tuple[int, int], str]] = []
+        if (pattern := config.account_pattern) is None:
+            return
+        for page_num, page in enumerate(pages):
             for line_num, line in enumerate(page.lines):
-                if (match := self.pattern.search(line)) and (last4 := extract_last4(match.group("account"))):
-                    headers.append(((page_num, line_num), last4))
-        return headers
-
-    @cached_property
-    def _positions(self) -> list[tuple[int, int]]:
-        return [position for position, _ in self.headers]
+                if (match := pattern.search(line)) and (last4 := extract_last4(match.group("account"))):
+                    self.headers.append(((page_num, line_num), last4))
 
     @property
     def first(self) -> str | None:
@@ -59,5 +49,5 @@ class AccountResolver:
 
     def at(self, page_num: int, line_num: int) -> str | None:
         """Return the account of the section a line is in."""
-        idx = bisect_right(self._positions, (page_num, line_num))
+        idx = bisect_right(self.headers, (page_num, line_num), key=itemgetter(0))
         return self.headers[idx - 1][1] if idx else self.first
