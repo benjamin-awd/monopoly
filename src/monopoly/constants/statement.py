@@ -68,5 +68,4 @@ class SharedPatterns(StrEnum):
     BALANCE = rf"(?P<balance>{COMMA_FORMAT})?$"
     DESCRIPTION = r"(?P<description>.*?)\s+"
     TRANSACTION_DATE_ABBREVIATED_ALL_CAPS = r"(?P<transaction_date>\d{2}\s[A-Z]{3})\s+"
-    TRANSACTION_DATE_ABBREVIATED_PROPER_CASE = r"(?P<transaction_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
     POSTING_DATE_ABBREVIATED_PROPER = r"(?P<posting_date>\d{2}\s[A-Z]{1}[a-z]{2})\s+"
