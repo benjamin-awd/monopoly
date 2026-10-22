@@ -44,7 +44,7 @@ class CreditStatement(BaseStatement):
                 prev_month_transaction = Transaction(
                     **raw_transaction.as_dict(),
                     currency=self.config.currency,
-                    account=self.account_at(prev_month_balance.page_num, prev_month_balance.line_num),
+                    account=self.account_resolver.at(prev_month_balance.page_num, prev_month_balance.line_num),
                     kind=TransactionKind.PREVIOUS_BALANCE,
                 )
                 transactions.insert(0, prev_month_transaction)
