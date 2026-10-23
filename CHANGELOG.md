@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.23.4](https://github.com/benjamin-awd/monopoly/compare/v0.23.3...v0.23.4) (2026-10-23)
+
+
+### Features
+
+* **amex:** read American Express cards issued in the United States ([#349](https://github.com/benjamin-awd/monopoly/issues/349)) ([6c2900b](https://github.com/benjamin-awd/monopoly/commit/6c2900b64b537b667147c4f70c263fb940b080f1))
+* **capital-one:** add Capital One 360 (US) bank statements ([#348](https://github.com/benjamin-awd/monopoly/issues/348)) ([99b6bb5](https://github.com/benjamin-awd/monopoly/commit/99b6bb52e0ce49ccb8921303612c909a3ba4d2b4))
+
+
+### Bug Fixes
+
+* **chase:** read masked card numbers and the payment summary ([#347](https://github.com/benjamin-awd/monopoly/issues/347)) ([b6c6b27](https://github.com/benjamin-awd/monopoly/commit/b6c6b27244b8a557d030d11b7efaaf4cd08bae2a))
+
 ## [0.23.3](https://github.com/benjamin-awd/monopoly/compare/v0.23.2...v0.23.3) (2026-10-22)
 
 
