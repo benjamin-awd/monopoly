@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792750786089,
+  "lastUpdate": 1792750869006,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -1605,6 +1605,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 1.9907939039000002,
             "range": "± 0.049776041205509665",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "82356519+bsaurusrex@users.noreply.github.com",
+            "name": "Brian Taylor",
+            "username": "bsaurusrex"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "99b6bb52e0ce49ccb8921303612c909a3ba4d2b4",
+          "message": "feat(capital-one): add Capital One 360 (US) bank statements (#348)\n\nA new CapitalOneUS bank (capital_one_us) for Capital One 360 statements, which list every 360\naccount in one PDF, each in its own section. Identified by the PDF metadata (author\ncapitalone.com, title \"Bank Statement\"); the existing CapitalOneCanada config is unchanged.\n\nRows carry their own account's last 4 from each section's \"360 Checking - <number>\" header,\nsigned \"+ $\" / \"- $\" amounts set the direction, and the period comes from \"Mar 1 - Mar 31, 2026\".\nThe statement prints no totals, only opening and closing balances, so safety_check is off.\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-23T18:19:05+08:00",
+          "tree_id": "85fe82496ec800f934db993f0486e82e6b58c0f9",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/99b6bb52e0ce49ccb8921303612c909a3ba4d2b4"
+        },
+        "date": 1792750868509,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.6552770829999999,
+            "range": "± 0.05215398346717669",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 2.5609120615000003,
+            "range": "± 0.045697083002076554",
             "unit": "s"
           }
         ]
