@@ -1,0 +1,20 @@
+                                                                                                Alex Example   STATEMENT PERIOD
+                                                                                                               Mar 1 - Mar 31, 2026
+DATE         DESCRIPTION                                                       CATEGORY             AMOUNT                  BALANCE
+Mar 1        Opening Balance                                                                                              $2,500.00
+Mar 3        Check Deposit (Mobile)                                               Credit           + $250.00              $2,750.00
+Mar 9        Withdrawal from EXAMPLE CARD EPAYMENT ACH PMT                        Debit         - $1,141.85               $1,608.15
+Mar 15       Withdrawal to 360 Performance Savings...5678                         Debit           - $500.00               $1,108.15
+Mar 31       Monthly Interest Paid                                                Credit             + $0.12               $1,108.27
+Mar 31       Closing Balance                                                                                              $1,108.27
+360 Performance Savings - 10000005678
+3.50%                                      $12.40                                          31
+ANNUAL PERCENTAGE YIELD                    YTD INTEREST AND BONUSES                        DAYS IN STATEMENT
+(APY) EARNED                                                                               CYCLE
+DATE         DESCRIPTION                                                       CATEGORY             AMOUNT                  BALANCE
+Mar 1        Opening Balance                                                                                              $5,000.00
+Mar 15       Deposit from 360 Checking...1234                                     Credit           + $500.00              $5,500.00
+Mar 31       Monthly Interest Paid                                                Credit             + $4.68              $5,504.68
+Mar 31       Closing Balance                                                                                              $5,504.68
+                                                             Page 2 of 2
+           capitalone.com             1-800-555-0100                  P.O. Box 00000, Anytown, VA 00000
