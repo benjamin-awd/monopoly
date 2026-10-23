@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792674056173,
+  "lastUpdate": 1792750786089,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -1569,6 +1569,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 1.61077481548,
             "range": "± 0.030662967228030132",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "82356519+bsaurusrex@users.noreply.github.com",
+            "name": "Brian Taylor",
+            "username": "bsaurusrex"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6c2900b64b537b667147c4f70c263fb940b080f1",
+          "message": "feat(amex): read American Express cards issued in the United States (#349)\n\n* feat(amex): read American Express cards issued in the United States\n\nAdds an Amex.us config beside the Singapore Platinum one. US statements are told apart by\ntheir metadata (title \"CSF.CRS.US....\", creator \"FIS Global Corp.\") plus americanexpress.com,\nand their config by the \"Account Ending 4-12345\" line every page header carries.\n\nRows are \"MM/DD/YY[*] DESCRIPTION ... [-]$AMOUNT\" in USD, the account is the last 4 of\n\"Account Ending\", and the payment summary comes from the first page's New Balance, Minimum\nPayment Due and Payment Due Date lines.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* docs(readme): name the Singapore Amex card the existing config reads\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-23T18:18:32+08:00",
+          "tree_id": "99bcd374cd5f5e4ac706d1d76734bd77f1effb73",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/6c2900b64b537b667147c4f70c263fb940b080f1"
+        },
+        "date": 1792750785612,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.5076449782199999,
+            "range": "± 0.019873189039537074",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 1.9907939039000002,
+            "range": "± 0.049776041205509665",
             "unit": "s"
           }
         ]
