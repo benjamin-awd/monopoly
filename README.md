@@ -19,6 +19,7 @@ Supported banks:
 | Canadian Imperial Bank of Commerce (CIBC) | ✅                 | ✅                   |
 | Canadian Tire Bank                     | ✅                 | ❌                   |
 | Capital One Canada                     | ✅                 | ❌                   |
+| Capital One 360 (US)                   | ❌                 | ✅                   |
 | Chase                                  | ✅                 | ❌                   |
 | Citibank                               | ✅                 | ❌                   |
 | DBS/POSB                               | ✅                 | ✅                   |
