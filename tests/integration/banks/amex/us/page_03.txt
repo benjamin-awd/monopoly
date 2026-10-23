@@ -1,0 +1,10 @@
+  ALEX EXAMPLE                                           Account Ending 1-23456                                                 p. 3/3
+ Detail Continued
+                                                                                                                                      Amount
+09/02/26        SAMPLE GROCERS                                      ANYTOWN                       NY                                     $120.00
+ Fees
+                                                                                                                                      Amount
+Total Fees for this Period                                                                                                                 $0.00
+ Interest Charged
+                                                                                                                                      Amount
+Total Interest Charged for this Period                                                                                                     $0.00
