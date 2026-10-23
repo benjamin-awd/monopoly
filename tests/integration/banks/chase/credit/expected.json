@@ -1,0 +1,81 @@
+{
+  "schema_version": 2,
+  "bank": "chase",
+  "statement_type": "credit",
+  "period_start": "2026-09-11",
+  "period_end": "2026-10-10",
+  "payment_summary": {
+    "payment_due_date": "2026-11-07",
+    "total_amount_due": 862.22,
+    "minimum_payment": 40.0
+  },
+  "balances": [],
+  "transactions": [
+    {
+      "id": "27157dc5ffe6866770da9d7e59b4949b0147aec586c5fc81e982c954ba1be183",
+      "transaction_date": "2026-09-20",
+      "posting_date": null,
+      "description": "AUTOMATIC PAYMENT - THANK YOU",
+      "amount": 1250.0,
+      "currency": "USD",
+      "account": "1234",
+      "balance": null,
+      "direction": "credit"
+    },
+    {
+      "id": "3c4d2befcd7865b84de1f9c2c830f071d214e18646726e2b4567bf3c61dd23b4",
+      "transaction_date": "2026-09-25",
+      "posting_date": null,
+      "description": "SAMPLE OUTFITTERS ANYTOWN NY",
+      "amount": 25.0,
+      "currency": "USD",
+      "account": "1234",
+      "balance": null,
+      "direction": "credit"
+    },
+    {
+      "id": "c60d9a61d319d9864eec217f7b72e20c6dd54f765539b1f0de4d34902306a7c7",
+      "transaction_date": "2026-09-12",
+      "posting_date": null,
+      "description": "EXAMPLE COFFEE CO ANYTOWN NY",
+      "amount": -4.5,
+      "currency": "USD",
+      "account": "1234",
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "a4dfc19614bfc8c4f7ba1a95fbdb952036a51545bcdcefdf78768b1bf6cfd790",
+      "transaction_date": "2026-09-15",
+      "posting_date": null,
+      "description": "SAMPLE GROCERS ANYTOWN NY",
+      "amount": -86.42,
+      "currency": "USD",
+      "account": "1234",
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "bc988140b18657f66a155219ba8d642f2c4d85ef1412dff941752d892468664c",
+      "transaction_date": "2026-09-28",
+      "posting_date": null,
+      "description": "EXAMPLE AIRLINES 800-555-0199 TX",
+      "amount": -412.3,
+      "currency": "USD",
+      "account": "1234",
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "9b6f38400f54953610af89fb388945688fbf57d7e2abb8e8e949d176b7404f20",
+      "transaction_date": "2026-10-03",
+      "posting_date": null,
+      "description": "SAMPLE HOTEL NEW YORK NY",
+      "amount": -289.0,
+      "currency": "USD",
+      "account": "1234",
+      "balance": null,
+      "direction": "debit"
+    }
+  ]
+}
