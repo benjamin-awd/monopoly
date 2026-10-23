@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792750869006,
+  "lastUpdate": 1792750933097,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -1641,6 +1641,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 2.5609120615000003,
             "range": "± 0.045697083002076554",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "82356519+bsaurusrex@users.noreply.github.com",
+            "name": "Brian Taylor",
+            "username": "bsaurusrex"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b6c6b27244b8a557d030d11b7efaaf4cd08bae2a",
+          "message": "fix(chase): read masked card numbers and the payment summary (#347)\n\nChase now prints the card number masked (\"Account Number: XXXX XXXX XXXX 1234\"), which the\naccount pattern (four groups of digits) missed, so every row came back without an account.\nThe pattern now accepts X in the masked groups, as Bank of America's does.\n\nAlso adds a PaymentSummaryConfig from the payment coupon's \"Payment Due Date:\", \"New Balance:\"\nand \"Minimum Payment Due:\" lines, and the first Chase text fixture.\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-23T18:20:37+08:00",
+          "tree_id": "6cab75b58e7eb291dcf30c1b14d6195d44396e35",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/b6c6b27244b8a557d030d11b7efaaf4cd08bae2a"
+        },
+        "date": 1792750932621,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.3820339014000001,
+            "range": "± 0.016270508247314366",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 1.48071181804,
+            "range": "± 0.018405630100758456",
             "unit": "s"
           }
         ]
