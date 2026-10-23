@@ -1,0 +1,70 @@
+{
+  "schema_version": 2,
+  "bank": "amex",
+  "statement_type": "credit",
+  "period_start": null,
+  "period_end": "2026-09-07",
+  "payment_summary": {
+    "payment_due_date": "2026-10-02",
+    "total_amount_due": 426.25,
+    "minimum_payment": 40.0
+  },
+  "balances": [],
+  "transactions": [
+    {
+      "id": "d5a59e536bed3a0ec7237491f1bfa86abf3cd6866e8e551e6731568086745f21",
+      "transaction_date": "2026-08-23",
+      "posting_date": null,
+      "description": "ONLINE PAYMENT - THANK YOU",
+      "amount": 500.0,
+      "currency": "USD",
+      "account": "3456",
+      "balance": null,
+      "direction": "credit"
+    },
+    {
+      "id": "c9740afc345518cba28c302ffd7725affb692404bb1e6a2e3dfc7b5a6616c200",
+      "transaction_date": "2026-08-12",
+      "posting_date": null,
+      "description": "SAMPLE OUTFITTERS ANYTOWN NY",
+      "amount": 40.0,
+      "currency": "USD",
+      "account": "3456",
+      "balance": null,
+      "direction": "credit"
+    },
+    {
+      "id": "b0ee19a3a7d830b664f5300abf570ea574845ac49dbb24d0899cc412b7b7e911",
+      "transaction_date": "2026-08-10",
+      "posting_date": null,
+      "description": "EXAMPLE COFFEE CO ANYTOWN NY",
+      "amount": -35.5,
+      "currency": "USD",
+      "account": "3456",
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "2e213a7c2a8ac2a5ea374554a72efb5a10460595713e0b652f00a1d92750a543",
+      "transaction_date": "2026-08-16",
+      "posting_date": null,
+      "description": "SAMPLE HOTEL WASHINGTON DC",
+      "amount": -210.75,
+      "currency": "USD",
+      "account": "3456",
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "9ee74de1322fe7d325d60c3a3ffbf265fc3c13c2355c441780edd0b3b3db5a64",
+      "transaction_date": "2026-09-02",
+      "posting_date": null,
+      "description": "SAMPLE GROCERS ANYTOWN NY",
+      "amount": -120.0,
+      "currency": "USD",
+      "account": "3456",
+      "balance": null,
+      "direction": "debit"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+             Example Rewards Card                                                                                     p. 2/3
+             ALEX EXAMPLE
+             Closing Date 09/07/26                                                                      Account Ending 1-23456
+ Payments and Credits
+ Summary
+                                                                                                                               Total
+Payments                                                                                                                 -$500.00
+Credits                                                                                                                   -$40.00
+Total Payments and Credits                                                                                               -$540.00
+ Detail        *Indicates posting date
+Payments                                                                                                                 Amount
+08/23/26*      ONLINE PAYMENT - THANK YOU                                                                                -$500.00
+Credits                                                                                                                  Amount
+08/12/26       SAMPLE OUTFITTERS                                  ANYTOWN               NY                                -$40.00
+ New Charges
+ Summary
+                                                                                                                               Total
+Total New Charges                                                                                                        $366.25
+ Detail
+          ALEX EXAMPLE
+          Card Ending 1-23456
+                                                                                                                         Amount
+08/10/26       EXAMPLE COFFEE CO                                  ANYTOWN               NY                                $35.50
+08/16/26       SAMPLE HOTEL                                       WASHINGTON            DC                               $210.75
+               Arrival Date           Departure Date
+               08/14/26               08/16/26
+               00000000
+               LODGING
+                                                                                                              Continued on reverse

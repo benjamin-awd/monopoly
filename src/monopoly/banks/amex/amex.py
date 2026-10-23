@@ -1,10 +1,10 @@
 import re
 
 from monopoly.banks.base import BankBase
-from monopoly.config import MultilineConfig, StatementConfig
+from monopoly.config import DateOrder, MultilineConfig, PaymentSummaryConfig, StatementConfig
 from monopoly.constants import EntryType, SharedPatterns
 from monopoly.constants.date import ISO8601
-from monopoly.identifiers import TextIdentifier
+from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
 
 class Amex(BankBase):
@@ -24,11 +24,47 @@ class Amex(BankBase):
         ),
         multiline_config=MultilineConfig(multiline_direction=True),
     )
+
+    # Cards issued in the United States: USD, US dates, and an "Account Ending 4-12345" line
+    # in every page header
+    us = StatementConfig(
+        currency="USD",
+        statement_type=EntryType.CREDIT,
+        # "Closing Date 09/07/26", which may share a line with "Next Closing Date 10/07/26"
+        statement_date_pattern=re.compile(rf"(?<!Next )Closing Date\s+{ISO8601.MM_DD_YY}"),
+        account_pattern=re.compile(r"Account Ending\s+(?P<account>\d-\d{5})\b"),
+        statement_date_order=DateOrder("MDY"),
+        transaction_date_order=DateOrder("MDY"),
+        header_pattern=re.compile(r"(Account Ending\s+\d-\d{5})"),
+        # "08/16/26   HOTEL NAME   WASHINGTON   DC   $984.32"; credits are "-$253.41", and a
+        # "*" after the date marks it as the posting date
+        transaction_pattern=re.compile(
+            rf"^\s*(?P<transaction_date>{ISO8601.MM_DD_YY})\*?\s+"
+            + SharedPatterns.DESCRIPTION
+            + r"(?P<direction>-)?\$(?P<amount>"
+            + SharedPatterns.COMMA_FORMAT
+            + r")$"
+        ),
+        transaction_date_format="%m/%d/%y",
+        payment_summary_config=PaymentSummaryConfig(
+            payment_due_date=re.compile(rf"Payment Due Date\s+(?P<due_date>{ISO8601.MM_DD_YY})"),
+            total_amount_due=re.compile(
+                r"^\s*New Balance\s+(?P<direction>-)?\$(?P<amount>" + SharedPatterns.COMMA_FORMAT + r")"
+            ),
+            minimum_payment=re.compile(r"^\s*Minimum Payment Due\s+\$(?P<amount>" + SharedPatterns.COMMA_FORMAT + r")"),
+        ),
+    )
+
     identifiers = [
         [
             TextIdentifier("The Platinum Credit Card"),
             TextIdentifier("americanexpress.com"),
-        ]
+        ],
+        [
+            # US statements are titled "CSF.CRS.US.MTH...." by the issuer's statement system
+            MetadataIdentifier(title="CSF.CRS.US.", creator="FIS Global Corp."),
+            TextIdentifier("americanexpress.com"),
+        ],
     ]
 
-    statement_configs = [platinum]
+    statement_configs = [platinum, us]
