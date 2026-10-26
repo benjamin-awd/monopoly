@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792752542478,
+  "lastUpdate": 1793018858141,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -1713,6 +1713,40 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 2.87413601098,
             "range": "± 0.022178775387202785",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "github-actions[bot]",
+            "username": "github-actions[bot]",
+            "email": "41898282+github-actions[bot]@users.noreply.github.com"
+          },
+          "committer": {
+            "name": "GitHub",
+            "username": "web-flow",
+            "email": "noreply@github.com"
+          },
+          "id": "7b5c7fd208ae3783cf53aeae45d17955c81d4781",
+          "message": "chore(main): release 0.23.4 (#350)\n\nCo-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>",
+          "timestamp": "2026-10-23T10:47:31Z",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/7b5c7fd208ae3783cf53aeae45d17955c81d4781"
+        },
+        "date": 1793018857384,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.5933629207400001,
+            "range": "± 0.00968725515736853",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 2.5033333872,
+            "range": "± 0.02767598746792936",
             "unit": "s"
           }
         ]
