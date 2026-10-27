@@ -56,10 +56,9 @@ class CurrencyResolver:
     """
     Resolves each line's currency from `config.currency_pattern` matches.
 
-    A multi-currency account prints one section per currency (DBS: "CURRENCY: UNITED STATES DOLLAR"). Each
-    match opens a section; a line takes the nearest header at or above it, or the config's `currency` if it
-    precedes them all (or none is configured or found). A header naming an unknown currency still opens a
-    section, in currency None, so its rows aren't mislabelled with the previous section's currency.
+    Each match opens a section; a line takes the nearest header at or above it,
+    or the config's `currency` if it precedes them all. An unknown currency opens
+    a section in None rather than inheriting the previous one.
     """
 
     def __init__(self, pages: list[PdfPage], config: StatementConfig):
