@@ -16,6 +16,7 @@ ISO_CODE_LENGTH = 3
 CURRENCY_NAMES = {
     "AUSTRALIAN DOLLAR": "AUD",
     "CANADIAN DOLLAR": "CAD",
+    # offshore renminbi: not ISO 4217 (which only has CNY), but what DBS's multi-currency account holds
     "CHINESE RENMINBI": "CNH",
     "CHINESE YUAN": "CNH",
     "DANISH KRONE": "DKK",
