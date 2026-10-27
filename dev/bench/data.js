@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793018858141,
+  "lastUpdate": 1793067592546,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -1747,6 +1747,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 2.5033333872,
             "range": "± 0.02767598746792936",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f843c90c66030d1c4b08525583ec628bbbdb9d96",
+          "message": "build(deps-dev): bump black from 26.3.1 to 26.10.1 (#351)\n\nBumps [black](https://github.com/psf/black) from 26.3.1 to 26.10.1.\n- [Release notes](https://github.com/psf/black/releases)\n- [Changelog](https://github.com/psf/black/blob/main/CHANGES.md)\n- [Commits](https://github.com/psf/black/compare/26.3.1...26.10.1)\n\n---\nupdated-dependencies:\n- dependency-name: black\n  dependency-version: 26.10.1\n  dependency-type: direct:development\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>\nCo-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>",
+          "timestamp": "2026-10-27T10:18:15+08:00",
+          "tree_id": "a4b71253229601375af52afed210757a51bb666a",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/f843c90c66030d1c4b08525583ec628bbbdb9d96"
+        },
+        "date": 1793067591678,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.49230664075999997,
+            "range": "± 0.020513262088539957",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 2.0407223385199997,
+            "range": "± 0.03016022827310299",
             "unit": "s"
           }
         ]
