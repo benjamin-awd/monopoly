@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793067592546,
+  "lastUpdate": 1793109821466,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -1783,6 +1783,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 2.0407223385199997,
             "range": "± 0.03016022827310299",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "82356519+bsaurusrex@users.noreply.github.com",
+            "name": "Brian Taylor",
+            "username": "bsaurusrex"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e2764b5b0d033b474b9d640af1f671676894f65e",
+          "message": "feat(dbs): read each currency section's currency on multi-currency accounts (#352)\n\n* feat(dbs): read each currency section's currency on multi-currency accounts\n\nA DBS/POSB multi-currency account (e.g. eMulti-Currency Autosave) prints one\nsection per currency in its consolidated statement, each headed\n\"CURRENCY: UNITED STATES DOLLAR\". Every row was stamped with the config's\ncurrency (SGD), so a USD section's rows came out as SGD.\n\nStatementConfig gains an optional currency_pattern (a named `currency` group:\nan ISO code or a currency name). Like account_pattern, each match opens a\nsection and a transaction takes the nearest header above it, else the config's\ncurrency. Dbs.consolidated sets it.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* fix(dbs): don't carry a currency into a section with an unknown name\n\nA \"CURRENCY:\" header whose name isn't in CURRENCY_NAMES opened no section, so\nits rows took the previous section's currency (e.g. ringgit rows labelled\nUSD). It now opens a section with no currency and logs a warning naming it.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* docs(dbs): note why the renminbi maps to CNH, not ISO 4217's CNY\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* docs(dbs): shorten the CurrencyResolver docstring\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n* docs(dbs): shorten the CNH comment\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>\nCo-authored-by: Benjamin Dornel <benjamindornel@gmail.com>",
+          "timestamp": "2026-10-27T21:53:11+08:00",
+          "tree_id": "48b79c1ffe7b7fd2ea8729c49f577d4e20ab5318",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/e2764b5b0d033b474b9d640af1f671676894f65e"
+        },
+        "date": 1793109820234,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.7035742797800001,
+            "range": "± 0.027579589447960514",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 2.8875609264200004,
+            "range": "± 0.04673311106108757",
             "unit": "s"
           }
         ]
