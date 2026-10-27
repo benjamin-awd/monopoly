@@ -126,6 +126,12 @@ class StatementConfig:
     digits are derived from it. Each match opens a section; a transaction takes the
     nearest one above it, so match section headers, not summary tables. Set per
     config/vintage, same shape as identifiers. Left None where unknown.
+    - `currency_pattern` is an optional regex that locates the section headers of a
+    multi-currency account (e.g. DBS's "CURRENCY: UNITED STATES DOLLAR"). It must expose a
+    named `currency` group capturing an ISO 4217 code or a currency name (see
+    `statements/currency_resolver.py`). Each match opens a section; a transaction takes
+    the currency of the nearest one above it, else `currency`. Left None where a statement
+    is in one currency.
     - `multiline_config` determines whether Monopoly tries to concatenate
     transactions that are split across two lines
     - `header_pattern` is a regex pattern that is used to find the 'header' line
@@ -163,6 +169,7 @@ class StatementConfig:
     header_pattern: Pattern[str]
     period_start_pattern: Pattern[str] | None = None
     account_pattern: Pattern[str] | None = None
+    currency_pattern: Pattern[str] | None = None
     transaction_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
     statement_date_order: DateOrder = field(default_factory=lambda: DateOrder("DMY"))
     transaction_date_format: str = ""
@@ -180,6 +187,7 @@ class StatementConfig:
         "header_pattern",
         "period_start_pattern",
         "account_pattern",
+        "currency_pattern",
         "prev_balance_pattern",
         "filename_fallback_pattern",
     )
