@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.23.5](https://github.com/benjamin-awd/monopoly/compare/v0.23.4...v0.23.5) (2026-10-27)
+
+
+### Features
+
+* **dbs:** read each currency section's currency on multi-currency accounts ([#352](https://github.com/benjamin-awd/monopoly/issues/352)) ([e2764b5](https://github.com/benjamin-awd/monopoly/commit/e2764b5b0d033b474b9d640af1f671676894f65e))
+
 ## [0.23.4](https://github.com/benjamin-awd/monopoly/compare/v0.23.3...v0.23.4) (2026-10-23)
 
 
