@@ -20,7 +20,7 @@ from monopoly.statements.currency_resolver import to_currency_code
         ("UNITED STATES DOLLAR", "USD"),
         ("United  States Dollar", "USD"),  # case and spacing don't matter
         ("EUR", "EUR"),  # a code is taken as-is
-        ("MARTIAN CREDIT", None),  # an unknown name opens no section
+        ("MARTIAN CREDIT", None),  # an unknown name has no code
         (None, None),
     ],
 )
@@ -74,6 +74,31 @@ def test_each_transaction_takes_the_currency_of_its_own_section():
         ("INTEREST", "USD"),
         ("CARRIED ONTO THE NEXT PAGE", "USD"),
     ]
+
+
+def test_an_unknown_currency_opens_a_section_with_no_currency(caplog):
+    pages = [
+        PdfPage(
+            raw_text="\n".join(
+                [
+                    "STATEMENT DATE 30 Sep 2026",
+                    "DATE DESCRIPTION AMOUNT",
+                    "CURRENCY: UNITED STATES DOLLAR",
+                    "02 Sep SHOP ONE 10.00",
+                    "CURRENCY: MARTIAN CREDIT",
+                    "03 Sep SHOP TWO 5.00",
+                ]
+            )
+        )
+    ]
+    statement = _statement(pages, _config(CURRENCY))
+
+    # not carried over from the USD section above it
+    assert [(t.description, t.currency) for t in statement.transactions] == [
+        ("SHOP ONE", "USD"),
+        ("SHOP TWO", None),
+    ]
+    assert "MARTIAN CREDIT" in caplog.text
 
 
 def test_without_a_pattern_every_transaction_takes_the_config_currency():
