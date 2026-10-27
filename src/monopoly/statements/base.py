@@ -12,6 +12,7 @@ from monopoly.config import MultilineConfig, StatementConfig
 from monopoly.constants import Columns, Direction, SharedPatterns
 from monopoly.pdf import PdfPage
 from monopoly.statements.account_resolver import AccountResolver
+from monopoly.statements.currency_resolver import CurrencyResolver
 from monopoly.statements.date_resolver import DateResolver
 from monopoly.statements.number_extractor import NumberExtractor
 from monopoly.statements.transaction import (
@@ -177,10 +178,11 @@ class BaseStatement(ABC):
     def _build_transaction(self, raw_transaction: RawTransaction, context: MatchContext) -> Transaction:
         """Run the pre/post-processing hooks and construct the Transaction."""
         account = self.account_resolver.at(raw_transaction.page_number, context.idx)
+        currency = self.currency_resolver.at(raw_transaction.page_number, context.idx)
         processed = self.process_match(self.pre_process_match(raw_transaction), context)
         return Transaction(
             **processed.as_dict(),
-            currency=self.config.currency,
+            currency=currency,
             account=account,
             auto_direction=self.config.transaction_auto_direction,
         )
@@ -268,6 +270,10 @@ class BaseStatement(ABC):
     @cached_property
     def account_resolver(self) -> AccountResolver:
         return AccountResolver(self.pages, self.config)
+
+    @cached_property
+    def currency_resolver(self) -> CurrencyResolver:
+        return CurrencyResolver(self.pages, self.config)
 
     @abstractmethod
     def perform_safety_check(self) -> bool:

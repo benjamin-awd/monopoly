@@ -8,6 +8,9 @@ from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
 # Each account's table on a consolidated statement opens with "<account name>   Account No. 123-456789-0"
 CONSOLIDATED_ACCOUNT = re.compile(r"Account No\.\s*(?P<account>\d{3}-\d{1,6}-\d{1,6})")
+# A multi-currency account (e.g. DBS eMulti-Currency Autosave) prints a section per currency, each headed
+# "CURRENCY: UNITED STATES DOLLAR"; a single-currency account prints one "CURRENCY: SINGAPORE DOLLAR".
+CONSOLIDATED_CURRENCY = re.compile(r"^\s*CURRENCY:\s+(?P<currency>[A-Z][A-Z ]*[A-Z])\s*$")
 # A non-empty description: an account's closing line ("30/06/2023 ... 20.66") has a date and its balance
 # only, which would otherwise read as a deposit of that balance
 NONEMPTY_DESCRIPTION = r"(?P<description>\S.*?)\s+"
@@ -74,6 +77,7 @@ class Dbs(BankBase):
         # the account table headers repeat on every page; the account summary above them can print the
         # number truncated, so it isn't used
         account_pattern=CONSOLIDATED_ACCOUNT,
+        currency_pattern=CONSOLIDATED_CURRENCY,
         multiline_config=MultilineConfig(
             multiline_descriptions=True,
             description_margin=10,  # Allow for indented PayNow/transaction details
