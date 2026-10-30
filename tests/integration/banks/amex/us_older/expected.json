@@ -1,0 +1,67 @@
+{
+  "schema_version": 2,
+  "bank": "amex",
+  "statement_type": "credit",
+  "period_start": null,
+  "period_end": "2019-11-07",
+  "payment_summary": {
+    "payment_due_date": "2019-12-02",
+    "total_amount_due": 89.6,
+    "minimum_payment": 35.0
+  },
+  "balances": [
+    {
+      "type": "previous",
+      "amount": 25.0,
+      "date": "2019-10-21",
+      "direction": "credit",
+      "currency": "USD"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "ddf74da2e6a2145942b45c6305562147ddbfe1fef3d2785f9e4e6b4df3af449e",
+      "transaction_date": "2019-10-21",
+      "posting_date": null,
+      "description": "ONLINE PAYMENT - THANK YOU",
+      "amount": 300.0,
+      "currency": "USD",
+      "account": "2345",
+      "balance": null,
+      "direction": "credit"
+    },
+    {
+      "id": "2161e606870cd82b40d6ed557d92daba061ebbb29ad175991d3817bee535c9ea",
+      "transaction_date": "2019-10-12",
+      "posting_date": null,
+      "description": "EXAMPLE BOOKSHOP ANYTOWN NY",
+      "amount": -160.25,
+      "currency": "USD",
+      "account": "2345",
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "378c57957cea82538aeb5f11c32009fed5a8d9b477fa8c98218de681f5995f1e",
+      "transaction_date": "2019-11-02",
+      "posting_date": null,
+      "description": "SAMPLE AIRLINES EXAMPLE CITY CA",
+      "amount": -250.25,
+      "currency": "USD",
+      "account": "2345",
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "14dfbc87d60e82a9e45247f49fc969bb0c1e59a25d598d762b59beedaf7463ce",
+      "transaction_date": "2019-11-07",
+      "posting_date": null,
+      "description": "Interest Charge on Purchases",
+      "amount": -4.1,
+      "currency": "USD",
+      "account": "2345",
+      "balance": null,
+      "direction": "debit"
+    }
+  ]
+}
