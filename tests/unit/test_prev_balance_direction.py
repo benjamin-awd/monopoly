@@ -36,3 +36,10 @@ def test_prev_balance_without_marker_is_debit():
     assert prev.direction is Direction.DEBIT
     assert prev.amount == -100.0
     assert prev.date == "01/02"
+
+
+def test_prev_balance_alone_is_no_transactions():
+    # a statement with no activity still prints its balance: nothing to extract, not a crash
+    statement = make_statement("PREVIOUS BALANCE  100.00\nNEW BALANCE  100.00\n")
+
+    assert statement.transactions == []

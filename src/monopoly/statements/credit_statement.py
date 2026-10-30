@@ -34,7 +34,8 @@ class CreditStatement(BaseStatement):
 
     def post_process_transactions(self, transactions) -> list[Transaction]:
         previous_month_balances = self.get_prev_month_balances()
-        if previous_month_balances:
+        # a statement with no activity stays empty: the balance alone is nothing to extract
+        if previous_month_balances and transactions:
             first_transaction_date = next(iter(transactions)).date
             for prev_month_balance in previous_month_balances:
                 groupdict = prev_month_balance.match.groupdict()
