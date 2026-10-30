@@ -1,0 +1,51 @@
+             Example Travel Card                                                                                             p. 2/2
+
+             ALEX EXAMPLE
+             Closing Date 11/07/19                                                                                  Account Ending 9-12345
+
+
+  Payments and Credits
+  Summary
+
+                                                                                                                                           Total
+Payments                                                                                                                                -$300.00
+Credits                                                                                                                                    $0.00
+Total Payments and Credits                                                                                                              -$300.00
+
+
+  Detail       *Indicates posting date
+
+Payments                                                                                                                                Amount
+10/21/19*      ONLINE PAYMENT - THANK YOU                                                                                              -$300.00
+
+
+  New Charges
+  Summary
+                                                                                                                                           Total
+Total New Charges                                                                                                                        $410.50
+
+
+  Detail
+          ALEX EXAMPLE
+          Card Ending 9-12345
+                                                                                                                                        Amount
+10/12/19       EXAMPLE BOOKSHOP                                 ANYTOWN               NY                                                 $160.25
+               0000000000
+11/02/19       SAMPLE AIRLINES                                  EXAMPLE CITY          CA                                                 $250.25
+               0000000000
+
+
+  Fees
+
+                                                                                                                                        Amount
+
+Total Fees for this Period                                                                                                                 $0.00
+
+
+
+  Interest Charged
+
+                                                                                                                                        Amount
+11/07/19       Interest Charge on Purchases                                                                                                $4.10
+
+Total Interest Charged for this Period                                                                                                     $4.10

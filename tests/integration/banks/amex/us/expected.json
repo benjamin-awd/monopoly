@@ -9,7 +9,15 @@
     "total_amount_due": 426.25,
     "minimum_payment": 40.0
   },
-  "balances": [],
+  "balances": [
+    {
+      "type": "previous",
+      "amount": -600.0,
+      "date": "2026-08-23",
+      "direction": "debit",
+      "currency": "USD"
+    }
+  ],
   "transactions": [
     {
       "id": "d5a59e536bed3a0ec7237491f1bfa86abf3cd6866e8e551e6731568086745f21",
