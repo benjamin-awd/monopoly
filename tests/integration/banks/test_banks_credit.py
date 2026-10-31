@@ -15,7 +15,7 @@ from monopoly.statements import CreditStatement, PaymentSummary
 # The `--format json` envelope is asserted in test_bank_fixtures.py.
 test_cases = [
     (BankOfAmerica, -89.0, datetime(2023, 8, 22)),
-    (Chase, 482.78, datetime(2026, 10, 10)),
+    (Chase, -957.22, datetime(2026, 10, 10)),
     (Citibank, -310.8, datetime(2022, 3, 12)),
     (Dbs, -550.0, datetime(2023, 11, 20)),
     (Hsbc, -575.94, datetime(2024, 9, 24)),
@@ -28,7 +28,7 @@ test_cases = [
 
 # expected payment summary per bank that configures one, keyed by bank name
 expected_payment_summaries = {
-    "chase": PaymentSummary(date(2026, 11, 7), 862.22, 40.00),
+    "chase": PaymentSummary(date(2026, 11, 7), 957.22, 40.00),
     "citibank": PaymentSummary(date(2022, 4, 6), 310.8, 50.00),
     "dbs": PaymentSummary(date(2023, 12, 15), 550.0, 50.00),
     # HSBC prints no payment due date, so it stays None

@@ -12,6 +12,9 @@
   09/15                   SAMPLE GROCERS ANYTOWN NY                                                                                    86.42
   09/28                   EXAMPLE AIRLINES 800-555-0199 TX                                                                            412.30
   10/03                   SAMPLE HOTEL NEW YORK NY                                                                                    289.00
+ FEES CHARGED
+  10/10                   ANNUAL MEMBERSHIP FEE                                                                                        95.00
+                                                           TOTAL FEES FOR THIS PERIOD          $95.00
                                                             2026 Totals Year-to-Date
                                         Total fees charged in 2026                             $95.00
                                         Total interest charged in 2026                          $0.00

@@ -6,10 +6,18 @@
   "period_end": "2026-10-10",
   "payment_summary": {
     "payment_due_date": "2026-11-07",
-    "total_amount_due": 862.22,
+    "total_amount_due": 957.22,
     "minimum_payment": 40.0
   },
-  "balances": [],
+  "balances": [
+    {
+      "type": "previous",
+      "amount": -1345.0,
+      "date": "2026-09-20",
+      "direction": "debit",
+      "currency": "USD"
+    }
+  ],
   "transactions": [
     {
       "id": "27157dc5ffe6866770da9d7e59b4949b0147aec586c5fc81e982c954ba1be183",
@@ -72,6 +80,17 @@
       "posting_date": null,
       "description": "SAMPLE HOTEL NEW YORK NY",
       "amount": -289.0,
+      "currency": "USD",
+      "account": "1234",
+      "balance": null,
+      "direction": "debit"
+    },
+    {
+      "id": "63af2742f2532543c326ea0c7efe173177a56b8dd19ecf7a750f5556d4125f10",
+      "transaction_date": "2026-10-10",
+      "posting_date": null,
+      "description": "ANNUAL MEMBERSHIP FEE",
+      "amount": -95.0,
       "currency": "USD",
       "account": "1234",
       "balance": null,
