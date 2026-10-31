@@ -33,22 +33,23 @@ class CreditStatement(BaseStatement):
         return PaymentSummaryExtractor(self.pages, self.config).extract()
 
     def post_process_transactions(self, transactions) -> list[Transaction]:
-        previous_month_balances = self.get_prev_month_balances()
         # a statement with no activity stays empty: the balance alone is nothing to extract
-        if previous_month_balances and transactions:
-            first_transaction_date = next(iter(transactions)).date
-            for prev_month_balance in previous_month_balances:
-                groupdict = prev_month_balance.match.groupdict()
-                groupdict["transaction_date"] = first_transaction_date
-                raw_transaction = self.pre_process_match(RawTransaction(**groupdict))
-                # keep the default auto_direction: TDCT/CIBC turn it off for activity rows, not for this balance
-                prev_month_transaction = Transaction(
-                    **raw_transaction.as_dict(),
-                    currency=self.config.currency,
-                    account=self.account_resolver.at(prev_month_balance.page_num, prev_month_balance.line_num),
-                    kind=TransactionKind.PREVIOUS_BALANCE,
-                )
-                transactions.insert(0, prev_month_transaction)
+        if not transactions:
+            return transactions
+
+        first_transaction_date = next(iter(transactions)).date
+        for prev_month_balance in self.get_prev_month_balances():
+            groupdict = prev_month_balance.match.groupdict()
+            groupdict["transaction_date"] = first_transaction_date
+            raw_transaction = self.pre_process_match(RawTransaction(**groupdict))
+            # keep the default auto_direction: TDCT/CIBC turn it off for activity rows, not for this balance
+            prev_month_transaction = Transaction(
+                **raw_transaction.as_dict(),
+                currency=self.config.currency,
+                account=self.account_resolver.at(prev_month_balance.page_num, prev_month_balance.line_num),
+                kind=TransactionKind.PREVIOUS_BALANCE,
+            )
+            transactions.insert(0, prev_month_transaction)
         return transactions
 
     def get_prev_month_balances(self) -> list[PrevBalanceMatch]:
