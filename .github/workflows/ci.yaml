@@ -42,3 +42,4 @@ jobs:
           uv run task format-check
           uv run task lint
           uv run task mypy
+          uvx pre-commit run comment-style --all-files
