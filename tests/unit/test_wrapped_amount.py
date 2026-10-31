@@ -1,5 +1,7 @@
+import pytest
+
 from monopoly.banks.capitalone.capitalone_us import CapitalOneUS
-from monopoly.statements.base import merge_wrapped_amounts
+from monopoly.statements.base import TRAILING_AMOUNT, merge_wrapped_amounts
 
 PATTERN = CapitalOneUS.debit.transaction_pattern
 
@@ -51,3 +53,10 @@ def test_a_merge_that_still_does_not_match_is_dropped():
 def test_last_line_and_empty_input():
     assert merge_wrapped_amounts([], PATTERN) == []
     assert merge_wrapped_amounts([WRAPPED[0]], PATTERN) == [WRAPPED[0]]
+
+
+@pytest.mark.parametrize(
+    "amount", ["- $1,234.56", "+ £0.12", "- ¥100.00", "- S$100.00", "- HK$100.00", "RM5.00", "100.00"]
+)
+def test_trailing_amount_takes_the_whole_figure(amount):
+    assert TRAILING_AMOUNT.search(f"PAYMENT     {amount}").group() == amount
