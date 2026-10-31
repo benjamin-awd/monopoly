@@ -52,7 +52,6 @@ class DateOrder:
 @dataclass
 class MultilineConfig:
     multiline_descriptions: bool = False
-    #: See `merge_wrapped_amounts`.
     multiline_amount: bool = False
     multiline_direction: bool = False
     multiline_statement_date: bool = False
