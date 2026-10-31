@@ -22,6 +22,12 @@ class Chase(BankBase):
         statement_date_order=DateOrder("MDY"),
         transaction_date_order=DateOrder("MDY"),
         header_pattern=re.compile(r"(.*Transaction.*Merchant Name .*\$ Amount)"),
+        # "Previous Balance   $1,234.56" in the account summary, "-$12.34" when it was a credit.
+        # Counted with the rows, they add up to the New Balance, which every statement prints:
+        # the purchases alone aren't a printed figure once there are fees or interest.
+        prev_balance_pattern=re.compile(
+            r"(?P<description>Previous Balance)\s+(?P<direction>-)?\$(?P<amount>" + SharedPatterns.COMMA_FORMAT + r")"
+        ),
         transaction_date_format="%m/%d",
         transaction_pattern=re.compile(
             rf"(?P<transaction_date>{ISO8601.MM_DD})\s+"
