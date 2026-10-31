@@ -3,12 +3,8 @@ import re
 from monopoly.banks.base import BankBase
 from monopoly.config import DateOrder, MultilineConfig, PaymentSummaryConfig, StatementConfig
 from monopoly.constants import EntryType, SharedPatterns
-from monopoly.constants.date import ISO8601, DateFormats
+from monopoly.constants.date import ISO8601
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
-
-# MM/DD/YY reaching back to 2010: US statements are kept online for years, and the shared
-# two-digit year starts at 2020
-US_MM_DD_YY = rf"\b({DateFormats.MM}/{DateFormats.DD}/[1-5][0-9]\b)"
 
 
 class Amex(BankBase):
@@ -35,7 +31,7 @@ class Amex(BankBase):
         currency="USD",
         statement_type=EntryType.CREDIT,
         # "Closing Date 09/07/26", which may share a line with "Next Closing Date 10/07/26"
-        statement_date_pattern=re.compile(rf"(?<!Next )Closing Date\s+{US_MM_DD_YY}"),
+        statement_date_pattern=re.compile(rf"(?<!Next )Closing Date\s+{ISO8601.MM_DD_YY}"),
         account_pattern=re.compile(r"Account Ending\s+(?P<account>\d-\d{5})\b"),
         statement_date_order=DateOrder("MDY"),
         transaction_date_order=DateOrder("MDY"),
@@ -49,7 +45,7 @@ class Amex(BankBase):
         # "08/16/26   HOTEL NAME   WASHINGTON   DC   $984.32"; credits are "-$253.41", and a
         # "*" after the date marks it as the posting date
         transaction_pattern=re.compile(
-            rf"^\s*(?P<transaction_date>{US_MM_DD_YY})\*?\s+"
+            rf"^\s*(?P<transaction_date>{ISO8601.MM_DD_YY})\*?\s+"
             + SharedPatterns.DESCRIPTION
             + r"(?P<direction>-)?\$(?P<amount>"
             + SharedPatterns.COMMA_FORMAT
@@ -57,7 +53,7 @@ class Amex(BankBase):
         ),
         transaction_date_format="%m/%d/%y",
         payment_summary_config=PaymentSummaryConfig(
-            payment_due_date=re.compile(rf"Payment Due Date\s+(?P<due_date>{US_MM_DD_YY})"),
+            payment_due_date=re.compile(rf"Payment Due Date\s+(?P<due_date>{ISO8601.MM_DD_YY})"),
             total_amount_due=re.compile(
                 r"^\s*New Balance\s+(?P<direction>-)?\$(?P<amount>" + SharedPatterns.COMMA_FORMAT + r")"
             ),
