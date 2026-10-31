@@ -8,7 +8,7 @@ from monopoly.identifiers import MetadataIdentifier, TextIdentifier
 
 # MM/DD/YY reaching back to 2010: US statements are kept online for years, and the shared
 # two-digit year starts at 2020
-US_MM_DD_YY = rf"\b({DateFormats.MM}/{DateFormats.DD}/(1[0-9]|[2-5][0-9])\b)"
+US_MM_DD_YY = rf"\b({DateFormats.MM}/{DateFormats.DD}/[1-5][0-9]\b)"
 
 
 class Amex(BankBase):
