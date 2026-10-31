@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793109903625,
+  "lastUpdate": 1793420014712,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -1855,6 +1855,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 1.9907620989,
             "range": "± 0.025609312235130292",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "82356519+bsaurusrex@users.noreply.github.com",
+            "name": "bsaurusrex",
+            "username": "bsaurusrex"
+          },
+          "committer": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "distinct": true,
+          "id": "502f0afdd1e30dba96b7365bff3b0fe322a8797a",
+          "message": "fix(chase): reconcile statements with fees or interest\n\n- Count the Previous Balance (-$ when it was a credit) with the rows. Their sum\n  is then the printed New Balance, which every statement has; the purchases\n  alone aren't a printed figure once a statement has fees or interest, so those\n  failed the safety check although every row was read.\n- The fixture gains an annual fee, so its purchases total is no longer printed.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-31T12:12:33+08:00",
+          "tree_id": "e2226ce1a243c621e4b79552b97165cc81fd9c42",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/502f0afdd1e30dba96b7365bff3b0fe322a8797a"
+        },
+        "date": 1793420014225,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.38079945976000007,
+            "range": "± 0.02789385784144261",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 1.49814971516,
+            "range": "± 0.021295880667046515",
             "unit": "s"
           }
         ]
