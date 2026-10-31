@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793431307980,
+  "lastUpdate": 1793431853853,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -1927,6 +1927,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 2.8259791655599997,
             "range": "± 0.02501105008098855",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "distinct": true,
+          "id": "2bc6ec93722d8f782b92418d956a66ae07f721a7",
+          "message": "refactor(statements): accept any currency prefix in TRAILING_AMOUNT\n\nAn unlisted prefix such as \"- S$100.00\" matched only \"$100.00\", which\nlost the sign and left the rest on the wrapped line.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-31T15:29:31+08:00",
+          "tree_id": "66a62af795bdb400db82a8e6d91d104ddff28b64",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/2bc6ec93722d8f782b92418d956a66ae07f721a7"
+        },
+        "date": 1793431853549,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.6549771427800001,
+            "range": "± 0.005041584705899357",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 2.79263578336,
+            "range": "± 0.046417352233762206",
             "unit": "s"
           }
         ]
