@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793431853853,
+  "lastUpdate": 1793432187677,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -1963,6 +1963,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 2.79263578336,
             "range": "± 0.046417352233762206",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "distinct": true,
+          "id": "24160b8c97a9d57498aca0a1f5423df13e79832f",
+          "message": "ci: check comment style\n\nNothing ran the \"#:\" pre-commit hook: CI doesn't use pre-commit and it\nisn't installed by the project setup. Run the hook in CI, and widen it\nto any whole-line comment that doesn't start with \"# \".\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-31T15:34:48+08:00",
+          "tree_id": "ba9022f4c0dfae0c624477e420271d63f5a4c965",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/24160b8c97a9d57498aca0a1f5423df13e79832f"
+        },
+        "date": 1793432187111,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.49914121832000014,
+            "range": "± 0.010070280334233607",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 2.02362511364,
+            "range": "± 0.03215987420343214",
             "unit": "s"
           }
         ]
