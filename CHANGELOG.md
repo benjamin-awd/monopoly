@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.23.6](https://github.com/benjamin-awd/monopoly/compare/v0.23.5...v0.23.6) (2026-10-31)
+
+
+### Bug Fixes
+
+* **amex:** read older US statements and reconcile fees and interest ([f2bba2f](https://github.com/benjamin-awd/monopoly/commit/f2bba2f6d713c124be9ed7f3416f42045d9c3500))
+* **capital-one:** read a row whose amount wraps onto the next line ([50db0f7](https://github.com/benjamin-awd/monopoly/commit/50db0f7969edba8af83acef7995a12b24c2b6e9c))
+* **chase:** reconcile statements with fees or interest ([502f0af](https://github.com/benjamin-awd/monopoly/commit/502f0afdd1e30dba96b7365bff3b0fe322a8797a))
+* **credit:** keep a statement with only a previous balance empty ([fe1a11e](https://github.com/benjamin-awd/monopoly/commit/fe1a11e3b8bc3dea46b80335bc91aac07572cdb5))
+
+
+### Code Refactoring
+
+* **amex:** simplify the two-digit year in US_MM_DD_YY ([7307954](https://github.com/benjamin-awd/monopoly/commit/73079541af94f03b1ff999db5a9cf907a20429a9))
+* **credit:** return early for a statement with no transactions ([564b762](https://github.com/benjamin-awd/monopoly/commit/564b762ef9cf6a5764e89a269aaec307460f8431))
+* **date:** accept 2010s years in the shared two-digit year ([eef9fd7](https://github.com/benjamin-awd/monopoly/commit/eef9fd70b49651928e75e69a84e12ae26e3acc0f))
+* **statements:** accept any currency prefix in TRAILING_AMOUNT ([2bc6ec9](https://github.com/benjamin-awd/monopoly/commit/2bc6ec93722d8f782b92418d956a66ae07f721a7))
+* **statements:** tighten merge_wrapped_amounts ([ed80bba](https://github.com/benjamin-awd/monopoly/commit/ed80bba6636a32203925fb67d0c5af047506893f))
+
 ## [0.23.5](https://github.com/benjamin-awd/monopoly/compare/v0.23.4...v0.23.5) (2026-10-27)
 
 
