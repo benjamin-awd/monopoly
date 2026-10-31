@@ -13,10 +13,11 @@ repos:
 
   - repo: local
     hooks:
-      # ruff exempts these comments, so match them directly
-      - id: no-attribute-doc-comments
-        name: use a plain "#" comment, not "#:"
-        entry: '(^|\s)#:(\s|$)'
+      # ruff's comment rules are preview-only and exempt "#:", so match directly.
+      # Inline comments only check "#:", as a line regex can't tell "#" in a string.
+      - id: comment-style
+        name: start comments with "# "
+        entry: '^\s*#(?![\s!]|$)|\s#:(\s|$)'
         language: pygrep
         types: [python]
       - id: pytest
