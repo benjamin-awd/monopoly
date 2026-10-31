@@ -145,8 +145,8 @@ class BaseStatement(ABC):
     """
 
     statement_type = "base"
-    #: How a bare "-" marker reads for this statement type. Debit statements
-    #: print it on withdrawals, credit statements on refunds.
+    # How a bare "-" marker reads for this statement type. Debit statements
+    # print it on withdrawals, credit statements on refunds.
     minus_direction: ClassVar[Direction] = Direction.DEBIT
     columns: ClassVar[list[str]] = [
         Columns.DATE,

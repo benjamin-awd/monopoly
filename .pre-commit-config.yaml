@@ -13,6 +13,12 @@ repos:
 
   - repo: local
     hooks:
+      # ruff exempts these comments, so match them directly
+      - id: no-attribute-doc-comments
+        name: use a plain "#" comment, not "#:"
+        entry: '(^|\s)#:(\s|$)'
+        language: pygrep
+        types: [python]
       - id: pytest
         name: pytest
         entry: uv run --locked pytest
