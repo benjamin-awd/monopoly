@@ -52,6 +52,9 @@ class DateOrder:
 @dataclass
 class MultilineConfig:
     multiline_descriptions: bool = False
+    #: A row's amount printed on the line below it, under the amount column: a long description wraps and
+    #: pdftotext puts the amount on the wrapped line. See `merge_wrapped_amounts`.
+    multiline_amount: bool = False
     multiline_direction: bool = False
     multiline_statement_date: bool = False
     multiline_transaction_date: bool = False

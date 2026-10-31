@@ -1,7 +1,7 @@
 import re
 
 from monopoly.banks.base import BankBase
-from monopoly.config import DateOrder, StatementConfig
+from monopoly.config import DateOrder, MultilineConfig, StatementConfig
 from monopoly.constants import EntryType, SharedPatterns
 from monopoly.constants.date import DateFormats
 from monopoly.identifiers import MetadataIdentifier
@@ -43,6 +43,9 @@ class CapitalOneUS(BankBase):
             + SharedPatterns.COMMA_FORMAT
             + r")\s*$"
         ),
+        # a long description wraps onto a second line and takes the amount with it:
+        # "Jul 9   Withdrawal from ... TAX   Debit   $1,008.15" then "   PAYMENT   - $100.00"
+        multiline_config=MultilineConfig(multiline_descriptions=True, multiline_amount=True),
         # no totals are printed, only each account's opening and closing balance
         safety_check=False,
     )

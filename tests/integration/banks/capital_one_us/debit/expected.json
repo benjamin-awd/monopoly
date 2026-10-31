@@ -41,6 +41,17 @@
       "direction": "debit"
     },
     {
+      "id": "142fa454e7443bbce722eef32c64b314676a4d0419272a03b3ba320025584cb3",
+      "transaction_date": "2026-03-20",
+      "posting_date": null,
+      "description": "Withdrawal from EXAMPLE TAX AUTHORITY ESTIMATED TAX PAYMENT",
+      "amount": -100.0,
+      "currency": "USD",
+      "account": "1234",
+      "balance": 1008.15,
+      "direction": "debit"
+    },
+    {
       "id": "f18ffe82af72ab95c6a08c42597537eca00707c3acb1bada6465ed9d76e41176",
       "transaction_date": "2026-03-31",
       "posting_date": null,
@@ -48,7 +59,7 @@
       "amount": 0.12,
       "currency": "USD",
       "account": "1234",
-      "balance": 1108.27,
+      "balance": 1008.27,
       "direction": "credit"
     },
     {

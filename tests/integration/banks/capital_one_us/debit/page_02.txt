@@ -5,8 +5,10 @@ Mar 1        Opening Balance                                                    
 Mar 3        Check Deposit (Mobile)                                               Credit           + $250.00              $2,750.00
 Mar 9        Withdrawal from EXAMPLE CARD EPAYMENT ACH PMT                        Debit         - $1,141.85               $1,608.15
 Mar 15       Withdrawal to 360 Performance Savings...5678                         Debit           - $500.00               $1,108.15
-Mar 31       Monthly Interest Paid                                                Credit             + $0.12               $1,108.27
-Mar 31       Closing Balance                                                                                              $1,108.27
+Mar 20       Withdrawal from EXAMPLE TAX AUTHORITY ESTIMATED TAX                  Debit                                   $1,008.15
+             PAYMENT                                                                              - $100.00
+Mar 31       Monthly Interest Paid                                                Credit             + $0.12               $1,008.27
+Mar 31       Closing Balance                                                                                              $1,008.27
 360 Performance Savings - 10000005678
 3.50%                                      $12.40                                          31
 ANNUAL PERCENTAGE YIELD                    YTD INTEREST AND BONUSES                        DAYS IN STATEMENT

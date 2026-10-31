@@ -26,6 +26,42 @@ logger = logging.getLogger(__name__)
 MIN_BREAK_GAP = 20  # Minimum gap between words and numbers to trigger break
 
 
+# The last figure on a line, with an optional sign and currency symbol: "- $1,234.56", "+ $0.12", "100.00".
+TRAILING_AMOUNT = re.compile(r"(?:[+-]\s*)?[$€£]?\d{1,3}(?:,\d{3})*\.\d{2}\s*$")
+
+
+def merge_wrapped_amounts(lines: list[str], pattern: re.Pattern[str]) -> list[str]:
+    """
+    Lay an amount that wrapped onto the next line back onto its row's line.
+
+    A long description can push a row's amount down a line, while its date, category and balance stay on the first:
+
+        Mar 20   Withdrawal from EXAMPLE TAX AUTHORITY ESTIMATED TAX   Debit               $1,008.15
+                 PAYMENT                                                      - $100.00
+
+    pdftotext's layout mode keeps the columns, so the amount sits under the amount column. Copying it into the same
+    columns of the line above (where they are blank) gives a whole row. The copy is kept only when the result then
+    matches `pattern`, so no other line changes. The amount is taken off the next line, leaving the description's
+    wrapped words for `multiline_descriptions`.
+    """
+    out = list(lines)
+    for i in range(len(out) - 1):
+        line, below = out[i], out[i + 1]
+        if pattern.search(line) or pattern.search(below):
+            continue
+        if not (found := TRAILING_AMOUNT.search(below)):
+            continue
+        start, end = found.span()
+        padded = line.ljust(end)
+        if padded[start:end].strip():
+            continue
+        merged = (padded[:start] + below[start:end] + padded[end:]).rstrip()
+        if pattern.search(merged):
+            out[i] = merged
+            out[i + 1] = below[:start].rstrip()
+    return out
+
+
 @dataclass
 class MatchContext:
     line: str
@@ -150,7 +186,10 @@ class BaseStatement(ABC):
     def _iter_matches(self) -> Iterator[tuple[RawTransaction, MatchContext]]:
         """Yield one raw transaction and its line context per in-bounds match."""
         for page_num, page in enumerate(self.pages):
-            for line_num, line in enumerate(page.lines):
+            lines = page.lines
+            if self.config.multiline_config.multiline_amount:
+                lines = merge_wrapped_amounts(lines, self.pattern)
+            for line_num, line in enumerate(lines):
                 raw_match = self.pattern.search(line)
                 if not raw_match or self._check_bound(raw_match):
                     continue
@@ -168,7 +207,7 @@ class BaseStatement(ABC):
                 )
                 context = MatchContext(
                     line=line,
-                    lines=page.lines,
+                    lines=lines,
                     idx=line_num,
                     description=raw_transaction.description,
                     multiline_config=self.config.multiline_config,
