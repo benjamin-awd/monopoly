@@ -13,7 +13,7 @@ from monopoly.statements import DebitStatement
 # The `--format json` envelope is asserted in test_bank_fixtures.py.
 test_cases = [
     (BankOfAmerica, 2770.15, 954.55, datetime(2023, 7, 25)),
-    (CapitalOneUS, 754.8, 1641.85, datetime(2026, 3, 31)),
+    (CapitalOneUS, 754.8, 1741.85, datetime(2026, 3, 31)),
     (Dbs, 1653.65, 396.65, datetime(2024, 11, 30)),
     (Maybank, 525.25, 464.0, datetime(2023, 8, 31)),
     (Ocbc, 3670.25, 1596.1, datetime(2024, 9, 30)),
