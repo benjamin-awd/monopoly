@@ -32,17 +32,12 @@ TRAILING_AMOUNT = re.compile(r"(?:[+-]\s*)?[$€£]?\d{1,3}(?:,\d{3})*\.\d{2}\s*
 
 def merge_wrapped_amounts(lines: list[str], pattern: re.Pattern[str]) -> list[str]:
     """
-    Lay an amount that wrapped onto the next line back onto its row's line.
-
-    A long description can push a row's amount down a line, while its date, category and balance stay on the first:
+    Move an amount that wrapped onto the next line back into its row's column.
 
         Mar 20   Withdrawal from EXAMPLE TAX AUTHORITY ESTIMATED TAX   Debit               $1,008.15
                  PAYMENT                                                      - $100.00
 
-    pdftotext's layout mode keeps the columns, so the amount sits under the amount column. Copying it into the same
-    columns of the line above (where they are blank) gives a whole row. The copy is kept only when the result then
-    matches `pattern`, so no other line changes. The amount is taken off the next line, leaving the description's
-    wrapped words for `multiline_descriptions`.
+    The merge is kept only if the row then matches `pattern`. The wrapped words stay for `multiline_descriptions`.
     """
     out = list(lines)
     for i in range(len(out) - 1):
@@ -53,12 +48,9 @@ def merge_wrapped_amounts(lines: list[str], pattern: re.Pattern[str]) -> list[st
             continue
         start, end = found.span()
         padded = line.ljust(end)
-        if padded[start:end].strip():
-            continue
-        merged = (padded[:start] + below[start:end] + padded[end:]).rstrip()
-        if pattern.search(merged):
-            out[i] = merged
-            out[i + 1] = below[:start].rstrip()
+        merged = padded[:start] + found.group() + padded[end:]
+        if not padded[start:end].strip() and pattern.search(merged):
+            out[i], out[i + 1] = merged, below[:start]
     return out
 
 
