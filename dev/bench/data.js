@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793420014712,
+  "lastUpdate": 1793431307980,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -1891,6 +1891,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 1.49814971516,
             "range": "± 0.021295880667046515",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "distinct": true,
+          "id": "564b762ef9cf6a5764e89a269aaec307460f8431",
+          "message": "refactor(credit): return early for a statement with no transactions\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-10-31T15:20:12+08:00",
+          "tree_id": "5ecda03a5d548e3a5a004742780e2e7e0d843e1f",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/564b762ef9cf6a5764e89a269aaec307460f8431"
+        },
+        "date": 1793431307396,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.6996365478200001,
+            "range": "± 0.010325628329553329",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 2.8259791655599997,
+            "range": "± 0.02501105008098855",
             "unit": "s"
           }
         ]
