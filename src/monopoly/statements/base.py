@@ -26,8 +26,8 @@ logger = logging.getLogger(__name__)
 MIN_BREAK_GAP = 20  # Minimum gap between words and numbers to trigger break
 
 
-# The last figure on a line, with an optional sign and currency symbol: "- $1,234.56", "+ $0.12", "100.00".
-TRAILING_AMOUNT = re.compile(r"(?:[+-]\s*)?[$€£]?\d{1,3}(?:,\d{3})*\.\d{2}\s*$")
+# The last figure on a line, with an optional sign and currency prefix: "- $1,234.56", "- S$0.12", "RM5.00", "100.00".
+TRAILING_AMOUNT = re.compile(r"(?:[+-]\s*)?[^\d\s]{0,3}\d{1,3}(?:,\d{3})*\.\d{2}\s*$")
 
 
 def merge_wrapped_amounts(lines: list[str], pattern: re.Pattern[str]) -> list[str]:
