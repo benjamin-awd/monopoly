@@ -208,7 +208,7 @@ class StatementConfig:
         return None
 
 
-#: A config to try, paired with the header line it matched (None if it matched nothing).
+# A config to try, paired with the header line it matched (None if it matched nothing).
 Candidate = tuple[StatementConfig, str | None]
 
 
