@@ -15,7 +15,7 @@ class Trust(BankBase):
         statement_type=EntryType.CREDIT,
         statement_date_pattern=re.compile(
             r"-\s*"
-            r"(?P<day>\d{2})\s+"
+            r"(?P<day>\d{1,2})\s+"
             r"(?P<month>Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+"
             r".*?"
             r"(?P<year>20\d{2}\b)"
