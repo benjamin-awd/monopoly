@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793432187677,
+  "lastUpdate": 1793536377797,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -1999,6 +1999,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 2.02362511364,
             "range": "± 0.03215987420343214",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "56353330+plwg@users.noreply.github.com",
+            "name": "plwg",
+            "username": "plwg"
+          },
+          "committer": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "distinct": true,
+          "id": "fa6e10f2e4f03f576b530b2992904035222bac67",
+          "message": "fix(trust): accept a single-digit day in the statement date\n\nThe statement-date regex required a two-digit day, so a cycle ending on\ne.g. \"9 Oct 2026\" raised MissingStatementDateError.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-01T20:31:33+08:00",
+          "tree_id": "3176bb0376efc7b87c2b5551ee0d0a2af7dfe229",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/fa6e10f2e4f03f576b530b2992904035222bac67"
+        },
+        "date": 1793536377492,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.67342672604,
+            "range": "± 0.014239485150193206",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 2.84891922958,
+            "range": "± 0.025179139757097468",
             "unit": "s"
           }
         ]
