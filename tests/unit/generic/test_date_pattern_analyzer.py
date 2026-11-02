@@ -7,32 +7,31 @@ import pytest
 from monopoly.constants import EntryType, SharedPatterns
 from monopoly.constants.date import DateFormats
 from monopoly.generic import DateMatch, DatePatternAnalyzer
-from monopoly.pdf import PdfPage, MetadataIdentifier
+from monopoly.pdf import MetadataIdentifier, PdfPage
 
 
 @pytest.fixture(scope="session")
 def mock_pages():
-    pages = [
+    return [
         PdfPage("                Statement Date   31 Oct 2024"),
         PdfPage("01 Oct   ValueVille   123.12 \n02 Oct   RandomShop 124.50"),
         PdfPage("04 Oct   Fernvale Food   12.12\nPayment Due Date   21 Aug 2024"),
     ]
-    yield pages
 
 
 @pytest.fixture(scope="session")
 def mock_metadata():
-    yield MetadataIdentifier()
+    return MetadataIdentifier()
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def date_pattern_analyzer(mock_pages, mock_metadata):
-    yield DatePatternAnalyzer(pages=mock_pages, metadata=mock_metadata)
+    return DatePatternAnalyzer(pages=mock_pages, metadata=mock_metadata)
 
 
 @pytest.fixture(scope="session")
 def lines_before_first_transaction():
-    yield list(
+    return list(
         reversed(
             [
                 "DBS Bank Ltd",
@@ -158,7 +157,7 @@ def patterns_with_date_matches():
 
 @pytest.fixture(scope="session")
 def matches_with_transaction_posting_dates():
-    yield [
+    return [
         MockDateMatch(
             span=(10, 16),
             raw_date="03 OCT",
@@ -196,7 +195,7 @@ def matches_with_transaction_posting_dates():
 
 @pytest.fixture(scope="session")
 def matches_with_posting_transaction_dates():
-    yield [
+    return [
         MockDateMatch(
             span=(10, 16),
             raw_date="05 OCT",

@@ -4,9 +4,9 @@ from unittest.mock import Mock
 
 import pytest
 
+from monopoly.banks import BankBase
 from monopoly.config import StatementConfig
 from monopoly.constants import EntryType
-from monopoly.banks import BankBase
 from monopoly.handler import STATEMENT_CLASSES, select_statement
 from monopoly.pdf import PdfPage
 from monopoly.statements import BaseStatement, CreditStatement, DebitStatement, MissingHeaderError

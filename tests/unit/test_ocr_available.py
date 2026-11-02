@@ -1,8 +1,9 @@
-import pytest
 from unittest.mock import Mock, PropertyMock
 
-from monopoly.pdf import PdfParser
+import pytest
+
 from monopoly.identifiers import MetadataIdentifier, TextIdentifier
+from monopoly.pdf import PdfParser
 
 
 class MockPdfDocument:
@@ -28,7 +29,7 @@ def test_ocr_available_succeeds(mock_bank: Mock):
 
     type(mock_bank.pdf_config).ocr_identifiers = PropertyMock(return_value=identifier_group)
 
-    assert parser.ocr_available == True
+    assert parser.ocr_available
 
 
 def test_ocr_available_succeeds_with_two_text_identifiers(mock_bank: Mock):
@@ -47,4 +48,4 @@ def test_ocr_available_succeeds_with_two_text_identifiers(mock_bank: Mock):
 
     type(mock_bank.pdf_config).ocr_identifiers = PropertyMock(return_value=identifier_group)
 
-    assert parser.ocr_available == True
+    assert parser.ocr_available

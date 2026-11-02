@@ -1,5 +1,6 @@
 from datetime import datetime
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 from test_utils.transactions import read_pages
@@ -7,7 +8,9 @@ from test_utils.transactions import read_pages
 from monopoly.generic import GenericBank
 from monopoly.pdf import PdfParser
 from monopoly.pipeline import Pipeline
-from monopoly.statements import DebitStatement
+
+if TYPE_CHECKING:
+    from monopoly.statements import DebitStatement
 
 # What the generic handler produces on the synthetic debit fixtures. The generic
 # handler may resolve a different statement_date than the specific config (e.g.
@@ -21,7 +24,7 @@ test_cases = [
 
 
 @pytest.mark.parametrize(
-    "bank_name, expected_debit_sum, expected_credit_sum, statement_date",
+    ("bank_name", "expected_debit_sum", "expected_credit_sum", "statement_date"),
     test_cases,
 )
 def test_bank_debit_statements(

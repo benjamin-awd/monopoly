@@ -1,5 +1,6 @@
 from datetime import datetime
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 from test_utils.transactions import read_pages
@@ -7,7 +8,9 @@ from test_utils.transactions import read_pages
 from monopoly.generic import GenericBank
 from monopoly.pdf import PdfParser
 from monopoly.pipeline import Pipeline
-from monopoly.statements import CreditStatement
+
+if TYPE_CHECKING:
+    from monopoly.statements import CreditStatement
 
 # The generic handler auto-detects the transaction/date pattern instead of using
 # a bank config, so it can extract a different row set (and sign/date) than the
@@ -26,7 +29,7 @@ test_cases = [
 
 
 @pytest.mark.parametrize(
-    "bank_name, total_amount, statement_date",
+    ("bank_name", "total_amount", "statement_date"),
     test_cases,
 )
 def test_bank_credit_statements(bank_name: str, total_amount: float, statement_date: datetime):

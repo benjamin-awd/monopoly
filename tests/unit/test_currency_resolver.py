@@ -14,7 +14,7 @@ from monopoly.statements.currency_resolver import to_currency_code
 
 
 @pytest.mark.parametrize(
-    "token, expected",
+    ("token", "expected"),
     [
         ("SINGAPORE DOLLAR", "SGD"),
         ("UNITED STATES DOLLAR", "USD"),

@@ -1,5 +1,6 @@
 from datetime import datetime
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 from test_utils.transactions import get_transactions_as_dict, read_pages, read_transactions_from_csv
@@ -7,7 +8,9 @@ from test_utils.transactions import get_transactions_as_dict, read_pages, read_t
 from monopoly.banks import BankBase, BankOfAmerica, CapitalOneUS, Dbs, Maybank, Ocbc, Uob, ZurcherKantonalBank
 from monopoly.pdf import PdfParser
 from monopoly.pipeline import Pipeline
-from monopoly.statements import DebitStatement
+
+if TYPE_CHECKING:
+    from monopoly.statements import DebitStatement
 
 # Synthetic, plain-text fixtures (page_NN.txt) - no real statements, no encryption.
 # The `--format json` envelope is asserted in test_bank_fixtures.py.
@@ -23,7 +26,7 @@ test_cases = [
 
 
 @pytest.mark.parametrize(
-    "bank, expected_debit_sum, expected_credit_sum, statement_date",
+    ("bank", "expected_debit_sum", "expected_credit_sum", "statement_date"),
     test_cases,
 )
 def test_bank_debit_statements(

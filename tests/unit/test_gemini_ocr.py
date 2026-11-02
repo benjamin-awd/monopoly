@@ -27,7 +27,8 @@ def test_missing_google_genai_package():
             GeminiOcr(api_key="test-key")
 
 
-def test_missing_api_key(mock_google_genai, monkeypatch):
+@pytest.mark.usefixtures("mock_google_genai")
+def test_missing_api_key(monkeypatch):
     from monopoly.ocr import GeminiOcr
 
     monkeypatch.delenv("GOOGLE_API_KEY", raising=False)

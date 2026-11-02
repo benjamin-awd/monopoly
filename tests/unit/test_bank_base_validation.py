@@ -89,7 +89,7 @@ class TestTransactionPatternGroups:
             statement_date_pattern=re.compile(r"\d{4}-\d{2}-\d{2}"),
             header_pattern=re.compile(r"Header"),
         )
-        with pytest.raises(ValueError, match="missing required named groups.*description"):
+        with pytest.raises(ValueError, match=r"missing required named groups.*description"):
 
             class Bad(BankBase):
                 name = _unique_name("no_desc")
@@ -103,7 +103,7 @@ class TestTransactionPatternGroups:
             statement_date_pattern=re.compile(r"\d{4}-\d{2}-\d{2}"),
             header_pattern=re.compile(r"Header"),
         )
-        with pytest.raises(ValueError, match="missing required named groups.*amount"):
+        with pytest.raises(ValueError, match=r"missing required named groups.*amount"):
 
             class Bad(BankBase):
                 name = _unique_name("no_amt")

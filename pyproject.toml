@@ -71,7 +71,6 @@ line-length = 120
 [tool.ruff.lint]
 select = ["ALL"]
 fixable = ["ALL"]
-exclude = ["tests/*"]
 
 ignore = [
     # modules
@@ -97,6 +96,24 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 "**/banks/**.py" = ["RUF012"]
 "**/examples/example_bank.py" = ["RUF012"]
+
+# idioms that are normal in tests: bare asserts, literal expected values, naive
+# dates matching parser output, poking at internals, no package __init__s, and
+# statement text built line by line at its real width
+"tests/**" = [
+    "D",
+    "DTZ",
+    "E501",
+    "FBT",
+    "FLY002",
+    "INP001",
+    "PLC0415",
+    "PLR2004",
+    "RUF012",
+    "S101",
+    "S108",
+    "SLF001",
+]
 
 # PLC0415 (import-outside-top-level): these modules defer imports on purpose -
 # to keep the gemini and ocr extras optional, to load dateparser only on the

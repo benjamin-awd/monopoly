@@ -7,8 +7,8 @@ from monopoly.pdf import PdfPage
 from monopoly.statements import BaseStatement
 from monopoly.statements.base import MatchContext
 from monopoly.statements.transaction import (
-    Transaction,
     RawTransaction,
+    Transaction,
 )
 
 
@@ -90,7 +90,7 @@ def test_process_match_multiline_description(statement: BaseStatement):
         **groupdict,
     )
 
-    # case 1: transaction is found on next line
+    # case 1 - transaction is found on next line
     line = "04 Aug 02 Aug SHOPEE 3.20"
     lines = ["04 Aug 02 Aug SHOPEE 3.20", "05 Aug 02 Aug ValueVille 3.20"]
     expected_groupdict = {
@@ -105,7 +105,7 @@ def test_process_match_multiline_description(statement: BaseStatement):
     match = statement.process_match(match, context)
     assert match.as_dict() == expected_groupdict
 
-    # case 2: description across next line is more than three spaces apart
+    # case 2 - description across next line is more than three spaces apart
     line = "04 Aug 02 Aug SHOPEE 3.20"
     lines = ["04 Aug 02 Aug SHOPEE 3.20", "foo", "bar"]
     context = MatchContext(line=line, lines=lines, idx=0, description="SHOPEE")

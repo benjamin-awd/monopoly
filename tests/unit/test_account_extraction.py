@@ -14,7 +14,7 @@ from monopoly.statements.account_resolver import extract_last4
 
 
 @pytest.mark.parametrize(
-    "token, expected",
+    ("token", "expected"),
     [
         ("4417 88XX XXXX 2031", "2031"),  # masked spaced card number
         ("4111-2222-3333-4444", "4444"),  # dash-separated card number

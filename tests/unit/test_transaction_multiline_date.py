@@ -1,6 +1,8 @@
 import re
-from monopoly.config import MultilineConfig, StatementConfig, EntryType
+
 from test_utils.statements import StubStatement
+
+from monopoly.config import EntryType, MultilineConfig, StatementConfig
 from monopoly.statements.transaction import RawTransaction
 
 
@@ -25,7 +27,7 @@ def test_carry_forward_date_when_multiline_is_enabled():
 
     # SCENARIO: Process a sequence of transactions
     first_date = "24 FEB 2025"
-    dummy_match = re.search("foo", "foo")
+    re.search("foo", "foo")
 
     # Transaction 1: Has a date. This date should be saved as 'previous_transaction_date'.
     tx_with_date_1 = RawTransaction(
@@ -68,7 +70,7 @@ def test_date_is_not_carried_forward_when_multiline_is_disabled():
         transaction_auto_direction=True,
     )
     statement = StubStatement(pages=[], bank_name="Test Bank", config=config, header="")
-    dummy_match = re.search("foo", "foo")
+    re.search("foo", "foo")
 
     # SCENARIO: Process two transactions
     # Process one with a date to set the internal state
