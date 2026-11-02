@@ -41,7 +41,7 @@ expected_payment_summaries = {
 
 
 @pytest.mark.parametrize(
-    "bank, total_amount, statement_date",
+    ("bank", "total_amount", "statement_date"),
     test_cases,
 )
 def test_bank_credit_statements(

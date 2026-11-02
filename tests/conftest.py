@@ -3,12 +3,12 @@ from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 from pymupdf import Document
+from test_utils.statements import StubStatement
 
 from monopoly.banks.detector import BankDetector
 from monopoly.config import DateOrder, PdfConfig, StatementConfig
 from monopoly.constants import EntryType
 from monopoly.pdf import PdfDocument, PdfPage, PdfParser
-from test_utils.statements import StubStatement
 from monopoly.statements import BaseStatement, CreditStatement, DebitStatement
 
 
@@ -21,12 +21,12 @@ def mock_env():
 
 @pytest.fixture
 def pdf_document():
-    yield PdfDocument(file_path="src/monopoly/examples/example_statement.pdf")
+    return PdfDocument(file_path="src/monopoly/examples/example_statement.pdf")
 
 
 @pytest.fixture
 def metadata_analyzer(pdf_document):
-    yield BankDetector(pdf_document)
+    return BankDetector(pdf_document)
 
 
 @pytest.fixture
@@ -36,7 +36,7 @@ def mock_get_pages():
         yield mock_get_pages
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def mock_bank():
     class MockBank:
         pdf_config = PdfConfig()
@@ -51,8 +51,7 @@ def parser(mock_bank):
         metadata_identifier = [None]
 
     document = MockDocument()
-    parser = PdfParser(bank=mock_bank, document=document)
-    yield parser
+    return PdfParser(bank=mock_bank, document=document)
 
 
 def setup_statement_fixture(
@@ -68,24 +67,24 @@ def setup_statement_fixture(
     yield statement
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def credit_statement(statement_config):
     yield from setup_statement_fixture(CreditStatement, statement_config)
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def debit_statement(statement_config):
     yield from setup_statement_fixture(DebitStatement, statement_config)
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def statement(statement_config):
     yield from setup_statement_fixture(StubStatement, statement_config)
 
 
 @pytest.fixture(scope="session")
 def statement_config():
-    statement_config = StatementConfig(
+    return StatementConfig(
         statement_type=EntryType.CREDIT,
         header_pattern="foo",
         transaction_pattern="foo",
@@ -93,7 +92,6 @@ def statement_config():
         transaction_date_order=DateOrder("DMY"),
         prev_balance_pattern="foo",
     )
-    yield statement_config
 
 
 @pytest.fixture

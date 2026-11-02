@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from pytest import raises
+import pytest
 
 from monopoly.pdf import MissingOCRError, PdfDocument, PdfParser
 
@@ -19,7 +19,7 @@ def test_get_pages_with_no_text(parser: PdfParser):
     parser.document = pdf_document
     parser.page_range = slice(0, -1)
 
-    with raises(MissingOCRError):
+    with pytest.raises(MissingOCRError):
         parser._get_pages()
 
 
@@ -28,5 +28,5 @@ def test_get_pages_invalid_returns_error(parser: PdfParser):
     parser.document = pdf_document
     parser.page_range = slice(99, -99)
 
-    with raises(ValueError, match="bad page number"):
+    with pytest.raises(ValueError, match="bad page number"):
         parser._get_pages()

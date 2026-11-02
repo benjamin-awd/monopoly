@@ -51,7 +51,7 @@ class TestBaseStatementIsAbstract:
         # Message wording differs across Python versions (3.11 omits the quotes
         # and says "with abstract method"; 3.12+ says "without an implementation
         # for abstract method '...'"), so match only the stable substring.
-        with pytest.raises(TypeError, match="abstract method '?perform_safety_check'?"):
+        with pytest.raises(TypeError, match=r"abstract method '?perform_safety_check'?"):
             BaseStatement(pages=[], bank_name="bank", config=config, header="")
 
 
@@ -74,5 +74,5 @@ class TestCreditFallbackMessage:
         statement = CreditStatement([PdfPage("Statement Page 1\nno totals listed here\n")], "bank", config, "header")
         statement.transactions = [_tx(10.0), _tx(20.0)]
 
-        with pytest.raises(SafetyCheckError, match="Total amount 30.0 cannot be found in credit statement"):
+        with pytest.raises(SafetyCheckError, match=r"Total amount 30\.0 cannot be found in credit statement"):
             statement.perform_safety_check()

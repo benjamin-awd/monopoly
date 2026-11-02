@@ -27,7 +27,7 @@ class MockPdfDocument:
 
 @pytest.fixture
 def mock_encrypted_document():
-    yield MockPdfDocument(
+    return MockPdfDocument(
         is_encrypted=True,
         metadata={
             "title": "foo",
@@ -41,7 +41,7 @@ def mock_encrypted_document():
 
 @pytest.fixture
 def mock_non_encrypted_document():
-    yield MockPdfDocument(
+    return MockPdfDocument(
         is_encrypted=False,
         metadata={
             "title": "foo",

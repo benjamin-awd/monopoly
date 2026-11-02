@@ -41,7 +41,7 @@ def test_layout_at_column_zero_is_usable():
 
 
 def test_layout_is_frozen():
-    with pytest.raises(Exception, match="frozen|immutable|cannot assign"):
+    with pytest.raises(Exception, match=r"frozen|immutable|cannot assign"):
         LAYOUT.withdrawal = 99
 
 

@@ -1,7 +1,6 @@
 """Test filename fallback for statement dates when not found in content."""
 
 import re
-from datetime import datetime
 from pathlib import Path
 
 import pytest
@@ -14,7 +13,7 @@ from monopoly.statements import CreditStatement
 
 
 @pytest.mark.parametrize(
-    "filename,expected_month",
+    ("filename", "expected_month"),
     [
         ("eStatement_Nov2025_2025-11-07T14_50_26.pdf", 11),
         ("CardStatement_Oct2025.pdf", 10),

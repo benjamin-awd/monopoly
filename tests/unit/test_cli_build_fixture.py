@@ -32,7 +32,8 @@ def _write_fixture_dir(directory, page_text):
     (directory / "page_01.txt").write_text(page_text, encoding="utf8")
 
 
-def test_build_writes_three_fixture_files(tmp_path, _register_example_bank):
+@pytest.mark.usefixtures("_register_example_bank")
+def test_build_writes_three_fixture_files(tmp_path):
     _write_fixture_dir(tmp_path, GOOD_PAGE)
 
     result = CliRunner().invoke(fixtures, ["build", str(tmp_path), "--bank", "ExampleBank"])
@@ -56,7 +57,8 @@ def test_build_writes_three_fixture_files(tmp_path, _register_example_bank):
     assert abs(round(sum(tx["amount"] for tx in expected["transactions"]), 2)) == 69.12
 
 
-def test_build_safety_check_catches_broken_total(tmp_path, _register_example_bank):
+@pytest.mark.usefixtures("_register_example_bank")
+def test_build_safety_check_catches_broken_total(tmp_path):
     _write_fixture_dir(tmp_path, BROKEN_PAGE)
 
     result = CliRunner().invoke(fixtures, ["build", str(tmp_path), "--bank", "ExampleBank"])
@@ -64,7 +66,8 @@ def test_build_safety_check_catches_broken_total(tmp_path, _register_example_ban
     assert not (tmp_path / "raw.csv").exists()
 
 
-def test_build_nosafe_skips_safety_check(tmp_path, _register_example_bank):
+@pytest.mark.usefixtures("_register_example_bank")
+def test_build_nosafe_skips_safety_check(tmp_path):
     _write_fixture_dir(tmp_path, BROKEN_PAGE)
 
     result = CliRunner().invoke(fixtures, ["build", str(tmp_path), "--bank", "ExampleBank", "--nosafe"])
@@ -72,7 +75,8 @@ def test_build_nosafe_skips_safety_check(tmp_path, _register_example_bank):
     assert (tmp_path / "raw.csv").exists()
 
 
-def test_build_requires_bank_or_generic(tmp_path, _register_example_bank):
+@pytest.mark.usefixtures("_register_example_bank")
+def test_build_requires_bank_or_generic(tmp_path):
     _write_fixture_dir(tmp_path, GOOD_PAGE)
 
     result = CliRunner().invoke(fixtures, ["build", str(tmp_path)])

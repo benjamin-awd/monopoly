@@ -1,5 +1,5 @@
-from datetime import datetime
 import re
+from datetime import datetime
 
 from monopoly.config import MultilineConfig
 from monopoly.statements import BaseStatement

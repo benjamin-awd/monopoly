@@ -45,7 +45,7 @@ def test_prev_month_balance_not_found(credit_statement: CreditStatement):
     assert not result
 
 
-def mock_get_prev_month_balances(transactions):
+def mock_get_prev_month_balances(_self):
     @dataclass
     class MockRegexMatch:
         transaction_date: str

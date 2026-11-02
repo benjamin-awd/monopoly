@@ -1,7 +1,6 @@
 """Unit tests for DateResolver class."""
 
 import re
-from datetime import datetime
 from pathlib import Path
 
 import pytest

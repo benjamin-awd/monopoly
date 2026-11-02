@@ -1,15 +1,16 @@
 import json
-import os
 import re
 from pathlib import Path
+
 import pytest
 from click.testing import CliRunner
-from monopoly.cli.models import Report, Result
+
 from monopoly.cli import (
     get_statement_paths,
     monopoly,
     pprint_transactions,
 )
+from monopoly.cli.models import Report, Result
 from monopoly.statements.transaction import Transaction
 
 
@@ -33,7 +34,7 @@ def test_directory() -> Path:
 
 @pytest.fixture
 def cli_runner():
-    yield CliRunner()
+    return CliRunner()
 
 
 def test_display_report(mock_results, capsys):
@@ -70,7 +71,7 @@ def test_monopoly_output(cli_runner: CliRunner, tmp_path: Path):
     assert "1 statement(s) processed" in result.output
 
     # Check that a CSV output file was created
-    csv_files = [f for f in os.listdir(output_dir) if f.endswith(".csv")]
+    csv_files = [f.name for f in output_dir.glob("*.csv")]
     assert len(csv_files) == 1, f"Expected exactly one CSV file, found {len(csv_files)}"
     assert csv_files[0] in result.output
 
@@ -88,10 +89,10 @@ def test_monopoly_output_json(cli_runner: CliRunner, tmp_path: Path):
     assert "1 statement(s) processed" in result.output
 
     # exactly one .json and no .csv written
-    json_files = [f for f in os.listdir(output_dir) if f.endswith(".json")]
+    json_files = [f.name for f in output_dir.glob("*.json")]
     assert len(json_files) == 1, f"Expected exactly one JSON file, found {len(json_files)}"
     assert json_files[0] in result.output
-    assert not [f for f in os.listdir(output_dir) if f.endswith(".csv")]
+    assert not [f.name for f in output_dir.glob("*.csv")]
 
     data = json.loads((output_dir / json_files[0]).read_text())
     assert data["schema_version"] == 2
@@ -116,9 +117,9 @@ def test_monopoly_output_csv_explicit(cli_runner: CliRunner, tmp_path: Path):
     )
 
     assert result.exit_code == 0
-    csv_files = [f for f in os.listdir(output_dir) if f.endswith(".csv")]
+    csv_files = [f.name for f in output_dir.glob("*.csv")]
     assert len(csv_files) == 1
-    assert not [f for f in os.listdir(output_dir) if f.endswith(".json")]
+    assert not [f.name for f in output_dir.glob("*.json")]
 
 
 def test_monopoly_output_preserve_filename(cli_runner: CliRunner, tmp_path: Path):

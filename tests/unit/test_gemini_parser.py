@@ -19,12 +19,15 @@ def mock_google_genai():
 
 
 def test_missing_google_genai_package():
-    with patch.dict(sys.modules, {"google": None, "google.genai": None}):
-        with pytest.raises(ImportError, match="google-genai is not installed"):
-            GeminiParser(api_key="test-key")
+    with (
+        patch.dict(sys.modules, {"google": None, "google.genai": None}),
+        pytest.raises(ImportError, match="google-genai is not installed"),
+    ):
+        GeminiParser(api_key="test-key")
 
 
-def test_missing_api_key(mock_google_genai, monkeypatch, tmp_path):
+@pytest.mark.usefixtures("mock_google_genai")
+def test_missing_api_key(monkeypatch, tmp_path):
     monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
     monkeypatch.chdir(tmp_path)
     with pytest.raises(MissingApiKeyError, match="Google API key not found"):

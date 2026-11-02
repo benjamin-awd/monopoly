@@ -11,22 +11,21 @@ from monopoly.pdf import PdfPage
 
 @pytest.fixture(scope="session")
 def mock_pages():
-    pages = [
+    return [
         PdfPage("                Statement Date   31 Oct 2024"),
         PdfPage("01 Oct   ValueVille   123.12 \n02 Oct   RandomShop 124.50"),
         PdfPage("04 Oct   Fernvale Food   12.12\nPayment Due Date   21 Aug 2024"),
     ]
-    yield pages
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def pattern_matcher(mock_pages):
-    yield PatternMatcher(pages=mock_pages)
+    return PatternMatcher(pages=mock_pages)
 
 
 @pytest.fixture(scope="session")
 def lines_before_first_transaction():
-    yield list(
+    return list(
         reversed(
             [
                 "DBS Bank Ltd",
@@ -62,7 +61,7 @@ class MockDateMatch(DateMatch):
 
 @pytest.fixture(scope="session")
 def lines_with_transaction_posting_dates():
-    yield {
+    return {
         "dd_mmm": [
             MockDateMatch(
                 span=(10, 16),
@@ -102,7 +101,7 @@ def lines_with_transaction_posting_dates():
 
 @pytest.fixture(scope="session")
 def lines_with_posting_transaction_dates():
-    yield {
+    return {
         "dd_mmm": [
             MockDateMatch(
                 span=(10, 16),
@@ -129,7 +128,7 @@ def test_pattern_matcher(pattern_matcher: PatternMatcher):
     spans = pattern_matcher.get_transaction_spans(pattern)
 
     assert spans == {(0, 6)}
-    assert len([pattern for pattern in pattern_matcher]) == 13
+    assert len(list(pattern_matcher)) == 13
     assert pattern.name == "dd_mmm"
     assert pattern.span_occurrences == Counter({(0, 6): 3, (33, 39): 1, (19, 25): 1})
     assert pattern.unique_spans == {(19, 25), (0, 6), (33, 39)}
@@ -155,7 +154,7 @@ def test_get_transaction_pattern():
     pattern3.name = "mmm_dd"
     pattern3.span_occurrences = Counter({(0, 5): 2})
 
-    with patch.object(PatternMatcher, "__init__", lambda self, pages: None):
+    with patch.object(PatternMatcher, "__init__", return_value=None):
         pattern_matcher = PatternMatcher(pages=[])
         pattern_matcher.patterns = {
             "dd_mmm": pattern1,

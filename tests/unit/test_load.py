@@ -17,11 +17,13 @@ def mock_generate_name():
 
 @pytest.fixture
 def mock_file_system():
-    with patch("builtins.open", new_callable=MagicMock) as mock_open:
-        with patch("csv.writer", autospec=True) as mock_writer:
-            mock_instance = mock_writer.return_value
-            mock_instance.writerow = MagicMock()
-            yield mock_open, mock_instance
+    with (
+        patch("builtins.open", new_callable=MagicMock) as mock_open,
+        patch("csv.writer", autospec=True) as mock_writer,
+    ):
+        mock_instance = mock_writer.return_value
+        mock_instance.writerow = MagicMock()
+        yield mock_open, mock_instance
 
 
 @pytest.mark.usefixtures("mock_generate_name")

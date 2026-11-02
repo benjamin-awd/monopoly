@@ -29,7 +29,7 @@ roundtrip_cases = [
 ]
 
 
-@pytest.mark.parametrize("bank, statement_type", roundtrip_cases)
+@pytest.mark.parametrize(("bank", "statement_type"), roundtrip_cases)
 def test_render_roundtrip_extracts_transactions(bank, statement_type, tmp_path):
     fixture_dir = BANKS_DIR / bank.name / statement_type
     rendered = tmp_path / f"{bank.name}_{statement_type}.pdf"
