@@ -56,7 +56,6 @@ make setup
 # an older libstdc++ that clashes with the system libpoppler.
 
 # Or using uv directly
-uv venv
 uv sync --all-extras
 source .venv/bin/activate
 ```

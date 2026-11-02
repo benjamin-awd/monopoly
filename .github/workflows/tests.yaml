@@ -27,20 +27,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libpoppler-cpp-dev
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v7
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install uv
+      - name: Install uv and Python ${{ matrix.python-version }}
         uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
+          python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: |
-          uv venv
-          uv sync --all-extras --locked
+        run: uv sync --all-extras --locked
+
+      - name: Check the Python version
+        run: uv run python -c "import sys; assert sys.version.startswith('${{ matrix.python-version }}.'), sys.version"
 
       - name: Run tests
         run: uv run task test
