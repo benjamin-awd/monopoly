@@ -52,9 +52,7 @@ monopoly-fixture = "monopoly.cli.fixtures:fixtures"
 
 [dependency-groups]
 dev = [
-    "black>=25.1.0",
     "pylint>=3.3.7",
-    "isort>=6.0.1",
     "taskipy>=1.14.1",
     "pytest>=8.3.5",
     "pysnooper>=1.2.3",
