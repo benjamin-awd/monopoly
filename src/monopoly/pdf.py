@@ -310,7 +310,6 @@ class PdfParser:
 
     @staticmethod
     def apply_ocr(document: PdfDocument) -> PdfDocument:
-        # pylint: disable=import-outside-toplevel
         try:
             from ocrmypdf import Verbosity, configure_logging, ocr
             from ocrmypdf.exceptions import PriorOcrFoundError, TaggedPDFError
@@ -343,7 +342,6 @@ class PdfParser:
         except (PriorOcrFoundError, TaggedPDFError) as err:
             logger.debug("OCR skipped: %s", str(err))
 
-        # pylint: disable=attribute-defined-outside-init
         if added_ocr:
             logger.debug("Adding OCR layer to document")
             document = PdfDocument(file_bytes=output_bytes)

@@ -6,7 +6,6 @@ from typing import Any
 from strenum import StrEnum
 
 
-# pylint: disable=unused-argument,no-self-argument
 class AutoEnum(StrEnum):
     """Generates lower case values for enums e.g. CITIBANK -> citibank."""
 

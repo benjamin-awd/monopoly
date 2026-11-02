@@ -91,7 +91,6 @@ class PaymentSummaryConfig:
             setattr(self, name, compile_pattern(getattr(self, name)))
 
 
-# pylint: disable=too-many-instance-attributes
 @dataclass(kw_only=True)
 class StatementConfig:
     r"""
