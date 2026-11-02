@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from monopoly.examples.example_bank import ExampleBank
 from monopoly.pdf import PdfDocument, PdfParser
 from monopoly.pipeline import Pipeline
@@ -10,7 +12,7 @@ def example():
     You can pass in the bank class if you want to specify a specific bank,
     or use the BankDetector class to try to detect the bank automatically.
     """
-    document = PdfDocument(file_path="src/monopoly/examples/example_statement.pdf")
+    document = PdfDocument(file_path=Path("src/monopoly/examples/example_statement.pdf"))
     parser = PdfParser(ExampleBank, document)
     pipeline = Pipeline(parser)
 
@@ -26,6 +28,7 @@ def example():
         transactions=transactions,
         statement=statement,
         output_directory="src/monopoly/examples",
+        preserve_filename=False,
     )
 
     with open(file_path, encoding="utf8"):
