@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793604296538,
+  "lastUpdate": 1793605369232,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -2107,6 +2107,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 2.7800930999999998,
             "range": "± 0.09458158525266254",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "distinct": true,
+          "id": "ed3318b1f1b2e6cc2db10855908c8d48346e3797",
+          "message": "build(deps): drop pylint and flake8 in favour of ruff\n\nRuff's select = [\"ALL\"] covers pyflakes, pycodestyle and the PL rules,\nand neither tool was run by pre-commit or CI. Remove the deps, the unread\n.flake8 config, and the inert pylint disable comments.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-02T15:41:17+08:00",
+          "tree_id": "4a65f7213396f0ef01b43ebd56dc32fff997c754",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/ed3318b1f1b2e6cc2db10855908c8d48346e3797"
+        },
+        "date": 1793605368922,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.6486625891000001,
+            "range": "± 0.007378903264327473",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 2.7508718231,
+            "range": "± 0.049579272208638",
             "unit": "s"
           }
         ]
