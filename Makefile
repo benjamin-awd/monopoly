@@ -9,6 +9,5 @@ else
 endif
 
 	# install uv dependencies
-	uv venv
 	uv sync --all-extras
 	@echo "Run 'source .venv/bin/activate' to activate the venv"
