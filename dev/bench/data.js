@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793586886217,
+  "lastUpdate": 1793604296538,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -2071,6 +2071,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 2.8752251378600002,
             "range": "± 0.061483219369115834",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "distinct": true,
+          "id": "4e8675d20a98a3b3872899e6137f05f1459ee2d1",
+          "message": "ci(release): open release PRs with a GitHub App token\n\nA release PR opened with GITHUB_TOKEN holds its CI runs for approval, and\nmerging it without approval marks them failed. Opening the PR as a GitHub\nApp lets CI run normally.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-02T15:23:35+08:00",
+          "tree_id": "f0343d323ebc7d74bd65d93d81b4e8b9fbaaa46d",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/4e8675d20a98a3b3872899e6137f05f1459ee2d1"
+        },
+        "date": 1793604296237,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.6340422410600001,
+            "range": "± 0.007451968842050151",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 2.7800930999999998,
+            "range": "± 0.09458158525266254",
             "unit": "s"
           }
         ]
