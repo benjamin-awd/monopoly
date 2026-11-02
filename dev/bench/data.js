@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793536377797,
+  "lastUpdate": 1793586886217,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -2035,6 +2035,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 2.84891922958,
             "range": "± 0.025179139757097468",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "41898282+github-actions[bot]@users.noreply.github.com",
+            "name": "github-actions[bot]",
+            "username": "github-actions[bot]"
+          },
+          "committer": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "distinct": true,
+          "id": "108615bedae0b0555f2af7f7c1d22d6b8a6242d6",
+          "message": "chore(main): release 0.23.6",
+          "timestamp": "2026-11-02T10:33:15+08:00",
+          "tree_id": "75af59428bf2e4bbec0fb4b3476ec74291054dcd",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/108615bedae0b0555f2af7f7c1d22d6b8a6242d6"
+        },
+        "date": 1793586885704,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.6955787360400001,
+            "range": "± 0.007190833665904518",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 2.8752251378600002,
+            "range": "± 0.061483219369115834",
             "unit": "s"
           }
         ]
