@@ -2,7 +2,8 @@
 authors = [
     {name = "benjamin-awd", email = "benjamindornel@gmail.com"},
 ]
-license = {text = "AGPL-3.0"}
+license = "AGPL-3.0-only"
+license-files = ["LICENSE.md"]
 requires-python = "<3.15,>=3.10"
 dependencies = [
     "pydantic-settings>=2.9.1",
@@ -40,11 +41,12 @@ gemini = [
 ]
 
 [build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
+requires = ["uv_build>=0.10.12,<0.11"]
+build-backend = "uv_build"
 
-[tool.pdm.build]
-includes = ["src/monopoly", "tests/test_utils"]
+[tool.uv.build-backend]
+module-name = "monopoly"
+source-include = ["tests/**"]
 
 [project.scripts]
 monopoly = "monopoly.cli:monopoly"
