@@ -130,7 +130,6 @@ class Transaction:
         """
         return Direction.parse(value, minus=Direction.DEBIT)
 
-    # pylint: disable=bad-classmethod-argument
     @model_validator(mode="before")
     def treat_parenthesis_enclosure_as_credit(self: ArgsKwargs | Any) -> "ArgsKwargs":
         """Treat amounts enclosed by parentheses (e.g. cashback) as a credit entry."""

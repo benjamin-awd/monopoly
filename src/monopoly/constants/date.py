@@ -11,7 +11,6 @@ from monopoly.enums import RegexEnum
 logger = logging.getLogger(__name__)
 
 
-# pylint: disable=line-too-long
 class DateFormats(StrEnum):
     """Case-insensitive list of common ISO 8601 date formats."""
 

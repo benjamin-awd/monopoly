@@ -20,7 +20,6 @@ from monopoly.statements.transaction import (
     Transaction,
 )
 
-# pylint: disable=bad-classmethod-argument
 logger = logging.getLogger(__name__)
 
 MIN_BREAK_GAP = 20  # Minimum gap between words and numbers to trigger break
