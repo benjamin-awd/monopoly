@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793605369232,
+  "lastUpdate": 1793605561382,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -2143,6 +2143,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 2.7508718231,
             "range": "± 0.049579272208638",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "committer": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "distinct": true,
+          "id": "775089b6a68283c5b420efb8fd4f14510c6a4954",
+          "message": "fix(examples): pass preserve_filename to Pipeline.load\n\nThe single-statement example crashed with a TypeError: load() made\npreserve_filename keyword-only and required, but the example never\npassed it. mypy missed it because example() has no annotations, so\nenable check_untyped_defs (which makes annotation-unchecked moot).\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-02T15:44:32+08:00",
+          "tree_id": "4985084687d7bda2e0b6c6fb248c11508c1eab58",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/775089b6a68283c5b420efb8fd4f14510c6a4954"
+        },
+        "date": 1793605561092,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.6624123143800001,
+            "range": "± 0.005095518245093574",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 2.7931275231,
+            "range": "± 0.02911641573108361",
             "unit": "s"
           }
         ]
