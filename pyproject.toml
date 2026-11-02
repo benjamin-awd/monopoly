@@ -72,7 +72,6 @@ dev = [
 
 [tool.ruff]
 line-length = 120
-target-version = "py312"
 
 [tool.ruff.lint]
 select = ["ALL"]
@@ -124,6 +123,8 @@ mypy = "mypy src"
 
 
 [tool.mypy]
+# check against the oldest supported Python, not the one running mypy
+python_version = "3.10"
 disable_error_code = [
     "annotation-unchecked",
 ]

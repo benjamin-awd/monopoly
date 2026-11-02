@@ -273,7 +273,8 @@ class PdfParser:
                     raise MissingOCRError(msg)
 
                 return [PdfPage(page) for page in pdf]
-            except pdftotext.Error:
+            # a two-attempt retry, not a hot loop
+            except pdftotext.Error:  # noqa: PERF203
                 continue
         msg = "Unable to retrieve pages"
         raise RuntimeError(msg)
