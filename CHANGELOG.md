@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.23.7](https://github.com/benjamin-awd/monopoly/compare/v0.23.6...v0.23.7) (2026-11-02)
+
+
+### Bug Fixes
+
+* **examples:** pass preserve_filename to Pipeline.load ([775089b](https://github.com/benjamin-awd/monopoly/commit/775089b6a68283c5b420efb8fd4f14510c6a4954))
+
 ## [0.23.6](https://github.com/benjamin-awd/monopoly/compare/v0.23.5...v0.23.6) (2026-11-01)
 
 
