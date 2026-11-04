@@ -19,6 +19,7 @@ if TYPE_CHECKING:
 # so we assert totals + statement date rather than the specific raw.csv rows.
 # HSBC and Trust are excluded (multi-column / non-generic layouts).
 test_cases = [
+    ("bank_of_america", -489.0, datetime(2023, 8, 22)),
     ("citibank", -310.8, datetime(2022, 3, 12)),
     ("dbs", -550.0, datetime(2023, 11, 20)),
     ("maybank", -1209.5, datetime(2024, 11, 8)),
