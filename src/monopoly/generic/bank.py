@@ -56,6 +56,7 @@ class GenericConfigBuilder:
                 multiline_config=MultilineConfig(self.multiline_descriptions),
                 header_pattern=re.compile(self._header_regex),
                 transaction_date_order=self._date_order,
+                statement_date_order=self._date_order,
             )
         return None
 
@@ -72,6 +73,7 @@ class GenericConfigBuilder:
                 header_pattern=re.compile(self._header_regex),
                 multiline_config=MultilineConfig(self.multiline_descriptions),
                 transaction_date_order=self._date_order,
+                statement_date_order=self._date_order,
             )
         return None
 
