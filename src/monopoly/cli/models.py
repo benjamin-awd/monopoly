@@ -12,6 +12,7 @@ class RunConfig:
     single_process: bool = False
     ocr_engine: str | None = None
     parser: str | None = None
+    bank: str | None = None
     verbose: bool = False
     preserve_filename: bool = False
     output_format: str = "csv"
