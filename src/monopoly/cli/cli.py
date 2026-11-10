@@ -185,7 +185,7 @@ def run(input_files: Collection[Path], config: RunConfig):
         # filter out null values to avoid pydantic validation errors,
         # for cases where print_df is True and processing errors occur
         report = Report([res for res in results if res])
-        report.display_report(config.verbose)
+        report.display_report(verbose=config.verbose)
 
 
 def get_statement_paths(files: Iterable[Path]) -> set[Path]:
