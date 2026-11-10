@@ -53,6 +53,7 @@ class DateOrder:
 class MultilineConfig:
     multiline_descriptions: bool = False
     multiline_amount: bool = False
+    straddled_descriptions: bool = False
     multiline_direction: bool = False
     multiline_statement_date: bool = False
     multiline_transaction_date: bool = False

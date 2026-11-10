@@ -53,6 +53,39 @@ def merge_wrapped_amounts(lines: list[str], pattern: re.Pattern[str]) -> list[st
     return out
 
 
+def merge_straddled_descriptions(lines: list[str], pattern: re.Pattern[str]) -> list[str]:
+    """
+    Pull a description that wraps around its own row back onto that row.
+
+                          TAX ON EXAMPLE FEE (Ref#
+        12/05/2026 | 00:00                                         5.19
+                          AB0000000001)
+
+    Only rows that match `pattern` with an empty description are touched. A neighbouring line is taken when it is
+    not itself a row and is indented past the row's first column. The line count is unchanged.
+    """
+    out = list(lines)
+    for i, line in enumerate(out):
+        match = pattern.search(line)
+        if not match or match.group(Columns.DESCRIPTION).strip():
+            continue
+        taken = [
+            j
+            for j in (i - 1, i + 1)
+            if 0 <= j < len(out)
+            and out[j].strip()
+            and not pattern.search(out[j])
+            and len(out[j]) - len(out[j].lstrip()) > match.start()
+        ]
+        pos = match.start(Columns.DESCRIPTION)
+        merged = f"{line[:pos]}{' '.join(out[j].strip() for j in taken)} {line[pos:]}"
+        if taken and pattern.search(merged):
+            out[i] = merged
+            for j in taken:
+                out[j] = ""
+    return out
+
+
 @dataclass
 class MatchContext:
     line: str
@@ -180,6 +213,8 @@ class BaseStatement(ABC):
             lines = page.lines
             if self.config.multiline_config.multiline_amount:
                 lines = merge_wrapped_amounts(lines, self.pattern)
+            if self.config.multiline_config.straddled_descriptions:
+                lines = merge_straddled_descriptions(lines, self.pattern)
             for line_num, line in enumerate(lines):
                 raw_match = self.pattern.search(line)
                 if not raw_match or self._check_bound(raw_match):
