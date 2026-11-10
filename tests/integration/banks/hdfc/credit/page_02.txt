@@ -1,0 +1,55 @@
+                                                                                                                                              HSN Code: 997113
+   DUPLICATE Diners Black Credit Card Statement                                                                HDFC Bank Credit Cards GSTIN: 33AAACH2702H2Z6
+
+Offers on your card
+
+
+
+
+ Domestic Transactions
+ DATE & TIME                              TRANSACTION DESCRIPTION                                                    REWARDS                     AMOUNT       PI
+
+ 23/05/2026| 18:44                        MERCHANT 06                                                                  + 30                       C 978.00    l
+ 23/05/2026| 18:09                        MERCHANT 07                                                                                             C 936.73    l
+ 26/05/2026| 11:20                        MERCHANT 08                                                                   +5                        C 283.00    l
+ 26/05/2026| 11:25                        MERCHANT 09                                                                                             C 890.00    l
+ 27/05/2026| 11:27                        BPPY CC PAYMENT BD000000XXXXXXXXXXX (Ref# ST000000000000000000000)                                 + C 19,155.00    l
+ 30/05/2026| 12:49                        MERCHANT 10                                                                  + 20                       C 700.00    l
+ 30/05/2026| 15:29                        MERCHANT 11                                                                  + 25                       C 750.00    l
+ 31/05/2026| 16:40              EMI       MERCHANT 12                                                                  + 150                    C 4,555.00    l
+ 31/05/2026| 21:43                        MERCHANT 13                                                                  + 20                       C 600.00    l
+ 31/05/2026| 12:55                        MERCHANT 03                                                                                             C 231.00    l
+ 01/06/2026| 10:10              EMI       MERCHANT 14                                                                                          C 12,551.00    l
+ 03/06/2026| 12:38              EMI       MERCHANT 15                                                                                           C 5,848.36    l
+ 03/06/2026| 00:03              EMI       MERCHANT 02                                                                  + 95                     C 2,892.53    l
+ 03/06/2026| 11:30                        MERCHANT 09                                                                                             C 510.00    l
+ 03/06/2026| 00:00                        MERCHANT 09                                                                                           + C 114.50    l
+ 04/06/2026| 21:42                        MERCHANT 06                                                                  + 10                       C 334.00    l
+ 04/06/2026| 00:00                        MERCHANT 02                                                                                            + C 61.88    l
+ 06/06/2026| 15:39                        MERCHANT 16                                                                  + 20                       C 650.00    l
+ 07/06/2026| 23:39                        MERCHANT 06                                                                  + 80                     C 2,406.00    l
+ 08/06/2026| 16:48                        MERCHANT 17                                                                   +5                        C 260.12    l
+
+
+
+
+ International Transactions
+ DATE & TIME                              TRANSACTION DESCRIPTION                                                    REWARDS                      AMOUNT      PI
+
+                                          JOHN DOE             [CKYC ID : 00000000000000 ]
+
+ 10/05/2026 | 12:12                       MERCHANT 18* 0000000000                                  USD 15.00           + 45                      C 1,442.14   l
+                                          IGST-VPS0000000000000-RATE 18.0 -29 (Ref#
+ 12/05/2026 | 00:00                                                                                                                                  C 5.19   l
+                                          DT000000000000000000000)
+                                          CONSOLIDATED FCY MARKUP FEE (Ref#
+ 09/06/2026 | 00:00                                                                                                                                 C 28.84   l
+                                          DT000000000000000000000)
+
+
+*Transaction time captured in IST Zone.
+
+
+
+
+  Page 2 of 3

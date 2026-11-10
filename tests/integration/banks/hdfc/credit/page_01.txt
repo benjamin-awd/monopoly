@@ -1,0 +1,94 @@
+ DUPLICATE Diners Black Credit Card Statement
+ HSN Code: 997113           HDFC Bank Credit Cards GSTIN: 33AAACH2702H2Z6
+
+ JOHN DOE                                                  Credit Card No.                                        00000000XXXX1234
+
+ 1 EXAMPLE STREET                                          Alternate Account Number                          0000000000000000000
+
+                                                           Statement Date                                                  09 Jun, 2026
+ EXAMPLE AREA
+ NR EXAMPLE LANDMARK                                       Billing Period                                10 May, 2026 - 09 Jun, 2026
+ EXAMPLE CITY 000000
+                                                           CKYC ID                                                   00000000000000
+ Email : JOHN.DOE@EXAMPLE.COM
+
+
+ To update personal details : Change of Address: click here        |     Change of email-id: click here    |      Change of Mobile number: click here
+ To update any other personal details, please write a letter to : The Manager, HDFC Bank Cards Division, Door No 94 SP, Estate Bus Stand, Wavin Main Road, Mogappair West, Chennai - 600058
+
+
+                                             PAYMENTS/CREDITS                          PURCHASES/DEBIT
+       PREVIOUS STATEMENT DUES                                                                                                 FINANCE CHARGES                    TOTAL AMOUNT DUE
+                                                 RECEIVED                             (Current Billing Cycle)
+
+               C19,155.43
+                                         _      C19,397.77                  +               C42,674.34                 +             C0.00              =         C42,432.00
+               TOTAL CREDIT LIMIT
+                                                        AVAILABLE CREDIT LIMIT                                  AVAILABLE CASH LIMIT                              MINIMUM DUE                  DUE DATE
+                 (Including Cash)
+
+                                                                                                                                                                  C2,130.00                    29 Jun, 2026
+                   C1,00,000                                    C1,00,000                                              C1,00,000
+
+
+
+
+Past Dues                   OVER LIMIT                  3 MONTHS +                       2 MONTHS                          1 MONTH                      CURRENT DUES                        MINIMUM DUES
+(if any)                    C0.00                       C0.00                            C0.00                             C0.00                        C2,130.00                           C2,130.00
+
+Benefits on your card
+                                                    IMPORTANT INFORMATION
+
+                                                    1. BANK WILL REPORT YOU AS DEFAULTER TO CREDIT AGENCIES IF YOU MISS PAYMENT FOR MINIMUM AMOUNT BY 3 DAYS FROM THE
+                                                       DUE DATE
+                                                    2. COMPLIMENTARY INSURANCE FROM HDFC ERGO.TOLL FREE:+800 08250825/01204507250 (CHARGEABLE) EMAIL:
+                                                       BANKCLAIMS@HDFCERGO.COM
+
+
+
+                                                             Reward Points                               Opening Balance             Feature + Bonus Reward      Disbursed                         Adjusted/Lapsed
+                                                                                                                                     Points Earned
+
+                                                             58,019                                      56,523                      1,496                       0                                 0
+
+
+                                                                REDEEM REWARDS                           POINTS EXPIRING             IN 30 DAYS 0                IN 60 DAYS 0
+
+
+                                              * All contents of the statement will be deemed to be correct and accepted by you, unless you inform us of any discrepancies within 30 days from the date of this statement.
+                                              * The available credit limit showed herein takes into account charges incurred but not billed.
+
+                                                 Your Card Control Setting As on : 09 Jun, 2026
+                                                 Domestic Transaction                                             International Transaction
+
+                                                          Online                POS              Tap & Pay               Online               POS             Tap & Pay                            MODIFY ON MyCards
+
+
+                                                     ENABLED             ENABLED               ENABLED               ENABLED            ENABLED           DISABLED                  Card Control            Set Pin
+
+
+
+
+                                                 Purchase Indicator / Insights (PI)
+
+                                                l INSURANCE                        l GROCERIES                        l MEDICAL                      l RESTAURANT                         l MISC
+                                                  32%                                 26%                                16%                           13%                                   12%
+
+
+
+
+                                                 Domestic Transactions
+                                                 DATE & TIME                       TRANSACTION DESCRIPTION                                                                REWARDS                      AMOUNT         PI
+
+                                                                                   JOHN DOE                     [CKYC ID : 00000000000000 ]
+
+                                                 09/05/2026| 17:59                 MERCHANT 01                                                                                                         C 1,150.04     l
+                                                 09/05/2026| 00:00                 PETRO SURCHARGE WAIVER                                                                                              + C 11.39      l
+                                                 19/05/2026| 11:08                 MERCHANT 02                                                                               + 65                      C 2,037.36     l
+                                                 19/05/2026| 13:22                 MERCHANT 03                                                                                                          C 264.00      l
+                                                 20/05/2026| 19:03                 MERCHANT 04                                                                                                          C 443.00      l
+                                                 20/05/2026| 00:00                 MERCHANT 02                                                                                                         + C 55.00      l
+                                                 22/05/2026| 12:29                 MERCHANT 05                                                                                                         C 1,928.03     l
+
+
+ Page 1 of 3

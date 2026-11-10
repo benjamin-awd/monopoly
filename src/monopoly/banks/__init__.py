@@ -11,6 +11,7 @@ from .cibc import CIBC
 from .citibank import Citibank
 from .dbs import Dbs
 from .detector import BankDetector
+from .hdfc import Hdfc
 from .hsbc import Hsbc
 from .maybank import Maybank
 from .ocbc import Ocbc
@@ -35,6 +36,7 @@ banks: list[type[BankBase]] = [
     CIBC,
     Citibank,
     Dbs,
+    Hdfc,
     Hsbc,
     Maybank,
     Ocbc,
