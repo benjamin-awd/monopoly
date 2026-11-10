@@ -102,8 +102,11 @@ def _process_with_pipeline(file: Path, config: RunConfig) -> Result | None:
         if config.ocr_engine == "tesseract":
             document = PdfParser.apply_ocr(document)
 
-        analyzer = BankDetector(document)
-        bank = analyzer.detect_bank(banks) or GenericBank
+        if config.bank:
+            bank = next(bank for bank in banks if bank.name == config.bank)
+        else:
+            analyzer = BankDetector(document)
+            bank = analyzer.detect_bank(banks) or GenericBank
         parser = PdfParser(bank, document, ocr_engine=config.ocr_engine)
         pipeline = Pipeline(parser)
 
@@ -201,6 +204,20 @@ def get_statement_paths(files: Iterable[Path]) -> set[Path]:
     return matched_files
 
 
+def validate_bank(_ctx: click.Context, _param: click.Parameter, value: str | None) -> str | None:
+    """Check `--bank` against the supported banks, importing them only when the flag is used."""
+    if value is None:
+        return None
+
+    from monopoly.banks import banks
+
+    names = sorted(bank.name for bank in banks)
+    if value.lower() not in names:
+        msg = f"{value!r} is not a supported bank. Choose from: {', '.join(names)}"
+        raise click.BadParameter(msg)
+    return value.lower()
+
+
 @click.command()
 @click.version_option(package_name="monopoly-core")
 @click.argument(
@@ -266,6 +283,13 @@ def get_statement_paths(files: Iterable[Path]) -> set[Path]:
     type=click.Choice(["gemini"], case_sensitive=False),
     default=None,
     help="Use an alternative parser for full statement extraction (e.g. 'gemini').",
+)
+@click.option(
+    "-b",
+    "--bank",
+    default=None,
+    callback=validate_bank,
+    help="Parse with this bank's configuration instead of detecting the bank (e.g. 'dbs').",
 )
 @click.pass_context
 @setup_logs

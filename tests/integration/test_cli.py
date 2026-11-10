@@ -225,3 +225,31 @@ def test_pprint_transactions(capsys, statement):
         "\n"
     )
     assert captured.out == expected_output
+
+
+def test_monopoly_bank_override(cli_runner: CliRunner, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    from monopoly import banks
+    from monopoly.examples.example_bank import ExampleBank
+
+    def fail_detection(*_args, **_kwargs):
+        pytest.fail("--bank should skip bank detection")
+
+    monkeypatch.setattr(banks, "banks", [*banks.banks, ExampleBank])
+    monkeypatch.setattr(banks.BankDetector, "detect_bank", fail_detection)
+
+    result = cli_runner.invoke(
+        monopoly,
+        ["src/monopoly/examples/example_statement.pdf", "--bank", "Example", "--output", str(tmp_path)],
+    )
+
+    assert result.exit_code == 0
+    assert "1 statement(s) processed" in result.output
+    assert [f.name.split("-")[0] for f in tmp_path.glob("*.csv")] == ["example"]
+
+
+def test_monopoly_bank_override_unknown(cli_runner: CliRunner):
+    result = cli_runner.invoke(monopoly, ["src/monopoly/examples/example_statement.pdf", "--bank", "nope"])
+
+    assert result.exit_code == 2
+    assert "'nope' is not a supported bank" in result.output
+    assert "dbs" in result.output
