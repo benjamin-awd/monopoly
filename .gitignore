@@ -1,4 +1,5 @@
 # env vars and keys
+.env
 *.key
 
 # financial documents
