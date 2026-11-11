@@ -51,4 +51,29 @@ banks: list[type[BankBase]] = [
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["BankDetector", "BankBase"] + [bank.__name__ for bank in banks]
+
+def get_bank(name: str, *, include_generic: bool = False) -> type[BankBase]:
+    """
+    Return the bank whose `name` matches, case-insensitively.
+
+    Raise a LookupError naming the supported banks if nothing matches.
+    `GenericBank` is excluded unless `include_generic` is set: it is not a real
+    bank and must never be auto-detected.
+    """
+    candidates = list(banks)
+    if include_generic:
+        # imported here because monopoly.generic imports this package for BankBase
+        from monopoly.generic import GenericBank  # noqa: PLC0415
+
+        candidates.append(GenericBank)
+
+    wanted = name.casefold()
+    for bank in candidates:
+        if bank.name.casefold() == wanted:
+            return bank
+    available = ", ".join(sorted(bank.name for bank in candidates))
+    msg = f"{name!r} is not a supported bank. Choose from: {available}"
+    raise LookupError(msg)
+
+
+__all__ = ["BankDetector", "BankBase", "get_bank"] + [bank.__name__ for bank in banks]

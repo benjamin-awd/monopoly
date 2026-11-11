@@ -19,7 +19,7 @@ removal, `pdftotext` layout).
 monopoly-fixture dump path/to/statement.pdf -o tests/integration/banks/<bank>/<type>
 ```
 
-This detects the bank (or pass `--bank <ClassName>` / `--generic`) and writes
+This detects the bank (or pass `--bank <name>` / `--generic`) and writes
 one `page_NN.txt` per page plus a `metadata.json`.
 
 ### 2. Redact the page files
@@ -36,7 +36,7 @@ CSVs because the next step regenerates them from the redacted text.
 ### 3. Build the CSV fixtures
 
 ```bash
-monopoly-fixture build tests/integration/banks/<bank>/<type> --bank <ClassName>
+monopoly-fixture build tests/integration/banks/<bank>/<type> --bank <name>
 ```
 
 This parses the **redacted** text through the real pipeline, re-runs the safety

@@ -25,7 +25,7 @@ BROKEN_PAGE = "01-02-2024\nDATE DESCRIPTION AMOUNT\n12/01 COFFEE SHOP 12.34\n13/
 
 @pytest.fixture
 def _register_example_bank(monkeypatch):
-    monkeypatch.setattr("monopoly.cli.fixtures.banks", [ExampleBank])
+    monkeypatch.setattr("monopoly.banks.banks", [ExampleBank])
 
 
 def _write_fixture_dir(directory, page_text):
@@ -36,7 +36,7 @@ def _write_fixture_dir(directory, page_text):
 def test_build_writes_three_fixture_files(tmp_path):
     _write_fixture_dir(tmp_path, GOOD_PAGE)
 
-    result = CliRunner().invoke(fixtures, ["build", str(tmp_path), "--bank", "ExampleBank"])
+    result = CliRunner().invoke(fixtures, ["build", str(tmp_path), "--bank", "example"])
     assert result.exit_code == 0, result.output
 
     with (tmp_path / "raw.csv").open() as file:
@@ -61,7 +61,7 @@ def test_build_writes_three_fixture_files(tmp_path):
 def test_build_safety_check_catches_broken_total(tmp_path):
     _write_fixture_dir(tmp_path, BROKEN_PAGE)
 
-    result = CliRunner().invoke(fixtures, ["build", str(tmp_path), "--bank", "ExampleBank"])
+    result = CliRunner().invoke(fixtures, ["build", str(tmp_path), "--bank", "example"])
     assert result.exit_code != 0
     assert not (tmp_path / "raw.csv").exists()
 
@@ -70,7 +70,7 @@ def test_build_safety_check_catches_broken_total(tmp_path):
 def test_build_nosafe_skips_safety_check(tmp_path):
     _write_fixture_dir(tmp_path, BROKEN_PAGE)
 
-    result = CliRunner().invoke(fixtures, ["build", str(tmp_path), "--bank", "ExampleBank", "--nosafe"])
+    result = CliRunner().invoke(fixtures, ["build", str(tmp_path), "--bank", "example", "--nosafe"])
     assert result.exit_code == 0, result.output
     assert (tmp_path / "raw.csv").exists()
 
