@@ -47,7 +47,8 @@ def test_dump_rejects_unknown_bank(tmp_path):
 
     result = CliRunner().invoke(fixtures, ["dump", str(pdf), "--bank", "NotABank"])
     assert result.exit_code != 0
-    assert "Unknown bank" in result.output
+    assert "'NotABank' is not a supported bank" in result.output
+    assert "dbs" in result.output
 
 
 def test_dump_defaults_output_to_pdf_directory(tmp_path):

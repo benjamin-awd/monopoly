@@ -16,7 +16,7 @@ from pathlib import Path
 import click
 import pymupdf
 
-from monopoly.banks import BankDetector, banks
+from monopoly.banks import BankDetector, banks, get_bank
 from monopoly.banks.base import BankBase
 from monopoly.generic import GenericBank
 from monopoly.identifiers import MetadataIdentifier
@@ -41,12 +41,10 @@ def _resolve_bank(
     if generic:
         return GenericBank
     if bank_name:
-        by_name = {bank.__name__: bank for bank in banks}
-        if bank_name not in by_name:
-            available = ", ".join(sorted(by_name))
-            msg = f"Unknown bank {bank_name!r}. Available: {available}"
-            raise click.ClickException(msg)
-        return by_name[bank_name]
+        try:
+            return get_bank(bank_name)
+        except LookupError as err:
+            raise click.ClickException(str(err)) from err
     if document is not None:
         bank = BankDetector(document).detect_bank(banks)
         if bank is not None:
@@ -133,7 +131,7 @@ def fixtures() -> None:
     default=None,
     help="Directory for pages.txt/metadata.json (defaults to the PDF's directory).",
 )
-@click.option("--bank", "bank_name", default=None, help="Force a bank by class name instead of auto-detecting.")
+@click.option("--bank", "bank_name", default=None, help="Force a bank by name instead of auto-detecting.")
 @click.option("--generic", is_flag=True, help="Use the generic handler instead of detecting a bank.")
 def dump(file: Path, output_directory: Path | None, bank_name: str | None, generic: bool) -> None:  # noqa: FBT001
     """
@@ -174,7 +172,7 @@ def dump(file: Path, output_directory: Path | None, bank_name: str | None, gener
     "directory",
     type=click.Path(exists=True, file_okay=False, resolve_path=True, path_type=Path),
 )
-@click.option("--bank", "bank_name", default=None, help="Bank class name (required unless --generic).")
+@click.option("--bank", "bank_name", default=None, help="Bank name (required unless --generic).")
 @click.option("--generic", is_flag=True, help="Use the generic handler instead of a specific bank.")
 @click.option(
     "--safe/--nosafe",

@@ -90,7 +90,7 @@ def _write_gemini_csv(result, output_directory: Path, file: Path, *, preserve_fi
 def _process_with_pipeline(file: Path, config: RunConfig) -> Result | None:
     """Process a statement using the standard regex-based pipeline."""
     # Lazily importing here prevents from CLI from having a "slow" start
-    from monopoly.banks import BankDetector, banks
+    from monopoly.banks import BankDetector, banks, get_bank
     from monopoly.generic import GenericBank
     from monopoly.pdf import PdfDocument, PdfParser
     from monopoly.pipeline import Pipeline
@@ -103,7 +103,7 @@ def _process_with_pipeline(file: Path, config: RunConfig) -> Result | None:
             document = PdfParser.apply_ocr(document)
 
         if config.bank:
-            bank = next(bank for bank in banks if bank.name == config.bank)
+            bank = get_bank(config.bank)
         else:
             analyzer = BankDetector(document)
             bank = analyzer.detect_bank(banks) or GenericBank
@@ -209,13 +209,12 @@ def validate_bank(_ctx: click.Context, _param: click.Parameter, value: str | Non
     if value is None:
         return None
 
-    from monopoly.banks import banks
+    from monopoly.banks import get_bank
 
-    names = sorted(bank.name for bank in banks)
-    if value.lower() not in names:
-        msg = f"{value!r} is not a supported bank. Choose from: {', '.join(names)}"
-        raise click.BadParameter(msg)
-    return value.lower()
+    try:
+        return get_bank(value).name
+    except LookupError as err:
+        raise click.BadParameter(str(err)) from err
 
 
 @click.command()

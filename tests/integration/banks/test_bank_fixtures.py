@@ -26,8 +26,7 @@ from pathlib import Path
 import pytest
 from test_utils.transactions import get_transactions_as_dict, read_pages, read_transactions_from_csv
 
-from monopoly.banks import banks
-from monopoly.generic import GenericBank
+from monopoly.banks import get_bank
 from monopoly.identifiers import MetadataIdentifier
 from monopoly.pdf import PdfParser
 from monopoly.pipeline import Pipeline
@@ -40,13 +39,6 @@ def _discover_fixtures() -> list[Path]:
     return sorted(path.parent for path in FIXTURES_DIR.glob("*/*/expected.json"))
 
 
-def _bank_by_name(name: str):
-    # `name` is the envelope's `bank` field, i.e. statement.bank_name == bank.name
-    by_name = {bank.name: bank for bank in banks}
-    by_name[GenericBank.name] = GenericBank
-    return by_name[name]
-
-
 FIXTURE_DIRS = _discover_fixtures()
 
 
@@ -57,7 +49,8 @@ FIXTURE_DIRS = _discover_fixtures()
 )
 def test_bank_fixture(fixture_dir: Path):
     expected = json.loads((fixture_dir / "expected.json").read_text())
-    bank = _bank_by_name(expected["bank"])
+    # `bank` is the envelope's field, i.e. statement.bank_name == bank.name
+    bank = get_bank(expected["bank"], include_generic=True)
 
     pages = read_pages(fixture_dir)
     metadata = None

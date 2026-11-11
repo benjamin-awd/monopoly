@@ -5,12 +5,14 @@ from pathlib import Path
 import pytest
 from click.testing import CliRunner
 
+from monopoly import banks
 from monopoly.cli import (
     get_statement_paths,
     monopoly,
     pprint_transactions,
 )
 from monopoly.cli.models import Report, Result
+from monopoly.examples.example_bank import ExampleBank
 from monopoly.statements.transaction import Transaction
 
 
@@ -228,9 +230,6 @@ def test_pprint_transactions(capsys, statement):
 
 
 def test_monopoly_bank_override(cli_runner: CliRunner, tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
-    from monopoly import banks
-    from monopoly.examples.example_bank import ExampleBank
-
     def fail_detection(*_args, **_kwargs):
         pytest.fail("--bank should skip bank detection")
 
@@ -244,7 +243,8 @@ def test_monopoly_bank_override(cli_runner: CliRunner, tmp_path: Path, monkeypat
 
     assert result.exit_code == 0
     assert "1 statement(s) processed" in result.output
-    assert [f.name.split("-")[0] for f in tmp_path.glob("*.csv")] == ["example"]
+    (csv_file,) = tmp_path.glob("*.csv")
+    assert csv_file.name.startswith("example-credit-")
 
 
 def test_monopoly_bank_override_unknown(cli_runner: CliRunner):
