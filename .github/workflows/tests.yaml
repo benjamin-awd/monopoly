@@ -41,3 +41,12 @@ jobs:
 
       - name: Run tests
         run: uv run task test
+
+  tests-pass:
+    if: always()
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if any matrix job did not succeed
+        if: needs.tests.result != 'success'
+        run: exit 1
