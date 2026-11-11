@@ -64,7 +64,7 @@ class Report:
     def number_errored(self) -> int:
         return len(self.errored_results)
 
-    def display_report(self, *_, verbose=False) -> None:
+    def display_report(self, *, verbose=False) -> None:
         """Parse all results, displaying the number of successfully processed statements and any errors."""
         for res in self.processed_results:
             click.echo(f"{res.source_file_name} -> {res.target_file_name}")
