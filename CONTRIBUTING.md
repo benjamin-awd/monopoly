@@ -55,3 +55,21 @@ pytest tests/integration/banks/test_bank_fixtures.py -k <bank>
 Confirm your case is collected and passes (not `0 selected`). Then open a PR
 with the `tests/integration/banks/<bank>/<type>/` directory. Do **not**
 commit the original PDF.
+
+## Commit messages
+
+Commits follow [Conventional Commits](https://www.conventionalcommits.org):
+`type(scope): subject`, with the type one of `feat`, `fix`, `perf`, `deps`,
+`revert`, `refactor`, `docs`, `style`, `chore`, `test`, `build`, or `ci`.
+
+This is not a style preference. release-please derives the changelog and the
+version bump from these subjects, so a commit it cannot parse ships with no
+release note at all. CI checks every commit a PR adds; to catch it before you
+push, install the hooks:
+
+```bash
+uvx pre-commit install --install-hooks
+```
+
+Note that the project is pre-1.0, so a `feat` is a patch bump and only a
+breaking change (`feat!:` or a `BREAKING CHANGE:` footer) bumps the minor.
