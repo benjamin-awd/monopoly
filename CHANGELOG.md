@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.23.7](https://github.com/benjamin-awd/monopoly/compare/v0.23.6...v0.23.7) (2026-11-14)
+
+
+### Features
+
+* **cli:** add --bank to parse with a named bank instead of detecting it ([c95dc9c](https://github.com/benjamin-awd/monopoly/commit/c95dc9c9e1e908f5b33447dd3c6bd6b62776fecb)), closes [#227](https://github.com/benjamin-awd/monopoly/issues/227)
+* **hdfc:** add HDFC Bank credit card statements ([2f9cf08](https://github.com/benjamin-awd/monopoly/commit/2f9cf084d3312789909944774c71f35a2d644cd7))
+
+
+### Bug Fixes
+
+* **examples:** pass preserve_filename to Pipeline.load ([775089b](https://github.com/benjamin-awd/monopoly/commit/775089b6a68283c5b420efb8fd4f14510c6a4954))
+* **generic:** parse the statement date in the detected date order ([20731e9](https://github.com/benjamin-awd/monopoly/commit/20731e94d1407d795f6fabc830d8126242b7fb40))
+
+
+### Code Refactoring
+
+* **banks:** share one bank-name lookup across both CLIs ([4026b3b](https://github.com/benjamin-awd/monopoly/commit/4026b3b3e65b21b482f66bd4a9b7c3c5b0308897))
+
 ## [0.23.6](https://github.com/benjamin-awd/monopoly/compare/v0.23.5...v0.23.6) (2026-11-01)
 
 
