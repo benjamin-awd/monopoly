@@ -58,8 +58,10 @@ class DatePatternAnalyzer:
         lines_with_multiple_dates = self.get_items_with_same_page_and_line()
         for line in lines_with_multiple_dates:
             logger.debug("Checking dates in line: %s", line)
-            if len(line) > EXPECTED_DATE_COUNT_PER_LINE:
-                _, date_1, date_2 = line
+            _, *dates = line
+            # lines with more dates (e.g. a statement period and due date) aren't transactions
+            if len(dates) == EXPECTED_DATE_COUNT_PER_LINE:
+                date_1, date_2 = dates
                 if date_1 and date_2 and date_1 != date_2:
                     logger.debug("%s != %s, returning %s", date_1, date_2, date_1 < date_2)
                     return date_1 < date_2
