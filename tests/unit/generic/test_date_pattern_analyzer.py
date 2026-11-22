@@ -241,6 +241,14 @@ def test_identify_posting_date(date_pattern_analyzer: DatePatternAnalyzer, match
     assert not result
 
 
+def test_identify_posting_date_skips_lines_with_more_dates(
+    date_pattern_analyzer: DatePatternAnalyzer, matches_with_posting_transaction_dates
+):
+    period = [MockDateMatch(line_number=1, parsed_date=datetime(2024, m, d)) for m, d in ((10, 1), (10, 31), (11, 21))]
+    date_pattern_analyzer.matches = period + matches_with_posting_transaction_dates
+    assert not date_pattern_analyzer.is_transaction_date_first()
+
+
 def test_create_transaction_pattern_with_transaction_first(
     date_pattern_analyzer: DatePatternAnalyzer,
     matches_with_transaction_posting_dates,
