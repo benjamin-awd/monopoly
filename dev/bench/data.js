@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1794840760798,
+  "lastUpdate": 1795454885528,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -2425,6 +2425,40 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 1.05036626208,
             "range": "± 0.024988296077656735",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd",
+            "email": "benjamindornel@gmail.com"
+          },
+          "committer": {
+            "name": "GitHub",
+            "username": "web-flow",
+            "email": "noreply@github.com"
+          },
+          "id": "57c6979ff6bc34a653c74424e88c1c9a23dcf333",
+          "message": "Merge pull request #365 from benjamin-awd/release-please--branches--main--components--monopoly-core",
+          "timestamp": "2026-11-14T03:38:07Z",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/57c6979ff6bc34a653c74424e88c1c9a23dcf333"
+        },
+        "date": 1795454884839,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.47047064819999995,
+            "range": "± 0.1255813060987461",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 0.6061399777400001,
+            "range": "± 0.011996225784495062",
             "unit": "s"
           }
         ]
