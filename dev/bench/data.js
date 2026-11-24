@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795454885528,
+  "lastUpdate": 1795537591067,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -2459,6 +2459,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 0.6061399777400001,
             "range": "± 0.011996225784495062",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "160968744+wavebyrd@users.noreply.github.com",
+            "name": "wavebyrd",
+            "username": "wavebyrd"
+          },
+          "committer": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "distinct": true,
+          "id": "6f7e688125a556cc191b221e42568644e47a3740",
+          "message": "fix(generic): skip lines with more than two dates when ordering date columns",
+          "timestamp": "2026-11-25T00:25:08+08:00",
+          "tree_id": "fc8ea7023523f0f1d7cb1f30b9ff913e8cb38148",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/6f7e688125a556cc191b221e42568644e47a3740"
+        },
+        "date": 1795537590191,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.50287344618,
+            "range": "± 0.0049074418848802275",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 0.7890478443800001,
+            "range": "± 0.036144544872753225",
             "unit": "s"
           }
         ]
