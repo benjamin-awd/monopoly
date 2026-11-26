@@ -379,3 +379,12 @@ def test_create_previous_balance_regex(date_pattern_analyzer: DatePatternAnalyze
     expected = re.compile(rf"(?P<description>Balance Brought Forward)\s+{SharedPatterns.AMOUNT}")
     result = date_pattern_analyzer.create_previous_balance_regex()
     assert result == expected
+
+
+def test_create_previous_balance_regex_near_top_of_page(date_pattern_analyzer: DatePatternAnalyzer):
+    page = PdfPage("Balance Brought Forward     222.13\n" + "01 Oct   ValueVille    123.12     2,000.00\n" * 5)
+    date_pattern_analyzer.pages = [page]
+    date_pattern_analyzer.get_first_transaction_location = lambda: (0, 1)
+
+    expected = re.compile(rf"(?P<description>Balance Brought Forward)\s+{SharedPatterns.AMOUNT}")
+    assert date_pattern_analyzer.create_previous_balance_regex() == expected
