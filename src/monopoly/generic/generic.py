@@ -190,7 +190,7 @@ class DatePatternAnalyzer:
 
         # grab the first five lines before the first transaction
         page = self.pages[page_num]
-        lines_before_first_transaction = list(reversed(page.lines[line_num - 5 : line_num]))
+        lines_before_first_transaction = list(reversed(page.lines[max(line_num - 5, 0) : line_num]))
 
         balance_pattern = re.compile(SharedPatterns.DESCRIPTION + SharedPatterns.AMOUNT)
 
