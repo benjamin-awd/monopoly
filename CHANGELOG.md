@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.23.8](https://github.com/benjamin-awd/monopoly/compare/v0.23.7...v0.23.8) (2026-11-27)
+
+
+### Bug Fixes
+
+* **generic:** find a previous balance near the top of the page ([5b99b16](https://github.com/benjamin-awd/monopoly/commit/5b99b16e8906c27c4fa9844567ecfb3f2ea048c6))
+* **generic:** skip lines with more than two dates when ordering date columns ([6f7e688](https://github.com/benjamin-awd/monopoly/commit/6f7e688125a556cc191b221e42568644e47a3740))
+
 ## [0.23.7](https://github.com/benjamin-awd/monopoly/compare/v0.23.6...v0.23.7) (2026-11-14)
 
 
