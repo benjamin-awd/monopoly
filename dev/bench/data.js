@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795537591067,
+  "lastUpdate": 1795793106274,
   "repoUrl": "https://github.com/benjamin-awd/monopoly",
   "entries": {
     "monopoly CLI performance": [
@@ -2495,6 +2495,42 @@ window.BENCHMARK_DATA = {
             "name": "Integration (10 banks)",
             "value": 0.7890478443800001,
             "range": "± 0.036144544872753225",
+            "unit": "s"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "160968744+wavebyrd@users.noreply.github.com",
+            "name": "wavebyrd",
+            "username": "wavebyrd"
+          },
+          "committer": {
+            "email": "benjamindornel@gmail.com",
+            "name": "Benjamin Dornel",
+            "username": "benjamin-awd"
+          },
+          "distinct": true,
+          "id": "5b99b16e8906c27c4fa9844567ecfb3f2ea048c6",
+          "message": "fix(generic): find a previous balance near the top of the page",
+          "timestamp": "2026-11-27T23:23:38+08:00",
+          "tree_id": "a7d04d8869cfaf6641b2d08c1f94c30b091be354",
+          "url": "https://github.com/benjamin-awd/monopoly/commit/5b99b16e8906c27c4fa9844567ecfb3f2ea048c6"
+        },
+        "date": 1795793105763,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Single file",
+            "value": 0.61825880768,
+            "range": "± 0.00453441816830517",
+            "unit": "s"
+          },
+          {
+            "name": "Integration (10 banks)",
+            "value": 0.9979849922999999,
+            "range": "± 0.07328096928320575",
             "unit": "s"
           }
         ]
